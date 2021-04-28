@@ -1,0 +1,80 @@
+import { Animated, Dimensions } from "react-native";
+import styled from "styled-components/native";
+import fonts from "../../styles/fonts";
+
+export const Container = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
+`;
+
+export const QuickAccessGroupsContainer = styled.View`
+  width: 100%;
+  padding: 10px;
+  margin-top: 35px;
+  justify-content: center;
+`;
+
+export const QuickAccessTitle = styled.Text`
+  font-size: 18px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.dark_heading};
+`;
+
+export const QuickAccessGroupsScroll = styled.ScrollView`
+  width: ${Dimensions.get("screen").width}px;
+`;
+
+export const NewGroupButton = styled.TouchableOpacity`
+  width: 70px;
+  height: 70px;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed ${(props) => props.theme.colors.secondary};
+  border-radius: 35px;
+  margin-right: 15px;
+  margin-left: 15px;
+`;
+
+export const GroupButton = styled.TouchableOpacity`
+  margin-right: 15px;
+`;
+
+export const GroupImage = styled.Image`
+  width: 70px;
+  height: 70px;
+  border-radius: 35px;
+`;
+
+export const GroupsContainer = styled(Animated.ScrollView)`
+  flex: 1;
+  margin-top: 35px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background-color: ${(props) => props.theme.colors.shape};
+  padding: 0 27px;
+  elevation: 10;
+  z-index: 5;
+`;
+
+export const TitleWrapper = styled.View`
+  width: 100%;
+  margin-bottom: 40px;
+`;
+
+export const GroupsTitle = styled.Text`
+  font-size: 28px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.dark_heading};
+  margin-top: 40px;
+`;
+
+export const GroupsSubtitle = styled.Text`
+  font-size: 18px;
+  font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.light_heading};
+  margin-top: -10px;
+`;
+
+export const GroupsList = styled.View`
+  flex: 1;
+`;
