@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ButtonText, Container } from "./styles";
 
 interface ButtonProps {
@@ -13,4 +13,4 @@ const Button = ({ title }: ButtonProps) => {
   );
 };
 
-export default Button;
+export default memo(Button);

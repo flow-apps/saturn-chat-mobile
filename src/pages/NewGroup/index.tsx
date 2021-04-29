@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
+  Alert,
   Keyboard,
   Platform,
+  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -11,6 +13,7 @@ import {
   Container,
   SelectGroupPhotoContainer,
   SelectGroupPhoto,
+  GroupPhoto,
   SelectGroupPhotoTitle,
   SelectGroupPhotoSubtitle,
   FormContainer,
@@ -21,11 +24,57 @@ import {
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import Switcher from "../../components/Switcher/Switcher";
+import { Switch } from "react-native-switch";
 import Button from "../../components/Button";
+import * as ImagePicker from "expo-image-picker";
+import crypto from "crypto";
 
 const NewGroup: React.FC = () => {
+  const [groupPhoto, setGroupPhoto] = useState<string>();
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [isPublicGroup, setIsPublicGroup] = useState(true);
   const { colors } = useTheme();
+
+  const descriptionInput = useRef() as any;
+
+  async function handleCreateGroup() {
+    const data = new FormData();
+
+    data.append("name", name);
+    data.append("description", description);
+    data.append("photo", {
+      name: `image_${name.replace(" ", "_")}.jpg`,
+      uri: groupPhoto,
+      type: "image/jpg",
+    } as any);
+  }
+
+  function handleSetPublic() {
+    setIsPublicGroup(!isPublicGroup);
+  }
+
+  async function handleSelectGroupPhoto() {
+    const { granted } = await ImagePicker.getCameraPermissionsAsync();
+
+    if (!granted) {
+      const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+
+      if (!granted) {
+        return Alert.alert("Precisamos da permissão para acessar suas fotos!");
+      }
+    }
+
+    const photo = await ImagePicker.launchImageLibraryAsync({
+      aspect: [300, 300],
+      allowsEditing: true,
+      quality: 0.7,
+      allowsMultipleSelection: false,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    });
+
+    if (!photo.cancelled) return setGroupPhoto(photo.uri);
+  }
 
   return (
     <>
@@ -34,12 +83,25 @@ const NewGroup: React.FC = () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View>
             <SelectGroupPhotoContainer>
-              <SelectGroupPhoto>
-                <Feather name="camera" size={55} color={colors.secondary} />
+              <SelectGroupPhoto
+                style={{
+                  borderWidth: groupPhoto ? 0 : 2,
+                }}
+                onPress={handleSelectGroupPhoto}
+              >
+                {groupPhoto ? (
+                  <GroupPhoto source={{ uri: groupPhoto }} />
+                ) : (
+                  <Feather name="camera" size={55} color={colors.secondary} />
+                )}
               </SelectGroupPhoto>
-              <SelectGroupPhotoTitle>Escolha uma foto</SelectGroupPhotoTitle>
+              <SelectGroupPhotoTitle>
+                {!groupPhoto
+                  ? "🖼 Escolha uma foto legal"
+                  : "🌟 Essa foto está perfeita!"}
+              </SelectGroupPhotoTitle>
               <SelectGroupPhotoSubtitle>
-                Recomendamos uma imagem de 300x300
+                {!groupPhoto && "Recomendamos uma imagem de 300x300"}
               </SelectGroupPhotoSubtitle>
             </SelectGroupPhotoContainer>
             <FormContainer
@@ -50,12 +112,18 @@ const NewGroup: React.FC = () => {
                   placeholder="Nome do grupo"
                   maxLength={100}
                   returnKeyType="go"
+                  onSubmitEditing={() => descriptionInput.current.focus()}
+                  value={name}
+                  onChangeText={setName}
                 />
                 <Input
                   placeholder="Descrição do grupo"
                   multiline
                   numberOfLines={4}
                   maxLength={500}
+                  ref={descriptionInput}
+                  value={description}
+                  onChangeText={setDescription}
                 />
                 <SwitcherContainer>
                   <SwitcherText>
@@ -66,10 +134,24 @@ const NewGroup: React.FC = () => {
                     />{" "}
                     Tornar público
                   </SwitcherText>
-                  <Switcher />
+                  <Switch
+                    circleSize={30}
+                    barHeight={23}
+                    changeValueImmediately={true}
+                    circleActiveColor={colors.secondary}
+                    circleBorderActiveColor={colors.secondary}
+                    circleInActiveColor={colors.light_heading}
+                    circleBorderWidth={0}
+                    backgroundInactive={colors.dark_gray}
+                    backgroundActive={colors.light_secondary}
+                    activeText=""
+                    inActiveText=""
+                    onValueChange={handleSetPublic}
+                    value={isPublicGroup}
+                  />
                 </SwitcherContainer>
+                <Button title="Cria Grupo" />
               </Form>
-              <Button title="Cria Grupo" />
             </FormContainer>
           </View>
         </TouchableWithoutFeedback>

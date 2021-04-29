@@ -14,12 +14,19 @@ export const SelectGroupPhotoContainer = styled.View`
 `;
 
 export const SelectGroupPhoto = styled.TouchableOpacity`
-  width: 150px;
-  height: 150px;
-  border-radius: ${150 / 2}px;
+  width: 200px;
+  height: 200px;
+  border-radius: ${200 / 2}px;
   border: 2px dashed ${(props) => props.theme.colors.dark_gray};
   align-items: center;
   justify-content: center;
+`;
+
+export const GroupPhoto = styled.Image`
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 100px;
 `;
 
 export const SelectGroupPhotoTitle = styled.Text`
@@ -33,7 +40,6 @@ export const SelectGroupPhotoSubtitle = styled.Text`
   font-size: 14px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.dark_gray};
-  margin-top: -5px;
 `;
 
 export const FormContainer = styled.KeyboardAvoidingView`
@@ -59,6 +65,7 @@ export const SwitcherContainer = styled.View`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding: 0 3px;
 `;
 
 export const SwitcherText = styled.Text`

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { TouchableOpacityProps } from "react-native";
 import {
   Container,
@@ -36,4 +36,4 @@ const Group = ({ name, unreadMessages, image }: GroupProps) => {
   );
 };
 
-export default Group;
+export default memo(Group);

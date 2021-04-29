@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   Container,
   HeaderTitle,
@@ -54,4 +54,4 @@ const Header = ({ title, backButton, homeButtons }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default memo(Header);
