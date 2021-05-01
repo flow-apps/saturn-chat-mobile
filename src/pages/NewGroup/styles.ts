@@ -40,6 +40,7 @@ export const SelectGroupPhotoSubtitle = styled.Text`
   font-size: 14px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.dark_gray};
+  text-align: center;
 `;
 
 export const FormContainer = styled.KeyboardAvoidingView`
@@ -53,7 +54,7 @@ export const Form = styled.View`
 
 export const Input = styled.TextInput`
   border-radius: 10px;
-  padding: 12px;
+  padding: 15px;
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
   font-family: ${fonts.text};
   font-size: 16px;
@@ -72,4 +73,8 @@ export const SwitcherText = styled.Text`
   font-size: 18px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
+`;
+
+export const ButtonWrapper = styled.View`
+  margin: -5px 0 10px 0;
 `;

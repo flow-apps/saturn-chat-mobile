@@ -2,7 +2,7 @@ import { TouchableOpacityProps } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.TouchableOpacity<TouchableOpacityProps>`
+export const Container = styled.TouchableOpacity`
   width: 100%;
   padding: 10px;
   flex-direction: row;

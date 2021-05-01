@@ -1,13 +1,14 @@
 import React, { memo } from "react";
+import { RectButtonProps } from "react-native-gesture-handler";
 import { ButtonText, Container } from "./styles";
 
-interface ButtonProps {
+interface ButtonProps extends RectButtonProps {
   title: string;
 }
 
-const Button = ({ title }: ButtonProps) => {
+const Button = ({ title, ...rest }: ButtonProps) => {
   return (
-    <Container>
+    <Container {...rest}>
       <ButtonText>{title}</ButtonText>
     </Container>
   );

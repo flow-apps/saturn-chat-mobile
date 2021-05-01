@@ -19,9 +19,15 @@ import Header from "../../components/Header";
 import avatar from "../../assets/avatar.jpg";
 import HorizontalLine from "../../components/HorizontalLine";
 import Group from "../../components/Group";
+import { useNavigation } from "@react-navigation/core";
 
 const Home: React.FC = () => {
   const { colors } = useTheme();
+  const navigation = useNavigation();
+
+  function handleGoChat() {
+    navigation.navigate("Chat");
+  }
 
   return (
     <Container>
@@ -56,7 +62,11 @@ const Home: React.FC = () => {
         </TitleWrapper>
         <HorizontalLine />
         <GroupsList>
-          <Group name="Pedro's Group" unreadMessages={20} />
+          <Group
+            name="Pedro's Group"
+            unreadMessages={20}
+            onPress={handleGoChat}
+          />
           <Group name="Pedro's Group" unreadMessages={5} />
           <Group name="Pedro's Group" unreadMessages={0} />
           <Group name="Pedro's Group" unreadMessages={0} />

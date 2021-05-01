@@ -1,13 +1,16 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import TabRoutes from "./tabs.routes";
+import { ChatRoutes, HomeRoutes } from "./tabs.routes";
+import MyProfile from "../pages/MyProfile";
 
 const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
   return (
     <StackRoutes.Navigator headerMode="none">
-      <StackRoutes.Screen name="Groups" component={TabRoutes} />
+      <StackRoutes.Screen name="Groups" component={HomeRoutes} />
+      <StackRoutes.Screen name="Chat" component={ChatRoutes} />
+      <StackRoutes.Screen name="MyProfile" component={MyProfile} />
     </StackRoutes.Navigator>
   );
 };

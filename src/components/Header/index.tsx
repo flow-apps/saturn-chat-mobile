@@ -27,6 +27,10 @@ const Header = ({ title, backButton, homeButtons }: HeaderProps) => {
     }
   }
 
+  function handleGoMyProfile() {
+    navigation.navigate("MyProfile");
+  }
+
   return (
     <Container>
       <StatusBar backgroundColor={colors.primary} style="inverted" />
@@ -45,7 +49,12 @@ const Header = ({ title, backButton, homeButtons }: HeaderProps) => {
               <Feather name="search" size={25} color={colors.white} />
             </Button>
             <Button>
-              <Feather name="user" size={25} color={colors.white} />
+              <Feather
+                name="user"
+                size={25}
+                color={colors.white}
+                onPress={handleGoMyProfile}
+              />
             </Button>
           </>
         )}

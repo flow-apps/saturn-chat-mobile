@@ -10,17 +10,18 @@ import {
 } from "./styles";
 import avatar from "../../assets/avatar.jpg";
 import HorizontalLine from "../HorizontalLine";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-export interface GroupProps extends TouchableOpacityProps {
+interface GroupProps extends TouchableOpacity {
   name: string;
   image?: string;
-  unreadMessages: number;
+  unreadMessages?: number;
 }
 
-const Group = ({ name, unreadMessages, image }: GroupProps) => {
+const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
   return (
     <>
-      <Container>
+      <Container {...rest}>
         <GroupInfos>
           <GroupImage source={avatar} />
           <GroupName>{name}</GroupName>

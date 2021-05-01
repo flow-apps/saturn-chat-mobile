@@ -21,6 +21,7 @@ import {
   Input,
   SwitcherContainer,
   SwitcherText,
+  ButtonWrapper,
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
@@ -44,10 +45,12 @@ const NewGroup: React.FC = () => {
     data.append("name", name);
     data.append("description", description);
     data.append("photo", {
-      name: `image_${name.replace(" ", "_")}.jpg`,
+      name: `photo_${name.replace(" ", "_").toLowerCase()}.jpg`,
       uri: groupPhoto,
       type: "image/jpg",
     } as any);
+
+    console.log(data);
   }
 
   function handleSetPublic() {
@@ -101,7 +104,8 @@ const NewGroup: React.FC = () => {
                   : "🌟 Essa foto está perfeita!"}
               </SelectGroupPhotoTitle>
               <SelectGroupPhotoSubtitle>
-                {!groupPhoto && "Recomendamos uma imagem de 300x300"}
+                {!groupPhoto &&
+                  "Recomendamos uma imagem de 300x300 e de no máximo 5MB"}
               </SelectGroupPhotoSubtitle>
             </SelectGroupPhotoContainer>
             <FormContainer
@@ -109,7 +113,7 @@ const NewGroup: React.FC = () => {
             >
               <Form>
                 <Input
-                  placeholder="Nome do grupo"
+                  placeholder="Nome do grupo (máx. 100 caracteres)"
                   maxLength={100}
                   returnKeyType="go"
                   onSubmitEditing={() => descriptionInput.current.focus()}
@@ -117,7 +121,7 @@ const NewGroup: React.FC = () => {
                   onChangeText={setName}
                 />
                 <Input
-                  placeholder="Descrição do grupo"
+                  placeholder="Descrição do grupo (máx. 500 caracteres)"
                   multiline
                   numberOfLines={4}
                   maxLength={500}
@@ -150,7 +154,9 @@ const NewGroup: React.FC = () => {
                     value={isPublicGroup}
                   />
                 </SwitcherContainer>
-                <Button title="Cria Grupo" />
+                <ButtonWrapper>
+                  <Button title="Cria Grupo" onPress={handleCreateGroup} />
+                </ButtonWrapper>
               </Form>
             </FormContainer>
           </View>

@@ -3,13 +3,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { useTheme } from "styled-components";
+import Chat from "../pages/Chat";
 import Home from "../pages/Home";
 import NewGroup from "../pages/NewGroup";
 import fonts from "../styles/fonts";
 
 const tabRoutes = createBottomTabNavigator();
 
-const TabRoutes = () => {
+const HomeRoutes = () => {
   const { colors } = useTheme();
 
   return (
@@ -51,7 +52,49 @@ const TabRoutes = () => {
   );
 };
 
-export default TabRoutes;
+const ChatRoutes = () => {
+  const { colors } = useTheme();
+
+  return (
+    <tabRoutes.Navigator
+      tabBarOptions={{
+        activeTintColor: colors.primary,
+        inactiveTintColor: colors.dark_gray,
+        labelPosition: "below-icon",
+        labelStyle: styles.label,
+        style: styles.tabBar,
+      }}
+    >
+      <tabRoutes.Screen
+        component={Chat}
+        name="Chat"
+        options={{
+          title: "Conversa",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons
+              name="chat-bubble-outline"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <tabRoutes.Screen
+        component={Chat}
+        name="Participants"
+        options={{
+          title: "Participantes",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="users" size={size} color={color} />
+          ),
+        }}
+      />
+    </tabRoutes.Navigator>
+  );
+};
+
+export { HomeRoutes, ChatRoutes };
 
 const styles = StyleSheet.create({
   tabBar: {
