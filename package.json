@@ -15,6 +15,8 @@
     "@react-navigation/stack": "^5.14.4",
     "expo": "~41.0.1",
     "expo-app-loading": "^1.0.3",
+    "expo-clipboard": "~1.0.2",
+    "expo-document-picker": "~9.1.2",
     "expo-font": "~9.1.0",
     "expo-image-picker": "~10.1.4",
     "expo-status-bar": "~1.0.4",

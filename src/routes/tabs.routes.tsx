@@ -6,6 +6,7 @@ import { useTheme } from "styled-components";
 import Chat from "../pages/Chat";
 import Home from "../pages/Home";
 import NewGroup from "../pages/NewGroup";
+import Participants from "../pages/Participants";
 import fonts from "../styles/fonts";
 
 const tabRoutes = createBottomTabNavigator();
@@ -81,7 +82,7 @@ const ChatRoutes = () => {
       />
 
       <tabRoutes.Screen
-        component={Chat}
+        component={Participants}
         name="Participants"
         options={{
           title: "Participantes",
