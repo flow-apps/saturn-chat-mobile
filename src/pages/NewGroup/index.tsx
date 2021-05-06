@@ -29,6 +29,7 @@ import { Switch } from "react-native-switch";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
 import crypto from "crypto";
+import Switcher from "../../components/Switcher";
 
 const NewGroup: React.FC = () => {
   const [groupPhoto, setGroupPhoto] = useState<string>();
@@ -138,20 +139,9 @@ const NewGroup: React.FC = () => {
                     />{" "}
                     Tornar público
                   </SwitcherText>
-                  <Switch
-                    circleSize={30}
-                    barHeight={23}
-                    changeValueImmediately={true}
-                    circleActiveColor={colors.secondary}
-                    circleBorderActiveColor={colors.secondary}
-                    circleInActiveColor={colors.light_heading}
-                    circleBorderWidth={0}
-                    backgroundInactive={colors.dark_gray}
-                    backgroundActive={colors.light_secondary}
-                    activeText=""
-                    inActiveText=""
-                    onValueChange={handleSetPublic}
-                    value={isPublicGroup}
+                  <Switcher
+                    onChangeValue={handleSetPublic}
+                    currentValue={isPublicGroup}
                   />
                 </SwitcherContainer>
                 <ButtonWrapper>

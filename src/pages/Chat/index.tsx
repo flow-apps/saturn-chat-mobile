@@ -67,7 +67,7 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      <Header title="Pedro's Group" backButton />
+      <Header title="Pedro's Group" backButton groupButtons />
       <Container>
         <ChatContainer
           as={ScrollView}

@@ -6,7 +6,7 @@ import {
   Button,
   LeftContainer,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { StatusBar } from "expo-status-bar";
@@ -15,9 +15,15 @@ interface HeaderProps {
   title: string;
   backButton?: boolean;
   homeButtons?: boolean;
+  groupButtons?: boolean;
 }
 
-const Header = ({ title, backButton, homeButtons }: HeaderProps) => {
+const Header = ({
+  title,
+  backButton,
+  homeButtons,
+  groupButtons,
+}: HeaderProps) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -29,6 +35,10 @@ const Header = ({ title, backButton, homeButtons }: HeaderProps) => {
 
   function handleGoMyProfile() {
     navigation.navigate("MyProfile");
+  }
+
+  function handleGoGroupConfig() {
+    navigation.navigate("GroupConfig");
   }
 
   return (
@@ -57,6 +67,16 @@ const Header = ({ title, backButton, homeButtons }: HeaderProps) => {
               />
             </Button>
           </>
+        )}
+        {groupButtons && (
+          <Button>
+            <FontAwesome
+              name="cog"
+              size={25}
+              color={colors.white}
+              onPress={handleGoGroupConfig}
+            />
+          </Button>
         )}
       </LeftContainer>
     </Container>
