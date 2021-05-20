@@ -4,12 +4,14 @@ import { ButtonText, Container } from "./styles";
 
 interface ButtonProps extends RectButtonProps {
   title: string;
+  transparent?: boolean;
+  textColor?: string;
 }
 
-const Button = ({ title, ...rest }: ButtonProps) => {
+const Button = ({ title, transparent, textColor, ...rest }: ButtonProps) => {
   return (
-    <Container {...rest}>
-      <ButtonText>{title}</ButtonText>
+    <Container transparent={transparent} {...rest}>
+      <ButtonText textColor={textColor}>{title}</ButtonText>
     </Container>
   );
 };

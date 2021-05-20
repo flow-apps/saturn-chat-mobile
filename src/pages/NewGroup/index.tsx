@@ -25,10 +25,8 @@ import {
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import { Switch } from "react-native-switch";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
-import crypto from "crypto";
 import Switcher from "../../components/Switcher";
 
 const NewGroup: React.FC = () => {
