@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
 import React from "react";
+import Loading from "../components/Loading";
 import { useAuth } from "../contexts/auth";
 import AppRoutes from "./app.routes";
 import { AuthRoutes } from "./auth.routes";

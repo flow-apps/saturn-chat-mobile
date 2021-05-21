@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import * as auth from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../services/api";
+import Loading from "../components/Loading";
 
 interface AuthContextData {
   signed: boolean;
@@ -58,6 +59,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   async function signUp(data: FormData) {
     setError(false);
+    setLoading(true);
     auth
       .signUp(data)
       .then(async (response) => {
