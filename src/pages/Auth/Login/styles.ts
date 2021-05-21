@@ -13,7 +13,7 @@ export const WelcomeContainer = styled.View`
 
 export const ErrorContainer = styled.View`
   padding: 10px;
-  margin-bottom: 15px;
+  margin-bottom: -25px;
 `;
 
 export const ErrorText = styled.Text`

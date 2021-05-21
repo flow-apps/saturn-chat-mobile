@@ -22,19 +22,21 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
 import Button from "../../../components/Button";
 import * as ImagePicker from "expo-image-picker";
+import { useAuth } from "../../../contexts/auth";
 
 const Register: React.FC = () => {
-  const [avatar, setAvatar] = useState<string>();
-  const [name, setName] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [passwordConfirm, setPasswordConfirm] = useState<string>();
+  const [avatar, setAvatar] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
 
   const [emailError, setEmailError] = useState(false);
   const [passError, setPassError] = useState(false);
   const [passConfirmError, setPassConfirmError] = useState(false);
 
   const { colors } = useTheme();
+  const { signUp } = useAuth();
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
   const emailValidation = /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g;
@@ -97,6 +99,17 @@ const Register: React.FC = () => {
     }
   }
 
+  async function handleSubmit() {
+    const data = new FormData();
+
+    data.append("name", name);
+    data.append("email", email);
+    data.append("password", password);
+    data.append("avatar", avatar);
+
+    return signUp(data);
+  }
+
   return (
     <>
       <Header backButton title="Criar conta" />
@@ -128,6 +141,7 @@ const Register: React.FC = () => {
                     autoCapitalize="words"
                     placeholder="Ex.: Pedro Henrique"
                     onChangeText={handleSetName}
+                    value={name}
                   />
                 </FormField>
                 <FormField>
@@ -136,6 +150,7 @@ const Register: React.FC = () => {
                     keyboardType="email-address"
                     placeholder="Ex.: usuario@exemplo.com"
                     onChangeText={handleSetEmail}
+                    value={email}
                   />
                   {emailError && (
                     <FieldError>Esse email não é válido</FieldError>
@@ -146,6 +161,7 @@ const Register: React.FC = () => {
                   <Input
                     passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
                     onChangeText={handleSetPassword}
+                    value={password}
                     secureTextEntry
                   />
                   {passError && (
@@ -163,13 +179,17 @@ const Register: React.FC = () => {
                 </FormField>
                 <FormField>
                   <Label>Confirme sua senha</Label>
-                  <Input onChangeText={handleSetPassConfirm} secureTextEntry />
+                  <Input
+                    value={passwordConfirm}
+                    onChangeText={handleSetPassConfirm}
+                    secureTextEntry
+                  />
                   {passConfirmError && (
                     <FieldError>As senhas não combinam</FieldError>
                   )}
                 </FormField>
               </InputsContainer>
-              <Button title="Criar conta" />
+              <Button title="Criar conta" onPress={handleSubmit} />
             </FormContainer>
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>

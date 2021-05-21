@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
-import React from "react";
+import React, { useState } from "react";
 import { Keyboard } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Button from "../../../components/Button";
@@ -11,6 +11,8 @@ import {
   Container,
   CreateAccountContainer,
   CreateAccountText,
+  ErrorContainer,
+  ErrorText,
   FieldContainer,
   FieldsContainer,
   ForgotPassword,
@@ -22,19 +24,19 @@ import {
 } from "./styles";
 
 const Login: React.FC = () => {
-  const navigator = useNavigation();
-  const { signed, signIn } = useAuth();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  console.log(signed);
+  const navigator = useNavigation();
+  const { signed, signIn, error } = useAuth();
 
   function handleNavigateSignUp() {
     navigator.navigate("Register");
   }
 
   async function handleLogin() {
-    await signIn();
+    await signIn(email, password);
   }
-
   return (
     <>
       <Header title="Faça o login" backButton />
@@ -43,19 +45,32 @@ const Login: React.FC = () => {
           <WelcomeContainer>
             <WelcomeTitle>Olá,{"\n"}Bem-vindo de volta</WelcomeTitle>
           </WelcomeContainer>
+          {error && (
+            <ErrorContainer>
+              <ErrorText>
+                Erro ao fazer login, verifique seus dados ou crie uma conta
+              </ErrorText>
+            </ErrorContainer>
+          )}
           <FormContainer>
             <FieldsContainer>
               <FieldContainer>
                 <Label>
                   <Feather name="at-sign" size={16} /> Email
                 </Label>
-                <Input keyboardType="email-address" />
+                <Input
+                  onChangeText={setEmail}
+                  value={email}
+                  keyboardType="email-address"
+                />
               </FieldContainer>
               <FieldContainer>
                 <Label>
                   <Feather name="lock" size={16} /> Senha
                 </Label>
                 <Input
+                  onChangeText={setPassword}
+                  value={password}
                   passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
                   secureTextEntry
                 />

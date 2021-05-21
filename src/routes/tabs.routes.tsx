@@ -1,9 +1,10 @@
-import { MaterialIcons, Feather } from "@expo/vector-icons";
+import { MaterialIcons, Feather, FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { useTheme } from "styled-components";
 import Chat from "../pages/Chat";
+import Configurations from "../pages/Configurations";
 import Home from "../pages/Home";
 import NewGroup from "../pages/NewGroup";
 import Participants from "../pages/Participants";
@@ -35,6 +36,17 @@ const HomeRoutes = () => {
               size={size}
               color={color}
             />
+          ),
+        }}
+      />
+
+      <tabRoutes.Screen
+        component={Configurations}
+        name="UserConfigs"
+        options={{
+          title: "Configurações",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="cog" size={size} color={color} />
           ),
         }}
       />
