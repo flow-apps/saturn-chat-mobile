@@ -11,6 +11,18 @@ export const WelcomeContainer = styled.View`
   margin-top: 30px;
 `;
 
+export const ErrorContainer = styled.View`
+  padding: 10px;
+  margin-bottom: 15px;
+`;
+
+export const ErrorText = styled.Text`
+  text-align: center;
+  font-size: 18px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.red};
+`;
+
 export const WelcomeTitle = styled.Text`
   font-size: 30px;
   font-family: ${fonts.heading};
@@ -19,7 +31,7 @@ export const WelcomeTitle = styled.Text`
 
 export const FormContainer = styled.View`
   flex: 1;
-  margin-top: 50px;
+  margin-top: 40px;
 `;
 
 export const FieldsContainer = styled.View``;

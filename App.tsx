@@ -7,6 +7,7 @@ import AppLoading from "expo-app-loading";
 import React from "react";
 import { ThemeProvider } from "styled-components/native";
 import Routes from "./src/routes";
+import { AuthProvider } from "./src/contexts/auth";
 import light from "./src/styles/themes/light";
 
 export default function App() {
@@ -19,7 +20,9 @@ export default function App() {
 
   return (
     <ThemeProvider theme={light}>
-      <Routes />
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -6,6 +6,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
+import { useAuth } from "../../../contexts/auth";
 import {
   Container,
   CreateAccountContainer,
@@ -22,9 +23,16 @@ import {
 
 const Login: React.FC = () => {
   const navigator = useNavigation();
+  const { signed, signIn } = useAuth();
+
+  console.log(signed);
 
   function handleNavigateSignUp() {
     navigator.navigate("Register");
+  }
+
+  async function handleLogin() {
+    await signIn();
   }
 
   return (
@@ -56,7 +64,7 @@ const Login: React.FC = () => {
                 </ForgotPassword>
               </FieldContainer>
             </FieldsContainer>
-            <Button title="Entrar" />
+            <Button title="Entrar" onPress={handleLogin} />
             <CreateAccountContainer onPress={handleNavigateSignUp}>
               <CreateAccountText>
                 É novo por aqui? Crie uma conta!

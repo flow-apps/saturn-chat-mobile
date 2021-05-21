@@ -36,7 +36,7 @@ const Register: React.FC = () => {
 
   const { colors } = useTheme();
   const passwordValidation =
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
   const emailValidation = /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g;
 
   function handleSetName(value: string) {
