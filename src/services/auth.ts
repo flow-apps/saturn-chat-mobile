@@ -18,7 +18,11 @@ export async function signIn(
 }
 
 export async function signUp(data: FormData) {
-  const response = await api.post("/users", data);
+  const response = await api.post("/users", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
   return response;
 }

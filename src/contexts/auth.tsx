@@ -29,7 +29,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       if (storageUser && storageToken) {
         setUser(JSON.parse(storageUser));
-        api.defaults.headers["Authorization"] = `Bearer ${storageToken}`;
+        api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
       }
       setLoading(false);
     }
@@ -41,7 +41,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     setUser(data.user);
     await AsyncStorage.setItem("@FlowChat:user", JSON.stringify(data.user));
     await AsyncStorage.setItem("@FlowChat:token", data.token);
-    api.defaults.headers["Authorization"] = `Bearer ${data.token}`;
+    api.defaults.headers["authorization"] = `Bearer ${data.token}`;
   }
 
   async function signIn(email: string, password: string) {

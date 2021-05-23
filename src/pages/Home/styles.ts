@@ -18,10 +18,12 @@ export const QuickAccessTitle = styled.Text`
   font-size: 18px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.dark_heading};
+  margin-bottom: 10px;
 `;
 
-export const QuickAccessGroupsScroll = styled.ScrollView`
+export const QuickAccessGroupsScroll = styled.View`
   width: ${Dimensions.get("screen").width}px;
+  flex-direction: row;
 `;
 
 export const NewGroupButton = styled.TouchableOpacity`
@@ -45,7 +47,7 @@ export const GroupImage = styled.Image`
   border-radius: 35px;
 `;
 
-export const GroupsContainer = styled(Animated.ScrollView)`
+export const GroupsContainer = styled(Animated.View)`
   flex: 1;
   margin-top: 35px;
   border-top-left-radius: 20px;
@@ -58,7 +60,7 @@ export const GroupsContainer = styled(Animated.ScrollView)`
 
 export const TitleWrapper = styled.View`
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 `;
 
 export const GroupsTitle = styled.Text`

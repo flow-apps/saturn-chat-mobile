@@ -1,31 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
+import React, { useState } from "react";
+import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useTheme } from "styled-components";
+import Button from "../../../components/Button";
 import Header from "../../../components/Header";
+import Input from "../../../components/Input";
+import { useAuth } from "../../../contexts/auth";
 import {
   Avatar,
   Container,
+  FieldError,
+  FieldInfo,
+  FieldInfoContainer,
   FormContainer,
+  FormField,
+  InputsContainer,
+  Label,
   SelectAvatarButton,
   SelectAvatarContainer,
   SelectAvatarSubtitle,
   SelectAvatarTitle,
-  InputsContainer,
-  FormField,
-  Label,
-  FieldInfoContainer,
-  FieldInfo,
-  FieldError,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
-import { useTheme } from "styled-components";
-import Input from "../../../components/Input";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
-import Button from "../../../components/Button";
-import * as ImagePicker from "expo-image-picker";
-import { useAuth } from "../../../contexts/auth";
+import formData from "form-data";
 
 const Register: React.FC = () => {
-  const [avatar, setAvatar] = useState<string>("");
+  const [avatar, setAvatar] = useState<ImageInfo>();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -92,22 +94,29 @@ const Register: React.FC = () => {
       quality: 0.7,
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
     });
 
     if (!photo.cancelled) {
-      return setAvatar(photo.uri);
+      return setAvatar(photo);
     }
   }
 
   async function handleSubmit() {
-    const data = new FormData();
+    const data = new formData();
+    const uriParts = avatar?.uri.split(".");
+    const fileType = uriParts?.pop();
 
     data.append("name", name);
     data.append("email", email);
     data.append("password", password);
-    data.append("avatar", avatar);
+    data.append("avatar", {
+      uri: avatar?.uri,
+      name: `avatar.${fileType}`,
+      type: `image/${fileType}`,
+    });
 
-    return signUp(data);
+    return signUp(data as unknown as FormData);
   }
 
   return (
@@ -120,7 +129,7 @@ const Register: React.FC = () => {
               <SelectAvatarContainer>
                 <SelectAvatarButton onPress={handleSelectAvatar}>
                   {avatar ? (
-                    <Avatar source={{ uri: avatar }} />
+                    <Avatar source={{ uri: avatar.uri }} />
                   ) : (
                     <Feather name="camera" size={55} color={colors.secondary} />
                   )}

@@ -22,6 +22,7 @@
     "expo-font": "~9.1.0",
     "expo-image-picker": "~10.1.4",
     "expo-status-bar": "~1.0.4",
+    "form-data": "^4.0.0",
     "install": "^0.13.0",
     "lottie-react-native": "3.5.0",
     "react": "16.13.1",

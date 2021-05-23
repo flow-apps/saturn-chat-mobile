@@ -28,28 +28,49 @@ import { useTheme } from "styled-components";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
 import Switcher from "../../components/Switcher";
+import api from "../../services/api";
+import { useNavigation } from "@react-navigation/core";
+import FormData from "form-data";
+import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 
 const NewGroup: React.FC = () => {
-  const [groupPhoto, setGroupPhoto] = useState<string>();
+  const [groupPhoto, setGroupPhoto] = useState<ImageInfo>();
+  const [groupPhotoPreview, setGroupPhotoPreview] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
   const { colors } = useTheme();
+  const navigator = useNavigation();
 
   const descriptionInput = useRef() as any;
 
   async function handleCreateGroup() {
     const data = new FormData();
 
+    const uriParts = groupPhoto?.uri.split(".");
+    const fileType = uriParts?.pop();
+
     data.append("name", name);
     data.append("description", description);
-    data.append("photo", {
-      name: `photo_${name.replace(" ", "_").toLowerCase()}.jpg`,
-      uri: groupPhoto,
-      type: "image/jpg",
-    } as any);
+    data.append("group_avatar", {
+      uri: groupPhoto?.uri,
+      name: `group_avatar.${fileType}`,
+      type: `image/${fileType}`,
+    });
+    data.append("privacy", isPublicGroup ? "PUBLIC" : "PRIVATE");
 
-    console.log(data);
+    api
+      .post("/groups", data, {
+        headers: {
+          "Content-Type": `multipart/form-data`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          navigator.navigate("Groups");
+        }
+      })
+      .catch((err) => console.log(err));
   }
 
   function handleSetPublic() {
@@ -68,14 +89,18 @@ const NewGroup: React.FC = () => {
     }
 
     const photo = await ImagePicker.launchImageLibraryAsync({
-      aspect: [300, 300],
+      aspect: [600, 600],
       allowsEditing: true,
       quality: 0.7,
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
     });
 
-    if (!photo.cancelled) return setGroupPhoto(photo.uri);
+    if (!photo.cancelled) {
+      setGroupPhotoPreview(photo.uri);
+      return setGroupPhoto(photo);
+    }
   }
 
   return (
@@ -87,23 +112,23 @@ const NewGroup: React.FC = () => {
             <SelectGroupPhotoContainer>
               <SelectGroupPhoto
                 style={{
-                  borderWidth: groupPhoto ? 0 : 2,
+                  borderWidth: groupPhotoPreview ? 0 : 2,
                 }}
                 onPress={handleSelectGroupPhoto}
               >
-                {groupPhoto ? (
-                  <GroupPhoto source={{ uri: groupPhoto }} />
+                {groupPhotoPreview ? (
+                  <GroupPhoto source={{ uri: groupPhotoPreview }} />
                 ) : (
                   <Feather name="camera" size={55} color={colors.secondary} />
                 )}
               </SelectGroupPhoto>
               <SelectGroupPhotoTitle>
-                {!groupPhoto
+                {!groupPhotoPreview
                   ? "🖼 Escolha uma foto legal"
                   : "🌟 Essa foto está perfeita!"}
               </SelectGroupPhotoTitle>
               <SelectGroupPhotoSubtitle>
-                {!groupPhoto &&
+                {!groupPhotoPreview &&
                   "Recomendamos uma imagem de 300x300 e de no máximo 5MB"}
               </SelectGroupPhotoSubtitle>
             </SelectGroupPhotoContainer>

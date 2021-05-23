@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { TouchableOpacityProps } from "react-native";
+import { TouchableOpacityProps, TouchableOpacity } from "react-native";
 import {
   Container,
   GroupInfos,
@@ -10,9 +10,8 @@ import {
 } from "./styles";
 import avatar from "../../assets/avatar.jpg";
 import HorizontalLine from "../HorizontalLine";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
-interface GroupProps extends TouchableOpacity {
+interface GroupProps extends TouchableOpacityProps {
   name: string;
   image?: string;
   unreadMessages?: number;
@@ -21,9 +20,9 @@ interface GroupProps extends TouchableOpacity {
 const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
   return (
     <>
-      <Container {...rest}>
+      <Container as={TouchableOpacity} {...rest}>
         <GroupInfos>
-          <GroupImage source={avatar} />
+          <GroupImage source={{ uri: image }} />
           <GroupName>{name}</GroupName>
         </GroupInfos>
         {unreadMessages > 0 && (
