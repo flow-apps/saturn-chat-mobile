@@ -8,7 +8,6 @@ import {
   UnreadMessages,
   UnreadMessagesText,
 } from "./styles";
-import avatar from "../../assets/avatar.jpg";
 import HorizontalLine from "../HorizontalLine";
 
 interface GroupProps extends TouchableOpacityProps {

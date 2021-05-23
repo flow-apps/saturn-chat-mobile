@@ -81,8 +81,8 @@ const Home: React.FC = () => {
             showsHorizontalScrollIndicator={false}
             data={groups}
             keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }: { item: GroupData }) => (
-              <GroupButton>
+            renderItem={({ item }) => (
+              <GroupButton activeOpacity={0.5}>
                 <GroupImage
                   source={{ uri: item.group_avatar && item.group_avatar.url }}
                 />
@@ -105,6 +105,8 @@ const Home: React.FC = () => {
                 name={item.name}
                 image={item.group_avatar && item.group_avatar.url}
                 unreadMessages={0}
+                activeOpacity={0.5}
+                onPress={() => handleGoChat()}
               />
             )}
           />

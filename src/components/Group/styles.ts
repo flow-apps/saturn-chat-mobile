@@ -1,6 +1,6 @@
-import { TouchableOpacityProps } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
+import CachedImage from "react-native-expo-cached-image";
 
 export const Container = styled.TouchableOpacity`
   width: 100%;
@@ -16,7 +16,7 @@ export const GroupInfos = styled.View`
   align-items: center;
 `;
 
-export const GroupImage = styled.Image`
+export const GroupImage = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
