@@ -22,7 +22,7 @@ import {
   TitleWrapper,
 } from "./styles";
 
-interface GroupData {
+export interface GroupData {
   id: string;
   owner_id: string;
   name: string;
@@ -106,7 +106,7 @@ const Home: React.FC = () => {
                 image={item.group_avatar && item.group_avatar.url}
                 unreadMessages={0}
                 activeOpacity={0.5}
-                onPress={() => handleGoChat()}
+                onPress={handleGoChat}
               />
             )}
           />

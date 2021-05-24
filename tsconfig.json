@@ -9,8 +9,10 @@
     "allowJs": true,
     "module": "ESNext",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": ["src"],
-  "files": ["src/styles/styled.d.ts", "custom.d.ts"]
+  "files": ["src/styles/styled.d.ts", "./@types/custom.d.ts"]
 }

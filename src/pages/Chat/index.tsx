@@ -23,6 +23,7 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
+import { io } from "socket.io-client";
 import { Alert } from "react-native";
 
 const Chat: React.FC = () => {
@@ -31,6 +32,17 @@ const Chat: React.FC = () => {
   const [sendFile, setSendFile] = useState<string>("");
   const { colors } = useTheme();
   const chatScrollRef = useRef() as React.MutableRefObject<ScrollView>;
+
+  useEffect(() => {
+    const socket = io("http://192.168.0.112:3000/", {
+      path: "/socket.io/",
+      jsonp: false,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      transports: ["websocket"],
+    });
+  }, []);
 
   useEffect(() => {
     if (chatScrollRef && chatScrollRef.current) {
@@ -42,9 +54,9 @@ const Chat: React.FC = () => {
     setMessage(message);
   }
 
-  function handleSelectEmoji(emoji: string) {
-    setMessage((old) => old + emoji);
-  }
+  // function handleSelectEmoji(emoji: string) {
+  //   setMessage((old) => old + emoji);
+  // }
 
   function handleShowEmojiPicker() {
     setShowEmojiPicker(!showEmojiPicker);
@@ -67,7 +79,7 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      <Header title="Pedro's Group" backButton groupButtons />
+      <Header title="feef" backButton groupButtons />
       <Container>
         <ChatContainer
           as={ScrollView}
@@ -76,6 +88,33 @@ const Chat: React.FC = () => {
           alwaysBounceVertical
         >
           <MessageContainer>
+            <MessageBox isRight>
+              <MessageAuthorContainer>
+                <MessageAvatar source={avatar} />
+                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
+              </MessageAuthorContainer>
+              <MessageContentContainer isRight>
+                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
+              </MessageContentContainer>
+            </MessageBox>
+            <MessageBox isRight>
+              <MessageAuthorContainer>
+                <MessageAvatar source={avatar} />
+                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
+              </MessageAuthorContainer>
+              <MessageContentContainer isRight>
+                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
+              </MessageContentContainer>
+            </MessageBox>
+            <MessageBox isRight>
+              <MessageAuthorContainer>
+                <MessageAvatar source={avatar} />
+                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
+              </MessageAuthorContainer>
+              <MessageContentContainer isRight>
+                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
+              </MessageContentContainer>
+            </MessageBox>
             <MessageBox isRight>
               <MessageAuthorContainer>
                 <MessageAvatar source={avatar} />
