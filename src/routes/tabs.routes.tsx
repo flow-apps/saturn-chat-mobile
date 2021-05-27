@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
     elevation: 10,
+    zIndex: 99,
   },
   label: {
     fontSize: 16,

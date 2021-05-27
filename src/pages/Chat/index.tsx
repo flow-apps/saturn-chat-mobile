@@ -28,11 +28,16 @@ import { Alert } from "react-native";
 import { useRoute } from "@react-navigation/core";
 import api from "../../services/api";
 import { GroupData } from "../Home";
+import Loading from "../../components/Loading";
+import Toast from "../../components/Toast";
 
 const Chat: React.FC = () => {
+  const [largeFile, setLargeFile] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<Socket>();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<string[]>();
   const [sendFile, setSendFile] = useState<string>("");
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const { colors } = useTheme();
@@ -41,6 +46,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     async function initChat() {
+      setLoading(true);
       const socketIO = io("http://192.168.0.112:3000/", {
         path: "/socket.io/",
         jsonp: false,
@@ -60,6 +66,7 @@ const Chat: React.FC = () => {
       if (res.status === 200) {
         setGroup(res.data);
       }
+      setLoading(false);
     }
 
     initChat();
@@ -84,18 +91,24 @@ const Chat: React.FC = () => {
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1024 / 1024);
-      if (fileSize > 20) {
-        return Alert.alert(
-          "😱 Que arquivo grande!",
-          `O arquivo não pode ser maior que 20MB!`
-        );
+      if (fileSize > 15) {
+        return setLargeFile(true);
       }
       return setSendFile(file.uri);
     }
   }
 
+  if (loading) return <Loading />;
+
   return (
     <>
+      {largeFile && (
+        <Toast
+          title="😱 Que coisa pesada!"
+          content="Eu não consigo carregar algo tão pesado, tente algo de até 15MB!"
+          okButtonAction={() => setLargeFile(false)}
+        />
+      )}
       <Header title={group.name} backButton groupButtons />
       <Container>
         <ChatContainer
