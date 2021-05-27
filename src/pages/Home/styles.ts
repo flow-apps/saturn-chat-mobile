@@ -1,7 +1,6 @@
 import { Animated, Dimensions } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import CachedImage from "react-native-expo-cached-image";
 
 export const Container = styled.View`
   flex: 1;
@@ -42,7 +41,7 @@ export const GroupButton = styled.TouchableOpacity`
   margin-right: 15px;
 `;
 
-export const GroupImage = styled(CachedImage)`
+export const GroupImage = styled.Image`
   width: 70px;
   height: 70px;
   border-radius: 35px;

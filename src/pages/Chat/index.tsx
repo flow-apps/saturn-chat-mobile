@@ -23,29 +23,50 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { Alert } from "react-native";
+import { useRoute } from "@react-navigation/core";
+import api from "../../services/api";
+import { GroupData } from "../Home";
 
 const Chat: React.FC = () => {
+  const [socket, setSocket] = useState<Socket>();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [sendFile, setSendFile] = useState<string>("");
+  const [group, setGroup] = useState<GroupData>({} as GroupData);
   const { colors } = useTheme();
   const chatScrollRef = useRef() as React.MutableRefObject<ScrollView>;
+  const { id } = useRoute().params as { id: string };
 
   useEffect(() => {
-    const socket = io("http://192.168.0.112:3000/", {
-      path: "/socket.io/",
-      jsonp: false,
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      transports: ["websocket"],
-    });
+    async function initChat() {
+      const socketIO = io("http://192.168.0.112:3000/", {
+        path: "/socket.io/",
+        jsonp: false,
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        transports: ["websocket"],
+        query: {
+          group_id: id,
+        },
+      });
+
+      setSocket(socketIO);
+
+      const res = await api.get(`/group/${id}`);
+
+      if (res.status === 200) {
+        setGroup(res.data);
+      }
+    }
+
+    initChat();
   }, []);
 
   useEffect(() => {
-    if (chatScrollRef && chatScrollRef.current) {
+    if (chatScrollRef.current) {
       chatScrollRef.current.scrollToEnd({ animated: false });
     }
   }, [chatScrollRef.current]);
@@ -53,10 +74,6 @@ const Chat: React.FC = () => {
   function handleSetMessage(message: string) {
     setMessage(message);
   }
-
-  // function handleSelectEmoji(emoji: string) {
-  //   setMessage((old) => old + emoji);
-  // }
 
   function handleShowEmojiPicker() {
     setShowEmojiPicker(!showEmojiPicker);
@@ -79,7 +96,7 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      <Header title="feef" backButton groupButtons />
+      <Header title={group.name} backButton groupButtons />
       <Container>
         <ChatContainer
           as={ScrollView}

@@ -80,7 +80,7 @@ const ChatRoutes = () => {
     >
       <tabRoutes.Screen
         component={Chat}
-        name="Chat"
+        name="ChatTalk"
         options={{
           title: "Conversa",
           tabBarIcon: ({ color, size }) => (

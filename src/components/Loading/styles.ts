@@ -9,7 +9,8 @@ export const Container = styled.View`
 
 export const AnimationView = styled.View`
   flex: 1;
-  width: 100%;
+  width: 100px;
+  height: 100px;
 `;
 
 export const Lottie = styled(LottieView)``;

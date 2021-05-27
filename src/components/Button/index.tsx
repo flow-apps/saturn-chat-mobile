@@ -16,4 +16,4 @@ const Button = ({ title, transparent, textColor, ...rest }: ButtonProps) => {
   );
 };
 
-export default memo(Button);
+export default Button;

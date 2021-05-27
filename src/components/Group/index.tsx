@@ -35,4 +35,4 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
   );
 };
 
-export default memo(Group);
+export default Group;

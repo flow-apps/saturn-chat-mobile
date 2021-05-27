@@ -10,8 +10,7 @@
     "module": "ESNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "jsx": "react-native"
   },
   "include": ["src"],
   "files": ["src/styles/styled.d.ts", "./@types/custom.d.ts"]

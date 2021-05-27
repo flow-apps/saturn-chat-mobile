@@ -37,11 +37,9 @@ const Home: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const inScreen = useIsFocused();
 
   useEffect(() => {
     async function loadGroups() {
-      if (!inScreen) return;
       setLoading(true);
       const groups = await api.get("/groups/list");
 
@@ -53,16 +51,23 @@ const Home: React.FC = () => {
     }
 
     loadGroups();
-  }, [inScreen]);
+  }, []);
 
   const { colors } = useTheme();
   const navigation = useNavigation();
 
-  function handleGoChat() {
-    navigation.navigate("Chat");
+  function handleGoChat(id: string) {
+    navigation.navigate("Chat", {
+      screen: "ChatTalk",
+      params: {
+        id,
+      },
+    });
   }
 
   if (loading) return <Loading />;
+
+  console.log("OK!");
 
   return (
     <Container>
@@ -106,7 +111,7 @@ const Home: React.FC = () => {
                 image={item.group_avatar && item.group_avatar.url}
                 unreadMessages={0}
                 activeOpacity={0.5}
-                onPress={handleGoChat}
+                onPress={() => handleGoChat(item.id)}
               />
             )}
           />
