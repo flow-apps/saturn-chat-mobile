@@ -3,18 +3,18 @@ import { StatusBar } from "expo-status-bar";
 
 import {
   Container,
-  ToastButtonsContainer,
-  ToastContainer,
-  ToastContent,
-  ToastOkButton,
-  ToastModal,
-  ToastTitle,
-  ToastOkButtonText,
-  ToastCancelButton,
-  ToastCancelButtonText,
+  AlertButtonsContainer,
+  AlertContainer,
+  AlertContent,
+  AlertOkButton,
+  AlertModal,
+  AlertTitle,
+  AlertOkButtonText,
+  AlertCancelButton,
+  AlertCancelButtonText,
 } from "./styles";
 
-interface ToastProps {
+interface AlertProps {
   title: string;
   content: string;
   okButtonText?: string;
@@ -23,17 +23,17 @@ interface ToastProps {
   cancelButtonAction?: () => any;
 }
 
-const Toast = ({
+const Alert = ({
   title,
   content,
   okButtonText,
   cancelButtonText,
   okButtonAction,
   cancelButtonAction,
-}: ToastProps) => {
-  const [showToast, setShowToast] = useState(true);
+}: AlertProps) => {
+  const [showAlert, setShowAlert] = useState(true);
   const handleOkButton = useCallback(() => {
-    setShowToast(false);
+    setShowAlert(false);
 
     if (okButtonAction) {
       return okButtonAction();
@@ -41,7 +41,7 @@ const Toast = ({
   }, [okButtonAction]);
 
   const handleCancelButton = useCallback(() => {
-    setShowToast(false);
+    setShowAlert(false);
 
     if (cancelButtonAction) {
       return cancelButtonAction();
@@ -49,32 +49,32 @@ const Toast = ({
   }, [cancelButtonAction]);
 
   return (
-    <Container show={showToast}>
+    <Container show={showAlert}>
       <StatusBar backgroundColor="#000" animated style="light" />
-      <ToastContainer>
-        <ToastModal>
-          <ToastTitle>{title}</ToastTitle>
-          <ToastContent>{content}</ToastContent>
-          <ToastButtonsContainer>
-            <ToastOkButton onPress={handleOkButton}>
-              <ToastOkButtonText>
+      <AlertContainer>
+        <AlertModal>
+          <AlertTitle>{title}</AlertTitle>
+          <AlertContent>{content}</AlertContent>
+          <AlertButtonsContainer>
+            <AlertOkButton onPress={handleOkButton}>
+              <AlertOkButtonText>
                 {okButtonText ? okButtonText : "OK"}
-              </ToastOkButtonText>
-            </ToastOkButton>
+              </AlertOkButtonText>
+            </AlertOkButton>
             {cancelButtonAction ? (
-              <ToastCancelButton onPress={handleCancelButton}>
-                <ToastCancelButtonText>
+              <AlertCancelButton onPress={handleCancelButton}>
+                <AlertCancelButtonText>
                   {cancelButtonText ? cancelButtonText : "Cancelar"}
-                </ToastCancelButtonText>
-              </ToastCancelButton>
+                </AlertCancelButtonText>
+              </AlertCancelButton>
             ) : (
               <></>
             )}
-          </ToastButtonsContainer>
-        </ToastModal>
-      </ToastContainer>
+          </AlertButtonsContainer>
+        </AlertModal>
+      </AlertContainer>
     </Container>
   );
 };
 
-export default memo(Toast);
+export default memo(Alert);

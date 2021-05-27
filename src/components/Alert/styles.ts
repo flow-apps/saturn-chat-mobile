@@ -1,5 +1,4 @@
 import { Dimensions } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -17,24 +16,24 @@ export const Container = styled.View<ContainerProps>`
   z-index: 100;
 `;
 
-export const ToastContainer = styled.View`
+export const AlertContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
   background-color: #00000055;
 `;
 
-export const ToastTitle = styled.Text`
+export const AlertTitle = styled.Text`
   font-family: ${fonts.heading};
   font-size: 18px;
 `;
 
-export const ToastContent = styled.Text`
+export const AlertContent = styled.Text`
   font-family: ${fonts.text};
   font-size: 16px;
 `;
 
-export const ToastModal = styled.View`
+export const AlertModal = styled.View`
   width: 90%;
   height: 220px;
   z-index: 150;
@@ -44,25 +43,25 @@ export const ToastModal = styled.View`
   justify-content: space-around;
 `;
 
-export const ToastButtonsContainer = styled.View`
+export const AlertButtonsContainer = styled.View`
   flex-direction: row;
   justify-content: flex-end;
 `;
 
-export const ToastOkButton = styled.TouchableOpacity`
+export const AlertOkButton = styled.TouchableOpacity`
   margin-right: 15px;
 `;
 
-export const ToastOkButtonText = styled.Text`
+export const AlertOkButtonText = styled.Text`
   font-family: ${fonts.heading};
   font-size: 16px;
   color: ${(props) => props.theme.colors.primary};
 `;
 
-export const ToastCancelButton = styled(ToastOkButton)`
+export const AlertCancelButton = styled(AlertOkButton)`
   margin-left: 25px;
 `;
 
-export const ToastCancelButtonText = styled(ToastOkButtonText)`
+export const AlertCancelButtonText = styled(AlertOkButtonText)`
   color: ${(props) => props.theme.colors.red};
 `;

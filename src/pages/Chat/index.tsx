@@ -24,12 +24,11 @@ import {
   SendButton,
 } from "./styles";
 import { io, Socket } from "socket.io-client";
-import { Alert } from "react-native";
 import { useRoute } from "@react-navigation/core";
 import api from "../../services/api";
 import { GroupData } from "../Home";
 import Loading from "../../components/Loading";
-import Toast from "../../components/Toast";
+import Alert from "../../components/Alert";
 
 const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
@@ -103,7 +102,7 @@ const Chat: React.FC = () => {
   return (
     <>
       {largeFile && (
-        <Toast
+        <Alert
           title="😱 Que coisa pesada!"
           content="Eu não consigo carregar algo tão pesado, tente algo de até 15MB!"
           okButtonAction={() => setLargeFile(false)}
