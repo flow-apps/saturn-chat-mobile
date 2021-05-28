@@ -13,7 +13,7 @@ export const Container = styled.View`
 
 export const KeyBoardAvoid = styled.KeyboardAvoidingView``;
 
-export const ChatContainer = styled.ScrollView`
+export const ChatContainer = styled.FlatList`
   flex: 1;
   padding: 10px 5px;
 `;
@@ -63,7 +63,7 @@ export const MessageBox = styled.View<IMessageProps>`
   margin-bottom: 15px;
 `;
 
-export const MessageAuthorContainer = styled.View`
+export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-bottom: 5px;

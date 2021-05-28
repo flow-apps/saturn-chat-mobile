@@ -13,6 +13,7 @@ import {
   AlertCancelButton,
   AlertCancelButtonText,
 } from "./styles";
+import { TouchableWithoutFeedback } from "react-native";
 
 interface AlertProps {
   title: string;
@@ -31,25 +32,20 @@ const Alert = ({
   okButtonAction,
   cancelButtonAction,
 }: AlertProps) => {
-  const [showAlert, setShowAlert] = useState(true);
   const handleOkButton = useCallback(() => {
-    setShowAlert(false);
-
     if (okButtonAction) {
       return okButtonAction();
     }
   }, [okButtonAction]);
 
   const handleCancelButton = useCallback(() => {
-    setShowAlert(false);
-
     if (cancelButtonAction) {
       return cancelButtonAction();
     }
   }, [cancelButtonAction]);
 
   return (
-    <Container show={showAlert}>
+    <Container>
       <StatusBar backgroundColor="#000" animated style="light" />
       <AlertContainer>
         <AlertModal>

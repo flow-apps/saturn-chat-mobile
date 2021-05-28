@@ -50,7 +50,7 @@ const Header = ({
             <Feather name="arrow-left" size={25} color={colors.white} />
           </Button>
         )}
-        <HeaderTitle>{title}</HeaderTitle>
+        <HeaderTitle numberOfLines={1}>{title}</HeaderTitle>
       </RightContainer>
       <LeftContainer>
         {homeButtons && (
@@ -70,8 +70,8 @@ const Header = ({
         )}
         {groupButtons && (
           <Button>
-            <FontAwesome
-              name="cog"
+            <Feather
+              name="more-vertical"
               size={25}
               color={colors.white}
               onPress={handleGoGroupConfig}

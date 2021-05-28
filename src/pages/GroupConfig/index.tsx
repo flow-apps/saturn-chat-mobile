@@ -27,7 +27,7 @@ const GroupConfig: React.FC = () => {
 
   return (
     <>
-      <Header title="Configurações do grupo" backButton />
+      <Header title="Opções do grupo" backButton />
       <Container>
         <OptionsContainer>
           <SectionTitle>Gerais</SectionTitle>

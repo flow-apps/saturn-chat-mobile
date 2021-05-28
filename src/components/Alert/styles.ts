@@ -2,12 +2,7 @@ import { Dimensions } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-interface ContainerProps {
-  show: boolean;
-}
-
-export const Container = styled.View<ContainerProps>`
-  display: ${(props) => (!props.show ? "none" : "flex")};
+export const Container = styled.View`
   flex: 1;
   width: ${Dimensions.get("screen").width}px;
   height: ${Dimensions.get("screen").height}px;

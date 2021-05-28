@@ -1,6 +1,6 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native";
 import { useTheme } from "styled-components";
 import avatar from "../../assets/avatar.jpg";
 import Header from "../../components/Header";
@@ -36,11 +36,15 @@ const Chat: React.FC = () => {
   const [socket, setSocket] = useState<Socket>();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<string[]>();
-  const [sendFile, setSendFile] = useState<string>("");
+  const [messages, setMessages] = useState([
+    { id: 1, author: { name: "Pedro Henrique" }, message: "Oi, tudo bem?" },
+    { id: 2, author: { name: "João Carlos" }, message: "Tudo bem e vc?" },
+    { id: 3, author: { name: "Carlos José" }, message: "Eae pessoal!" },
+  ]);
+  const [sendFile, setSendFile] = useState<DocumentPicker.DocumentResult>();
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const { colors } = useTheme();
-  const chatScrollRef = useRef() as React.MutableRefObject<ScrollView>;
+  const chatScrollRef = useRef() as React.MutableRefObject<FlatList>;
   const { id } = useRoute().params as { id: string };
 
   useEffect(() => {
@@ -93,7 +97,7 @@ const Chat: React.FC = () => {
       if (fileSize > 15) {
         return setLargeFile(true);
       }
-      return setSendFile(file.uri);
+      return setSendFile(file);
     }
   }
 
@@ -111,83 +115,23 @@ const Chat: React.FC = () => {
       <Header title={group.name} backButton groupButtons />
       <Container>
         <ChatContainer
-          as={ScrollView}
+          as={FlatList}
           ref={chatScrollRef}
-          showsVerticalScrollIndicator={false}
-          alwaysBounceVertical
-        >
-          <MessageContainer>
+          inverted
+          data={messages}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
             <MessageBox isRight>
               <MessageAuthorContainer>
                 <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
+                <MessageAuthorName>{item.author.name}</MessageAuthorName>
               </MessageAuthorContainer>
               <MessageContentContainer isRight>
-                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
+                <MessageContent isRight>{item.message}</MessageContent>
               </MessageContentContainer>
             </MessageBox>
-            <MessageBox isRight>
-              <MessageAuthorContainer>
-                <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer isRight>
-                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-            <MessageBox isRight>
-              <MessageAuthorContainer>
-                <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer isRight>
-                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-            <MessageBox isRight>
-              <MessageAuthorContainer>
-                <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer isRight>
-                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-            <MessageBox isRight>
-              <MessageAuthorContainer>
-                <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer isRight>
-                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-            <MessageBox isRight>
-              <MessageAuthorContainer>
-                <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer isRight>
-                <MessageContent isRight>Boa tarde, tudo bem?</MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-            <MessageBox>
-              <MessageAuthorContainer>
-                <MessageAvatar source={avatar} />
-                <MessageAuthorName>Pedro Henrique</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer>
-                <MessageContent>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Mauris imperdiet, nunc vitae hendrerit pellentesque, odio
-                  mauris fermentum lorem, vitae tempor lorem mauris sit amet
-                  mauris. Suspendisse aliquet suscipit magna non tristique.
-                  Integer ornare sollicitudin fermentum.
-                </MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-          </MessageContainer>
-        </ChatContainer>
+          )}
+        />
         <FormContainer>
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
