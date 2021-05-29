@@ -3,11 +3,12 @@ import * as auth from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../services/api";
 import Loading from "../components/Loading";
+import { UserData } from "../../@types/interfaces";
 
 interface AuthContextData {
   signed: boolean;
   loading: boolean;
-  user: object | null;
+  user: UserData | null;
   error: boolean;
   token: string;
   signIn(email: string, password: string): Promise<void>;
@@ -19,7 +20,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [token, setToken] = useState("");
-  const [user, setUser] = useState<object | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
