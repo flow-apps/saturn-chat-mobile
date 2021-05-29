@@ -29,6 +29,7 @@ import api from "../../services/api";
 import { GroupData } from "../Home";
 import Loading from "../../components/Loading";
 import Alert from "../../components/Alert";
+import { useAuth } from "../../contexts/auth";
 
 const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
@@ -46,6 +47,7 @@ const Chat: React.FC = () => {
   const { colors } = useTheme();
   const chatScrollRef = useRef() as React.MutableRefObject<FlatList>;
   const { id } = useRoute().params as { id: string };
+  const { token } = useAuth();
 
   useEffect(() => {
     async function initChat() {
@@ -59,6 +61,7 @@ const Chat: React.FC = () => {
         transports: ["websocket"],
         query: {
           group_id: id,
+          token,
         },
       });
 

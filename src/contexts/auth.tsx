@@ -9,6 +9,7 @@ interface AuthContextData {
   loading: boolean;
   user: object | null;
   error: boolean;
+  token: string;
   signIn(email: string, password: string): Promise<void>;
   signUp(data: FormData): Promise<void>;
   signOut(): void;
@@ -17,6 +18,7 @@ interface AuthContextData {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }) => {
+  const [token, setToken] = useState("");
   const [user, setUser] = useState<object | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -29,6 +31,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       if (storageUser && storageToken) {
         setUser(JSON.parse(storageUser));
+        setToken(`Bearer ${storageToken}`);
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
       }
       setLoading(false);
@@ -87,6 +90,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         signIn,
         signUp,
         signOut,
+        token,
         error,
       }}
     >
