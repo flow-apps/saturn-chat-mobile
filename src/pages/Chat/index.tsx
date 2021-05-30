@@ -52,9 +52,9 @@ const Chat: React.FC = () => {
 
   const fetchMessages = useCallback(async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=10`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
 
-    if (data.messages.length <= 0) {
+    if (data.messages.length === 0) {
       setFetching(false);
       return setFetchedAll(true);
     }
@@ -103,18 +103,8 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    async function getMessages() {
-      await fetchMessages();
-    }
-
-    getMessages();
+    fetchMessages();
   }, []);
-
-  useEffect(() => {
-    if (chatScrollRef.current) {
-      chatScrollRef.current.scrollToEnd({ animated: false });
-    }
-  }, [chatScrollRef.current]);
 
   function handleSetMessage(message: string) {
     setMessage(message);
@@ -145,14 +135,14 @@ const Chat: React.FC = () => {
     if (fetchedAll) return;
 
     const { layoutMeasurement, contentOffset, contentSize } = event;
-    const paddingToBottom = 20;
-    const listHeight =
-      layoutMeasurement.height + contentOffset.y - paddingToBottom;
+    const paddingToBottom = 1;
+    const listHeight = layoutMeasurement.height + contentOffset.y;
 
     if (listHeight >= contentSize.height - paddingToBottom) {
-      setPage((old) => old + 1);
-      console.log(`Buscado página ${page}...`);
-      await fetchMessages();
+      if (!fetching) {
+        setPage((old) => old + 1);
+        await fetchMessages();
+      }
     }
   }
 
@@ -175,13 +165,16 @@ const Chat: React.FC = () => {
             ref={chatScrollRef}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
-            scrollEventThrottle={33}
             maxToRenderPerBatch={15}
             initialNumToRender={15}
             removeClippedSubviews
             ListFooterComponent={
               fetching && !fetchedAll ? (
-                <ActivityIndicator size="small" color={colors.primary} />
+                <ActivityIndicator
+                  style={{ margin: 10 }}
+                  size="large"
+                  color={colors.primary}
+                />
               ) : (
                 <></>
               )

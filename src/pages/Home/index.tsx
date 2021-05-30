@@ -66,9 +66,6 @@ const Home: React.FC = () => {
   }
 
   if (loading) return <Loading />;
-
-  console.log("OK!");
-
   return (
     <Container>
       <Header title="Grupos" backButton={false} homeButtons />

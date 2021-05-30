@@ -27,13 +27,15 @@ export const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     setError(false);
     async function loadStorageData() {
-      const storageUser = await AsyncStorage.getItem("@FlowChat:user");
-      const storageToken = await AsyncStorage.getItem("@FlowChat:token");
+      const [storageUser, storageToken] = await AsyncStorage.multiGet([
+        "@FlowChat:user",
+        "@FlowChat:token",
+      ]);
 
       if (storageUser && storageToken) {
-        setUser(JSON.parse(storageUser));
-        setToken(`Bearer ${storageToken}`);
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
+        setUser(JSON.parse(String(storageUser)));
+        setToken(`Bearer ${storageToken}`);
       }
       setLoading(false);
     }
@@ -42,10 +44,12 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   async function updateUser(data: any) {
-    setUser(data.user);
-    await AsyncStorage.setItem("@FlowChat:user", JSON.stringify(data.user));
-    await AsyncStorage.setItem("@FlowChat:token", data.token);
+    await AsyncStorage.multiSet([
+      ["@FlowChat:user", JSON.stringify(data.user)],
+      ["@FlowChat:token", data.token],
+    ]);
     api.defaults.headers["authorization"] = `Bearer ${data.token}`;
+    setUser(data.user);
   }
 
   async function signIn(email: string, password: string) {
@@ -77,6 +81,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   function signOut() {
     AsyncStorage.multiRemove(["@FlowChat:user", "@FlowChat:token"]).then(() => {
+      api.defaults.headers["authorization"] = undefined;
       setUser(null);
       setError(false);
     });

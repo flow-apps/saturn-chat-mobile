@@ -62,7 +62,7 @@ export const MessageBox = memo(styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
   width: 100%;
   padding: 0 10px;
-  margin: 8px 0;
+  margin: 5px 0;
 `);
 
 export const MessageAuthorContainer = memo(styled.TouchableOpacity`
@@ -84,7 +84,7 @@ export const MessageAuthorName = styled.Text`
   color: ${(props) => props.theme.colors.light_heading};
 `;
 
-export const MessageContentContainer = styled.View<IMessageProps>`
+export const MessageContentContainer = memo(styled.View<IMessageProps>`
   background-color: ${(props) =>
     !props.isRight
       ? props.theme.colors.light_gray
@@ -92,7 +92,7 @@ export const MessageContentContainer = styled.View<IMessageProps>`
   padding: 15px;
   border-radius: 15px;
   width: 80%;
-`;
+`);
 
 export const MessageContent = styled.Text<IMessageProps>`
   font-size: 14px;
