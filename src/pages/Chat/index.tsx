@@ -2,10 +2,11 @@ import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useRef, useState } from "react";
-import { FlatList } from "react-native";
+import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import avatar from "../../assets/avatar.jpg";
+import { MessageData } from "../../../@types/interfaces";
 import Alert from "../../components/Alert";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -13,7 +14,6 @@ import { useAuth } from "../../contexts/auth";
 import api from "../../services/api";
 import { GroupData } from "../Home";
 import {
-  ChatContainer,
   Container,
   EmojiButton,
   FormContainer,
@@ -29,17 +29,21 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
-import { MessageData } from "../../../@types/interfaces";
 
 const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState<Socket>({} as Socket);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [sendFile, setSendFile] = useState<DocumentPicker.DocumentResult>();
   const [group, setGroup] = useState<GroupData>({} as GroupData);
+
+  const [page, setPage] = useState(0);
+  const [fetching, setFetching] = useState(true);
+  const [fetchedAll, setFetchedAll] = useState(false);
+
   const { colors } = useTheme();
   const chatScrollRef = useRef() as React.MutableRefObject<FlatList>;
   const { id } = useRoute().params as { id: string };
@@ -62,20 +66,21 @@ const Chat: React.FC = () => {
       });
 
       setSocket(socketIO);
-
-      socketIO.on("new_user_message", (message) => {
-        setMessages((oldMessages) => [...oldMessages, message]);
-      });
-
-      // socket.on("new_sended_user_message", (message) => {
-      //   setMessages((oldMessages) => [...oldMessages, message]);
+      // socket.on("new_user_message", (message) => {
+      //   setMessages((oldMessages) => [message, ...oldMessages]);
       // });
 
+      socketIO.on("sended_user_message", (msg) => {
+        console.log(msg);
+
+        setMessages((oldMessages) => [msg, ...oldMessages]);
+      });
       const res = await api.get(`/group/${id}`);
 
       if (res.status === 200) {
         setGroup(res.data);
       }
+
       setLoading(false);
     }
 
@@ -83,10 +88,36 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    async function getMessages() {
+      await fetchMessages();
+    }
+
+    getMessages();
+  }, []);
+
+  useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollToEnd({ animated: false });
     }
   }, [chatScrollRef.current]);
+
+  async function fetchMessages() {
+    setFetching(true);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
+
+    if (data.messages.length <= 0) {
+      setFetching(false);
+      return setFetchedAll(true);
+    }
+
+    if (page > 0) {
+      setMessages((old) => [...old, ...data.messages]);
+    } else {
+      setMessages(data.messages);
+    }
+
+    setFetching(false);
+  }
 
   function handleSetMessage(message: string) {
     setMessage(message);
@@ -110,7 +141,21 @@ const Chat: React.FC = () => {
 
   async function handleMessageSubmit() {
     setMessage("");
-    socket.emit("new_user_message", { message });
+    socket?.emit("new_user_message", { message });
+  }
+
+  async function handleFetchMoreMessages(event: NativeScrollEvent) {
+    if (fetchedAll) return;
+
+    const { layoutMeasurement, contentOffset, contentSize } = event;
+    const paddingToBottom = 1;
+    const listHeight = layoutMeasurement.height + contentOffset.y;
+
+    if (listHeight >= contentSize.height - paddingToBottom) {
+      setPage((old) => old + 1);
+      console.log(`Buscado página ${page}...`);
+      await fetchMessages();
+    }
   }
 
   if (loading) return <Loading />;
@@ -127,9 +172,19 @@ const Chat: React.FC = () => {
       <Header title={group.name} backButton groupButtons />
       <Container>
         <FlatList<MessageData>
-          ref={chatScrollRef}
           data={messages}
+          ref={chatScrollRef}
           keyExtractor={(item) => String(item.id)}
+          onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
+          scrollEventThrottle={16}
+          removeClippedSubviews
+          ListFooterComponent={
+            fetching && !fetchedAll ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <></>
+            )
+          }
           renderItem={({ item }) => (
             <MessageBox isRight={item.author.id === user?.id}>
               <MessageAuthorContainer>
@@ -143,6 +198,7 @@ const Chat: React.FC = () => {
               </MessageContentContainer>
             </MessageBox>
           )}
+          inverted
         />
         <FormContainer>
           <InputContainer>

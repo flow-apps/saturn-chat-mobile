@@ -15,7 +15,8 @@ export const KeyBoardAvoid = styled.KeyboardAvoidingView``;
 
 export const ChatContainer = styled.FlatList`
   flex: 1;
-  padding: 10px 5px;
+  margin-bottom: -5px;
+  padding: 20px 5px 0px 5px;
 `;
 
 export const FormContainer = styled.View`
