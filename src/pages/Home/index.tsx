@@ -85,6 +85,8 @@ const Home: React.FC = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             data={groups}
+            initialNumToRender={5}
+            removeClippedSubviews
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
               <GroupButton activeOpacity={0.5}>

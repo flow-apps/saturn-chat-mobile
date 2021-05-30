@@ -53,7 +53,7 @@ export const GroupsContainer = styled(Animated.View)`
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   background-color: ${(props) => props.theme.colors.shape};
-  padding: 0 27px;
+  padding: 0 20px;
   elevation: 10;
   z-index: 5;
 `;

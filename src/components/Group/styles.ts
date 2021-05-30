@@ -26,6 +26,7 @@ export const GroupName = styled.Text`
   font-family: ${fonts.text};
   margin-left: 10px;
   color: ${(props) => props.theme.colors.dark_heading};
+  width: 80%;
 `;
 
 export const UnreadMessages = styled.View`
@@ -39,4 +40,9 @@ export const UnreadMessages = styled.View`
 
 export const UnreadMessagesText = styled.Text`
   color: ${(props) => props.theme.colors.white};
+`;
+
+export const HLWrapper = styled.View`
+  flex: 1;
+  align-items: flex-end;
 `;

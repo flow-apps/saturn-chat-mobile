@@ -1,5 +1,4 @@
-import { Dimensions } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
+import { memo } from "react";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -51,24 +50,26 @@ export const MessageInput = styled.TextInput`
   font-size: 16px;
   font-family: ${fonts.text};
   margin: 0px 10px;
+  max-height: 120px;
 `;
 
 export const MessageContainer = styled.View`
   flex: 1;
+  padding: 0px 5px 0px 5px;
 `;
 
-export const MessageBox = styled.View<IMessageProps>`
+export const MessageBox = memo(styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
   width: 100%;
   padding: 0 10px;
-  margin-bottom: 15px;
-`;
+  margin: 8px 0;
+`);
 
-export const MessageAuthorContainer = styled.TouchableOpacity`
+export const MessageAuthorContainer = memo(styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  margin-bottom: 5px;
-`;
+  margin-top: 5px;
+`);
 
 export const MessageAvatar = styled.Image`
   width: 30px;

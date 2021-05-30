@@ -7,6 +7,7 @@ import {
   GroupName,
   UnreadMessages,
   UnreadMessagesText,
+  HLWrapper,
 } from "./styles";
 import HorizontalLine from "../HorizontalLine";
 
@@ -22,7 +23,7 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
       <Container as={TouchableOpacity} {...rest}>
         <GroupInfos>
           <GroupImage source={{ uri: image }} />
-          <GroupName>{name}</GroupName>
+          <GroupName numberOfLines={1}>{name}</GroupName>
         </GroupInfos>
         {unreadMessages > 0 && (
           <UnreadMessages>
@@ -30,7 +31,9 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
           </UnreadMessages>
         )}
       </Container>
-      <HorizontalLine />
+      <HLWrapper>
+        <HorizontalLine />
+      </HLWrapper>
     </>
   );
 };

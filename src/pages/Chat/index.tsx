@@ -1,7 +1,7 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import * as DocumentPicker from "expo-document-picker";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { io, Socket } from "socket.io-client";
@@ -22,6 +22,7 @@ import {
   MessageAuthorName,
   MessageAvatar,
   MessageBox,
+  MessageContainer,
   MessageContent,
   MessageContentContainer,
   MessageInput,
@@ -49,6 +50,24 @@ const Chat: React.FC = () => {
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
 
+  const fetchMessages = useCallback(async () => {
+    setFetching(true);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=10`);
+
+    if (data.messages.length <= 0) {
+      setFetching(false);
+      return setFetchedAll(true);
+    }
+
+    if (page > 0) {
+      setMessages((old) => [...old, ...data.messages]);
+    } else {
+      setMessages(data.messages);
+    }
+
+    setFetching(false);
+  }, [page]);
+
   useEffect(() => {
     async function initChat() {
       setLoading(true);
@@ -66,10 +85,6 @@ const Chat: React.FC = () => {
       });
 
       setSocket(socketIO);
-      // socket.on("new_user_message", (message) => {
-      //   setMessages((oldMessages) => [message, ...oldMessages]);
-      // });
-
       socketIO.on("sended_user_message", (msg) => {
         console.log(msg);
 
@@ -101,24 +116,6 @@ const Chat: React.FC = () => {
     }
   }, [chatScrollRef.current]);
 
-  async function fetchMessages() {
-    setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
-
-    if (data.messages.length <= 0) {
-      setFetching(false);
-      return setFetchedAll(true);
-    }
-
-    if (page > 0) {
-      setMessages((old) => [...old, ...data.messages]);
-    } else {
-      setMessages(data.messages);
-    }
-
-    setFetching(false);
-  }
-
   function handleSetMessage(message: string) {
     setMessage(message);
   }
@@ -132,7 +129,7 @@ const Chat: React.FC = () => {
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1024 / 1024);
-      if (fileSize > 15) {
+      if (fileSize > 12) {
         return setLargeFile(true);
       }
       return setSendFile(file);
@@ -148,8 +145,9 @@ const Chat: React.FC = () => {
     if (fetchedAll) return;
 
     const { layoutMeasurement, contentOffset, contentSize } = event;
-    const paddingToBottom = 1;
-    const listHeight = layoutMeasurement.height + contentOffset.y;
+    const paddingToBottom = 20;
+    const listHeight =
+      layoutMeasurement.height + contentOffset.y - paddingToBottom;
 
     if (listHeight >= contentSize.height - paddingToBottom) {
       setPage((old) => old + 1);
@@ -171,35 +169,48 @@ const Chat: React.FC = () => {
       )}
       <Header title={group.name} backButton groupButtons />
       <Container>
-        <FlatList<MessageData>
-          data={messages}
-          ref={chatScrollRef}
-          keyExtractor={(item) => String(item.id)}
-          onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
-          scrollEventThrottle={16}
-          removeClippedSubviews
-          ListFooterComponent={
-            fetching && !fetchedAll ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : (
-              <></>
-            )
-          }
-          renderItem={({ item }) => (
-            <MessageBox isRight={item.author.id === user?.id}>
-              <MessageAuthorContainer>
-                <MessageAvatar source={{ uri: item.author.avatar.url }} />
-                <MessageAuthorName>{item.author.name}</MessageAuthorName>
-              </MessageAuthorContainer>
-              <MessageContentContainer isRight={item.author.id === user?.id}>
-                <MessageContent isRight={item.author.id === user?.id}>
-                  {item.message}
-                </MessageContent>
-              </MessageContentContainer>
-            </MessageBox>
-          )}
-          inverted
-        />
+        <MessageContainer>
+          <FlatList<MessageData>
+            data={messages}
+            ref={chatScrollRef}
+            keyExtractor={(item) => String(item.id)}
+            onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
+            scrollEventThrottle={33}
+            maxToRenderPerBatch={15}
+            initialNumToRender={15}
+            removeClippedSubviews
+            ListFooterComponent={
+              fetching && !fetchedAll ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <></>
+              )
+            }
+            renderItem={({ item, index }) => (
+              <MessageBox isRight={item.author.id === user?.id}>
+                <MessageContentContainer isRight={item.author.id === user?.id}>
+                  <MessageContent isRight={item.author.id === user?.id}>
+                    {item.message}
+                  </MessageContent>
+                </MessageContentContainer>
+                {index === 0 ? (
+                  <MessageAuthorContainer>
+                    <MessageAvatar source={{ uri: item.author.avatar.url }} />
+                    <MessageAuthorName>{item.author.name}</MessageAuthorName>
+                  </MessageAuthorContainer>
+                ) : messages[index - 1].author.id !== item.author.id ? (
+                  <MessageAuthorContainer>
+                    <MessageAvatar source={{ uri: item.author.avatar.url }} />
+                    <MessageAuthorName>{item.author.name}</MessageAuthorName>
+                  </MessageAuthorContainer>
+                ) : (
+                  <></>
+                )}
+              </MessageBox>
+            )}
+            inverted
+          />
+        </MessageContainer>
         <FormContainer>
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
@@ -215,9 +226,10 @@ const Chat: React.FC = () => {
             </EmojiButton>
             <MessageInput
               placeholder="Sua mensagem..."
-              multiline
               onChangeText={handleSetMessage}
               value={message}
+              maxLength={500}
+              multiline
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>

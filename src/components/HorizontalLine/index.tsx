@@ -6,4 +6,4 @@ const HorizontalLine: React.FC = () => {
   return <Container />;
 };
 
-export default memo(HorizontalLine);
+export default HorizontalLine;
