@@ -27,10 +27,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     setError(false);
     async function loadStorageData() {
-      const [storageUser, storageToken] = await AsyncStorage.multiGet([
-        "@FlowChat:user",
-        "@FlowChat:token",
-      ]);
+      const storageUser = await AsyncStorage.getItem("@FlowChat:user");
+      const storageToken = await AsyncStorage.getItem("@FlowChat:token");
 
       if (storageUser && storageToken) {
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;

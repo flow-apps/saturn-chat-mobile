@@ -3,16 +3,14 @@ import { useRoute } from "@react-navigation/core";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { MessageData } from "../../../@types/interfaces";
+import { MessageData, GroupData } from "../../../@types/interfaces";
 import Alert from "../../components/Alert";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import { useAuth } from "../../contexts/auth";
 import api from "../../services/api";
-import { GroupData } from "../Home";
 import {
   Container,
   EmojiButton,

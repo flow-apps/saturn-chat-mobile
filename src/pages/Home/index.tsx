@@ -1,8 +1,9 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
+import { GroupData, UserData } from "../../../@types/interfaces";
 import Group from "../../components/Group";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -22,39 +23,36 @@ import {
   TitleWrapper,
 } from "./styles";
 
-export interface GroupData {
+export interface ParticipantData {
   id: string;
-  owner_id: string;
-  name: string;
-  description: string;
-  group_avatar: {
-    url: string;
-  };
-  owner: object;
+  user_id: string;
+  group_id: string;
+  participating_since: string;
+  user: UserData;
+  group: GroupData;
 }
 
 const Home: React.FC = () => {
-  const [groups, setGroups] = useState<GroupData[]>([]);
+  const [groups, setGroups] = useState<ParticipantData[]>([]);
   const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadGroups() {
-      setLoading(true);
-      const groups = await api.get("/groups/list");
-
-      if (groups.status === 200) {
-        setGroups(groups.data);
-        setGroupsCount(groups.data.length);
-      }
-      setLoading(false);
-    }
-
-    loadGroups();
-  }, []);
-
   const { colors } = useTheme();
   const navigation = useNavigation();
+
+  navigation.addListener("focus", async () => {
+    await loadGroups();
+  });
+
+  async function loadGroups() {
+    setLoading(true);
+    const groups = await api.get("/groups/list");
+
+    if (groups.status === 200) {
+      setGroups(groups.data);
+      setGroupsCount(groups.data.length);
+    }
+    setLoading(false);
+  }
 
   function handleGoChat(id: string) {
     navigation.navigate("Chat", {
@@ -88,7 +86,9 @@ const Home: React.FC = () => {
             renderItem={({ item }) => (
               <GroupButton activeOpacity={0.5}>
                 <GroupImage
-                  source={{ uri: item.group_avatar && item.group_avatar.url }}
+                  source={{
+                    uri: item.group.group_avatar && item.group.group_avatar.url,
+                  }}
                 />
               </GroupButton>
             )}
@@ -106,11 +106,11 @@ const Home: React.FC = () => {
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
               <Group
-                name={item.name}
-                image={item.group_avatar && item.group_avatar.url}
+                name={item.group.name}
+                image={item.group.group_avatar && item.group.group_avatar.url}
                 unreadMessages={0}
                 activeOpacity={0.5}
-                onPress={() => handleGoChat(item.id)}
+                onPress={() => handleGoChat(item.group.id)}
               />
             )}
           />
