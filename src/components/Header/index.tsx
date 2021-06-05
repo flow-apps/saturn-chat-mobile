@@ -41,6 +41,10 @@ const Header = ({
     navigation.navigate("GroupConfig");
   }
 
+  function handleGoSearch() {
+    navigation.navigate("Search");
+  }
+
   return (
     <Container>
       <StatusBar backgroundColor={colors.primary} style="inverted" />
@@ -55,7 +59,7 @@ const Header = ({
       <LeftContainer>
         {homeButtons && (
           <>
-            <Button>
+            <Button onPress={handleGoSearch}>
               <Feather name="search" size={25} color={colors.white} />
             </Button>
             <Button>
