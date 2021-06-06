@@ -1,7 +1,7 @@
 import { MaterialIcons, Feather, FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Keyboard, StyleSheet } from "react-native";
 import { useTheme } from "styled-components";
 import Chat from "../pages/Chat";
 import Configurations from "../pages/Configurations";
@@ -14,6 +14,15 @@ const tabRoutes = createBottomTabNavigator();
 
 const HomeRoutes = () => {
   const { colors } = useTheme();
+  const [keyboardOpened, setKeyboardOpened] = useState(false);
+
+  Keyboard.addListener("keyboardDidShow", (e) => {
+    setKeyboardOpened(true);
+  });
+
+  Keyboard.addListener("keyboardDidHide", (e) => {
+    setKeyboardOpened(false);
+  });
 
   return (
     <tabRoutes.Navigator
@@ -21,8 +30,19 @@ const HomeRoutes = () => {
         activeTintColor: colors.primary,
         inactiveTintColor: colors.dark_gray,
         labelPosition: "below-icon",
-        labelStyle: styles.label,
-        style: styles.tabBar,
+        labelStyle: {
+          fontSize: 16,
+          fontFamily: fonts.heading,
+        },
+        style: {
+          display: keyboardOpened ? "none" : "flex",
+          padding: 15,
+          height: 70,
+          borderTopRightRadius: 15,
+          borderTopLeftRadius: 15,
+          elevation: 10,
+          zIndex: 90,
+        },
       }}
     >
       <tabRoutes.Screen
@@ -67,6 +87,15 @@ const HomeRoutes = () => {
 
 const ChatRoutes = () => {
   const { colors } = useTheme();
+  const [keyboardOpened, setKeyboardOpened] = useState(false);
+
+  Keyboard.addListener("keyboardDidShow", (e) => {
+    setKeyboardOpened(true);
+  });
+
+  Keyboard.addListener("keyboardDidHide", (e) => {
+    setKeyboardOpened(false);
+  });
 
   return (
     <tabRoutes.Navigator
@@ -74,8 +103,19 @@ const ChatRoutes = () => {
         activeTintColor: colors.primary,
         inactiveTintColor: colors.dark_gray,
         labelPosition: "below-icon",
-        labelStyle: styles.label,
-        style: styles.tabBar,
+        labelStyle: {
+          fontSize: 16,
+          fontFamily: fonts.heading,
+        },
+        style: {
+          display: keyboardOpened ? "none" : "flex",
+          padding: 15,
+          height: 70,
+          borderTopRightRadius: 15,
+          borderTopLeftRadius: 15,
+          elevation: 10,
+          zIndex: 90,
+        },
       }}
     >
       <tabRoutes.Screen
@@ -108,18 +148,3 @@ const ChatRoutes = () => {
 };
 
 export { HomeRoutes, ChatRoutes };
-
-const styles = StyleSheet.create({
-  tabBar: {
-    padding: 15,
-    height: 70,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
-    elevation: 10,
-    zIndex: 90,
-  },
-  label: {
-    fontSize: 16,
-    fontFamily: fonts.heading,
-  },
-});

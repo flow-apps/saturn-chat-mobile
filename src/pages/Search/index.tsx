@@ -34,6 +34,7 @@ import {
 import { GroupData } from "../../../@types/interfaces";
 import api from "../../services/api";
 import { ActivityIndicator } from "react-native";
+import { useNavigation } from "@react-navigation/core";
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,7 @@ const Search: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [query, setQuery] = useState("");
   const { colors } = useTheme();
+  const navigation = useNavigation();
 
   const setQuerySearch = useCallback(
     (text) => {
@@ -94,6 +96,12 @@ const Search: React.FC = () => {
       setPage((old) => old + 1);
       await fetchMoreGroups();
     }
+  }
+
+  async function handleGoGroupInfos(id: string) {
+    navigation.navigate("GroupInfos", {
+      id,
+    });
   }
 
   return (
@@ -149,7 +157,7 @@ const Search: React.FC = () => {
               scrollEventThrottle={20}
               onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
               renderItem={({ item }) => (
-                <GroupCard>
+                <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
                   <GroupImage source={{ uri: item.group_avatar.url }} />
                   <GroupInfosContainer>
                     <GroupName numberOfLines={2}>{item.name}</GroupName>

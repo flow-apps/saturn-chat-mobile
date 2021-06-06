@@ -59,6 +59,11 @@ export const Input = styled.TextInput`
   font-family: ${fonts.text};
   font-size: 16px;
   margin-bottom: 20px;
+  max-height: 400px;
+`;
+
+export const TextArea = styled(Input)`
+  max-height: 600px;
 `;
 
 export const SwitcherContainer = styled.View`

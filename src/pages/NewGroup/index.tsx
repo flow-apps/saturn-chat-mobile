@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
   TextInput,
   TouchableWithoutFeedback,
@@ -22,6 +23,7 @@ import {
   SwitcherContainer,
   SwitcherText,
   ButtonWrapper,
+  TextArea,
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
@@ -32,6 +34,7 @@ import api from "../../services/api";
 import { useNavigation } from "@react-navigation/core";
 import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
+import { color } from "react-native-reanimated";
 
 const NewGroup: React.FC = () => {
   const [groupPhoto, setGroupPhoto] = useState<ImageInfo>();
@@ -129,25 +132,26 @@ const NewGroup: React.FC = () => {
               </SelectGroupPhotoTitle>
               <SelectGroupPhotoSubtitle>
                 {!groupPhotoPreview &&
-                  "Recomendamos uma imagem de 300x300 e de no máximo 5MB"}
+                  "Recomendamos uma imagem de 600x600 e de no máximo 5MB"}
               </SelectGroupPhotoSubtitle>
             </SelectGroupPhotoContainer>
-            <FormContainer
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
-              <Form>
+            <Form>
+              <FormContainer
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+              >
                 <Input
                   placeholder="Nome do grupo (máx. 100 caracteres)"
                   maxLength={100}
+                  selectionColor={colors.secondary}
                   returnKeyType="go"
                   onSubmitEditing={() => descriptionInput.current.focus()}
                   value={name}
                   onChangeText={setName}
                 />
-                <Input
-                  placeholder="Descrição do grupo (máx. 500 caracteres)"
+                <TextArea
                   multiline
-                  numberOfLines={4}
+                  selectionColor={colors.secondary}
+                  placeholder="Descrição (máx. 500 caracteres)"
                   maxLength={500}
                   ref={descriptionInput}
                   value={description}
@@ -170,8 +174,8 @@ const NewGroup: React.FC = () => {
                 <ButtonWrapper>
                   <Button title="Cria Grupo" onPress={handleCreateGroup} />
                 </ButtonWrapper>
-              </Form>
-            </FormContainer>
+              </FormContainer>
+            </Form>
           </View>
         </TouchableWithoutFeedback>
       </Container>

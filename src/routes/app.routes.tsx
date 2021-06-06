@@ -4,6 +4,7 @@ import { ChatRoutes, HomeRoutes } from "./tabs.routes";
 import MyProfile from "../pages/MyProfile";
 import GroupConfig from "../pages/GroupConfig";
 import Search from "../pages/Search";
+import GroupInfos from "../pages/GroupInfos";
 
 const StackRoutes = createStackNavigator();
 
@@ -15,6 +16,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="MyProfile" component={MyProfile} />
       <StackRoutes.Screen name="Search" component={Search} />
       <StackRoutes.Screen name="GroupConfig" component={GroupConfig} />
+      <StackRoutes.Screen name="GroupInfos" component={GroupInfos} />
     </StackRoutes.Navigator>
   );
 };
