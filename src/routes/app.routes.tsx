@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ChatRoutes, HomeRoutes } from "./tabs.routes";
+import { ChatRoutes } from "./tabRoutes/chat.routes";
+import { HomeRoutes } from "./tabRoutes/home.routes";
 import MyProfile from "../pages/MyProfile";
 import GroupConfig from "../pages/GroupConfig";
 import Search from "../pages/Search";
