@@ -1,10 +1,6 @@
-import {
-  NavigationHelpersContext,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/core";
+import { Feather } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
-import { useTheme } from "styled-components";
 import { GroupData } from "../../../@types/interfaces";
 import Header from "../../components/Header";
 import HorizontalLine from "../../components/HorizontalLine";
@@ -17,29 +13,26 @@ import {
   BasicInfosContainer,
   Container,
   GroupContainer,
+  GroupDesc,
+  GroupDescContainer,
+  GroupDescTitle,
+  GroupName,
   ImagesContainer,
+  JoinGroupButton,
+  JoinGroupButtonText,
+  JoinGroupContainer,
   ParticipantsContainer,
   ParticipantsInfosContainer,
   ParticipantsNumber,
   ParticipantsTitle,
-  GroupName,
-  GroupDescContainer,
-  GroupDesc,
-  GroupDescTitle,
-  JoinGroupContainer,
-  JoinGroupButton,
-  JoinGroupButtonText,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [loading, setLoading] = useState(true);
+  const [isParticipating, setIsParticipating] = useState(false);
   const { id } = useRoute().params as { id: string };
-  const { colors } = useTheme();
   const navigation = useNavigation();
-
-  console.log(group);
 
   useEffect(() => {
     async function getGroup() {
@@ -52,6 +45,13 @@ const GroupInfos: React.FC = () => {
       setLoading(false);
     }
     getGroup();
+  }, []);
+
+  useEffect(() => {
+    api
+      .get(`/group/participant/${id}`)
+      .then(() => setIsParticipating(true))
+      .catch(() => setIsParticipating(false));
   }, []);
 
   if (loading) return <Loading />;
@@ -83,9 +83,14 @@ const GroupInfos: React.FC = () => {
               <GroupName>{group.name}</GroupName>
 
               <JoinGroupContainer>
-                <JoinGroupButton onPress={handleJoinGroup}>
-                  <JoinGroupButtonText>
-                    <Feather name="user-plus" size={16} /> Participando
+                <JoinGroupButton
+                  participating={isParticipating}
+                  disabled={isParticipating}
+                  onPress={handleJoinGroup}
+                >
+                  <JoinGroupButtonText participating={isParticipating}>
+                    <Feather name="user-plus" size={16} />{" "}
+                    {isParticipating ? "Participando" : "Participar"}
                   </JoinGroupButtonText>
                 </JoinGroupButton>
               </JoinGroupContainer>

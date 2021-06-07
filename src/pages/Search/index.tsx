@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import Header from "../../components/Header";
 import { Feather } from "@expo/vector-icons";
-import avatar from "../../assets/avatar.jpg";
 
 import {
   ButtonBarContainer,
@@ -117,6 +116,7 @@ const Search: React.FC = () => {
                 placeholder="O que procura hoje?"
                 returnKeyType="search"
                 onEndEditing={handleSearch}
+                selectionColor={colors.secondary}
               />
               <ButtonSearch onPress={handleSearch}>
                 <Feather name="search" size={25} color={"#fff"} />

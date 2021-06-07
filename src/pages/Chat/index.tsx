@@ -84,8 +84,6 @@ const Chat: React.FC = () => {
 
       setSocket(socketIO);
       socketIO.on("sended_user_message", (msg) => {
-        console.log(msg);
-
         setMessages((oldMessages) => [msg, ...oldMessages]);
       });
       const res = await api.get(`/group/${id}`);
