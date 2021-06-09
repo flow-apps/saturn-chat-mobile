@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -84,7 +85,7 @@ export const MessageAuthorName = styled.Text`
   color: ${(props) => props.theme.colors.light_heading};
 `;
 
-export const MessageContentContainer = memo(styled.View<IMessageProps>`
+export const MessageContentContainer = memo(styled(RectButton)<IMessageProps>`
   background-color: ${(props) =>
     !props.isRight
       ? props.theme.colors.light_gray

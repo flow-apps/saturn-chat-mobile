@@ -1,5 +1,6 @@
 import React from "react";
-import { Switch } from "react-native-switch";
+// import { Switch } from "react-native-switch";
+import { Switch } from "react-native-paper";
 import { useTheme } from "styled-components";
 
 interface SwitcherProps {
@@ -12,19 +13,11 @@ const Switcher = ({ currentValue, onChangeValue }: SwitcherProps) => {
 
   return (
     <Switch
-      circleSize={30}
-      barHeight={23}
-      changeValueImmediately={true}
-      circleActiveColor={colors.secondary}
-      circleBorderActiveColor={colors.secondary}
-      circleInActiveColor={colors.light_heading}
-      circleBorderWidth={0}
-      backgroundInactive={colors.dark_gray}
-      backgroundActive={colors.light_secondary}
-      activeText=""
-      inActiveText=""
       onValueChange={onChangeValue}
       value={currentValue}
+      style={{ transform: [{ scale: 1.3 }] }}
+      thumbColor={currentValue ? colors.secondary : colors.light_gray}
+      trackColor={{ true: colors.light_secondary, false: colors.dark_gray }}
     />
   );
 };
