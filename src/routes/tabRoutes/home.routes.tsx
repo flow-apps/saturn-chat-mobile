@@ -12,12 +12,6 @@ const tabRoutes = createBottomTabNavigator();
 
 const HomeRoutes = () => {
   const { colors } = useTheme();
-  const [keyboardOpened, setKeyboardOpened] = useState(false);
-
-  useEffect(() => {
-    Keyboard.addListener("keyboardDidShow", () => setKeyboardOpened(true));
-    Keyboard.addListener("keyboardDidHide", () => setKeyboardOpened(false));
-  }, []);
 
   return (
     <tabRoutes.Navigator
@@ -25,14 +19,15 @@ const HomeRoutes = () => {
         activeTintColor: colors.primary,
         inactiveTintColor: colors.dark_gray,
         labelPosition: "below-icon",
+        keyboardHidesTabBar: true,
         labelStyle: {
           fontSize: 16,
           fontFamily: fonts.heading,
+          marginTop: 5,
         },
         style: {
-          display: keyboardOpened ? "none" : "flex",
           padding: 15,
-          height: 70,
+          height: 60,
           borderTopRightRadius: 15,
           borderTopLeftRadius: 15,
           elevation: 10,

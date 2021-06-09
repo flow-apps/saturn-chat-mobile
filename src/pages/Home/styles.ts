@@ -67,7 +67,7 @@ export const GroupsTitle = styled.Text`
   font-size: 28px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.dark_heading};
-  margin-top: 40px;
+  margin: 40px 0 10px 0;
 `;
 
 export const GroupsSubtitle = styled.Text`

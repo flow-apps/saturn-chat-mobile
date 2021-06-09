@@ -1,4 +1,4 @@
 export default {
-  heading: "Poppins_600SemiBold",
+  heading: "Roboto_500Medium",
   text: "Poppins_400Regular",
 };
