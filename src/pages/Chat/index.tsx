@@ -5,10 +5,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { MessageData, GroupData } from "../../../@types/interfaces";
+import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
 import Alert from "../../components/Alert";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
+import Message from "../../components/Message";
 import { useAuth } from "../../contexts/auth";
 import api from "../../services/api";
 import {
@@ -16,13 +17,7 @@ import {
   EmojiButton,
   FormContainer,
   InputContainer,
-  MessageAuthorContainer,
-  MessageAuthorName,
-  MessageAvatar,
-  MessageBox,
   MessageContainer,
-  MessageContent,
-  MessageContentContainer,
   MessageInput,
   OptionsButton,
   OptionsContainer,
@@ -43,8 +38,8 @@ const Chat: React.FC = () => {
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
 
-  const { colors } = useTheme();
   const chatScrollRef = useRef() as React.MutableRefObject<FlatList>;
+  const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
 
@@ -65,6 +60,20 @@ const Chat: React.FC = () => {
 
     setFetching(false);
   }, [page]);
+
+  const renderMessage = useCallback(
+    (item: MessageData, index: number) => {
+      return (
+        <Message
+          message={item}
+          index={index}
+          user={user as unknown as UserData}
+          lastMessage={messages[index - 1]}
+        />
+      );
+    },
+    [messages]
+  );
 
   useEffect(() => {
     async function initChat() {
@@ -175,28 +184,7 @@ const Chat: React.FC = () => {
                 <></>
               )
             }
-            renderItem={({ item, index }) => (
-              <MessageBox isRight={item.author.id === user?.id}>
-                <MessageContentContainer isRight={item.author.id === user?.id}>
-                  <MessageContent isRight={item.author.id === user?.id}>
-                    {item.message}
-                  </MessageContent>
-                </MessageContentContainer>
-                {index === 0 ? (
-                  <MessageAuthorContainer>
-                    <MessageAvatar source={{ uri: item.author.avatar.url }} />
-                    <MessageAuthorName>{item.author.name}</MessageAuthorName>
-                  </MessageAuthorContainer>
-                ) : messages[index - 1].author.id !== item.author.id ? (
-                  <MessageAuthorContainer>
-                    <MessageAvatar source={{ uri: item.author.avatar.url }} />
-                    <MessageAuthorName>{item.author.name}</MessageAuthorName>
-                  </MessageAuthorContainer>
-                ) : (
-                  <></>
-                )}
-              </MessageBox>
-            )}
+            renderItem={({ item, index }) => renderMessage(item, index)}
             inverted
           />
         </MessageContainer>

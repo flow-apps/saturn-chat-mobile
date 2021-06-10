@@ -1,6 +1,6 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/core";
-import React, { useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/core";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
 import { GroupData, UserData } from "../../../@types/interfaces";
@@ -38,10 +38,15 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { colors } = useTheme();
   const navigation = useNavigation();
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchGroups() {
+        await loadGroups();
+      }
 
-  navigation.addListener("focus", async () => {
-    await loadGroups();
-  });
+      fetchGroups();
+    }, [])
+  );
 
   async function loadGroups() {
     setLoading(true);
