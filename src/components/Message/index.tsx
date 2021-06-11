@@ -1,8 +1,8 @@
 import Clipboard from "expo-clipboard";
-import MarkdownIt from "markdown-it";
+// import MarkdownIt from "markdown-it";
 import React, { memo, useCallback, useState } from "react";
 import { Linking } from "react-native";
-import Markdown from "react-native-markdown-display";
+import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import { useTheme } from "styled-components";
 import { MessageData, UserData } from "../../../@types/interfaces";
 import Alert from "../Alert";
