@@ -1,4 +1,3 @@
-import { Dimensions } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
@@ -48,6 +47,14 @@ export const MessageContent = styled.Text<IMessageProps>`
   font-family: ${fonts.text};
   color: ${(props) =>
     props.isRight ? props.theme.colors.white : props.theme.colors.black};
+`;
+
+export const MessageCodeBlock = styled.Text`
+  font-size: 20px;
+`;
+
+export const MessageLink = styled(MessageContent)`
+  color: ${(props) => props.theme.colors.secondary};
 `;
 
 export const MessageOptionsContainer = styled.View`

@@ -22,6 +22,7 @@ interface AlertProps {
   cancelButtonText?: string;
   okButtonAction?: () => any;
   cancelButtonAction?: () => any;
+  visible: boolean;
 }
 
 const Alert = ({
@@ -31,6 +32,7 @@ const Alert = ({
   cancelButtonText,
   okButtonAction,
   cancelButtonAction,
+  visible,
 }: AlertProps) => {
   const handleOkButton = useCallback(() => {
     if (okButtonAction) {
@@ -39,36 +41,45 @@ const Alert = ({
   }, [okButtonAction]);
 
   const handleCancelButton = useCallback(() => {
+    visible = false;
     if (cancelButtonAction) {
       return cancelButtonAction();
     }
   }, [cancelButtonAction]);
 
   return (
-    <Container>
+    <Container
+      visible={visible}
+      onRequestClose={cancelButtonAction}
+      onDismiss={cancelButtonAction}
+      animationType="fade"
+      transparent
+    >
       <StatusBar backgroundColor="#000" animated style="light" />
-      <AlertContainer>
-        <AlertModal>
-          <AlertTitle>{title}</AlertTitle>
-          <AlertContent>{content}</AlertContent>
-          <AlertButtonsContainer>
-            <AlertOkButton onPress={handleOkButton}>
-              <AlertOkButtonText>
-                {okButtonText ? okButtonText : "OK"}
-              </AlertOkButtonText>
-            </AlertOkButton>
-            {cancelButtonAction ? (
-              <AlertCancelButton onPress={handleCancelButton}>
-                <AlertCancelButtonText>
-                  {cancelButtonText ? cancelButtonText : "Cancelar"}
-                </AlertCancelButtonText>
-              </AlertCancelButton>
-            ) : (
-              <></>
-            )}
-          </AlertButtonsContainer>
-        </AlertModal>
-      </AlertContainer>
+      <TouchableWithoutFeedback onPress={cancelButtonAction}>
+        <AlertContainer>
+          <AlertModal>
+            <AlertTitle>{title}</AlertTitle>
+            <AlertContent>{content}</AlertContent>
+            <AlertButtonsContainer>
+              <AlertOkButton onPress={handleOkButton}>
+                <AlertOkButtonText>
+                  {okButtonText ? okButtonText : "OK"}
+                </AlertOkButtonText>
+              </AlertOkButton>
+              {cancelButtonAction ? (
+                <AlertCancelButton onPress={handleCancelButton}>
+                  <AlertCancelButtonText>
+                    {cancelButtonText ? cancelButtonText : "Cancelar"}
+                  </AlertCancelButtonText>
+                </AlertCancelButton>
+              ) : (
+                <></>
+              )}
+            </AlertButtonsContainer>
+          </AlertModal>
+        </AlertContainer>
+      </TouchableWithoutFeedback>
     </Container>
   );
 };

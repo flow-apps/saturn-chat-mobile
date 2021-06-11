@@ -2,14 +2,7 @@ import { Dimensions } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.View`
-  flex: 1;
-  width: ${Dimensions.get("screen").width}px;
-  height: ${Dimensions.get("screen").height}px;
-  position: absolute;
-  left: 0;
-  z-index: 100;
-`;
+export const Container = styled.Modal``;
 
 export const AlertContainer = styled.View`
   flex: 1;
@@ -21,6 +14,7 @@ export const AlertContainer = styled.View`
 export const AlertTitle = styled.Text`
   font-family: ${fonts.heading};
   font-size: 18px;
+  margin-bottom: 10px;
 `;
 
 export const AlertContent = styled.Text`
@@ -30,7 +24,7 @@ export const AlertContent = styled.Text`
 
 export const AlertModal = styled.View`
   width: 90%;
-  height: 220px;
+  min-height: 220px;
   z-index: 150;
   background-color: ${(props) => props.theme.colors.white};
   padding: 25px 18px;

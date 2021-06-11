@@ -155,13 +155,12 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      {largeFile && (
-        <Alert
-          title="😱 Que coisa pesada!"
-          content="Eu não consigo carregar algo tão pesado, tente algo de até 15MB!"
-          okButtonAction={() => setLargeFile(false)}
-        />
-      )}
+      <Alert
+        title="😱 Que coisa pesada!"
+        content="Eu não consigo carregar algo tão pesado, tente algo de até 15MB!"
+        okButtonAction={() => setLargeFile(false)}
+        visible={largeFile}
+      />
       <Header title={group.name} backButton groupButtons />
       <Container>
         <MessageContainer>
