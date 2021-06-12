@@ -37,9 +37,10 @@ export const MessageContentContainer = styled(RectButton)<IMessageProps>`
     !props.isRight
       ? props.theme.colors.light_gray
       : props.theme.colors.primary};
-  padding: 15px;
-  border-radius: 15px;
-  width: 80%;
+  padding: 12px;
+  border-radius: 10px;
+  min-width: 30%;
+  max-width: 85%;
 `;
 
 export const MessageContent = styled.Text<IMessageProps>`
@@ -49,8 +50,23 @@ export const MessageContent = styled.Text<IMessageProps>`
     props.isRight ? props.theme.colors.white : props.theme.colors.black};
 `;
 
-export const MessageCodeBlock = styled.Text`
-  font-size: 20px;
+export const MessageCodeBlock = styled.View`
+  background-color: ${(props) => props.theme.colors.light_primary};
+  padding: 12px;
+  border-radius: 8px;
+  border: 0.5px solid #fff;
+`;
+
+export const MessageCodeBlockText = styled(MessageContent)`
+  color: #fff;
+  font-size: 12px;
+  font-family: ${fonts.code};
+`;
+
+export const MessageCodeInline = styled(MessageContent)`
+  font-family: ${fonts.code};
+  background-color: ${(props) => props.theme.colors.light_primary};
+  color: #fff;
 `;
 
 export const MessageLink = styled(MessageContent)`

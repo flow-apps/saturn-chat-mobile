@@ -4,6 +4,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/poppins";
 import { Roboto_500Medium } from "@expo-google-fonts/roboto";
+import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 import AppLoading from "expo-app-loading";
 import React from "react";
 import { ThemeProvider } from "styled-components/native";
@@ -16,6 +17,7 @@ export default function App() {
     Poppins_400Regular,
     Poppins_600SemiBold,
     Roboto_500Medium,
+    FiraCode_500Medium,
   });
 
   if (!fontLoaded) return <AppLoading />;

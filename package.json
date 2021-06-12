@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/fira-code": "^0.1.0",
     "@expo-google-fonts/poppins": "^0.1.0",
     "@expo-google-fonts/roboto": "^0.1.0",
     "@react-native-async-storage/async-storage": "^1.15.4",

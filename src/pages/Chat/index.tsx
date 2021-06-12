@@ -2,7 +2,12 @@ import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  NativeScrollEvent,
+  VirtualizedList,
+} from "react-native";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";

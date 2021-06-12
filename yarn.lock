@@ -1131,6 +1131,11 @@
   resolved "https://registry.npmjs.org/@emotion/unitless/-/unitless-0.7.5.tgz"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
+"@expo-google-fonts/fira-code@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/fira-code/-/fira-code-0.1.0.tgz#cedaf37dfcd82834e496f6fe3705a7667b7275c3"
+  integrity sha512-0wd6kq/6OILpeGHDjd5YgKs7WDp9VJ2t1DsMVAr/x5vFxfOTUzo7KM/9+6hNVfz1krVM/KJa4IA8dpct3lcmsA==
+
 "@expo-google-fonts/poppins@^0.1.0":
   version "0.1.0"
   resolved "https://registry.npmjs.org/@expo-google-fonts/poppins/-/poppins-0.1.0.tgz"

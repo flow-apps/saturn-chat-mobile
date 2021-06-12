@@ -12,6 +12,8 @@ import {
   MessageAuthorName,
   MessageAvatar,
   MessageCodeBlock,
+  MessageCodeBlockText,
+  MessageCodeInline,
   MessageContent,
   MessageContentContainer,
   MessageLink,
@@ -68,12 +70,15 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
   const closeLink = useCallback(() => {
     setLinkUrl("");
     return setShowLinkAlert(false);
-  }, [linkUrl]);
+  }, []);
 
   const markdownRules = MarkdownIt({
     linkify: true,
     typographer: true,
-  }).disable(["image", "heading", "table", "list", "link"], true);
+  }).disable(
+    ["image", "heading", "table", "list", "link", "blockquote", "hr"],
+    true
+  );
 
   return (
     <>
@@ -81,7 +86,7 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
         <MessageContentContainer isRight={message.author.id === user.id}>
           <Alert
             title="⚠ Cuidado, pode ser perigoso"
-            content={`Tem certeza que quer acessar este link? \n\n${linkUrl}`}
+            content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
             cancelButtonText="Não"
             okButtonText="Acessar"
             cancelButtonAction={closeLink}
@@ -109,7 +114,12 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
                   {children}
                 </MessageLink>
               ),
-              code_block: (node, children, parent, styles) => {
+              code_inline: (node, children, parent, styles) => (
+                <MessageCodeInline key={node.key}>
+                  {node.content}
+                </MessageCodeInline>
+              ),
+              fence: (node, children, parent, styles) => {
                 let { content } = node;
 
                 if (
@@ -120,7 +130,9 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
                 }
 
                 return (
-                  <MessageCodeBlock key={node.key}>{content}</MessageCodeBlock>
+                  <MessageCodeBlock key={node.key}>
+                    <MessageCodeBlockText>{content}</MessageCodeBlockText>
+                  </MessageCodeBlock>
                 );
               },
             }}
