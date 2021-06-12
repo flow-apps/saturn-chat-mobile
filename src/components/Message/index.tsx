@@ -75,10 +75,9 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
   const markdownRules = MarkdownIt({
     linkify: true,
     typographer: true,
-  }).disable(
-    ["image", "heading", "table", "list", "link", "blockquote", "hr"],
-    true
-  );
+  })
+    .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
+    .use(require("markdown-it-linkscheme"));
 
   return (
     <>

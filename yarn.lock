@@ -4755,10 +4755,10 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-markdown-it-emoji@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/markdown-it-emoji/-/markdown-it-emoji-2.0.0.tgz#3164ad4c009efd946e98274f7562ad611089a231"
-  integrity sha512-39j7/9vP/CPCKbEI44oV8yoPJTpvfeReTn/COgRhSpNrjWF3PfP/JUxxB0hxV6ynOY8KH8Y8aX9NMDdo6z+6YQ==
+markdown-it-linkscheme@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/markdown-it-linkscheme/-/markdown-it-linkscheme-1.0.2.tgz#254e1e3e9b477b466885c36be53cac780fa31bdb"
+  integrity sha1-JU4ePptHe0ZohcNr5TyseA+jG9s=
 
 markdown-it@^10.0.0:
   version "10.0.0"
