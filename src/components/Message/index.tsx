@@ -6,6 +6,7 @@ import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import { useTheme } from "styled-components";
 import { MessageData, UserData } from "../../../@types/interfaces";
 import Alert from "../Alert";
+import Toast from "react-native-simple-toast";
 import {
   Container,
   MessageAuthorContainer,
@@ -29,6 +30,7 @@ interface MessageProps {
 const Message = ({ message, lastMessage, user, index }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+
   const { colors } = useTheme();
 
   const renderAuthor = useCallback(() => {
@@ -66,6 +68,11 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
     setLinkUrl("");
     return setShowLinkAlert(false);
   }, [linkUrl]);
+
+  const copyLink = useCallback((url: string) => {
+    Clipboard.setString(url);
+    Toast.show("Link copiado", Toast.SHORT);
+  }, []);
 
   const closeLink = useCallback(() => {
     setLinkUrl("");
@@ -107,7 +114,7 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
               link: (node, children, parent, styles) => (
                 <MessageLink
                   onPress={() => alertLink(node.attributes.href)}
-                  onLongPress={() => Clipboard.setString(node.attributes.href)}
+                  onLongPress={() => copyLink(node.attributes.href)}
                   key={node.key}
                 >
                   {children}
