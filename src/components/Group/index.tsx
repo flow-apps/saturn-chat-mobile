@@ -31,11 +31,8 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
           </UnreadMessages>
         )}
       </Container>
-      <HLWrapper>
-        <HorizontalLine />
-      </HLWrapper>
     </>
   );
 };
 
-export default Group;
+export default memo(Group);

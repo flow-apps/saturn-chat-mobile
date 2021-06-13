@@ -10,7 +10,7 @@ export const Container = styled.View`
 export const QuickAccessGroupsContainer = styled.View`
   width: 100%;
   padding: 10px;
-  margin-top: 35px;
+  margin-top: 10px;
   justify-content: center;
 `;
 
@@ -49,7 +49,7 @@ export const GroupImage = styled.Image`
 
 export const GroupsContainer = styled(Animated.View)`
   flex: 1;
-  margin-top: 35px;
+  margin-top: 10px;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   background-color: ${(props) => props.theme.colors.shape};

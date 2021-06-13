@@ -48,7 +48,7 @@ const Home: React.FC = () => {
     }, [])
   );
 
-  async function loadGroups() {
+  const loadGroups = useCallback(async () => {
     setLoading(true);
     const groups = await api.get("/groups/list");
 
@@ -57,16 +57,18 @@ const Home: React.FC = () => {
       setGroupsCount(groups.data.length);
     }
     setLoading(false);
-  }
+  }, []);
 
-  function handleGoChat(id: string) {
-    navigation.navigate("Chat", {
-      screen: "ChatTalk",
-      params: {
-        id,
-      },
-    });
-  }
+  const handleGoChat = useCallback(
+    (id: string) =>
+      navigation.navigate("Chat", {
+        screen: "ChatTalk",
+        params: {
+          id,
+        },
+      }),
+    []
+  );
 
   if (loading) return <Loading />;
   return (
@@ -89,7 +91,10 @@ const Home: React.FC = () => {
             removeClippedSubviews
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
-              <GroupButton activeOpacity={0.5}>
+              <GroupButton
+                activeOpacity={0.5}
+                onPress={() => handleGoChat(item.group.id)}
+              >
                 <GroupImage
                   source={{
                     uri: item.group.group_avatar && item.group.group_avatar.url,
