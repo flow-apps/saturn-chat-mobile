@@ -5,6 +5,7 @@ import { memo } from "react";
 
 export const Container = styled.View`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const SearchContainer = styled.View`
@@ -12,16 +13,16 @@ export const SearchContainer = styled.View`
   justify-content: center;
   padding: 10px;
   margin-top: 20px;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const InputContainer = styled.View`
   padding: 0px 10px;
-  background-color: #fff;
   border-radius: 10px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  elevation: 3;
+  background-color: ${(props) => props.theme.colors.shape};
 `;
 
 export const Input = styled.TextInput`
@@ -29,6 +30,7 @@ export const Input = styled.TextInput`
   padding: 10px 12px;
   font-size: 16px;
   font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const ButtonSearch = styled.TouchableOpacity`
@@ -120,11 +122,13 @@ export const GroupImage = styled.Image`
 export const GroupName = styled.Text`
   font-family: ${fonts.heading};
   font-size: 16px;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const GroupDesc = styled.Text`
   font-family: ${fonts.text};
   font-size: 14px;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const GroupParticipantsText = styled.Text`

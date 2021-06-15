@@ -100,6 +100,9 @@ const Chat: React.FC = () => {
       socketIO.on("sended_user_message", (msg) => {
         setMessages((oldMessages) => [msg, ...oldMessages]);
       });
+      socketIO.on("new_user_message", (msg) => {
+        setMessages((old) => [msg, ...old]);
+      });
       const res = await api.get(`/group/${id}`);
 
       if (res.status === 200) {

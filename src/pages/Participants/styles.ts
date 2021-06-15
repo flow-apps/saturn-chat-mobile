@@ -4,11 +4,11 @@ import fonts from "../../styles/fonts";
 
 export const Container = styled.View`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const ParticipantsContainer = styled.ScrollView`
-  padding: 0 15px;
-  margin-top: 20px;
+  padding: 10px 15px;
 `;
 
 export const ParticipantsList = styled.View``;
@@ -18,6 +18,8 @@ export const SectionContainer = styled.View``;
 export const SectionTitle = styled.Text`
   font-size: 14px;
   font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.light_heading};
+  margin-bottom: 20px;
 `;
 
 export const ParticipantContainer = styled(RectButton)`
@@ -36,4 +38,5 @@ export const ParticipantAvatar = styled.Image`
 export const ParticipanteName = styled.Text`
   font-size: 16px;
   font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.black};
 `;

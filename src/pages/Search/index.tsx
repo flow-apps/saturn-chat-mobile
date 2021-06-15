@@ -117,6 +117,7 @@ const Search: React.FC = () => {
                 returnKeyType="search"
                 onEndEditing={handleSearch}
                 selectionColor={colors.secondary}
+                placeholderTextColor={colors.dark_gray}
               />
               <ButtonSearch onPress={handleSearch}>
                 <Feather name="search" size={25} color={"#fff"} />

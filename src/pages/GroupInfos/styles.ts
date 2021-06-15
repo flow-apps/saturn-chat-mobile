@@ -3,6 +3,7 @@ import fonts from "../../styles/fonts";
 
 export const Container = styled.ScrollView`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const GroupContainer = styled.View`
@@ -68,7 +69,7 @@ export const JoinGroupButtonText = styled.Text<{ participating?: boolean }>`
 `;
 
 export const GroupDescContainer = styled.View`
-  background-color: ${(props) => props.theme.colors.light_gray};
+  background-color: ${(props) => props.theme.colors.shape};
   padding: 20px;
   border-radius: 10px;
   margin-top: 15px;
@@ -84,6 +85,7 @@ export const GroupDescTitle = styled.Text`
 export const GroupDesc = styled.Text`
   font-size: 15px;
   font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const ParticipantsInfosContainer = styled.View`
@@ -107,4 +109,5 @@ export const ParticipantsTitle = styled.Text`
   font-family: ${fonts.text};
   text-align: center;
   margin-top: -5px;
+  color: ${(props) => props.theme.colors.black};
 `;

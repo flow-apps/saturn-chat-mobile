@@ -15,7 +15,7 @@ import {
 const Participants: React.FC = () => {
   return (
     <>
-      <Header title="Participantes (99)" backButton />
+      <Header title="Participantes (99)" />
       <Container>
         <ParticipantsContainer>
           <SectionContainer>

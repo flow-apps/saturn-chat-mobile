@@ -13,6 +13,7 @@ interface SectionTitleProps {
 export const Container = styled.ScrollView`
   flex: 1;
   padding: 10px;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const OptionsContainer = styled.View`
@@ -40,6 +41,5 @@ export const OptionText = styled.Text<OptionTextProps>`
   font-size: 18px;
   font-family: ${fonts.text};
   align-items: center;
-  color: ${(props) =>
-    props.color ? props.color : props.theme.colors.light_heading};
+  color: ${(props) => (props.color ? props.color : props.theme.colors.black)};
 `;

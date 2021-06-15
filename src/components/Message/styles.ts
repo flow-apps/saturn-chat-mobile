@@ -15,7 +15,7 @@ export const Container = styled.View<IMessageProps>`
 export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 10px;
 `;
 
 export const MessageAvatar = styled.Image`
