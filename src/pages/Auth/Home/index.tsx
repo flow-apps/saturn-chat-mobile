@@ -40,7 +40,7 @@ const Home: React.FC = () => {
             <Button
               title="Fazer login"
               textColor="#0088ff"
-              transparent
+              bgColor="transparent"
               onPress={loginNavigate}
             />
           </ButtonContainer>

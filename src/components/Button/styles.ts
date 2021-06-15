@@ -3,8 +3,8 @@ import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
 interface ButtonProps {
-  transparent?: boolean;
   textColor?: string;
+  bgColor?: string;
 }
 
 interface TextProps {
@@ -14,7 +14,7 @@ interface TextProps {
 export const Container = styled(RectButton)<ButtonProps>`
   padding: 20px;
   background: ${(props) =>
-    props.transparent ? "transparent" : props.theme.colors.primary};
+    props.bgColor ? props.bgColor : props.theme.colors.primary};
   border-radius: 15px;
   align-items: center;
   justify-content: center;

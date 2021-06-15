@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ConfigContainer,
   ConfigsContainer,
@@ -13,15 +13,33 @@ import { useAuth } from "../../contexts/auth";
 import { Feather } from "@expo/vector-icons";
 import Switcher from "../../components/Switcher";
 import { useToggleTheme } from "../../contexts/theme";
+import Button from "../../components/Button";
+import { useTheme } from "styled-components";
+import Alert from "../../components/Alert";
 
 const Configurations: React.FC = () => {
   const { signOut } = useAuth();
+  const [confirmSignOut, setConfirmSignOut] = useState(false);
   const { toggleTheme, currentThemeName } = useToggleTheme();
+  const { colors } = useTheme();
+
+  const handleSignOut = useCallback(() => {
+    setConfirmSignOut(true);
+  }, []);
 
   return (
     <>
       <Header title="Configurações" />
       <Container>
+        <Alert
+          visible={confirmSignOut}
+          title="😥 Quer mesmo sair?"
+          content="Ao sair você não receberá notificações de novas mensagens, convites e nada relacionado."
+          cancelButtonText="Cancelar"
+          okButtonText="Sair"
+          cancelButtonAction={() => setConfirmSignOut(false)}
+          okButtonAction={signOut}
+        />
         <SectionsContainer>
           <SectionContainer>
             <SectionTitle>Geral</SectionTitle>
@@ -35,6 +53,11 @@ const Configurations: React.FC = () => {
                   onChangeValue={toggleTheme}
                 />
               </ConfigContainer>
+              <Button
+                title="Sair da conta"
+                bgColor={colors.red}
+                onPress={handleSignOut}
+              />
             </ConfigsContainer>
           </SectionContainer>
         </SectionsContainer>

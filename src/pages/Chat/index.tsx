@@ -36,7 +36,10 @@ const Chat: React.FC = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageData[]>([]);
-  const [sendFile, setSendFile] = useState<DocumentPicker.DocumentResult>();
+  const [sendFiles, setSendFiles] = useState<DocumentPicker.DocumentResult[]>(
+    []
+  );
+  const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [group, setGroup] = useState<GroupData>({} as GroupData);
 
   const [page, setPage] = useState(0);
@@ -128,14 +131,15 @@ const Chat: React.FC = () => {
   }
 
   async function handleFileSelector() {
-    const file = await DocumentPicker.getDocumentAsync({});
+    const file = await DocumentPicker.getDocumentAsync({ multiple: true });
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1024 / 1024);
-      if (fileSize > 12) {
+      if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
         return setLargeFile(true);
       }
-      return setSendFile(file);
+      setFilesSizeUsed((used) => used + fileSize);
+      return setSendFiles((files) => [file, ...files]);
     }
   }
 
@@ -165,7 +169,7 @@ const Chat: React.FC = () => {
     <>
       <Alert
         title="😱 Que coisa pesada!"
-        content="Eu não consigo carregar algo tão pesado, tente algo de até 15MB!"
+        content="Eu não consigo carregar algo tão pesado, tente algo de até 12MB!"
         okButtonAction={() => setLargeFile(false)}
         visible={largeFile}
       />

@@ -4,6 +4,7 @@ import fonts from "../../../styles/fonts";
 export const Container = styled.ScrollView`
   flex: 1;
   padding: 15px;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const WelcomeContainer = styled.View`
@@ -45,6 +46,7 @@ export const Label = styled.Text`
   font-size: 16px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.light_heading};
+  margin-bottom: 5px;
 `;
 
 export const ForgotPassword = styled.TouchableOpacity`

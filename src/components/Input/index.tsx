@@ -9,7 +9,13 @@ interface InputProps extends TextInputProps {}
 const Input = ({ ...rest }: InputProps) => {
   const { colors } = useTheme();
 
-  return <Container as={TextInput} {...rest} />;
+  return (
+    <Container
+      placeholderTextColor={colors.dark_gray}
+      as={TextInput}
+      {...rest}
+    />
+  );
 };
 
 export default Input;

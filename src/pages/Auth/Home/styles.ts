@@ -3,6 +3,7 @@ import fonts from "../../../styles/fonts";
 
 export const Container = styled.ScrollView`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const Wrapper = styled.View`
@@ -25,12 +26,14 @@ export const Title = styled.Text`
   font-size: 22px;
   text-align: center;
   margin-top: 10px;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const Subtitle = styled.Text`
   font-size: 18px;
   font-family: ${fonts.text};
   text-align: center;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const ButtonsContainer = styled.View`
