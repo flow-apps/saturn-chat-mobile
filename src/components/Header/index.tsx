@@ -51,7 +51,7 @@ const Header = ({
       <RightContainer>
         {backButton && (
           <Button onPress={handleBack}>
-            <Feather name="arrow-left" size={25} color={colors.white} />
+            <Feather name="arrow-left" size={25} color={"#fff"} />
           </Button>
         )}
         <HeaderTitle numberOfLines={1}>{title}</HeaderTitle>
@@ -60,13 +60,13 @@ const Header = ({
         {homeButtons && (
           <>
             <Button onPress={handleGoSearch}>
-              <Feather name="search" size={25} color={colors.white} />
+              <Feather name="search" size={25} color={"#fff"} />
             </Button>
             <Button>
               <Feather
                 name="user"
                 size={25}
-                color={colors.white}
+                color={"#fff"}
                 onPress={handleGoMyProfile}
               />
             </Button>
@@ -77,7 +77,7 @@ const Header = ({
             <Feather
               name="more-vertical"
               size={25}
-              color={colors.white}
+              color={"#fff"}
               onPress={handleGoGroupConfig}
             />
           </Button>

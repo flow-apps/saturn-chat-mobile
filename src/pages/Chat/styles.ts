@@ -3,6 +3,7 @@ import fonts from "../../styles/fonts";
 
 export const Container = styled.View`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const KeyBoardAvoid = styled.KeyboardAvoidingView``;
@@ -46,6 +47,7 @@ export const MessageInput = styled.TextInput`
   font-family: ${fonts.text};
   margin: 0px 10px;
   max-height: 120px;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const MessageContainer = styled.View`

@@ -34,9 +34,7 @@ export const MessageAuthorName = styled.Text`
 export const MessageContentContainer = styled(RectButton)<IMessageProps>`
   position: relative;
   background-color: ${(props) =>
-    !props.isRight
-      ? props.theme.colors.light_gray
-      : props.theme.colors.primary};
+    !props.isRight ? props.theme.colors.shape : props.theme.colors.primary};
   padding: 12px;
   border-radius: 10px;
   min-width: 30%;
@@ -46,8 +44,7 @@ export const MessageContentContainer = styled(RectButton)<IMessageProps>`
 export const MessageContent = styled.Text<IMessageProps>`
   font-size: 14px;
   font-family: ${fonts.text};
-  color: ${(props) =>
-    props.isRight ? props.theme.colors.white : props.theme.colors.black};
+  color: ${(props) => (props.isRight ? "#fff" : props.theme.colors.black)};
 `;
 
 export const MessageCodeBlock = styled.View`

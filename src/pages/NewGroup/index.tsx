@@ -140,6 +140,7 @@ const NewGroup: React.FC = () => {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
                 <Input
+                  placeholderTextColor={colors.light_gray}
                   placeholder="Nome do grupo (máx. 100 caracteres)"
                   maxLength={100}
                   selectionColor={colors.secondary}
@@ -150,6 +151,7 @@ const NewGroup: React.FC = () => {
                 />
                 <TextArea
                   multiline
+                  placeholderTextColor={colors.light_gray}
                   selectionColor={colors.secondary}
                   placeholder="Descrição (máx. 500 caracteres)"
                   maxLength={500}

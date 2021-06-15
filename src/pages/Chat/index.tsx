@@ -209,6 +209,7 @@ const Chat: React.FC = () => {
               placeholder="Sua mensagem..."
               onChangeText={handleSetMessage}
               value={message}
+              placeholderTextColor={colors.light_gray}
               maxLength={500}
               multiline
             />

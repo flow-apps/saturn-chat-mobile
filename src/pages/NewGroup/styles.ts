@@ -4,6 +4,7 @@ import fonts from "../../styles/fonts";
 export const Container = styled.ScrollView`
   flex: 1;
   padding: 0 15px;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const SelectGroupPhotoContainer = styled.View`
@@ -60,6 +61,7 @@ export const Input = styled.TextInput`
   font-size: 16px;
   margin-bottom: 20px;
   max-height: 400px;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const TextArea = styled(Input)`

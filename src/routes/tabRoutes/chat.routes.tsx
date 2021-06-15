@@ -27,10 +27,9 @@ const ChatRoutes = () => {
         style: {
           padding: 15,
           height: 60,
-          borderTopRightRadius: 15,
-          borderTopLeftRadius: 15,
           elevation: 10,
           zIndex: 90,
+          backgroundColor: colors.shape,
         },
       }}
     >

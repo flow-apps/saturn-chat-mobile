@@ -17,7 +17,7 @@ export const HeaderTitle = styled.Text`
   width: 320px;
   font-size: 20px;
   font-family: ${fonts.heading};
-  color: ${(props) => props.theme.colors.white};
+  color: #fff;
 `;
 
 export const RightContainer = styled.View`

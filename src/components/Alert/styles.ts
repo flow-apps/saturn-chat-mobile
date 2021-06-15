@@ -13,11 +13,13 @@ export const AlertContainer = styled.View`
 
 export const AlertTitle = styled.Text`
   font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.black};
   font-size: 18px;
   margin-bottom: 10px;
 `;
 
 export const AlertContent = styled.Text`
+  color: ${(props) => props.theme.colors.black};
   font-family: ${fonts.text};
   font-size: 16px;
 `;
@@ -26,7 +28,7 @@ export const AlertModal = styled.View`
   width: 90%;
   min-height: 220px;
   z-index: 150;
-  background-color: ${(props) => props.theme.colors.white};
+  background-color: ${(props) => props.theme.colors.shape};
   padding: 25px 18px;
   border-radius: 12px;
   justify-content: space-around;

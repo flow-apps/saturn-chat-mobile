@@ -5,7 +5,7 @@ import { useTheme } from "styled-components";
 
 interface SwitcherProps {
   currentValue: boolean;
-  onChangeValue: () => unknown;
+  onChangeValue: (value: boolean) => unknown;
 }
 
 const Switcher = ({ currentValue, onChangeValue }: SwitcherProps) => {
