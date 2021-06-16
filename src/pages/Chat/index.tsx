@@ -134,7 +134,7 @@ const Chat: React.FC = () => {
     const file = await DocumentPicker.getDocumentAsync({ multiple: true });
 
     if (file.type === "success") {
-      const fileSize = Math.trunc(file.size / 1024 / 1024);
+      const fileSize = Math.trunc(file.size / 1000 / 1000);
       if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
         return setLargeFile(true);
       }

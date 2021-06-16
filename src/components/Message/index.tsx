@@ -19,6 +19,7 @@ import {
   MessageContentContainer,
   MessageLink,
 } from "./styles";
+import MessageOptions from "../MessageOptions";
 
 interface MessageProps {
   user: UserData;
@@ -30,6 +31,7 @@ interface MessageProps {
 const Message = ({ message, lastMessage, user, index }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const [msgOptions, setMsgOptions] = useState(false);
 
   const { colors } = useTheme();
 
@@ -89,7 +91,10 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
   return (
     <>
       <Container key={index} isRight={message.author.id === user.id}>
-        <MessageContentContainer isRight={message.author.id === user.id}>
+        <MessageContentContainer
+          isRight={message.author.id === user.id}
+          onLongPress={() => setMsgOptions(true)}
+        >
           <Alert
             title="⚠ Cuidado, pode ser perigoso"
             content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
@@ -98,6 +103,26 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
             cancelButtonAction={closeLink}
             okButtonAction={openLink}
             visible={showLinkAlert}
+          />
+          <MessageOptions
+            close={() => setMsgOptions(false)}
+            visible={msgOptions}
+            message={message}
+            options={[
+              {
+                iconName: "corner-up-right",
+                content: "Responder",
+                action: () => {},
+                onlyOwner: true,
+              },
+              {
+                iconName: "trash-2",
+                content: "Excluir mensagem",
+                action: () => {},
+                color: colors.red,
+                onlyOwner: true,
+              },
+            ]}
           />
           <Markdown
             markdownit={markdownRules}

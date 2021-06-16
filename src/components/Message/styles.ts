@@ -31,7 +31,7 @@ export const MessageAuthorName = styled.Text`
   color: ${(props) => props.theme.colors.light_heading};
 `;
 
-export const MessageContentContainer = styled(RectButton)<IMessageProps>`
+export const MessageContentContainer = styled.TouchableOpacity<IMessageProps>`
   position: relative;
   background-color: ${(props) =>
     !props.isRight ? props.theme.colors.shape : props.theme.colors.primary};
