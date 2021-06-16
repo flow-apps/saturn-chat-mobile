@@ -20,15 +20,23 @@ import {
   MessageLink,
 } from "./styles";
 import MessageOptions from "../MessageOptions";
+import { Socket } from "socket.io-client";
 
 interface MessageProps {
   user: UserData;
   message: MessageData;
   lastMessage: MessageData;
   index: number;
+  socket: Socket;
 }
 
-const Message = ({ message, lastMessage, user, index }: MessageProps) => {
+const Message = ({
+  message,
+  lastMessage,
+  user,
+  index,
+  socket,
+}: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
@@ -56,6 +64,10 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
       );
     }
   }, [message, lastMessage, index]);
+
+  const deleteMessage = useCallback(() => {
+    socket.emit("delete_user_message", message.id);
+  }, []);
 
   const alertLink = useCallback((url: string) => {
     setLinkUrl(url);
@@ -113,12 +125,12 @@ const Message = ({ message, lastMessage, user, index }: MessageProps) => {
                 iconName: "corner-up-right",
                 content: "Responder",
                 action: () => {},
-                onlyOwner: true,
+                onlyOwner: false,
               },
               {
                 iconName: "trash-2",
                 content: "Excluir mensagem",
-                action: () => {},
+                action: deleteMessage,
                 color: colors.red,
                 onlyOwner: true,
               },

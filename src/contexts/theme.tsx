@@ -8,16 +8,16 @@ import { usePersistedState } from "../hooks/usePersistedState";
 import dark from "../styles/themes/dark";
 import light from "../styles/themes/light";
 
-interface ToggleThemeContext {
+interface ThemeControllerContext {
   toggleTheme: () => unknown;
   currentThemeName: string;
 }
 
-const ToggleThemeContext = createContext<ToggleThemeContext>(
-  {} as ToggleThemeContext
+const ThemeControllerContext = createContext<ThemeControllerContext>(
+  {} as ThemeControllerContext
 );
 
-const ToggleThemeProvider: React.FC = ({ children }) => {
+const ThemeControllerProvider: React.FC = ({ children }) => {
   const defaultTheme = useColorScheme();
   const [theme, setTheme] = usePersistedState<DefaultTheme>(
     "@SaturnChat:theme",
@@ -28,18 +28,18 @@ const ToggleThemeProvider: React.FC = ({ children }) => {
   }, [theme, theme.title]);
 
   return (
-    <ToggleThemeContext.Provider
+    <ThemeControllerContext.Provider
       value={{ toggleTheme, currentThemeName: theme.title }}
     >
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    </ToggleThemeContext.Provider>
+    </ThemeControllerContext.Provider>
   );
 };
 
-const useToggleTheme = () => {
-  const toggleThemeContext = useContext(ToggleThemeContext);
+const useThemeController = () => {
+  const themeControllerContext = useContext(ThemeControllerContext);
 
-  return toggleThemeContext;
+  return themeControllerContext;
 };
 
-export { ToggleThemeProvider, useToggleTheme };
+export { ThemeControllerProvider, useThemeController };

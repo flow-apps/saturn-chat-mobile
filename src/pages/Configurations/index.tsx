@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import { useAuth } from "../../contexts/auth";
 import { Feather } from "@expo/vector-icons";
 import Switcher from "../../components/Switcher";
-import { useToggleTheme } from "../../contexts/theme";
+import { useThemeController } from "../../contexts/theme";
 import Button from "../../components/Button";
 import { useTheme } from "styled-components";
 import Alert from "../../components/Alert";
@@ -20,7 +20,7 @@ import Alert from "../../components/Alert";
 const Configurations: React.FC = () => {
   const { signOut } = useAuth();
   const [confirmSignOut, setConfirmSignOut] = useState(false);
-  const { toggleTheme, currentThemeName } = useToggleTheme();
+  const { toggleTheme, currentThemeName } = useThemeController();
   const { colors } = useTheme();
 
   const handleSignOut = useCallback(() => {

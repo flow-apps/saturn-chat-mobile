@@ -16,6 +16,7 @@ import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
 import { useAuth } from "../../contexts/auth";
+import { useSocket } from "../../contexts/socket";
 import api from "../../services/api";
 import {
   Container,
@@ -32,7 +33,6 @@ import {
 const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageData[]>([]);
@@ -41,6 +41,7 @@ const Chat: React.FC = () => {
   );
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [group, setGroup] = useState<GroupData>({} as GroupData);
+  const [socket, setSocket] = useState<Socket>({} as Socket);
 
   const [page, setPage] = useState(0);
   const [fetching, setFetching] = useState(true);
@@ -50,6 +51,51 @@ const Chat: React.FC = () => {
   const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
+  const { connectInGroup } = useSocket();
+
+  useEffect(() => {
+    async function initChat() {
+      setLoading(true);
+      const socketIO = io("http://192.168.0.112:3000/", {
+        path: "/socket.io/",
+        jsonp: false,
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        transports: ["websocket"],
+        query: {
+          group_id: id,
+          token,
+        },
+      });
+      setSocket(socketIO);
+
+      socketIO.on("sended_user_message", (msg) => {
+        setMessages((oldMessages) => [msg, ...oldMessages]);
+      });
+      socketIO.on("new_user_message", (msg) => {
+        setMessages((old) => [msg, ...old]);
+      });
+
+      socketIO.on("delete_user_message", (msgID) => {
+        setMessages((old) => old.filter((msg) => msg.id !== msgID));
+      });
+
+      const res = await api.get(`/group/${id}`);
+
+      if (res.status === 200) {
+        setGroup(res.data);
+      }
+
+      setLoading(false);
+    }
+
+    initChat();
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
   const fetchMessages = useCallback(async () => {
     setFetching(true);
@@ -69,11 +115,43 @@ const Chat: React.FC = () => {
     setFetching(false);
   }, [page]);
 
+  const handleFileSelector = useCallback(async () => {
+    const file = await DocumentPicker.getDocumentAsync({ multiple: true });
+
+    if (file.type === "success") {
+      const fileSize = Math.trunc(file.size / 1000 / 1000);
+      if (fileSize > 12 || filesSizeUsed + fileSize > 12)
+        return setLargeFile(true);
+
+      setFilesSizeUsed((used) => used + fileSize);
+      return setSendFiles((files) => [file, ...files]);
+    }
+  }, []);
+
+  const handleFetchMoreMessages = useCallback(
+    async (event: NativeScrollEvent) => {
+      if (fetchedAll) return;
+
+      const { layoutMeasurement, contentOffset, contentSize } = event;
+      const paddingToBottom = 1;
+      const listHeight = layoutMeasurement.height + contentOffset.y;
+
+      if (listHeight >= contentSize.height - paddingToBottom) {
+        if (!fetching) {
+          setPage((old) => old + 1);
+          await fetchMessages();
+        }
+      }
+    },
+    [page]
+  );
+
   const renderMessage = useCallback(
     (item: MessageData, index: number) => {
       return (
         <Message
           message={item}
+          socket={socket}
           index={index}
           user={user as unknown as UserData}
           lastMessage={messages[index - 1]}
@@ -83,45 +161,6 @@ const Chat: React.FC = () => {
     [messages]
   );
 
-  useEffect(() => {
-    async function initChat() {
-      setLoading(true);
-      const socketIO = io("http://192.168.0.112:3000/", {
-        path: "/socket.io/",
-        jsonp: false,
-        reconnection: true,
-        reconnectionAttempts: Infinity,
-        reconnectionDelay: 1000,
-        transports: ["websocket"],
-        query: {
-          group_id: id,
-          token,
-        },
-      });
-
-      setSocket(socketIO);
-      socketIO.on("sended_user_message", (msg) => {
-        setMessages((oldMessages) => [msg, ...oldMessages]);
-      });
-      socketIO.on("new_user_message", (msg) => {
-        setMessages((old) => [msg, ...old]);
-      });
-      const res = await api.get(`/group/${id}`);
-
-      if (res.status === 200) {
-        setGroup(res.data);
-      }
-
-      setLoading(false);
-    }
-
-    initChat();
-  }, []);
-
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
   function handleSetMessage(message: string) {
     setMessage(message);
   }
@@ -130,39 +169,12 @@ const Chat: React.FC = () => {
     setShowEmojiPicker(!showEmojiPicker);
   }
 
-  async function handleFileSelector() {
-    const file = await DocumentPicker.getDocumentAsync({ multiple: true });
-
-    if (file.type === "success") {
-      const fileSize = Math.trunc(file.size / 1000 / 1000);
-      if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
-        return setLargeFile(true);
-      }
-      setFilesSizeUsed((used) => used + fileSize);
-      return setSendFiles((files) => [file, ...files]);
-    }
-  }
-
   async function handleMessageSubmit() {
     setMessage("");
-    socket?.emit("new_user_message", { message });
+    setSendFiles([]);
+
+    socket.emit("new_user_message", { message });
   }
-
-  async function handleFetchMoreMessages(event: NativeScrollEvent) {
-    if (fetchedAll) return;
-
-    const { layoutMeasurement, contentOffset, contentSize } = event;
-    const paddingToBottom = 1;
-    const listHeight = layoutMeasurement.height + contentOffset.y;
-
-    if (listHeight >= contentSize.height - paddingToBottom) {
-      if (!fetching) {
-        setPage((old) => old + 1);
-        await fetchMessages();
-      }
-    }
-  }
-
   if (loading) return <Loading />;
 
   return (

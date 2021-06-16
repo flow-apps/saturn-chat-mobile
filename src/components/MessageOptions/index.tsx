@@ -52,10 +52,21 @@ const MessageOptions = ({
       <StatusBar backgroundColor="#000" style="light" animated translucent />
       <MessageOptionsContainer>
         <MessageOptionsModal>
-          {options.map(
-            (option, index) =>
-              option.onlyOwner &&
-              message.author.id === user?.id && (
+          {options.map((option, index) =>
+            option.onlyOwner && message.author.id === user?.id ? (
+              <Option
+                key={index}
+                onPress={() => handleExecAction(option.action)}
+              >
+                <OptionText color={option.color}>
+                  {option.iconName && (
+                    <Feather name={option.iconName} size={18} />
+                  )}{" "}
+                  {option.content}
+                </OptionText>
+              </Option>
+            ) : (
+              !option.onlyOwner && (
                 <Option
                   key={index}
                   onPress={() => handleExecAction(option.action)}
@@ -68,6 +79,7 @@ const MessageOptions = ({
                   </OptionText>
                 </Option>
               )
+            )
           )}
         </MessageOptionsModal>
       </MessageOptionsContainer>

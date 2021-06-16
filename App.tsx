@@ -8,9 +8,10 @@ import { Roboto_500Medium } from "@expo-google-fonts/roboto";
 import AppLoading from "expo-app-loading";
 import React from "react";
 import { AuthProvider } from "./src/contexts/auth";
-import { ToggleThemeProvider } from "./src/contexts/theme";
+import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
 import Routes from "./src/routes";
+import { SocketProvider } from "./src/contexts/socket";
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -24,11 +25,13 @@ export default function App() {
 
   return (
     <AppearanceProvider>
-      <ToggleThemeProvider>
+      <ThemeControllerProvider>
         <AuthProvider>
-          <Routes />
+          <SocketProvider>
+            <Routes />
+          </SocketProvider>
         </AuthProvider>
-      </ToggleThemeProvider>
+      </ThemeControllerProvider>
     </AppearanceProvider>
   );
 }
