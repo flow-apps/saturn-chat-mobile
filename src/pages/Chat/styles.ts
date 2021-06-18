@@ -1,3 +1,4 @@
+import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -6,12 +7,57 @@ export const Container = styled.View`
   background-color: ${(props) => props.theme.colors.background};
 `;
 
-export const KeyBoardAvoid = styled.KeyboardAvoidingView``;
+export const Messages = styled.FlatList`` as unknown as typeof FlatList;
 
-export const ChatContainer = styled.FlatList`
+export const MessageContainer = styled.View`
   flex: 1;
-  margin-bottom: -5px;
-  padding: 20px 5px 0px 5px;
+  padding: 0px 5px 0px 5px;
+`;
+
+export const FilesContainer = styled.View`
+  height: 100px;
+  background-color: ${(props) => props.theme.colors.shape};
+  padding: 5px;
+  border-radius: 10px;
+`;
+
+export const Files = styled.FlatList`` as unknown as typeof FlatList;
+
+export const File = styled.View`
+  position: relative;
+  width: 80px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  background-color: ${(props) => props.theme.colors.dark_gray}44;
+  border-radius: 8px;
+`;
+
+export const ImageFile = styled.Image`
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+`;
+
+export const OtherFile = styled.View`
+  width: 80px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const RemoveFileButton = styled.TouchableOpacity`
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  z-index: 5;
+  top: 3px;
+  right: 3px;
+  background-color: #88888888;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const FormContainer = styled.View`
@@ -48,23 +94,4 @@ export const MessageInput = styled.TextInput`
   margin: 0px 10px;
   max-height: 120px;
   color: ${(props) => props.theme.colors.black};
-`;
-
-export const MessageContainer = styled.View`
-  flex: 1;
-  padding: 0px 5px 0px 5px;
-`;
-
-export const DateSeparatorContainer = styled.View`
-  align-items: center;
-  margin: 20px auto;
-  background-color: ${(props) => props.theme.colors.light_secondary};
-  padding: 5px 15px;
-  border-radius: 30px;
-`;
-
-export const DateSeparator = styled.Text`
-  font-size: 12px;
-  font-family: ${fonts.code};
-  color: #000;
 `;

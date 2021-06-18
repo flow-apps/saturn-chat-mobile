@@ -1,28 +1,43 @@
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/core";
-import * as DocumentPicker from "expo-document-picker";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
-import { io, Socket } from "socket.io-client";
-import { useTheme } from "styled-components";
-import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
+import * as DocumentPicker from "expo-document-picker";
 import Alert from "../../components/Alert";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
-import { useAuth } from "../../contexts/auth";
 import api from "../../services/api";
+import avatar from "../../assets/avatar.jpg";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/core";
+import { ActivityIndicator, NativeScrollEvent } from "react-native";
+import { io, Socket } from "socket.io-client";
+import { useTheme } from "styled-components";
+import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
+import { useAuth } from "../../contexts/auth";
 import {
   Container,
   EmojiButton,
+  File,
+  FilesContainer,
+  ImageFile,
+  OtherFile,
   FormContainer,
   InputContainer,
   MessageContainer,
   MessageInput,
+  Messages,
   OptionsButton,
   OptionsContainer,
   SendButton,
+  RemoveFileButton,
+  Files,
 } from "./styles";
+
+const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
+
+interface File {
+  file: DocumentPicker.DocumentResult;
+  type: "image" | "other";
+}
 
 const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
@@ -30,7 +45,7 @@ const Chat: React.FC = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageData[]>([]);
-  const [files, setFiles] = useState<DocumentPicker.DocumentResult[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -111,17 +126,27 @@ const Chat: React.FC = () => {
   }, [page]);
 
   const handleFileSelector = useCallback(async () => {
-    const file = await DocumentPicker.getDocumentAsync({ multiple: true });
+    const file = await DocumentPicker.getDocumentAsync({});
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1000 / 1000);
-      if (fileSize > 12 || filesSizeUsed + fileSize > 12)
+      const type = file.name.split(".").pop();
+      if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
         return setLargeFile(true);
+      }
 
       setFilesSizeUsed((used) => used + fileSize);
-      return setFiles((oldFiles) => [file, ...oldFiles]);
+      setFiles((oldFiles) => [
+        { file, type: type && imageTypes.includes(type) ? "image" : "other" },
+        ...oldFiles,
+      ]);
     }
   }, [files]);
+
+  const removeFile = (position: number) => {
+    const filteredFiles = files.filter((f, index) => index !== position);
+    setFiles(filteredFiles);
+  };
 
   const handleFetchMoreMessages = useCallback(
     async (event: NativeScrollEvent) => {
@@ -156,9 +181,12 @@ const Chat: React.FC = () => {
     [messages]
   );
 
-  function handleSetMessage(message: string) {
-    setMessage(message);
-  }
+  const handleSetMessage = useCallback(
+    (message: string) => {
+      setMessage(message);
+    },
+    [message]
+  );
 
   function handleShowEmojiPicker() {
     setShowEmojiPicker(!showEmojiPicker);
@@ -170,6 +198,7 @@ const Chat: React.FC = () => {
 
     socket?.emit("new_user_message", { message });
   }
+
   if (loading) return <Loading />;
 
   return (
@@ -183,7 +212,7 @@ const Chat: React.FC = () => {
       <Header title={group.name} backButton groupButtons />
       <Container>
         <MessageContainer>
-          <FlatList<MessageData>
+          <Messages
             data={messages}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
@@ -201,13 +230,47 @@ const Chat: React.FC = () => {
                 <></>
               )
             }
-            renderItem={({ item, index }) => {
-              return renderMessage(item, index);
-            }}
+            renderItem={({ item, index }) => renderMessage(item, index)}
             inverted
           />
         </MessageContainer>
         <FormContainer>
+          {files.length > 0 && (
+            <FilesContainer>
+              <Files
+                data={files}
+                keyExtractor={(item) =>
+                  item.file.type == "success"
+                    ? item.file.name
+                    : String(Math.random())
+                }
+                horizontal={true}
+                contentContainerStyle={{
+                  alignItems: "center",
+                }}
+                renderItem={({ item, index }) => {
+                  return (
+                    <File>
+                      <RemoveFileButton onPress={() => removeFile(index)}>
+                        <Feather name="x" size={14} color={colors.secondary} />
+                      </RemoveFileButton>
+                      {item.file.type === "success" && item.type === "image" ? (
+                        <ImageFile source={{ uri: item.file.uri }} />
+                      ) : (
+                        <OtherFile>
+                          <Feather
+                            name="file-text"
+                            size={25}
+                            color={colors.black}
+                          />
+                        </OtherFile>
+                      )}
+                    </File>
+                  );
+                }}
+              />
+            </FilesContainer>
+          )}
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
               {!showEmojiPicker ? (
