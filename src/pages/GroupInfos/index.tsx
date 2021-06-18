@@ -95,14 +95,12 @@ const GroupInfos: React.FC = () => {
                 </JoinGroupButton>
               </JoinGroupContainer>
 
-              <HorizontalLine />
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>
                   <ParticipantsNumber>290</ParticipantsNumber>
                   <ParticipantsTitle>Participantes</ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>
-              <HorizontalLine />
               <GroupDescContainer>
                 <GroupDescTitle>Descrição</GroupDescTitle>
                 <GroupDesc>{group.description}</GroupDesc>

@@ -11,7 +11,6 @@ import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
 import Routes from "./src/routes";
-import { SocketProvider } from "./src/contexts/socket";
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -27,9 +26,7 @@ export default function App() {
     <AppearanceProvider>
       <ThemeControllerProvider>
         <AuthProvider>
-          <SocketProvider>
-            <Routes />
-          </SocketProvider>
+          <Routes />
         </AuthProvider>
       </ThemeControllerProvider>
     </AppearanceProvider>

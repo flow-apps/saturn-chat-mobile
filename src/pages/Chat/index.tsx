@@ -1,13 +1,8 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import * as DocumentPicker from "expo-document-picker";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  NativeScrollEvent,
-  VirtualizedList,
-} from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, NativeScrollEvent } from "react-native";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
@@ -16,7 +11,6 @@ import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
 import { useAuth } from "../../contexts/auth";
-import { useSocket } from "../../contexts/socket";
 import api from "../../services/api";
 import {
   Container,
@@ -36,27 +30,23 @@ const Chat: React.FC = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<MessageData[]>([]);
-  const [sendFiles, setSendFiles] = useState<DocumentPicker.DocumentResult[]>(
-    []
-  );
+  const [files, setFiles] = useState<DocumentPicker.DocumentResult[]>([]);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [group, setGroup] = useState<GroupData>({} as GroupData);
-  const [socket, setSocket] = useState<Socket>({} as Socket);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   const [page, setPage] = useState(0);
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
 
-  const chatScrollRef = useRef() as React.MutableRefObject<FlatList>;
   const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
-  const { connectInGroup } = useSocket();
 
   useEffect(() => {
     async function initChat() {
       setLoading(true);
-      const socketIO = io("http://192.168.0.112:3000/", {
+      const connectedSocket = io("http://192.168.0.112:3000/", {
         path: "/socket.io/",
         jsonp: false,
         reconnection: true,
@@ -68,18 +58,7 @@ const Chat: React.FC = () => {
           token,
         },
       });
-      setSocket(socketIO);
-
-      socketIO.on("sended_user_message", (msg) => {
-        setMessages((oldMessages) => [msg, ...oldMessages]);
-      });
-      socketIO.on("new_user_message", (msg) => {
-        setMessages((old) => [msg, ...old]);
-      });
-
-      socketIO.on("delete_user_message", (msgID) => {
-        setMessages((old) => old.filter((msg) => msg.id !== msgID));
-      });
+      setSocket(connectedSocket);
 
       const res = await api.get(`/group/${id}`);
 
@@ -96,6 +75,22 @@ const Chat: React.FC = () => {
   useEffect(() => {
     fetchMessages();
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("sended_user_message", (msg) =>
+      setMessages((oldMessages) => [msg, ...oldMessages])
+    );
+
+    socket.on("new_user_message", (msg) => {
+      setMessages((old) => [msg, ...old]);
+    });
+
+    socket.on("delete_user_message", (msgID) => {
+      setMessages((old) => old.filter((msg) => msg.id !== msgID));
+    });
+  }, [socket]);
 
   const fetchMessages = useCallback(async () => {
     setFetching(true);
@@ -124,9 +119,9 @@ const Chat: React.FC = () => {
         return setLargeFile(true);
 
       setFilesSizeUsed((used) => used + fileSize);
-      return setSendFiles((files) => [file, ...files]);
+      return setFiles((oldFiles) => [file, ...oldFiles]);
     }
-  }, []);
+  }, [files]);
 
   const handleFetchMoreMessages = useCallback(
     async (event: NativeScrollEvent) => {
@@ -154,7 +149,7 @@ const Chat: React.FC = () => {
           socket={socket}
           index={index}
           user={user as unknown as UserData}
-          lastMessage={messages[index - 1]}
+          lastMessage={index !== 0 ? messages[index - 1] : ({} as MessageData)}
         />
       );
     },
@@ -171,9 +166,9 @@ const Chat: React.FC = () => {
 
   async function handleMessageSubmit() {
     setMessage("");
-    setSendFiles([]);
+    setFiles([]);
 
-    socket.emit("new_user_message", { message });
+    socket?.emit("new_user_message", { message });
   }
   if (loading) return <Loading />;
 
@@ -190,7 +185,6 @@ const Chat: React.FC = () => {
         <MessageContainer>
           <FlatList<MessageData>
             data={messages}
-            ref={chatScrollRef}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
             maxToRenderPerBatch={15}
@@ -207,7 +201,9 @@ const Chat: React.FC = () => {
                 <></>
               )
             }
-            renderItem={({ item, index }) => renderMessage(item, index)}
+            renderItem={({ item, index }) => {
+              return renderMessage(item, index);
+            }}
             inverted
           />
         </MessageContainer>

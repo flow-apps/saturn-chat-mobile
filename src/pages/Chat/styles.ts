@@ -54,3 +54,17 @@ export const MessageContainer = styled.View`
   flex: 1;
   padding: 0px 5px 0px 5px;
 `;
+
+export const DateSeparatorContainer = styled.View`
+  align-items: center;
+  margin: 20px auto;
+  background-color: ${(props) => props.theme.colors.light_secondary};
+  padding: 5px 15px;
+  border-radius: 30px;
+`;
+
+export const DateSeparator = styled.Text`
+  font-size: 12px;
+  font-family: ${fonts.code};
+  color: #000;
+`;

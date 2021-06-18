@@ -1,12 +1,17 @@
+import { format, parseISO } from "date-fns";
+import { convertToTimeZone } from "date-fns-timezone";
 import Clipboard from "expo-clipboard";
+import * as Localize from "expo-localization";
 // import MarkdownIt from "markdown-it";
 import React, { memo, useCallback, useState } from "react";
 import { Linking } from "react-native";
 import Markdown, { MarkdownIt } from "react-native-markdown-display";
+import Toast from "react-native-simple-toast";
+import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { MessageData, UserData } from "../../../@types/interfaces";
 import Alert from "../Alert";
-import Toast from "react-native-simple-toast";
+import MessageOptions from "../MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
@@ -17,10 +22,10 @@ import {
   MessageCodeInline,
   MessageContent,
   MessageContentContainer,
+  MessageDate,
+  MessageDateContainer,
   MessageLink,
 } from "./styles";
-import MessageOptions from "../MessageOptions";
-import { Socket } from "socket.io-client";
 
 interface MessageProps {
   user: UserData;
@@ -40,8 +45,13 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
-
   const { colors } = useTheme();
+  const markdownRules = MarkdownIt({
+    linkify: true,
+    typographer: true,
+  })
+    .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
+    .use(require("markdown-it-linkscheme"));
 
   const renderAuthor = useCallback(() => {
     if (index === 0) {
@@ -64,6 +74,15 @@ const Message = ({
       );
     }
   }, [message, lastMessage, index]);
+
+  const formatHour = useCallback((date: string) => {
+    const isoDate = parseISO(date);
+    const tzDate = convertToTimeZone(isoDate, {
+      timeZone: Localize.timezone,
+    });
+
+    return format(tzDate, "dd/MM/yy, HH:mm");
+  }, []);
 
   const deleteMessage = useCallback(() => {
     socket.emit("delete_user_message", message.id);
@@ -92,13 +111,6 @@ const Message = ({
     setLinkUrl("");
     return setShowLinkAlert(false);
   }, []);
-
-  const markdownRules = MarkdownIt({
-    linkify: true,
-    typographer: true,
-  })
-    .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
-    .use(require("markdown-it-linkscheme"));
 
   return (
     <>
@@ -183,6 +195,9 @@ const Message = ({
             {message.message}
           </Markdown>
         </MessageContentContainer>
+        <MessageDateContainer>
+          <MessageDate>{formatHour(message.created_at)}</MessageDate>
+        </MessageDateContainer>
         {renderAuthor()}
       </Container>
     </>

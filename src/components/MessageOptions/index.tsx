@@ -43,30 +43,19 @@ const MessageOptions = ({
   }, []);
 
   return (
-    <Container
-      visible={visible}
-      onRequestClose={close}
-      onDismiss={close}
-      transparent
-    >
-      <StatusBar backgroundColor="#000" style="light" animated translucent />
-      <MessageOptionsContainer>
-        <MessageOptionsModal>
-          {options.map((option, index) =>
-            option.onlyOwner && message.author.id === user?.id ? (
-              <Option
-                key={index}
-                onPress={() => handleExecAction(option.action)}
-              >
-                <OptionText color={option.color}>
-                  {option.iconName && (
-                    <Feather name={option.iconName} size={18} />
-                  )}{" "}
-                  {option.content}
-                </OptionText>
-              </Option>
-            ) : (
-              !option.onlyOwner && (
+    <>
+      <Container
+        visible={visible}
+        onRequestClose={close}
+        onDismiss={close}
+        animationType="fade"
+        transparent
+      >
+        <StatusBar backgroundColor="#000" style="light" animated />
+        <MessageOptionsContainer>
+          <MessageOptionsModal>
+            {options.map((option, index) =>
+              option.onlyOwner && message.author.id === user?.id ? (
                 <Option
                   key={index}
                   onPress={() => handleExecAction(option.action)}
@@ -78,12 +67,26 @@ const MessageOptions = ({
                     {option.content}
                   </OptionText>
                 </Option>
+              ) : (
+                !option.onlyOwner && (
+                  <Option
+                    key={index}
+                    onPress={() => handleExecAction(option.action)}
+                  >
+                    <OptionText color={option.color}>
+                      {option.iconName && (
+                        <Feather name={option.iconName} size={18} />
+                      )}{" "}
+                      {option.content}
+                    </OptionText>
+                  </Option>
+                )
               )
-            )
-          )}
-        </MessageOptionsModal>
-      </MessageOptionsContainer>
-    </Container>
+            )}
+          </MessageOptionsModal>
+        </MessageOptionsContainer>
+      </Container>
+    </>
   );
 };
 

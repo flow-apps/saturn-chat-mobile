@@ -1,10 +1,9 @@
-import React, { useContext, useEffect } from "react";
-import { useCallback } from "react";
-import { createContext } from "react";
+import React, { useContext, useCallback, createContext } from "react";
 import { useColorScheme } from "react-native";
 import { DefaultTheme } from "styled-components";
 import { ThemeProvider } from "styled-components/native";
 import { usePersistedState } from "../hooks/usePersistedState";
+import Constants from "expo-constants";
 import dark from "../styles/themes/dark";
 import light from "../styles/themes/light";
 

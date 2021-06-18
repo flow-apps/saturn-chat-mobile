@@ -44,20 +44,16 @@ const Search: React.FC = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
-  const setQuerySearch = useCallback(
-    (text) => {
-      setQuery(text);
-    },
-    [query]
-  );
+  const setQuerySearch = useCallback((text) => {
+    setQuery(text);
+  }, []);
 
-  async function handleSearch() {
-    if (!query) return;
+  const handleSearch = useCallback(async () => {
+    if (!query || loading) return;
 
-    Keyboard.dismiss();
     setLoading(true);
-    setPage(0);
     setLoadedAll(false);
+    setPage(0);
 
     const response = await api.get(`/groups/search?q=${query}`);
 
@@ -66,9 +62,9 @@ const Search: React.FC = () => {
     }
 
     setLoading(false);
-  }
+  }, [query]);
 
-  async function fetchMoreGroups() {
+  const fetchMoreGroups = useCallback(async () => {
     setLoading(true);
     const response = await api.get(
       `/groups/search?q=${query}&_page=${page}&_limit=20`
@@ -86,7 +82,7 @@ const Search: React.FC = () => {
       setGroups((old) => [...old, ...response.data]);
     }
     setLoading(false);
-  }
+  }, [page]);
 
   async function reachEnd(distance: number) {
     if (distance < 1 || loadedAll) return;

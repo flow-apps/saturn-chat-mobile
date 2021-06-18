@@ -77,3 +77,13 @@ export const MessageOptionsContainer = styled.View`
   height: 100px;
   background-color: #00000088;
 `;
+
+export const MessageDateContainer = styled.View`
+  margin-top: 5px;
+`;
+
+export const MessageDate = styled.Text`
+  color: ${(props) => props.theme.colors.dark_heading};
+  font-family: ${fonts.text};
+  font-size: 12px;
+`;
