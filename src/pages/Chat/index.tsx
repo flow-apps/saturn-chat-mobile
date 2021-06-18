@@ -146,7 +146,7 @@ const Chat: React.FC = () => {
       return (
         <Message
           message={item}
-          socket={socket}
+          socket={socket as Socket}
           index={index}
           user={user as unknown as UserData}
           lastMessage={index !== 0 ? messages[index - 1] : ({} as MessageData)}
