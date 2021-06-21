@@ -1,6 +1,6 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
 import { GroupData, UserData } from "../../../@types/interfaces";

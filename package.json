@@ -19,6 +19,7 @@
     "axios": "^0.21.1",
     "date-fns": "^2.22.1",
     "date-fns-timezone": "^0.1.4",
+    "emoji-datasource": "^7.0.2",
     "expo": "^41.0.1",
     "expo-app-loading": "^1.0.3",
     "expo-clipboard": "~1.0.2",
@@ -51,6 +52,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@types/emoji-js": "^3.5.0",
+    "@types/lodash": "^4.14.170",
     "@types/markdown-it": "^12.0.2",
     "@types/mime-types": "^2.1.0",
     "@types/react": "~16.9.35",
@@ -58,6 +61,8 @@
     "@types/socket.io-client": "^3.0.0",
     "@types/styled-components": "^5.1.9",
     "@types/styled-components-react-native": "^5.1.1",
+    "emoji-js": "^3.5.0",
+    "lodash": "^4.17.21",
     "mime-types": "^2.1.31",
     "typescript": "~4.0.0"
   },

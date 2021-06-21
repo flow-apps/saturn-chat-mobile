@@ -95,3 +95,7 @@ export const MessageInput = styled.TextInput`
   max-height: 120px;
   color: ${(props) => props.theme.colors.black};
 `;
+
+export const EmojiBoardContainer = styled.View`
+  margin: 10px;
+`;

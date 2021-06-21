@@ -30,7 +30,13 @@ import {
   SendButton,
   RemoveFileButton,
   Files,
+  EmojiBoardContainer,
 } from "./styles";
+import fonts from "../../styles/fonts";
+import { Keyboard } from "react-native";
+import { TextInput } from "react-native";
+import { useRef } from "react";
+import EmojiPicker from "../../components/EmojiPicker";
 
 const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
 
@@ -54,6 +60,7 @@ const Chat: React.FC = () => {
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
 
+  const messageInputRef = useRef<TextInput>(null);
   const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
@@ -80,6 +87,8 @@ const Chat: React.FC = () => {
       if (res.status === 200) {
         setGroup(res.data);
       }
+
+      Keyboard.addListener("keyboardDidShow", () => setShowEmojiPicker(false));
 
       setLoading(false);
     }
@@ -181,15 +190,22 @@ const Chat: React.FC = () => {
     [messages]
   );
 
-  const handleSetMessage = useCallback(
-    (message: string) => {
-      setMessage(message);
-    },
-    [message]
-  );
+  const handleSetMessage = useCallback((message: string) => {
+    setMessage(message);
+  }, []);
 
   function handleShowEmojiPicker() {
-    setShowEmojiPicker(!showEmojiPicker);
+    if (!showEmojiPicker) {
+      setShowEmojiPicker(true);
+      return Keyboard.dismiss();
+    }
+
+    setShowEmojiPicker(false);
+    if (messageInputRef.current) messageInputRef.current.focus();
+  }
+
+  function handleSelectEmoji(emoji: string) {
+    setMessage((old) => old + emoji);
   }
 
   async function handleMessageSubmit() {
@@ -271,7 +287,7 @@ const Chat: React.FC = () => {
               />
             </FilesContainer>
           )}
-          <InputContainer>
+          <InputContainer style={{ marginBottom: showEmojiPicker ? 300 : 25 }}>
             <EmojiButton onPress={handleShowEmojiPicker}>
               {!showEmojiPicker ? (
                 <Feather name="smile" size={24} color={colors.secondary} />
@@ -284,6 +300,8 @@ const Chat: React.FC = () => {
               )}
             </EmojiButton>
             <MessageInput
+              ref={messageInputRef}
+              as={TextInput}
               placeholder="Sua mensagem..."
               onChangeText={handleSetMessage}
               value={message}
@@ -312,6 +330,7 @@ const Chat: React.FC = () => {
               </SendButton>
             </OptionsContainer>
           </InputContainer>
+          <EmojiPicker onClick={handleSelectEmoji} />
         </FormContainer>
       </Container>
     </>
