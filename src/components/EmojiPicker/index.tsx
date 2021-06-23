@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo, useState, useEffect, memo } from "react";
-import { FlatList, Text } from "react-native";
+import { FlatList } from "react-native";
 import _ from "lodash";
 import emojiSource from "emoji-datasource";
 
-import { Container, EmojiContainer, Emoji } from "./styles";
+import { Container, EmojiContainer, EmojiTitle, Emoji } from "./styles";
 import { StorageService } from "../../services/Storage";
 import EmojiConversor from "emoji-js";
 
@@ -16,14 +16,12 @@ interface EmojiPickerProps {
 const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
   const [lastEmojis, setLastEmojis] = useState<string[]>();
   const emojiJS = new EmojiConversor();
-  const emojis = useMemo(
-    () => emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by),
-    [emojiSource]
-  );
 
-  const memoizedEmojis = useMemo(() => {
-    return _.orderBy(emojis, "sort_order");
-  }, [emojis]);
+  const emojis = emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by);
+  const memoizedEmojis = useMemo(
+    () => _.orderBy(emojis, "sort_order"),
+    [emojis]
+  );
 
   useEffect(() => {
     (async () => {
@@ -68,7 +66,11 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
     index,
   });
 
-  const renderEmoji = ({ item }) => (
+  const getKey = (item: typeof emojiSource[0]) => {
+    return item.name;
+  };
+
+  const renderEmoji = ({ item }: any) => (
     <EmojiContainer
       onPress={() =>
         handleSelectEmoji(item.unified && codeToEmoji(item.unified))
@@ -80,22 +82,16 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
 
   return (
     <Container>
-      {lastEmojis &&
-        lastEmojis.map((item, index) => (
-          <EmojiContainer>
-            <Emoji key={index}>{String(item)}</Emoji>
-          </EmojiContainer>
-        ))}
+      <EmojiTitle>Selecione emojis</EmojiTitle>
       <FlatList
         data={memoizedEmojis}
-        windowSize={1}
+        windowSize={3}
         getItemLayout={getItemLayout}
-        keyExtractor={(item) => item.name}
-        numColumns={9}
-        initialNumToRender={1}
+        keyExtractor={getKey}
+        numColumns={8}
+        initialNumToRender={20}
         maxToRenderPerBatch={10}
         renderItem={renderEmoji}
-        removeClippedSubviews
       />
     </Container>
   );

@@ -287,7 +287,7 @@ const Chat: React.FC = () => {
               />
             </FilesContainer>
           )}
-          <InputContainer style={{ marginBottom: showEmojiPicker ? 300 : 25 }}>
+          <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
               {!showEmojiPicker ? (
                 <Feather name="smile" size={24} color={colors.secondary} />
@@ -330,7 +330,7 @@ const Chat: React.FC = () => {
               </SendButton>
             </OptionsContainer>
           </InputContainer>
-          <EmojiPicker onClick={handleSelectEmoji} />
+          {showEmojiPicker && <EmojiPicker onClick={handleSelectEmoji} />}
         </FormContainer>
       </Container>
     </>
