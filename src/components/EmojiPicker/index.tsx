@@ -8,8 +8,6 @@ import {
   TopOptionsContainer,
   TopOption,
   EmojiContainer,
-  LastEmojisContainer,
-  LastEmojis,
   Emoji,
 } from "./styles";
 import { StorageService } from "../../services/Storage";

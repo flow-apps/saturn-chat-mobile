@@ -70,17 +70,18 @@ const Home: React.FC = () => {
     []
   );
 
+  const handleGoNewGroup = () => {
+    navigation.navigate("NewGroup");
+  };
+
   if (loading) return <Loading />;
   return (
     <Container>
       <Header title="Grupos" backButton={false} homeButtons />
       <QuickAccessGroupsContainer>
-        <QuickAccessTitle>
-          <MaterialIcons name="star" size={20} color={colors.secondary} />{" "}
-          Acesso rápido
-        </QuickAccessTitle>
+        <QuickAccessTitle>Grupos</QuickAccessTitle>
         <QuickAccessGroupsScroll>
-          <NewGroupButton>
+          <NewGroupButton onPress={handleGoNewGroup}>
             <Feather name="plus" size={35} color={colors.secondary} />
           </NewGroupButton>
           <FlatList

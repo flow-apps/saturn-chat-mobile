@@ -213,9 +213,8 @@ const Chat: React.FC = () => {
   }
 
   async function handleMessageSubmit() {
-    const emojifiedMessage = emoji.replace_colons(message);
     socket?.emit("new_user_message", {
-      message: emojifiedMessage,
+      message,
     });
     setMessage("");
     setFiles([]);
