@@ -89,7 +89,7 @@ export const SendButton = styled.TouchableOpacity``;
 
 export const MessageInput = styled.TextInput`
   flex: 1;
-  font-size: 16px;
+  font-size: 15px;
   font-family: ${fonts.text};
   margin: 0px 10px;
   max-height: 120px;
