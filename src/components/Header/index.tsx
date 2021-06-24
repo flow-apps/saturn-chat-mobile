@@ -3,7 +3,7 @@ import {
   Container,
   HeaderTitle,
   RightContainer,
-  Button,
+  HeaderButton,
   LeftContainer,
 } from "./styles";
 import { Feather, FontAwesome } from "@expo/vector-icons";
@@ -14,16 +14,10 @@ import { StatusBar } from "expo-status-bar";
 interface HeaderProps {
   title: string;
   backButton?: boolean;
-  homeButtons?: boolean;
-  groupButtons?: boolean;
+  children?: React.ReactChild;
 }
 
-const Header = ({
-  title,
-  backButton,
-  homeButtons,
-  groupButtons,
-}: HeaderProps) => {
+const Header = ({ title, backButton, children }: HeaderProps) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -33,56 +27,18 @@ const Header = ({
     }
   }
 
-  function handleGoMyProfile() {
-    navigation.navigate("MyProfile");
-  }
-
-  function handleGoGroupConfig() {
-    navigation.navigate("GroupConfig");
-  }
-
-  function handleGoSearch() {
-    navigation.navigate("Search");
-  }
-
   return (
     <Container>
       <StatusBar backgroundColor={colors.primary} style="inverted" />
       <RightContainer>
         {backButton && (
-          <Button onPress={handleBack}>
+          <HeaderButton onPress={handleBack}>
             <Feather name="arrow-left" size={25} color={"#fff"} />
-          </Button>
+          </HeaderButton>
         )}
         <HeaderTitle numberOfLines={1}>{title}</HeaderTitle>
       </RightContainer>
-      <LeftContainer>
-        {homeButtons && (
-          <>
-            <Button onPress={handleGoSearch}>
-              <Feather name="search" size={25} color={"#fff"} />
-            </Button>
-            <Button>
-              <Feather
-                name="user"
-                size={25}
-                color={"#fff"}
-                onPress={handleGoMyProfile}
-              />
-            </Button>
-          </>
-        )}
-        {groupButtons && (
-          <Button>
-            <Feather
-              name="more-vertical"
-              size={25}
-              color={"#fff"}
-              onPress={handleGoGroupConfig}
-            />
-          </Button>
-        )}
-      </LeftContainer>
+      <LeftContainer>{children}</LeftContainer>
     </Container>
   );
 };

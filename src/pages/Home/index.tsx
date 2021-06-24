@@ -6,6 +6,7 @@ import { useTheme } from "styled-components/native";
 import { GroupData, UserData } from "../../../@types/interfaces";
 import Group from "../../components/Group";
 import Header from "../../components/Header";
+import { HeaderButton } from "../../components/Header/styles";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
 import {
@@ -59,6 +60,10 @@ const Home: React.FC = () => {
     setLoading(false);
   }, []);
 
+  const handleGoSearch = () => navigation.navigate("Search");
+
+  const handleGoUserProfile = () => navigation.navigate("MyProfile");
+
   const handleGoChat = useCallback(
     (id: string) =>
       navigation.navigate("Chat", {
@@ -70,14 +75,21 @@ const Home: React.FC = () => {
     []
   );
 
-  const handleGoNewGroup = () => {
-    navigation.navigate("NewGroup");
-  };
+  const handleGoNewGroup = () => navigation.navigate("NewGroup");
 
   if (loading) return <Loading />;
   return (
     <Container>
-      <Header title="Grupos" backButton={false} homeButtons />
+      <Header title="Grupos" backButton={false}>
+        <>
+          <HeaderButton onPress={handleGoSearch}>
+            <Feather name="search" size={22} color="#fff" />
+          </HeaderButton>
+          <HeaderButton onPress={handleGoUserProfile}>
+            <Feather name="user" size={22} color="#fff" />
+          </HeaderButton>
+        </>
+      </Header>
       <QuickAccessGroupsContainer>
         <QuickAccessTitle>Grupos</QuickAccessTitle>
         <QuickAccessGroupsScroll>

@@ -1,19 +1,18 @@
-import React, { useCallback, useState, useEffect, memo } from "react";
-import { FlatList } from "react-native";
-import _ from "lodash";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { Feather, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import emojiSource from "emoji-datasource";
-
+import _ from "lodash";
+import { FlatList } from "react-native";
+import Toast from "react-native-simple-toast";
+import { useTheme } from "styled-components";
+import { StorageService } from "../../services/Storage";
 import {
   Container,
-  TopOptionsContainer,
-  TopOption,
-  EmojiContainer,
   Emoji,
+  EmojiContainer,
+  TopOption,
+  TopOptionsContainer,
 } from "./styles";
-import { StorageService } from "../../services/Storage";
-import { Feather, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
-import { useTheme } from "styled-components";
-import Toast from "react-native-simple-toast";
 
 const Storage = new StorageService();
 
@@ -30,6 +29,7 @@ enum Categories {
   ACTIVITIES = "Activities",
   OBJECTS = "Objects",
   PLACES = "Travel & Places",
+  SYMBOLS = "Symbols",
   FLAGS = "Flags",
 }
 
@@ -156,7 +156,7 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
         <TopOption onPress={() => selectEmojisByCategory(Categories.OBJECTS)}>
           <Feather name="camera" size={22} color={colors.black} />
         </TopOption>
-        <TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.SYMBOLS)}>
           <Feather name="hash" size={22} color={colors.black} />
         </TopOption>
         <TopOption onPress={() => selectEmojisByCategory(Categories.FLAGS)}>

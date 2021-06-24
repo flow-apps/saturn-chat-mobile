@@ -3,6 +3,7 @@ import fonts from "../../styles/fonts";
 
 export const Container = styled.ScrollView`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const MyProfileContainer = styled.View`
@@ -65,6 +66,7 @@ export const FollowTitle = styled.Text`
   font-family: ${fonts.text};
   text-align: center;
   margin-top: -5px;
+  color: ${(props) => props.theme.colors.black};
 `;
 
 export const GroupsContainer = styled.View`

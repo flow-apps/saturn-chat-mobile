@@ -28,6 +28,6 @@ export const RightContainer = styled.View`
 
 export const LeftContainer = styled(RightContainer)``;
 
-export const Button = styled.TouchableOpacity`
+export const HeaderButton = styled.TouchableOpacity`
   margin-right: 15px;
 `;

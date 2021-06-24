@@ -5,10 +5,9 @@ import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
 import api from "../../services/api";
-import avatar from "../../assets/avatar.jpg";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
-import { ActivityIndicator, NativeScrollEvent } from "react-native";
+import { ActivityIndicator, NativeScrollEvent, Text } from "react-native";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
@@ -32,12 +31,13 @@ import {
   Files,
   EmojiBoardContainer,
 } from "./styles";
-import fonts from "../../styles/fonts";
 import { Keyboard } from "react-native";
 import { TextInput } from "react-native";
 import { useRef } from "react";
 import EmojiPicker from "../../components/EmojiPicker";
 import EmojiJS from "emoji-js";
+import { HeaderButton } from "../../components/Header/styles";
+import { useNavigation } from "@react-navigation/native";
 
 const emoji = new EmojiJS();
 
@@ -65,12 +65,13 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
 
   const messageInputRef = useRef<TextInput>(null);
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
 
   useEffect(() => {
-    async function initChat() {
+    (async function () {
       setLoading(true);
       const connectedSocket = io("http://192.168.0.112:3000/", {
         path: "/socket.io/",
@@ -95,9 +96,7 @@ const Chat: React.FC = () => {
       Keyboard.addListener("keyboardDidShow", () => setShowEmojiPicker(false));
 
       setLoading(false);
-    }
-
-    initChat();
+    })();
   }, []);
 
   useEffect(() => {
@@ -207,6 +206,10 @@ const Chat: React.FC = () => {
     setMessage(emojifiedMessage);
   }, []);
 
+  const handleGoGroupConfig = useCallback(() => {
+    navigation.navigate("GroupConfig", { id });
+  }, [id]);
+
   function handleShowEmojiPicker() {
     if (!showEmojiPicker) {
       setShowEmojiPicker(true);
@@ -233,6 +236,11 @@ const Chat: React.FC = () => {
 
   return (
     <>
+      <Header title={group.name} backButton>
+        <HeaderButton onPress={handleGoGroupConfig}>
+          <Feather name="more-vertical" size={22} color="#fff" />
+        </HeaderButton>
+      </Header>
       <Alert
         title="😱 Que coisa pesada!"
         content="Eu não consigo carregar algo tão pesado, tente algo de até 12MB!"
@@ -245,7 +253,6 @@ const Chat: React.FC = () => {
         okButtonAction={() => setIsSelectedFile(false)}
         visible={isSelectedFile}
       />
-      <Header title={group.name} backButton groupButtons />
       <Container>
         <MessageContainer>
           <Messages
