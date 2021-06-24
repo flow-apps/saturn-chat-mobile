@@ -50,6 +50,7 @@ interface File {
 
 const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
+  const [isSelectedFile, setIsSelectedFile] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState<string>("");
@@ -147,6 +148,14 @@ const Chat: React.FC = () => {
         return setLargeFile(true);
       }
 
+      const isSelected = files.find(
+        (f) => f.file.type === "success" && f.file.name === file.name
+      );
+
+      if (isSelected) {
+        return setIsSelectedFile(true);
+      }
+
       setFilesSizeUsed((used) => used + fileSize);
       setFiles((oldFiles) => [
         { file, type: type && imageTypes.includes(type) ? "image" : "other" },
@@ -230,6 +239,12 @@ const Chat: React.FC = () => {
         okButtonAction={() => setLargeFile(false)}
         visible={largeFile}
       />
+      <Alert
+        title="🤔 Já vi isso antes..."
+        content="Você já escolheu este arquivo para ser enviado!"
+        okButtonAction={() => setIsSelectedFile(false)}
+        visible={isSelectedFile}
+      />
       <Header title={group.name} backButton groupButtons />
       <Container>
         <MessageContainer>
@@ -260,9 +275,9 @@ const Chat: React.FC = () => {
             <FilesContainer>
               <Files
                 data={files}
-                keyExtractor={(item) =>
+                keyExtractor={(item, index) =>
                   item.file.type == "success"
-                    ? item.file.name
+                    ? item.file.name + index
                     : String(Math.random())
                 }
                 horizontal={true}
