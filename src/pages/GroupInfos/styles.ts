@@ -65,7 +65,8 @@ export const JoinGroupButton = styled.TouchableOpacity<{
 export const JoinGroupButtonText = styled.Text<{ participating?: boolean }>`
   font-size: 16px;
   font-family: ${fonts.text};
-  color: ${(props) => (props.participating ? "#fff" : "#000")};
+  color: ${(props) =>
+    props.participating ? props.theme.colors.black : props.theme.colors.black};
 `;
 
 export const GroupDescContainer = styled.View`

@@ -116,7 +116,7 @@ const Register: React.FC = () => {
       type: `image/${fileType}`,
     });
 
-    return signUp(data as unknown as FormData);
+    return signUp(data);
   }
 
   return (

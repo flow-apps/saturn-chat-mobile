@@ -3,7 +3,6 @@ import { useNavigation, useRoute } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import { GroupData } from "../../../@types/interfaces";
 import Header from "../../components/Header";
-import HorizontalLine from "../../components/HorizontalLine";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
 import {
@@ -60,6 +59,7 @@ const GroupInfos: React.FC = () => {
     const response = await api.get(`/group/participants/new/${group.id}`);
 
     if (response.status === 200) {
+      setIsParticipating(true);
       return navigation.navigate("Chat", {
         screen: "ChatTalk",
         params: {

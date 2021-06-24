@@ -61,6 +61,7 @@ const Login: React.FC = () => {
                   <Feather name="at-sign" size={16} /> Email
                 </Label>
                 <Input
+                  placeholder="seu@email.com"
                   onChangeText={setEmail}
                   value={email}
                   keyboardType="email-address"

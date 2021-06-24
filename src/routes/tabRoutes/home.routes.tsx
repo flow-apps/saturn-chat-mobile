@@ -68,6 +68,7 @@ const HomeRoutes = () => {
           tabBarIcon: ({ color, size }) => (
             <Feather name="plus" size={size} color={color} />
           ),
+          unmountOnBlur: true,
         }}
       />
     </tabRoutes.Navigator>

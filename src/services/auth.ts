@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import api from "./api";
+import FormData from "form-data";
 
 interface Response extends AxiosResponse {
   data: {
