@@ -18,13 +18,13 @@ export const Container = styled.ScrollView`
 
 export const OptionsContainer = styled.View`
   width: 100%;
-  margin-top: 15px;
+  margin-top: 5px;
 `;
 
 export const SectionTitle = styled.Text<SectionTitleProps>`
   font-size: 20px;
   font-family: ${fonts.heading};
-  margin: 10px 0;
+  margin: 15px 0;
   margin-left: 7px;
   color: ${(props) =>
     props.color ? props.color : props.theme.colors.dark_heading};

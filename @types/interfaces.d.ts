@@ -16,6 +16,7 @@ export interface GroupData {
   group_avatar: {
     url: string;
   };
+  owner: UserData;
   created_at: string;
 }
 
