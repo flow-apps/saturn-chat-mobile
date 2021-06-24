@@ -37,6 +37,9 @@ import { Keyboard } from "react-native";
 import { TextInput } from "react-native";
 import { useRef } from "react";
 import EmojiPicker from "../../components/EmojiPicker";
+import EmojiJS from "emoji-js";
+
+const emoji = new EmojiJS();
 
 const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
 
@@ -191,7 +194,8 @@ const Chat: React.FC = () => {
   );
 
   const handleSetMessage = useCallback((message: string) => {
-    setMessage(message);
+    const emojifiedMessage = emoji.replace_colons(message);
+    setMessage(emojifiedMessage);
   }, []);
 
   function handleShowEmojiPicker() {
@@ -209,10 +213,12 @@ const Chat: React.FC = () => {
   }
 
   async function handleMessageSubmit() {
+    const emojifiedMessage = emoji.replace_colons(message);
+    socket?.emit("new_user_message", {
+      message: emojifiedMessage,
+    });
     setMessage("");
     setFiles([]);
-
-    socket?.emit("new_user_message", { message });
   }
 
   if (loading) return <Loading />;

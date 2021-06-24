@@ -1,11 +1,21 @@
-import React, { useCallback, useMemo, useState, useEffect, memo } from "react";
+import React, { useCallback, useState, useEffect, memo } from "react";
 import { FlatList } from "react-native";
 import _ from "lodash";
 import emojiSource from "emoji-datasource";
 
-import { Container, EmojiContainer, EmojiTitle, Emoji } from "./styles";
+import {
+  Container,
+  TopOptionsContainer,
+  TopOption,
+  EmojiContainer,
+  LastEmojisContainer,
+  LastEmojis,
+  Emoji,
+} from "./styles";
 import { StorageService } from "../../services/Storage";
-import EmojiConversor from "emoji-js";
+import { Feather, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { useTheme } from "styled-components";
+import Toast from "react-native-simple-toast";
 
 const Storage = new StorageService();
 
@@ -13,20 +23,54 @@ interface EmojiPickerProps {
   onClick: (emoji: string) => any;
 }
 
+enum Categories {
+  HISTORY = "History",
+  SMILEYS = "Smileys & Emotion",
+  PEOPLE = "People & Body",
+  NATURE = "Animals & Nature",
+  FOOD = "Food & Drink",
+  ACTIVITIES = "Activities",
+  OBJECTS = "Objects",
+  PLACES = "Travel & Places",
+  FLAGS = "Flags",
+}
+
 const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
-  const [lastEmojis, setLastEmojis] = useState<string[]>();
-  const emojiJS = new EmojiConversor();
+  const [lastEmojis, setLastEmojis] = useState<any[]>();
+  const [emojisToRender, setEmojisToRender] = useState<any[]>([]);
+  const [currentCategory, setCurrentCategory] = useState("");
+  const { colors } = useTheme();
 
   const emojis = emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by);
-  const memoizedEmojis = useMemo(
-    () => _.orderBy(emojis, "sort_order"),
-    [emojis]
+  const sortedEmojis = _.orderBy(emojis, "sort_order");
+  const emojisCategories = _.groupBy(sortedEmojis, "category");
+
+  const selectEmojisByCategory = useCallback(
+    (category: string) => {
+      if (currentCategory === category) return;
+      if (category === "History" && lastEmojis) {
+        return setEmojisToRender(lastEmojis);
+      }
+
+      setCurrentCategory(category);
+      return setEmojisToRender(emojisCategories[category]);
+    },
+    [emojisToRender]
   );
+
+  const clearEmojisHistory = async () => {
+    setLastEmojis([]);
+    Toast.show("Histórico de emojis apagado");
+    return await Storage.deleteItem("@SaturnChat:EmojiHistory");
+  };
+
+  useEffect(() => {
+    return setEmojisToRender(emojisCategories[Categories.SMILEYS]);
+  }, []);
 
   useEffect(() => {
     (async () => {
       const history = await Storage.getItem("@SaturnChat:EmojiHistory");
-
       if (history) {
         setLastEmojis(JSON.parse(history));
       }
@@ -34,20 +78,22 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
   }, []);
 
   const codeToEmoji = (code: any) => {
-    emojiJS.replace_mode = "unified";
-    emojiJS.allow_native = true;
-    emojiJS.text_mode = true;
-
-    const hex = emojiJS.replace_unified(code);
-    return String.fromCodePoint(parseInt(hex, 16));
+    var codes = code.split("-");
+    var buffer = "";
+    for (var i = 0; i < codes.length; i++) {
+      buffer += String.fromCodePoint(parseInt(codes[i], 16));
+    }
+    return buffer;
   };
 
-  const handleSelectEmoji = useCallback(async (emoji: string) => {
-    onClick(emoji);
+  const handleSelectEmoji = useCallback(async (emoji: any) => {
+    onClick(codeToEmoji(emoji.unified));
+    setLastEmojis((le) => (le ? [...le, emoji] : []));
+
     const emojiHistory = await Storage.getItem("@SaturnChat:EmojiHistory");
 
     if (emojiHistory) {
-      const newHistory = [emoji, ...JSON.parse(emojiHistory)];
+      const newHistory = [JSON.stringify(emoji), ...JSON.parse(emojiHistory)];
       await Storage.saveItem(
         "@SaturnChat:EmojiHistory",
         JSON.stringify(newHistory)
@@ -71,26 +117,62 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
   };
 
   const renderEmoji = ({ item }: any) => (
-    <EmojiContainer
-      onPress={() =>
-        handleSelectEmoji(item.unified && codeToEmoji(item.unified))
-      }
-    >
+    <EmojiContainer onPress={() => handleSelectEmoji(item)}>
       <Emoji>{item.unified && String(codeToEmoji(item.unified))}</Emoji>
     </EmojiContainer>
   );
 
   return (
     <Container>
-      <EmojiTitle>Selecione emojis</EmojiTitle>
+      <TopOptionsContainer>
+        <TopOption
+          onLongPress={clearEmojisHistory}
+          onPress={() => selectEmojisByCategory(Categories.HISTORY)}
+        >
+          <Feather name="clock" size={22} color={colors.primary} />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.SMILEYS)}>
+          <Feather name="smile" size={22} color={colors.black} />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.PEOPLE)}>
+          <Feather name="user" size={22} color={colors.black} />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.NATURE)}>
+          <Ionicons name="leaf-outline" size={22} color={colors.black} />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.FOOD)}>
+          <SimpleLineIcons name="cup" size={22} color={colors.black} />
+        </TopOption>
+        <TopOption
+          onPress={() => selectEmojisByCategory(Categories.ACTIVITIES)}
+        >
+          <Ionicons
+            name="ios-american-football-outline"
+            size={22}
+            color={colors.black}
+          />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.PLACES)}>
+          <SimpleLineIcons name="plane" size={25} color={colors.black} />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.OBJECTS)}>
+          <Feather name="camera" size={22} color={colors.black} />
+        </TopOption>
+        <TopOption>
+          <Feather name="hash" size={22} color={colors.black} />
+        </TopOption>
+        <TopOption onPress={() => selectEmojisByCategory(Categories.FLAGS)}>
+          <Feather name="flag" size={22} color={colors.black} />
+        </TopOption>
+      </TopOptionsContainer>
       <FlatList
-        data={memoizedEmojis}
+        data={emojisToRender}
         windowSize={3}
         getItemLayout={getItemLayout}
         keyExtractor={getKey}
         numColumns={8}
         initialNumToRender={20}
-        maxToRenderPerBatch={10}
+        maxToRenderPerBatch={1}
         renderItem={renderEmoji}
       />
     </Container>

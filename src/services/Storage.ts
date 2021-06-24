@@ -18,6 +18,14 @@ class StorageService {
       new Error(error);
     }
   }
+
+  async deleteItem(key: string) {
+    try {
+      await storage.removeItem(key);
+    } catch (error) {
+      new Error(error);
+    }
+  }
 }
 
 export { StorageService };

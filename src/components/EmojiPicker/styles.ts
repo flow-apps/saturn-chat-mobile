@@ -7,6 +7,16 @@ export const Container = styled.View`
   height: 200px;
   background-color: ${(props) => props.theme.colors.shape};
   padding: 12px;
+  border-radius: 12px;
+`;
+
+export const TopOptionsContainer = styled.View`
+  margin-bottom: 10px;
+  flex-direction: row;
+`;
+
+export const TopOption = styled.TouchableOpacity`
+  margin-right: 15px;
 `;
 
 export const EmojiContainer = memo(styled.TouchableOpacity`
@@ -14,12 +24,14 @@ export const EmojiContainer = memo(styled.TouchableOpacity`
   margin-right: 5px;
 `);
 
-export const EmojiTitle = styled.Text`
+export const LastEmojisContainer = styled.View`
   font-family: ${fonts.heading};
   font-size: 16px;
   color: ${(props) => props.theme.colors.black};
   margin-bottom: 10px;
 `;
+
+export const LastEmojis = styled.ScrollView``;
 
 export const Emoji = memo(styled.Text`
   font-size: 26px;
