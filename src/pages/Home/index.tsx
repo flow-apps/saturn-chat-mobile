@@ -65,13 +65,7 @@ const Home: React.FC = () => {
   const handleGoUserProfile = () => navigation.navigate("MyProfile");
 
   const handleGoChat = useCallback(
-    (id: string) =>
-      navigation.navigate("Chat", {
-        screen: "ChatTalk",
-        params: {
-          id,
-        },
-      }),
+    (id: string) => navigation.navigate("Chat", { id }),
     []
   );
 

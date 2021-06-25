@@ -54,6 +54,10 @@ const GroupConfig: React.FC = () => {
     navigation.navigate("GroupInfos", { id });
   }
 
+  function handleGoParticipants() {
+    navigation.navigate("Participants", { id });
+  }
+
   if (loading) return <Loading />;
 
   return (
@@ -62,6 +66,16 @@ const GroupConfig: React.FC = () => {
       <Container>
         <OptionsContainer>
           <SectionTitle>Gerais</SectionTitle>
+          <OptionContainer onPress={handleGoParticipants}>
+            <OptionText color={colors.secondary}>
+              <Feather name="users" size={25} /> Participantes
+            </OptionText>
+          </OptionContainer>
+          <OptionContainer>
+            <OptionText color={colors.primary}>
+              <Feather name="user-plus" size={25} /> Convidar usuários
+            </OptionText>
+          </OptionContainer>
           <OptionContainer onPress={handleGoGroupInfos}>
             <OptionText>
               <Feather name="file-text" size={25} /> Ver detalhes
@@ -75,11 +89,6 @@ const GroupConfig: React.FC = () => {
               currentValue={notifications}
               onChangeValue={handleSetNotifications}
             />
-          </OptionContainer>
-          <OptionContainer>
-            <OptionText color={colors.primary}>
-              <Feather name="user-plus" size={25} /> Convidar usuários
-            </OptionText>
           </OptionContainer>
           {group.owner.id === user?.id && (
             <>

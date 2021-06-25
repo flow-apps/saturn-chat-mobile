@@ -15,8 +15,6 @@ import {
 } from "./styles";
 
 const Storage = new StorageService();
-const emojis = emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by);
-const sortedEmojis = _.orderBy(emojis, "sort_order");
 
 interface EmojiPickerProps {
   onClick: (emoji: string) => any;
@@ -43,8 +41,10 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
   const { colors } = useTheme();
 
   const emojisCategories = useMemo(() => {
+    const emojis = emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by);
+    const sortedEmojis = _.orderBy(emojis, "sort_order");
     return _.groupBy(sortedEmojis, "category");
-  }, [emojis]);
+  }, [emojiSource]);
 
   const selectEmojisByCategory = useCallback(
     (category: string) => {
@@ -90,20 +90,19 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
     return buffer;
   };
 
-  const handleSelectEmoji = useCallback(async (emoji: any) => {
-    onClick(codeToEmoji(emoji.unified));
-    setLastEmojis((le) => (le ? [...le, emoji] : []));
-
+  const addToHistory = async (emoji: any) => {
     const emojiHistory = await Storage.getItem("@SaturnChat:EmojiHistory");
 
     if (emojiHistory) {
+      const parsedEmojiHistory = JSON.parse(emojiHistory);
       const hasEmoji = JSON.parse(emojiHistory).filter(
         (e: any) => e.name === emoji.name
       );
 
       if (hasEmoji.length > 0) return;
 
-      const newHistory = [emoji, ...JSON.parse(emojiHistory)];
+      const newHistory = [emoji, ...parsedEmojiHistory];
+
       await Storage.saveItem(
         "@SaturnChat:EmojiHistory",
         JSON.stringify(newHistory)
@@ -113,6 +112,15 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
         "@SaturnChat:EmojiHistory",
         JSON.stringify([emoji])
       );
+    }
+  };
+
+  const handleSelectEmoji = useCallback(async (emoji: any) => {
+    onClick(codeToEmoji(emoji.unified));
+    setLastEmojis((le) => (le ? [...le, emoji] : []));
+
+    if (emoji && currentCategory !== Categories.HISTORY) {
+      addToHistory(emoji);
     }
   }, []);
 

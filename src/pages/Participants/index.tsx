@@ -11,8 +11,20 @@ import {
   ParticipantAvatar,
   ParticipanteName,
 } from "./styles";
+import { useRoute } from "@react-navigation/native";
+import { useEffect } from "react";
+import api from "../../services/api";
 
 const Participants: React.FC = () => {
+  const route = useRoute();
+  const { id } = route.params as { id: string };
+
+  useEffect(() => {
+    (async () => {
+      // const res = api.get("");
+    })();
+  }, []);
+
   return (
     <>
       <Header title="Participantes (99)" />
