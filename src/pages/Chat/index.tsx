@@ -91,10 +91,7 @@ const Chat: React.FC = () => {
       });
 
       const res = await api.get(`/group/${id}`);
-
-      if (res.status === 200) {
-        setGroup(res.data);
-      }
+      if (res.status === 200) setGroup(res.data);
 
       Keyboard.addListener("keyboardDidShow", () => setShowEmojiPicker(false));
 
