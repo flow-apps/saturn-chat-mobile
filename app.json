@@ -5,7 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "androidNavigationBar": {},
+    "androidNavigationBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#292929"
+    },
     "androidStatusBar": {
       "backgroundColor": "#0088ff",
       "barStyle": "light-content"

@@ -81,11 +81,14 @@ const Chat: React.FC = () => {
         reconnectionDelay: 1000,
         transports: ["websocket"],
         query: {
-          group_id: id,
           token,
         },
       });
-      setSocket(connectedSocket);
+
+      connectedSocket.emit("connect_in_group", id);
+      connectedSocket.on("connect", () => {
+        setSocket(connectedSocket);
+      });
 
       const res = await api.get(`/group/${id}`);
 
@@ -357,7 +360,12 @@ const Chat: React.FC = () => {
               </SendButton>
             </OptionsContainer>
           </InputContainer>
-          {showEmojiPicker && <EmojiPicker onClick={handleSelectEmoji} />}
+          <EmojiBoardContainer>
+            <EmojiPicker
+              onClick={handleSelectEmoji}
+              visible={showEmojiPicker}
+            />
+          </EmojiBoardContainer>
         </FormContainer>
       </Container>
     </>

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState, useMemo } from "react";
 import { Feather, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import emojiSource from "emoji-datasource";
 import _ from "lodash";
@@ -15,9 +15,12 @@ import {
 } from "./styles";
 
 const Storage = new StorageService();
+const emojis = emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by);
+const sortedEmojis = _.orderBy(emojis, "sort_order");
 
 interface EmojiPickerProps {
   onClick: (emoji: string) => any;
+  visible: boolean;
 }
 
 enum Categories {
@@ -33,25 +36,27 @@ enum Categories {
   FLAGS = "Flags",
 }
 
-const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
+const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
   const [lastEmojis, setLastEmojis] = useState<any[]>();
   const [emojisToRender, setEmojisToRender] = useState<any[]>([]);
   const [currentCategory, setCurrentCategory] = useState("");
   const { colors } = useTheme();
 
-  const emojis = emojiSource.filter((e) => !e.obsoletes && !e.obsoleted_by);
-  const sortedEmojis = _.orderBy(emojis, "sort_order");
-  const emojisCategories = _.groupBy(sortedEmojis, "category");
+  const emojisCategories = useMemo(() => {
+    return _.groupBy(sortedEmojis, "category");
+  }, [emojis]);
 
   const selectEmojisByCategory = useCallback(
     (category: string) => {
       if (currentCategory === category) return;
       if (category === "History" && lastEmojis) {
+        setCurrentCategory("History");
+
         return setEmojisToRender(lastEmojis);
       }
 
+      setEmojisToRender(emojisCategories[category]);
       setCurrentCategory(category);
-      return setEmojisToRender(emojisCategories[category]);
     },
     [emojisToRender]
   );
@@ -69,8 +74,9 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
   useEffect(() => {
     (async () => {
       const history = await Storage.getItem("@SaturnChat:EmojiHistory");
+
       if (history) {
-        setLastEmojis(JSON.parse(history));
+        setLastEmojis(_.orderBy(JSON.parse(history), "sort_order"));
       }
     })();
   }, []);
@@ -91,7 +97,13 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
     const emojiHistory = await Storage.getItem("@SaturnChat:EmojiHistory");
 
     if (emojiHistory) {
-      const newHistory = [JSON.stringify(emoji), ...JSON.parse(emojiHistory)];
+      const hasEmoji = JSON.parse(emojiHistory).filter(
+        (e: any) => e.name === emoji.name
+      );
+
+      if (hasEmoji.length > 0) return;
+
+      const newHistory = [emoji, ...JSON.parse(emojiHistory)];
       await Storage.saveItem(
         "@SaturnChat:EmojiHistory",
         JSON.stringify(newHistory)
@@ -121,13 +133,13 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
   );
 
   return (
-    <Container>
+    <Container visible={visible}>
       <TopOptionsContainer>
         <TopOption
           onLongPress={clearEmojisHistory}
           onPress={() => selectEmojisByCategory(Categories.HISTORY)}
         >
-          <Feather name="clock" size={22} color={colors.primary} />
+          <Feather name="clock" size={22} color={colors.black} />
         </TopOption>
         <TopOption onPress={() => selectEmojisByCategory(Categories.SMILEYS)}>
           <Feather name="smile" size={22} color={colors.black} />
@@ -165,12 +177,12 @@ const EmojiPicker = ({ onClick }: EmojiPickerProps) => {
       </TopOptionsContainer>
       <FlatList
         data={emojisToRender}
-        windowSize={3}
+        windowSize={2}
         getItemLayout={getItemLayout}
         keyExtractor={getKey}
         numColumns={8}
-        initialNumToRender={20}
-        maxToRenderPerBatch={1}
+        initialNumToRender={5}
+        maxToRenderPerBatch={15}
         renderItem={renderEmoji}
       />
     </Container>

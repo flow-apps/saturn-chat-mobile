@@ -1,3 +1,4 @@
+import React from "react";
 import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
@@ -71,7 +72,7 @@ export const InputContainer = styled.View`
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
   padding: 12px;
   border-radius: 15px;
-  margin: 10px 0 25px 0;
+  margin: 10px 0 20px 0;
 `;
 
 export const OptionsContainer = styled.View`
@@ -97,5 +98,5 @@ export const MessageInput = styled.TextInput`
 `;
 
 export const EmojiBoardContainer = styled.View`
-  margin: 10px;
+  margin-bottom: 10px;
 `;

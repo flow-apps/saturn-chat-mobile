@@ -3,7 +3,12 @@ import { Dimensions } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.View`
+interface IContainerProps {
+  visible: boolean;
+}
+
+export const Container = styled.View<IContainerProps>`
+  display: ${(props) => (props.visible ? "flex" : "none")};
   height: 200px;
   background-color: ${(props) => props.theme.colors.shape};
   padding: 12px;

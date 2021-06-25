@@ -11,7 +11,7 @@ import {
 } from "./styles";
 import Switcher from "../../components/Switcher";
 import { useTheme } from "styled-components";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useAuth } from "../../contexts/auth";
 import { GroupData } from "../../../@types/interfaces";
 import { useEffect } from "react";
@@ -25,6 +25,7 @@ const GroupConfig: React.FC = () => {
   const [isPublic, setIsPublic] = useState(true);
 
   const route = useRoute();
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const { user } = useAuth();
   const { id } = route.params as { id: string };
@@ -49,6 +50,10 @@ const GroupConfig: React.FC = () => {
     setIsPublic(!isPublic);
   }
 
+  function handleGoGroupInfos() {
+    navigation.navigate("GroupInfos", { id });
+  }
+
   if (loading) return <Loading />;
 
   return (
@@ -57,6 +62,11 @@ const GroupConfig: React.FC = () => {
       <Container>
         <OptionsContainer>
           <SectionTitle>Gerais</SectionTitle>
+          <OptionContainer onPress={handleGoGroupInfos}>
+            <OptionText>
+              <Feather name="file-text" size={25} /> Ver detalhes
+            </OptionText>
+          </OptionContainer>
           <OptionContainer>
             <OptionText>
               <Feather name="bell" size={25} /> Notificações
@@ -86,18 +96,19 @@ const GroupConfig: React.FC = () => {
             </>
           )}
           <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
-          {group.owner.id === user?.id && (
+          {group.owner.id === user?.id ? (
             <OptionContainer>
               <OptionText color={colors.red}>
                 <Feather name="trash-2" size={25} /> Apagar grupo
               </OptionText>
             </OptionContainer>
+          ) : (
+            <OptionContainer>
+              <OptionText color={colors.red}>
+                <Feather name="log-out" size={25} /> Sair do grupo
+              </OptionText>
+            </OptionContainer>
           )}
-          <OptionContainer>
-            <OptionText color={colors.red}>
-              <Feather name="log-out" size={25} /> Sair do grupo
-            </OptionText>
-          </OptionContainer>
         </OptionsContainer>
       </Container>
     </>
