@@ -85,7 +85,7 @@ const Chat: React.FC = () => {
         },
       });
 
-      connectedSocket.emit("connect_in_group", id);
+      connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {
         setSocket(connectedSocket);
       });
@@ -232,7 +232,7 @@ const Chat: React.FC = () => {
     setFiles([]);
   }
 
-  if (loading) return <Loading />;
+  if (loading || !socket) return <Loading />;
 
   return (
     <>

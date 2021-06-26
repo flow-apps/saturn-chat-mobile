@@ -20,6 +20,13 @@ export interface GroupData {
   created_at: string;
 }
 
+export interface ParticipantsData {
+  id: string;
+  user: UserData;
+  group: GroupData;
+  participant_since: string;
+}
+
 export interface MessageData {
   id: string;
   message: string;
