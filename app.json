@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "androidNavigationBar": {
       "barStyle": "light-content",
-      "backgroundColor": "#292929"
+      "backgroundColor": "#171717"
     },
     "androidStatusBar": {
       "backgroundColor": "#0088ff",

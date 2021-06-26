@@ -1,7 +1,6 @@
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useEffect, useState } from "react";
-import { Keyboard } from "react-native";
+import React from "react";
 import { useTheme } from "styled-components";
 import Configurations from "../../pages/Configurations";
 import Home from "../../pages/Home";
@@ -19,19 +18,20 @@ const HomeRoutes = () => {
       tabBarOptions={{
         activeTintColor: colors.primary,
         inactiveTintColor: colors.dark_gray,
+        activeBackgroundColor: "#00000000",
         labelPosition: "below-icon",
         keyboardHidesTabBar: true,
         labelStyle: {
-          fontSize: 16,
+          fontSize: 14,
           fontFamily: fonts.heading,
           marginTop: 5,
         },
         style: {
           padding: 15,
-          height: 60,
+          height: 55,
           elevation: 10,
           zIndex: 90,
-          backgroundColor: colors.shape,
+          backgroundColor: `${colors.shape}`,
         },
       }}
     >
@@ -43,7 +43,7 @@ const HomeRoutes = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons
               name="chat-bubble-outline"
-              size={size}
+              size={size - 3}
               color={color}
             />
           ),
@@ -56,7 +56,7 @@ const HomeRoutes = () => {
         options={{
           title: "Configurações",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="cog" size={size} color={color} />
+            <FontAwesome name="cog" size={size - 3} color={color} />
           ),
         }}
       />
@@ -67,7 +67,7 @@ const HomeRoutes = () => {
         options={{
           title: "Novo Grupo",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="plus" size={size} color={color} />
+            <Feather name="plus" size={size - 3} color={color} />
           ),
           unmountOnBlur: true,
         }}

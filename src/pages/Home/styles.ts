@@ -79,4 +79,5 @@ export const GroupsSubtitle = styled.Text`
 
 export const GroupsList = styled.View`
   flex: 1;
+  background-color: ${(props) => props.theme.colors.shape};
 `;

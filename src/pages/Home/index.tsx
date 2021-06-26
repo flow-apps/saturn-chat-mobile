@@ -120,6 +120,7 @@ const Home: React.FC = () => {
         <GroupsList>
           <FlatList
             data={groups}
+            endFillColor={colors.shape}
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
               <Group

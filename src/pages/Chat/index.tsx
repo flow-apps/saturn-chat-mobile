@@ -1,13 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+
 import * as DocumentPicker from "expo-document-picker";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+
 import Alert from "../../components/Alert";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
+import EmojiPicker from "../../components/EmojiPicker";
+import EmojiJS from "emoji-js";
+
 import api from "../../services/api";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
-import { ActivityIndicator, NativeScrollEvent, Text } from "react-native";
+import { ActivityIndicator, NativeScrollEvent } from "react-native";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
@@ -30,12 +35,15 @@ import {
   RemoveFileButton,
   Files,
   EmojiBoardContainer,
+  AudioContainer,
+  AudioButton,
+  RecordingAudioContainer,
+  RecordingAudioWrapper,
+  RecordingAudioText,
+  RecordingAudioDuration,
 } from "./styles";
 import { Keyboard } from "react-native";
 import { TextInput } from "react-native";
-import { useRef } from "react";
-import EmojiPicker from "../../components/EmojiPicker";
-import EmojiJS from "emoji-js";
 import { HeaderButton } from "../../components/Header/styles";
 import { useNavigation } from "@react-navigation/native";
 
@@ -49,18 +57,22 @@ interface File {
 }
 
 const Chat: React.FC = () => {
+  const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<MessageData[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
+
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  const [message, setMessage] = useState<string>("");
+  const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
+  const [recordingAudio, setRecordingAudio] = useState(false);
+
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
 
@@ -100,26 +112,26 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchMessages();
+    fetchOldMessages();
   }, []);
 
   useEffect(() => {
     if (!socket) return;
 
     socket.on("sended_user_message", (msg) =>
-      setMessages((oldMessages) => [msg, ...oldMessages])
+      setOldMessages((oldMessages) => [msg, ...oldMessages])
     );
 
     socket.on("new_user_message", (msg) => {
-      setMessages((old) => [msg, ...old]);
+      setOldMessages((old) => [msg, ...old]);
     });
 
     socket.on("delete_user_message", (msgID) => {
-      setMessages((old) => old.filter((msg) => msg.id !== msgID));
+      setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
   }, [socket]);
 
-  const fetchMessages = useCallback(async () => {
+  const fetchOldMessages = useCallback(async () => {
     setFetching(true);
     const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
 
@@ -129,9 +141,9 @@ const Chat: React.FC = () => {
     }
 
     if (page > 0) {
-      setMessages((old) => [...old, ...data.messages]);
+      setOldMessages((old) => [...old, ...data.messages]);
     } else {
-      setMessages(data.messages);
+      setOldMessages(data.oldMessages);
     }
 
     setFetching(false);
@@ -179,7 +191,7 @@ const Chat: React.FC = () => {
       if (listHeight >= contentSize.height - paddingToBottom) {
         if (!fetching) {
           setPage((old) => old + 1);
-          await fetchMessages();
+          await fetchOldMessages();
         }
       }
     },
@@ -194,11 +206,13 @@ const Chat: React.FC = () => {
           socket={socket as Socket}
           index={index}
           user={user as unknown as UserData}
-          lastMessage={index !== 0 ? messages[index - 1] : ({} as MessageData)}
+          lastMessage={
+            index !== 0 ? oldMessages[index - 1] : ({} as MessageData)
+          }
         />
       );
     },
-    [messages]
+    [oldMessages]
   );
 
   const handleSetMessage = useCallback((message: string) => {
@@ -256,7 +270,7 @@ const Chat: React.FC = () => {
       <Container>
         <MessageContainer>
           <Messages
-            data={messages}
+            data={oldMessages}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
             maxToRenderPerBatch={15}
@@ -278,6 +292,16 @@ const Chat: React.FC = () => {
           />
         </MessageContainer>
         <FormContainer>
+          {recordingAudio && (
+            <RecordingAudioContainer>
+              <RecordingAudioWrapper>
+                <RecordingAudioText>
+                  <Feather name="mic" size={20} color={colors.red} /> Gravando
+                </RecordingAudioText>
+              </RecordingAudioWrapper>
+              <RecordingAudioDuration>00:00</RecordingAudioDuration>
+            </RecordingAudioContainer>
+          )}
           {files.length > 0 && (
             <FilesContainer>
               <Files
@@ -329,7 +353,9 @@ const Chat: React.FC = () => {
             <MessageInput
               ref={messageInputRef}
               as={TextInput}
-              placeholder="Sua mensagem..."
+              placeholder={
+                recordingAudio ? "Gravando audio..." : "Sua mensagem..."
+              }
               onChangeText={handleSetMessage}
               value={message}
               placeholderTextColor={colors.light_gray}
@@ -355,6 +381,16 @@ const Chat: React.FC = () => {
                   }}
                 />
               </SendButton>
+              {message.length <= 0 && (
+                <AudioContainer>
+                  <AudioButton
+                    onPressIn={() => setRecordingAudio(true)}
+                    onPressOut={() => setRecordingAudio(false)}
+                  >
+                    <Feather name="mic" size={26} color={colors.secondary} />
+                  </AudioButton>
+                </AudioContainer>
+              )}
             </OptionsContainer>
           </InputContainer>
           <EmojiBoardContainer>
