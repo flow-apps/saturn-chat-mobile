@@ -18,7 +18,7 @@ export const ImagesContainer = styled.View`
 `;
 
 export const Banner = styled.View`
-  background: ${(props) => props.theme.colors.secondary};
+  background: ${(props) => props.theme.colors.shape};
   height: 200px;
   width: 100%;
 `;

@@ -62,7 +62,7 @@ const Home: React.FC = () => {
 
   const handleGoSearch = () => navigation.navigate("Search");
 
-  const handleGoUserProfile = () => navigation.navigate("MyProfile");
+  const handleGoUserProfile = () => navigation.navigate("UserProfile");
 
   const handleGoChat = useCallback(
     (id: string) => navigation.navigate("Chat", { id }),
