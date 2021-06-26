@@ -6,7 +6,7 @@ export const Container = styled.ScrollView`
   background-color: ${(props) => props.theme.colors.background};
 `;
 
-export const MyProfileContainer = styled.View`
+export const UserProfileContainer = styled.View`
   flex: 1;
 `;
 
@@ -18,7 +18,7 @@ export const ImagesContainer = styled.View`
 `;
 
 export const Banner = styled.View`
-  background: ${(props) => props.theme.colors.secondary};
+  background: ${(props) => props.theme.colors.shape};
   height: 200px;
   width: 100%;
 `;
@@ -43,32 +43,6 @@ export const UserName = styled.Text`
   margin-bottom: 15px;
 `;
 
-export const FollowInfosContainer = styled.View`
-  padding: 15px 10px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-`;
-
-export const FollowingContainer = styled.View``;
-
-export const FollowerContainer = styled.View``;
-
-export const FollowNumber = styled.Text`
-  font-size: 20px;
-  font-family: ${fonts.heading};
-  color: ${(props) => props.theme.colors.secondary};
-  text-align: center;
-`;
-
-export const FollowTitle = styled.Text`
-  font-size: 16px;
-  font-family: ${fonts.text};
-  text-align: center;
-  margin-top: -5px;
-  color: ${(props) => props.theme.colors.black};
-`;
-
 export const GroupsContainer = styled.View`
   margin: 20px 0;
   padding: 0 15px;
@@ -78,6 +52,7 @@ export const GroupsTitle = styled.Text`
   font-size: 25px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.light_heading};
+  margin-bottom: 15px;
 `;
 
 export const Groups = styled.View``;

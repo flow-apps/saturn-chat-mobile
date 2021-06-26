@@ -2,6 +2,7 @@ export interface UserData {
   id: string;
   name: string;
   email: string;
+  participating: ParticipantsData[];
   created_at: string;
   avatar: {
     url: string;
@@ -12,7 +13,7 @@ export interface GroupData {
   id: string;
   name: string;
   description: string;
-  privacy: string;
+  privacy: "PUBLIC" | "PRIVATE";
   group_avatar: {
     url: string;
   };

@@ -16,7 +16,7 @@ import {
   JoinedDateContainer,
   JoinedDate,
 } from "./styles";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import api from "../../services/api";
 import { useState } from "react";
@@ -34,6 +34,7 @@ const Participants: React.FC = () => {
   const [loadedAll, setLoadedAll] = useState(false);
   const [fetching, setFetching] = useState(false);
 
+  const navigation = useNavigation();
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { colors } = useTheme();
@@ -53,6 +54,10 @@ const Participants: React.FC = () => {
       setLoading(false);
     })();
   }, []);
+
+  const handleGoUserProfile = (userID: string) => {
+    navigation.navigate("UserProfile", { id: userID });
+  };
 
   const fetchMoreParticipants = useCallback(async () => {
     setFetching(true);
@@ -85,7 +90,7 @@ const Participants: React.FC = () => {
 
   const renderItem = ({ item }: { item: ParticipantData }) => {
     return (
-      <ParticipantContainer>
+      <ParticipantContainer onPress={() => handleGoUserProfile(item.user_id)}>
         <Participant>
           <ParticipantAvatar source={{ uri: item.user.avatar.url }} />
           <ParticipantInfosWrapper>
@@ -101,7 +106,7 @@ const Participants: React.FC = () => {
           </ParticipantInfosWrapper>
           <JoinedDateContainer></JoinedDateContainer>
         </Participant>
-        {item.group.owner.id === item.user.id && (
+        {item.group.owner.id === item.user_id && (
           <OwnerTagContainer>
             <OwnerTag>Dono</OwnerTag>
           </OwnerTagContainer>

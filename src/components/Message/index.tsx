@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { format, parseISO } from "date-fns";
 import { convertToTimeZone } from "date-fns-timezone";
 import Clipboard from "expo-clipboard";
@@ -45,6 +46,8 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
+
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const markdownRules = MarkdownIt({
     linkify: true,
@@ -53,10 +56,16 @@ const Message = ({
     .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
     .use(require("markdown-it-linkscheme"));
 
+  const handleGoUserProfile = (userID: string) => {
+    navigation.navigate("UserProfile", { id: userID });
+  };
+
   const renderAuthor = useCallback(() => {
     if (index === 0) {
       return (
-        <MessageAuthorContainer>
+        <MessageAuthorContainer
+          onPress={() => handleGoUserProfile(message.author.id)}
+        >
           <MessageAvatar source={{ uri: message.author.avatar.url }} />
           <MessageAuthorName>{message.author.name}</MessageAuthorName>
         </MessageAuthorContainer>
