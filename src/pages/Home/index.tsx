@@ -113,13 +113,17 @@ const Home: React.FC = () => {
         </QuickAccessGroupsScroll>
       </QuickAccessGroupsContainer>
       <GroupsContainer>
-        <TitleWrapper>
-          <GroupsTitle>Acesse os grupos</GroupsTitle>
-          <GroupsSubtitle>Você está em {groupsCount} grupos</GroupsSubtitle>
-        </TitleWrapper>
         <GroupsList>
           <FlatList
             data={groups}
+            ListHeaderComponent={() => (
+              <TitleWrapper>
+                <GroupsTitle>Acesse os grupos</GroupsTitle>
+                <GroupsSubtitle>
+                  Você está em {groupsCount} grupos
+                </GroupsSubtitle>
+              </TitleWrapper>
+            )}
             endFillColor={colors.shape}
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
