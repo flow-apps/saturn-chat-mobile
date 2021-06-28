@@ -127,7 +127,6 @@ const Chat: React.FC = () => {
     if (!socket) return;
 
     socket.on("sended_user_message", (msg) => {
-      console.log("Recebi a mensagem: ", msg.message);
       setOldMessages((old) => [msg, ...old]);
     });
 
@@ -147,7 +146,6 @@ const Chat: React.FC = () => {
       const permission = await Audio.getPermissionsAsync();
 
       if (!permission.granted) {
-        // setAudioPermission(true);
         const { granted } = await Audio.requestPermissionsAsync();
 
         if (!granted) return;
@@ -285,6 +283,10 @@ const Chat: React.FC = () => {
     navigation.navigate("GroupConfig", { id });
   }, [id]);
 
+  const handleGoGroupInfos = useCallback(() => {
+    navigation.navigate("GroupInfos", { id });
+  }, [id]);
+
   function handleShowEmojiPicker() {
     if (!showEmojiPicker) {
       setShowEmojiPicker(true);
@@ -303,7 +305,6 @@ const Chat: React.FC = () => {
     socket?.emit("new_user_message", {
       message,
     });
-    console.log("Enviei a mensagem: ", message);
     setMessage("");
     setFiles([]);
   }
@@ -312,7 +313,7 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      <Header title={group.name} backButton>
+      <Header title={group.name} onPressTitle={handleGoGroupInfos} backButton>
         <HeaderButton onPress={handleGoGroupConfig}>
           <Feather name="more-vertical" size={22} color="#fff" />
         </HeaderButton>

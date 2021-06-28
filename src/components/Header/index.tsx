@@ -13,11 +13,12 @@ import { StatusBar } from "expo-status-bar";
 
 interface HeaderProps {
   title: string;
+  onPressTitle?: () => unknown;
   backButton?: boolean;
   children?: React.ReactChild;
 }
 
-const Header = ({ title, backButton, children }: HeaderProps) => {
+const Header = ({ title, backButton, onPressTitle, children }: HeaderProps) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -36,7 +37,9 @@ const Header = ({ title, backButton, children }: HeaderProps) => {
             <Feather name="arrow-left" size={25} color={"#fff"} />
           </HeaderButton>
         )}
-        <HeaderTitle numberOfLines={1}>{title}</HeaderTitle>
+        <HeaderTitle numberOfLines={1} onPress={onPressTitle}>
+          {title}
+        </HeaderTitle>
       </RightContainer>
       <LeftContainer>{children}</LeftContainer>
     </Container>

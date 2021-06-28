@@ -85,13 +85,15 @@ const Home: React.FC = () => {
         </>
       </Header>
       <QuickAccessGroupsContainer>
-        <QuickAccessTitle>Grupos</QuickAccessTitle>
+        <QuickAccessTitle>Acesso rápido</QuickAccessTitle>
         <QuickAccessGroupsScroll>
-          <NewGroupButton onPress={handleGoNewGroup}>
-            <Feather name="plus" size={35} color={colors.secondary} />
-          </NewGroupButton>
           <FlatList
             horizontal
+            ListHeaderComponent={() => (
+              <NewGroupButton onPress={handleGoNewGroup}>
+                <Feather name="plus" size={35} color={colors.secondary} />
+              </NewGroupButton>
+            )}
             showsHorizontalScrollIndicator={false}
             data={groups}
             initialNumToRender={5}
