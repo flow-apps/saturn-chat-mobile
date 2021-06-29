@@ -49,6 +49,7 @@ import { TextInput } from "react-native";
 import { HeaderButton } from "../../components/Header/styles";
 import { useNavigation } from "@react-navigation/native";
 import { millisToTime } from "../../utils/format";
+import AudioPlayer from "../../components/AudioPlayer";
 
 const emoji = new EmojiJS();
 const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
@@ -337,6 +338,8 @@ const Chat: React.FC = () => {
         visible={audioPermission}
       />
       <Container>
+        {/* <AudioPlayer url="" />
+        <AudioPlayer url="" /> */}
         <MessageContainer>
           <Messages
             data={oldMessages}
@@ -464,6 +467,7 @@ const Chat: React.FC = () => {
               )}
             </OptionsContainer>
           </InputContainer>
+
           <EmojiBoardContainer>
             <EmojiPicker
               onClick={handleSelectEmoji}
