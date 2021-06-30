@@ -69,6 +69,33 @@ export const JoinGroupButtonText = styled.Text<{ participating?: boolean }>`
     props.participating ? props.theme.colors.black : props.theme.colors.black};
 `;
 
+export const GroupTagsContainer = styled.View``;
+
+export const GroupTagsTitle = styled.Text`
+  font-size: 18px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.light_heading};
+  margin-bottom: 10px;
+`;
+
+export const GroupTagsScroll = styled.ScrollView.attrs({
+  horizontal: true,
+  showsHorizontalScrollIndicator: false,
+})``;
+
+export const GroupTagContainer = styled.View`
+  margin-right: 10px;
+  background-color: ${(props) => props.theme.colors.shape};
+  padding: 12px;
+  border-radius: 40px;
+`;
+
+export const GroupTagText = styled.Text`
+  font-size: 16px;
+  font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.black};
+`;
+
 export const GroupDescContainer = styled.View`
   background-color: ${(props) => props.theme.colors.shape};
   padding: 20px;

@@ -14,6 +14,7 @@ export interface GroupData {
   name: string;
   description: string;
   privacy: "PUBLIC" | "PRIVATE";
+  tags: string[];
   group_avatar: {
     url: string;
   };

@@ -16,6 +16,11 @@ import {
   GroupDescContainer,
   GroupDescTitle,
   GroupName,
+  GroupTagContainer,
+  GroupTagsContainer,
+  GroupTagsScroll,
+  GroupTagsTitle,
+  GroupTagText,
   ImagesContainer,
   JoinGroupButton,
   JoinGroupButtonText,
@@ -27,14 +32,16 @@ import {
 } from "./styles";
 
 const GroupInfos: React.FC = () => {
-  const [group, setGroup] = useState<GroupData>({} as GroupData);
+  const [group, setGroup] = useState<GroupData>();
   const [loading, setLoading] = useState(true);
   const [isParticipating, setIsParticipating] = useState(false);
-  const { id } = useRoute().params as { id: string };
   const navigation = useNavigation();
+  const { id } = useRoute().params as { id: string };
 
   useEffect(() => {
     async function getGroup() {
+      if (group) return;
+
       setLoading(true);
       const response = await api.get(`/group/${id}`);
 
@@ -53,21 +60,20 @@ const GroupInfos: React.FC = () => {
       .catch(() => setIsParticipating(false));
   }, []);
 
-  if (loading) return <Loading />;
-
   async function handleJoinGroup() {
-    const response = await api.get(`/group/participants/new/${group.id}`);
+    const response = await api.get(`/group/participants/new/${group?.id}`);
 
     if (response.status === 200) {
       setIsParticipating(true);
       return navigation.navigate("Chat", {
         screen: "ChatTalk",
         params: {
-          id: group.id,
+          id: group?.id,
         },
       });
     }
   }
+  if (loading || !group) return <Loading />;
 
   return (
     <>
@@ -81,7 +87,6 @@ const GroupInfos: React.FC = () => {
             </ImagesContainer>
             <BasicInfos>
               <GroupName>{group.name}</GroupName>
-
               <JoinGroupContainer>
                 <JoinGroupButton
                   participating={isParticipating}
@@ -94,13 +99,28 @@ const GroupInfos: React.FC = () => {
                   </JoinGroupButtonText>
                 </JoinGroupButton>
               </JoinGroupContainer>
-
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>
                   <ParticipantsNumber>290</ParticipantsNumber>
                   <ParticipantsTitle>Participantes</ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>
+              <GroupTagsContainer>
+                <GroupTagsTitle>
+                  <Feather name="tag" size={20} /> Tags do grupo
+                </GroupTagsTitle>
+                <GroupTagsScroll>
+                  {group.tags ? (
+                    group.tags.map((tag, index) => (
+                      <GroupTagContainer key={index}>
+                        <GroupTagText>{tag}</GroupTagText>
+                      </GroupTagContainer>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </GroupTagsScroll>
+              </GroupTagsContainer>
               <GroupDescContainer>
                 <GroupDescTitle>Descrição</GroupDescTitle>
                 <GroupDesc>{group.description}</GroupDesc>

@@ -41,6 +41,7 @@ const NewGroup: React.FC = () => {
   const [groupPhotoPreview, setGroupPhotoPreview] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [tags, setTags] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
   const { colors } = useTheme();
   const navigator = useNavigation();
@@ -61,6 +62,7 @@ const NewGroup: React.FC = () => {
       type: `image/${fileType}`,
     });
     data.append("privacy", isPublicGroup ? "PUBLIC" : "PRIVATE");
+    data.append("tags", tags);
 
     api
       .post("/groups", data, {
@@ -158,6 +160,15 @@ const NewGroup: React.FC = () => {
                   ref={descriptionInput}
                   value={description}
                   onChangeText={setDescription}
+                />
+                <TextArea
+                  multiline
+                  placeholderTextColor={colors.light_gray}
+                  selectionColor={colors.secondary}
+                  placeholder="Tags do grupo (separe por vírgula)"
+                  ref={descriptionInput}
+                  value={tags}
+                  onChangeText={setTags}
                 />
                 <SwitcherContainer>
                   <SwitcherText>
