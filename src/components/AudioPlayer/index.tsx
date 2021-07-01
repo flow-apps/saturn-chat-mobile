@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Audio, AVPlaybackStatus } from "expo-av";
+import { Audio } from "expo-av";
 import {
   Container,
   AudioContainerWrapper,
@@ -11,12 +11,10 @@ import {
   AudioDuration,
 } from "./styles";
 
-import avatar from "../../assets/avatar.jpg";
-
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../utils/format";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 interface IAudioPlayer {
   url: string;
