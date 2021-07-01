@@ -17,6 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../utils/format";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useCallback } from "react";
 
 interface IAudioPlayer {
   url: string;
@@ -35,7 +36,7 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
     loadAudio();
   }, []);
 
-  async function loadAudio() {
+  const loadAudio = useCallback(async () => {
     if (sound) return;
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
@@ -68,7 +69,7 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
         await newSound.sound.pauseAsync();
       }
     });
-  }
+  }, [url]);
 
   async function handleFinish() {
     setIsPlaying(false);
@@ -128,4 +129,4 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
   );
 };
 
-export default AudioPlayer;
+export default React.memo(AudioPlayer);

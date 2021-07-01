@@ -160,12 +160,13 @@ const Chat: React.FC = () => {
         .prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
         .then(async (status) => {
           await recording.startAsync();
+          setRecordingAudio(recording);
+
           const durationInterval = setInterval(async () => {
             setAudioDuration((old) => old + 1000);
           }, 1000);
 
           setAudioInterval(durationInterval);
-          setRecordingAudio(recording);
         });
     } catch (error) {
       setRecordingAudio(undefined);
@@ -177,14 +178,20 @@ const Chat: React.FC = () => {
     try {
       if (!recordingAudio) return;
 
-      await recordingAudio.stopAndUnloadAsync();
       clearInterval(audioInterval);
+      setAudioInterval(undefined);
+
+      await recordingAudio.stopAndUnloadAsync();
 
       if (recordingAudio._finalDurationMillis < 500) {
         return Toast.show("Aperte e segure para gravar");
       }
 
       const uri = recordingAudio.getURI();
+
+      setRecordingAudio(undefined);
+      setAudioDuration(0);
+
       const extension =
         Platform.OS === "android"
           ? Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.android.extension
@@ -207,15 +214,9 @@ const Chat: React.FC = () => {
         }
       );
 
-      console.log(sendedAudio.data);
-
       socket?.emit("new_voice_message", { audio: sendedAudio.data, message });
     } catch (error) {
       new Error(error);
-    } finally {
-      setAudioInterval(undefined);
-      setRecordingAudio(undefined);
-      setAudioDuration(0);
     }
   };
 
