@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import Toast from "react-native-simple-toast";
+import FormData from "form-data";
 
 import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 
@@ -50,6 +52,8 @@ import { HeaderButton } from "../../components/Header/styles";
 import { useNavigation } from "@react-navigation/native";
 import { millisToTime } from "../../utils/format";
 import AudioPlayer from "../../components/AudioPlayer";
+import { Platform } from "react-native";
+import { randomHex } from "../../utils/random";
 
 const emoji = new EmojiJS();
 const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
@@ -154,7 +158,8 @@ const Chat: React.FC = () => {
 
       recording
         .prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
-        .then(async () => {
+        .then(async (status) => {
+          await recording.startAsync();
           const durationInterval = setInterval(async () => {
             setAudioDuration((old) => old + 1000);
           }, 1000);
@@ -172,16 +177,39 @@ const Chat: React.FC = () => {
     try {
       if (!recordingAudio) return;
 
-      clearInterval(audioInterval);
       await recordingAudio.stopAndUnloadAsync();
+      clearInterval(audioInterval);
 
       if (recordingAudio._finalDurationMillis < 500) {
         return Toast.show("Aperte e segure para gravar");
       }
 
       const uri = recordingAudio.getURI();
+      const extension =
+        Platform.OS === "android"
+          ? Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.android.extension
+          : Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.ios.extension;
+      const audioData = new FormData();
 
-      console.log(uri);
+      audioData.append("attachment", {
+        uri,
+        name: `attachment_audio${extension}`,
+        type: `audio/${extension.replace(".", "")}`,
+      });
+
+      const sendedAudio = await api.post(
+        `/messages/SendAttachment/${id}?type=voice_message`,
+        audioData,
+        {
+          headers: {
+            "Content-Type": `multipart/form-data`,
+          },
+        }
+      );
+
+      console.log(sendedAudio.data);
+
+      socket?.emit("new_voice_message", { audio: sendedAudio.data, message });
     } catch (error) {
       new Error(error);
     } finally {
@@ -461,7 +489,7 @@ const Chat: React.FC = () => {
                     onPressIn={recordAudio}
                     onPressOut={stopRecordAudio}
                   >
-                    <Feather name="mic" size={26} color={colors.secondary} />
+                    <Feather name="mic" size={24} color={colors.secondary} />
                   </AudioButton>
                 </AudioContainer>
               )}

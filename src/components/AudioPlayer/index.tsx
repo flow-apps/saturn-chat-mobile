@@ -22,7 +22,7 @@ interface IAudioPlayer {
   url: string;
 }
 
-const AudioPlayer = ({}: IAudioPlayer) => {
+const AudioPlayer = ({ url }: IAudioPlayer) => {
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState<number>(0);
@@ -44,9 +44,7 @@ const AudioPlayer = ({}: IAudioPlayer) => {
       shouldDuckAndroid: false,
     });
 
-    const newSound = await Audio.Sound.createAsync({
-      uri: "https://cdns-preview-6.dzcdn.net/stream/c-6dcd9ac5ff12144e7d32c5925960b97a-3.mp3",
-    });
+    const newSound = await Audio.Sound.createAsync({ uri: url });
 
     if (newSound.status.isLoaded) {
       const status = newSound.status;
@@ -68,7 +66,6 @@ const AudioPlayer = ({}: IAudioPlayer) => {
     navigation.addListener("blur", async () => {
       if (newSound.sound._loaded) {
         await newSound.sound.pauseAsync();
-        await newSound.sound.unloadAsync();
       }
     });
   }
@@ -76,6 +73,7 @@ const AudioPlayer = ({}: IAudioPlayer) => {
   async function handleFinish() {
     setIsPlaying(false);
     onChangePosition(0);
+    await sound?.unloadAsync();
   }
 
   const handlePlayPauseAudio = async () => {
@@ -95,7 +93,7 @@ const AudioPlayer = ({}: IAudioPlayer) => {
   };
 
   return (
-    <Container>
+    <Container loading={!sound || sound?._loading}>
       <AudioContainerWrapper>
         <AudioControllerContainer>
           <AudioController onPress={handlePlayPauseAudio}>

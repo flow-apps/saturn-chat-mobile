@@ -12,6 +12,7 @@ import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { MessageData, UserData } from "../../../@types/interfaces";
 import Alert from "../Alert";
+import AudioPlayer from "../AudioPlayer";
 import MessageOptions from "../MessageOptions";
 import {
   Container,
@@ -203,6 +204,9 @@ const Message = ({
           >
             {message.message}
           </Markdown>
+          {message.voice_message && (
+            <AudioPlayer url={message.voice_message.url} />
+          )}
         </MessageContentContainer>
         <MessageDateContainer>
           <MessageDate>{formatHour(message.created_at)}</MessageDate>

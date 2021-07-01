@@ -130,5 +130,5 @@ export const EmojiBoardContainer = styled.View`
 export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.TouchableOpacity`
-  margin-left: 20px;
+  margin-left: 12px;
 `;

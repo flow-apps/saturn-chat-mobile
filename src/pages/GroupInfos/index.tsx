@@ -110,15 +110,12 @@ const GroupInfos: React.FC = () => {
                   <Feather name="tag" size={20} /> Tags do grupo
                 </GroupTagsTitle>
                 <GroupTagsScroll>
-                  {group.tags ? (
+                  {group.tags &&
                     group.tags.map((tag, index) => (
                       <GroupTagContainer key={index}>
                         <GroupTagText>{tag}</GroupTagText>
                       </GroupTagContainer>
-                    ))
-                  ) : (
-                    <></>
-                  )}
+                    ))}
                 </GroupTagsScroll>
               </GroupTagsContainer>
               <GroupDescContainer>

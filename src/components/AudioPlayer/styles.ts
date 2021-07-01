@@ -1,11 +1,17 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.View`
+interface PlayerProps {
+  loading: boolean;
+}
+
+export const Container = styled.View<PlayerProps>`
+  min-width: 100%;
   padding: 8px 15px;
   background-color: ${(props) => props.theme.colors.shape};
   border: 1px solid ${(props) => props.theme.colors.secondary};
   border-radius: 12px;
+  opacity: ${(props) => (props.loading ? "0.5" : "1")};
 `;
 
 export const AudioContainerWrapper = styled.View`

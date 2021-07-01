@@ -35,4 +35,7 @@ export interface MessageData {
   created_at: string;
   author: UserData;
   group: GroupData;
+  voice_message?: {
+    url: string;
+  };
 }
