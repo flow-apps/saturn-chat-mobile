@@ -51,9 +51,7 @@ import { TextInput } from "react-native";
 import { HeaderButton } from "../../components/Header/styles";
 import { useNavigation } from "@react-navigation/native";
 import { millisToTime } from "../../utils/format";
-import AudioPlayer from "../../components/AudioPlayer";
 import { Platform } from "react-native";
-import { randomHex } from "../../utils/random";
 
 const emoji = new EmojiJS();
 const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
@@ -183,11 +181,16 @@ const Chat: React.FC = () => {
 
       await recordingAudio.stopAndUnloadAsync();
 
-      if (recordingAudio._finalDurationMillis < 500) {
+      if (recordingAudio._finalDurationMillis < 1000) {
         return Toast.show("Aperte e segure para gravar");
       }
 
+      const duration = recordingAudio._finalDurationMillis;
       const uri = recordingAudio.getURI();
+
+      if (!uri) return;
+
+      const audioInfos = await FileSystem.getInfoAsync(uri);
 
       setRecordingAudio(undefined);
       setAudioDuration(0);
@@ -198,6 +201,8 @@ const Chat: React.FC = () => {
           : Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.ios.extension;
       const audioData = new FormData();
 
+      audioData.append("duration", duration);
+      audioData.append("size", audioInfos.size);
       audioData.append("attachment", {
         uri,
         name: `attachment_audio${extension}`,
@@ -222,7 +227,7 @@ const Chat: React.FC = () => {
 
   const fetchOldMessages = useCallback(async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=50`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -367,15 +372,13 @@ const Chat: React.FC = () => {
         visible={audioPermission}
       />
       <Container>
-        {/* <AudioPlayer url="" />
-        <AudioPlayer url="" /> */}
         <MessageContainer>
           <Messages
             data={oldMessages}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
-            maxToRenderPerBatch={15}
-            initialNumToRender={20}
+            maxToRenderPerBatch={5}
+            initialNumToRender={10}
             removeClippedSubviews
             ListFooterComponent={
               fetching && !fetchedAll ? (

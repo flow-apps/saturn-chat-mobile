@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
 interface PlayerProps {
-  loading: boolean;
+  loading?: boolean;
 }
 
 export const Container = styled.View<PlayerProps>`
@@ -11,7 +11,6 @@ export const Container = styled.View<PlayerProps>`
   background-color: ${(props) => props.theme.colors.shape};
   border: 1px solid ${(props) => props.theme.colors.secondary};
   border-radius: 12px;
-  opacity: ${(props) => (props.loading ? "0.5" : "1")};
 `;
 
 export const AudioContainerWrapper = styled.View`
@@ -23,7 +22,10 @@ export const AudioControllerContainer = styled.View`
   flex-direction: row;
 `;
 
-export const AudioController = styled.TouchableOpacity``;
+export const AudioController = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+`;
 
 export const SeekBarContainer = styled.View`
   flex: 1;
@@ -36,6 +38,7 @@ export const SeekBar = styled.Slider`
 export const AudioInfosContainer = styled.View``;
 
 export const AudioDurationContainer = styled.View`
+  justify-content: center;
   align-items: center;
   margin-top: 3px;
 `;

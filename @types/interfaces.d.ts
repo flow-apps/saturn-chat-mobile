@@ -29,13 +29,17 @@ export interface ParticipantsData {
   participant_since: string;
 }
 
+export interface AudioData {
+  url: string;
+  size: number;
+  duration: number;
+}
+
 export interface MessageData {
   id: string;
   message: string;
   created_at: string;
   author: UserData;
   group: GroupData;
-  voice_message?: {
-    url: string;
-  };
+  voice_message?: AudioData;
 }

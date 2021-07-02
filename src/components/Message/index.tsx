@@ -205,7 +205,7 @@ const Message = ({
             {message.message}
           </Markdown>
           {message.voice_message && (
-            <AudioPlayer url={message.voice_message.url} />
+            <AudioPlayer audio={message.voice_message} />
           )}
         </MessageContentContainer>
         <MessageDateContainer>
@@ -217,4 +217,6 @@ const Message = ({
   );
 };
 
-export default memo(Message);
+export default memo(Message, (prev, next) => {
+  return prev.message.id !== next.message.id;
+});
