@@ -12,6 +12,7 @@ import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
 import EmojiPicker from "../../components/EmojiPicker";
+import FilePreview from "../../components/FilePreview";
 import EmojiJS from "emoji-js";
 
 import api from "../../services/api";
@@ -130,6 +131,8 @@ const Chat: React.FC = () => {
     if (!socket) return;
 
     socket.on("sended_user_message", (msg) => {
+      console.log(msg);
+
       setOldMessages((old) => [msg, ...old]);
     });
 
@@ -337,11 +340,37 @@ const Chat: React.FC = () => {
   }
 
   async function handleMessageSubmit() {
-    socket?.emit("new_user_message", {
-      message,
-    });
-    setMessage("");
+    if (!files.length) {
+      socket?.emit("new_user_message", {
+        message,
+      });
+    } else {
+      Toast.show("Enviando arquivos...");
+      const filesData = new FormData();
+
+      files.map((file) => {
+        if (file.file.type === "success") {
+          filesData.append("attachment", {
+            uri: file.file.uri,
+            type: "*/*",
+            name: file.file.name,
+          });
+        }
+      });
+
+      const sendedFiles = await api.post(
+        `/messages/SendAttachment/${id}?type=files`,
+        filesData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      socket?.emit("new_message_with_files", {
+        message,
+        files: sendedFiles.data,
+      });
+    }
     setFiles([]);
+    setMessage("");
   }
 
   if (loading || !socket) return <Loading />;
@@ -372,6 +401,8 @@ const Chat: React.FC = () => {
         visible={audioPermission}
       />
       <Container>
+        {/* <FilePreview />
+        <FilePreview /> */}
         <MessageContainer>
           <Messages
             data={oldMessages}

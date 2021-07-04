@@ -42,4 +42,13 @@ export interface MessageData {
   author: UserData;
   group: GroupData;
   voice_message?: AudioData;
+  files?: FileData[];
+}
+
+export interface FileData {
+  id: string;
+  name: string;
+  original_name: string;
+  url: string;
+  size: number;
 }

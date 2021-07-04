@@ -17,7 +17,7 @@ const HomeRoutes = () => {
       lazy
       tabBarOptions={{
         activeTintColor: colors.primary,
-        inactiveTintColor: colors.dark_gray,
+        inactiveTintColor: colors.dark_gray + "aa",
         activeBackgroundColor: "#00000000",
         labelPosition: "below-icon",
         keyboardHidesTabBar: true,

@@ -13,6 +13,7 @@ import { useTheme } from "styled-components";
 import { MessageData, UserData } from "../../../@types/interfaces";
 import Alert from "../Alert";
 import AudioPlayer from "../AudioPlayer";
+import FilePreview from "../FilePreview";
 import MessageOptions from "../MessageOptions";
 import {
   Container,
@@ -162,7 +163,7 @@ const Message = ({
             markdownit={markdownRules}
             mergeStyle
             rules={{
-              paragraph: (node, children, parent, styles) => (
+              paragraph: (node, children) => (
                 <MessageContent
                   isRight={message.author.id === user.id}
                   key={node.key}
@@ -170,7 +171,7 @@ const Message = ({
                   {children}
                 </MessageContent>
               ),
-              link: (node, children, parent, styles) => (
+              link: (node, children) => (
                 <MessageLink
                   onPress={() => alertLink(node.attributes.href)}
                   onLongPress={() => copyLink(node.attributes.href)}
@@ -179,12 +180,12 @@ const Message = ({
                   {children}
                 </MessageLink>
               ),
-              code_inline: (node, children, parent, styles) => (
+              code_inline: (node) => (
                 <MessageCodeInline key={node.key}>
                   {node.content}
                 </MessageCodeInline>
               ),
-              fence: (node, children, parent, styles) => {
+              fence: (node) => {
                 let { content } = node;
 
                 if (
@@ -207,6 +208,18 @@ const Message = ({
           {message.voice_message && (
             <AudioPlayer audio={message.voice_message} />
           )}
+
+          {message.files &&
+            message.files.map((file) => {
+              return (
+                <FilePreview
+                  key={file.id}
+                  name={file.original_name}
+                  url={file.url}
+                  size={file.size}
+                />
+              );
+            })}
         </MessageContentContainer>
         <MessageDateContainer>
           <MessageDate>{formatHour(message.created_at)}</MessageDate>
