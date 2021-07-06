@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import Toast from "react-native-simple-toast";
 import FormData from "form-data";
 
+import * as MimeTypes from "react-native-mime-types";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
@@ -12,7 +13,6 @@ import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Message";
 import EmojiPicker from "../../components/EmojiPicker";
-import FilePreview from "../../components/FilePreview";
 import EmojiJS from "emoji-js";
 
 import api from "../../services/api";
@@ -131,8 +131,6 @@ const Chat: React.FC = () => {
     if (!socket) return;
 
     socket.on("sended_user_message", (msg) => {
-      console.log(msg);
-
       setOldMessages((old) => [msg, ...old]);
     });
 
@@ -350,15 +348,17 @@ const Chat: React.FC = () => {
 
       files.map((file) => {
         if (file.file.type === "success") {
+          const type = MimeTypes.lookup(file.file.name);
+
           filesData.append("attachment", {
             uri: file.file.uri,
-            type: "*/*",
+            type,
             name: file.file.name,
           });
         }
       });
 
-      const sendedFiles = await api.post(
+      const response = await api.post(
         `/messages/SendAttachment/${id}?type=files`,
         filesData,
         { headers: { "Content-Type": "multipart/form-data" } }
@@ -366,7 +366,7 @@ const Chat: React.FC = () => {
 
       socket?.emit("new_message_with_files", {
         message,
-        files: sendedFiles.data,
+        message_id: response.data.message_id,
       });
     }
     setFiles([]);

@@ -217,6 +217,7 @@ const Message = ({
                   name={file.original_name}
                   url={file.url}
                   size={file.size}
+                  type={file.type}
                 />
               );
             })}

@@ -51,4 +51,5 @@ export interface FileData {
   original_name: string;
   url: string;
   size: number;
+  type: "unknown" | string;
 }

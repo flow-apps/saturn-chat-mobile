@@ -1,4 +1,8 @@
 import React, { useCallback } from "react";
+
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+
 import {
   Container,
   FileContainer,
@@ -12,18 +16,20 @@ import {
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import avatar from "../../assets/avatar.jpg";
 import Alert from "../Alert";
 import { useState } from "react";
 import { convertBytesToMB } from "../../utils/convertSize";
+import config from "../../config";
+import Toast from "react-native-simple-toast";
 
 interface IFileProps {
   name: string;
   url: string;
   size: number;
+  type: string;
 }
 
-const FilePreview = ({ name, size, url }: IFileProps) => {
+const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const { colors } = useTheme();
 
@@ -31,11 +37,53 @@ const FilePreview = ({ name, size, url }: IFileProps) => {
     setDownloadWarning(true);
   };
 
-  const downloadFile = useCallback(() => {
+  const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
+    const { granted } = await MediaLibrary.getPermissionsAsync();
 
-    // Código que executa o download
-  }, []);
+    if (!granted) {
+      const perm = await MediaLibrary.requestPermissionsAsync();
+
+      if (!perm.granted) {
+        return;
+      }
+    }
+
+    Toast.show("Iniciando download");
+
+    const filePath = config.FILE_PATHS.DOCUMENTS + name;
+
+    try {
+      FileSystem.downloadAsync(url, filePath).then(async ({ uri }) => {
+        Toast.show("Arquivo baixado com sucesso!");
+      });
+    } catch (error) {
+      Toast.show("Não foi possível realizar o download!");
+      new Error(error);
+    }
+  }, [url, name]);
+
+  const renderIcon = () => {
+    switch (type) {
+      case "image":
+        return <Feather name="image" size={40} color={colors.black} />;
+
+      case "text":
+        return <Feather name="file-text" size={40} color={colors.black} />;
+
+      case "application":
+        return <Feather name="file-minus" size={40} color={colors.black} />;
+
+      case "video":
+        return <Feather name="video" size={40} color={colors.black} />;
+
+      case "audio":
+        return <Feather name="speaker" size={40} color={colors.black} />;
+
+      default:
+        return <Feather name="file" size={40} color={colors.black} />;
+    }
+  };
 
   return (
     <Container>
@@ -49,9 +97,7 @@ const FilePreview = ({ name, size, url }: IFileProps) => {
         cancelButtonAction={() => setDownloadWarning(false)}
       />
       <FileContainer>
-        <FileIconContainer>
-          <Feather name="image" size={40} color={colors.black} />
-        </FileIconContainer>
+        <FileIconContainer>{renderIcon()}</FileIconContainer>
         <FileInfosContainer>
           <FileName numberOfLines={1} lineBreakMode="middle">
             {name}
@@ -59,7 +105,7 @@ const FilePreview = ({ name, size, url }: IFileProps) => {
           <FileSize>{convertBytesToMB(size)}MB</FileSize>
         </FileInfosContainer>
         <FileOpenAction>
-          {name.split(".").reverse().shift() === "jpg" ? (
+          {type === "image" ? (
             <FileImagePreview source={{ uri: url }} />
           ) : (
             <FileDownloadButton onPress={handleDownloadFile}>
