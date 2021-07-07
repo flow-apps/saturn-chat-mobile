@@ -31,8 +31,6 @@
     "android": {
       "allowBackup": true,
       "package": "com.flowapps.saturnchat",
-      "jsEngine": "hermes",
-      "userInterfaceStyle": "automatic",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0088FF"
