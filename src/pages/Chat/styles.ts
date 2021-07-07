@@ -1,4 +1,3 @@
-import React from "react";
 import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
@@ -112,7 +111,8 @@ export const OptionsButton = styled.TouchableOpacity`
   margin-right: 10px;
 `;
 
-export const SendButton = styled.TouchableOpacity``;
+export const SendButton = styled.TouchableOpacity`
+`;
 
 export const MessageInput = styled.TextInput`
   flex: 1;
@@ -130,5 +130,4 @@ export const EmojiBoardContainer = styled.View`
 export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.TouchableOpacity`
-  margin-left: 12px;
 `;

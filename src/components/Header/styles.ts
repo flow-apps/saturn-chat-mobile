@@ -29,4 +29,6 @@ export const RightContainer = styled.View`
 
 export const LeftContainer = styled(RightContainer)``;
 
-export const HeaderButton = styled.TouchableOpacity``;
+export const HeaderButton = styled.TouchableOpacity`
+  margin: 0px 5px;
+`;

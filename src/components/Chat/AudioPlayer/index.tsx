@@ -13,9 +13,9 @@ import {
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import { millisToTime } from "../../utils/format";
+import { millisToTime } from "../../../utils/format";
 import { useNavigation } from "@react-navigation/native";
-import { AudioData } from "../../../@types/interfaces";
+import { AudioData } from "../../../../@types/interfaces";
 
 interface IAudioPlayer {
   audio: AudioData;
@@ -123,7 +123,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
             {!sound?._loaded ? (
               <LottieView
                 style={{ width: 20, transform: [{ scale: 1.3 }] }}
-                source={require("../../assets/loading.json")}
+                source={require("../../../assets/loading.json")}
                 autoPlay
                 loop
               />

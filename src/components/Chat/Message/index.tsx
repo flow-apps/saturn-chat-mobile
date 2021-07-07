@@ -10,11 +10,11 @@ import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import Toast from "react-native-simple-toast";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { MessageData, UserData } from "../../../@types/interfaces";
-import Alert from "../Alert";
+import { MessageData, UserData } from "../../../../@types/interfaces";
+import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
 import FilePreview from "../FilePreview";
-import MessageOptions from "../MessageOptions";
+import MessageOptions from "../../MessageOptions";
 import {
   Container,
   MessageAuthorContainer,

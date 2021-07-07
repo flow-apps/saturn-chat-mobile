@@ -1,6 +1,6 @@
 import { memo } from "react";
 import styled from "styled-components/native";
-import fonts from "../../styles/fonts";
+import fonts from "../../../styles/fonts";
 
 interface IMessageProps {
   isRight?: boolean;

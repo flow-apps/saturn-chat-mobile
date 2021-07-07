@@ -16,10 +16,10 @@ import {
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import Alert from "../Alert";
+import Alert from "../../Alert";
 import { useState } from "react";
-import { convertBytesToMB } from "../../utils/convertSize";
-import config from "../../config";
+import { convertBytesToMB } from "../../../utils/convertSize";
+import config from "../../../config";
 import Toast from "react-native-simple-toast";
 import { useNavigation } from "@react-navigation/native";
 

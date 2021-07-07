@@ -1,34 +1,46 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import Toast from "react-native-simple-toast";
-import FormData from "form-data";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  ListRenderItem,
+  NativeScrollEvent,
+  Platform,
+  TextInput,
+} from "react-native";
 
-import * as MimeTypes from "react-native-mime-types";
-import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
-import { Audio } from "expo-av";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-
-import Alert from "../../components/Alert";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
-import Message from "../../components/Message";
-import EmojiPicker from "../../components/EmojiPicker";
 import EmojiJS from "emoji-js";
 
-import api from "../../services/api";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
-import { ActivityIndicator, NativeScrollEvent } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Audio } from "expo-av";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
+import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
+
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
+import * as MimeTypes from "react-native-mime-types";
+
+import FormData from "form-data";
+import Toast from "react-native-simple-toast";
+import Alert from "../../components/Alert";
+import EmojiPicker from "../../components/Chat/EmojiPicker";
+import Header from "../../components/Header";
+import Loading from "../../components/Loading";
+import Message from "../../components/Chat/Message";
+import SelectedFile from "../../components/Chat/SelectedFile";
+import api from "../../services/api";
 import {
+  AudioButton,
+  AudioContainer,
   Container,
+  EmojiBoardContainer,
   EmojiButton,
   File,
+  Files,
   FilesContainer,
-  ImageFile,
-  OtherFile,
   FormContainer,
   InputContainer,
   MessageContainer,
@@ -37,29 +49,15 @@ import {
   OptionsButton,
   OptionsContainer,
   SendButton,
-  RemoveFileButton,
-  Files,
-  EmojiBoardContainer,
-  AudioContainer,
-  AudioButton,
-  RecordingAudioContainer,
-  RecordingAudioWrapper,
-  RecordingAudioText,
-  RecordingAudioDuration,
 } from "./styles";
-import { Keyboard } from "react-native";
-import { TextInput } from "react-native";
-import { HeaderButton } from "../../components/Header/styles";
-import { useNavigation } from "@react-navigation/native";
-import { millisToTime } from "../../utils/format";
-import { Platform } from "react-native";
+import RecordingAudio from "../../components/Chat/RecordingAudio";
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 const emoji = new EmojiJS();
-const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
 
 interface File {
   file: DocumentPicker.DocumentResult;
-  type: "image" | "other";
+  type: string;
 }
 
 const Chat: React.FC = () => {
@@ -249,7 +247,7 @@ const Chat: React.FC = () => {
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1000 / 1000);
-      const type = file.name.split(".").pop();
+      const type = MimeTypes.lookup(file.name).split("/")[0];
       if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
         return setLargeFile(true);
       }
@@ -263,10 +261,7 @@ const Chat: React.FC = () => {
       }
 
       setFilesSizeUsed((used) => used + fileSize);
-      setFiles((oldFiles) => [
-        { file, type: type && imageTypes.includes(type) ? "image" : "other" },
-        ...oldFiles,
-      ]);
+      setFiles((oldFiles) => [{ file, type }, ...oldFiles]);
     }
   }, [files]);
 
@@ -294,7 +289,7 @@ const Chat: React.FC = () => {
   );
 
   const renderMessage = useCallback(
-    (item: MessageData, index: number) => {
+    ({ item, index }: ListRenderItem<MessageData> | any) => {
       return (
         <Message
           message={item}
@@ -401,8 +396,6 @@ const Chat: React.FC = () => {
         visible={audioPermission}
       />
       <Container>
-        {/* <FilePreview />
-        <FilePreview /> */}
         <MessageContainer>
           <Messages
             data={oldMessages}
@@ -412,64 +405,27 @@ const Chat: React.FC = () => {
             initialNumToRender={10}
             removeClippedSubviews
             ListFooterComponent={
-              fetching && !fetchedAll ? (
-                <ActivityIndicator
-                  style={{ margin: 10 }}
-                  size="large"
-                  color={colors.primary}
-                />
-              ) : (
-                <></>
-              )
+              fetching && !fetchedAll ? <LoadingIndicator /> : <></>
             }
-            renderItem={({ item, index }) => renderMessage(item, index)}
+            renderItem={renderMessage}
             inverted
           />
         </MessageContainer>
         <FormContainer>
-          {recordingAudio && (
-            <RecordingAudioContainer>
-              <RecordingAudioWrapper>
-                <RecordingAudioText>
-                  <Feather name="mic" size={20} color={colors.red} /> Gravando
-                </RecordingAudioText>
-              </RecordingAudioWrapper>
-              <RecordingAudioDuration>
-                {millisToTime(audioDuration)}
-              </RecordingAudioDuration>
-            </RecordingAudioContainer>
-          )}
+          {recordingAudio && <RecordingAudio audioDuration={audioDuration} />}
           {files.length > 0 && (
             <FilesContainer>
               <Files
                 data={files}
-                keyExtractor={(item, index) =>
-                  item.file.type == "success"
-                    ? item.file.name + index
-                    : String(Math.random())
-                }
+                keyExtractor={(item, index) => String(index)}
                 horizontal={true}
-                contentContainerStyle={{
-                  alignItems: "center",
-                }}
+                contentContainerStyle={{ alignItems: "center" }}
                 renderItem={({ item, index }) => {
                   return (
-                    <File>
-                      <RemoveFileButton onPress={() => removeFile(index)}>
-                        <Feather name="x" size={14} color={colors.secondary} />
-                      </RemoveFileButton>
-                      {item.file.type === "success" && item.type === "image" ? (
-                        <ImageFile source={{ uri: item.file.uri }} />
-                      ) : (
-                        <OtherFile>
-                          <Feather
-                            name="file-text"
-                            size={25}
-                            color={colors.black}
-                          />
-                        </OtherFile>
-                      )}
-                    </File>
+                    <SelectedFile
+                      file={item}
+                      onRemoveFile={() => removeFile(index)}
+                    />
                   );
                 }}
               />
@@ -504,19 +460,15 @@ const Chat: React.FC = () => {
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
               <SendButton>
-                <Feather
-                  name="send"
-                  size={24}
-                  color={colors.primary}
-                  onPress={handleMessageSubmit}
-                  style={{
-                    transform: [
-                      {
-                        rotate: "45deg",
-                      },
-                    ],
-                  }}
-                />
+                {message.length > 0 && (
+                  <Feather
+                    name="send"
+                    size={24}
+                    color={colors.primary}
+                    onPress={handleMessageSubmit}
+                    style={{ transform: [{ rotate: "45deg" }] }}
+                  />
+                )}
               </SendButton>
               {message.length <= 0 && (
                 <AudioContainer>
