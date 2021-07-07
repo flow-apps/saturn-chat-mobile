@@ -1,33 +1,46 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import Toast from "react-native-simple-toast";
-import FormData from "form-data";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  ListRenderItem,
+  NativeScrollEvent,
+  Platform,
+  TextInput,
+} from "react-native";
 
-import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
-import { Audio } from "expo-av";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-
-import Alert from "../../components/Alert";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
-import Message from "../../components/Message";
-import EmojiPicker from "../../components/EmojiPicker";
 import EmojiJS from "emoji-js";
 
-import api from "../../services/api";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
-import { ActivityIndicator, NativeScrollEvent } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Audio } from "expo-av";
 import { io, Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
+import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
+
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
+import * as MimeTypes from "react-native-mime-types";
+
+import FormData from "form-data";
+import Toast from "react-native-simple-toast";
+import Alert from "../../components/Alert";
+import EmojiPicker from "../../components/Chat/EmojiPicker";
+import Header from "../../components/Header";
+import Loading from "../../components/Loading";
+import Message from "../../components/Chat/Message";
+import SelectedFile from "../../components/Chat/SelectedFile";
+import api from "../../services/api";
 import {
+  AudioButton,
+  AudioContainer,
   Container,
+  EmojiBoardContainer,
   EmojiButton,
   File,
+  Files,
   FilesContainer,
-  ImageFile,
-  OtherFile,
   FormContainer,
   InputContainer,
   MessageContainer,
@@ -36,31 +49,15 @@ import {
   OptionsButton,
   OptionsContainer,
   SendButton,
-  RemoveFileButton,
-  Files,
-  EmojiBoardContainer,
-  AudioContainer,
-  AudioButton,
-  RecordingAudioContainer,
-  RecordingAudioWrapper,
-  RecordingAudioText,
-  RecordingAudioDuration,
 } from "./styles";
-import { Keyboard } from "react-native";
-import { TextInput } from "react-native";
-import { HeaderButton } from "../../components/Header/styles";
-import { useNavigation } from "@react-navigation/native";
-import { millisToTime } from "../../utils/format";
-import AudioPlayer from "../../components/AudioPlayer";
-import { Platform } from "react-native";
-import { randomHex } from "../../utils/random";
+import RecordingAudio from "../../components/Chat/RecordingAudio";
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 const emoji = new EmojiJS();
-const imageTypes = ["jpeg", "jpg", "png", "tiff", "tif", ".gif", ".bmp"];
 
 interface File {
   file: DocumentPicker.DocumentResult;
-  type: "image" | "other";
+  type: string;
 }
 
 const Chat: React.FC = () => {
@@ -160,12 +157,13 @@ const Chat: React.FC = () => {
         .prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
         .then(async (status) => {
           await recording.startAsync();
+          setRecordingAudio(recording);
+
           const durationInterval = setInterval(async () => {
             setAudioDuration((old) => old + 1000);
           }, 1000);
 
           setAudioInterval(durationInterval);
-          setRecordingAudio(recording);
         });
     } catch (error) {
       setRecordingAudio(undefined);
@@ -177,20 +175,33 @@ const Chat: React.FC = () => {
     try {
       if (!recordingAudio) return;
 
-      await recordingAudio.stopAndUnloadAsync();
       clearInterval(audioInterval);
+      setAudioInterval(undefined);
 
-      if (recordingAudio._finalDurationMillis < 500) {
+      await recordingAudio.stopAndUnloadAsync();
+
+      if (recordingAudio._finalDurationMillis < 1000) {
         return Toast.show("Aperte e segure para gravar");
       }
 
+      const duration = recordingAudio._finalDurationMillis;
       const uri = recordingAudio.getURI();
+
+      if (!uri) return;
+
+      const audioInfos = await FileSystem.getInfoAsync(uri);
+
+      setRecordingAudio(undefined);
+      setAudioDuration(0);
+
       const extension =
         Platform.OS === "android"
           ? Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.android.extension
           : Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.ios.extension;
       const audioData = new FormData();
 
+      audioData.append("duration", duration);
+      audioData.append("size", audioInfos.size);
       audioData.append("attachment", {
         uri,
         name: `attachment_audio${extension}`,
@@ -207,21 +218,15 @@ const Chat: React.FC = () => {
         }
       );
 
-      console.log(sendedAudio.data);
-
       socket?.emit("new_voice_message", { audio: sendedAudio.data, message });
     } catch (error) {
       new Error(error);
-    } finally {
-      setAudioInterval(undefined);
-      setRecordingAudio(undefined);
-      setAudioDuration(0);
     }
   };
 
   const fetchOldMessages = useCallback(async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=50`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -242,7 +247,7 @@ const Chat: React.FC = () => {
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1000 / 1000);
-      const type = file.name.split(".").pop();
+      const type = MimeTypes.lookup(file.name).split("/")[0];
       if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
         return setLargeFile(true);
       }
@@ -256,10 +261,7 @@ const Chat: React.FC = () => {
       }
 
       setFilesSizeUsed((used) => used + fileSize);
-      setFiles((oldFiles) => [
-        { file, type: type && imageTypes.includes(type) ? "image" : "other" },
-        ...oldFiles,
-      ]);
+      setFiles((oldFiles) => [{ file, type }, ...oldFiles]);
     }
   }, [files]);
 
@@ -287,7 +289,7 @@ const Chat: React.FC = () => {
   );
 
   const renderMessage = useCallback(
-    (item: MessageData, index: number) => {
+    ({ item, index }: ListRenderItem<MessageData> | any) => {
       return (
         <Message
           message={item}
@@ -331,11 +333,39 @@ const Chat: React.FC = () => {
   }
 
   async function handleMessageSubmit() {
-    socket?.emit("new_user_message", {
-      message,
-    });
-    setMessage("");
+    if (!files.length) {
+      socket?.emit("new_user_message", {
+        message,
+      });
+    } else {
+      Toast.show("Enviando arquivos...");
+      const filesData = new FormData();
+
+      files.map((file) => {
+        if (file.file.type === "success") {
+          const type = MimeTypes.lookup(file.file.name);
+
+          filesData.append("attachment", {
+            uri: file.file.uri,
+            type,
+            name: file.file.name,
+          });
+        }
+      });
+
+      const response = await api.post(
+        `/messages/SendAttachment/${id}?type=files`,
+        filesData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      socket?.emit("new_message_with_files", {
+        message,
+        message_id: response.data.message_id,
+      });
+    }
     setFiles([]);
+    setMessage("");
   }
 
   if (loading || !socket) return <Loading />;
@@ -366,75 +396,30 @@ const Chat: React.FC = () => {
         visible={audioPermission}
       />
       <Container>
-        {/* <AudioPlayer url="" />
-        <AudioPlayer url="" /> */}
         <MessageContainer>
           <Messages
             data={oldMessages}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
-            maxToRenderPerBatch={15}
-            initialNumToRender={20}
-            removeClippedSubviews
             ListFooterComponent={
-              fetching && !fetchedAll ? (
-                <ActivityIndicator
-                  style={{ margin: 10 }}
-                  size="large"
-                  color={colors.primary}
-                />
-              ) : (
-                <></>
-              )
+              fetching && !fetchedAll ? <LoadingIndicator /> : <></>
             }
-            renderItem={({ item, index }) => renderMessage(item, index)}
-            inverted
+            renderItem={renderMessage}
           />
         </MessageContainer>
         <FormContainer>
-          {recordingAudio && (
-            <RecordingAudioContainer>
-              <RecordingAudioWrapper>
-                <RecordingAudioText>
-                  <Feather name="mic" size={20} color={colors.red} /> Gravando
-                </RecordingAudioText>
-              </RecordingAudioWrapper>
-              <RecordingAudioDuration>
-                {millisToTime(audioDuration)}
-              </RecordingAudioDuration>
-            </RecordingAudioContainer>
-          )}
+          {recordingAudio && <RecordingAudio audioDuration={audioDuration} />}
           {files.length > 0 && (
             <FilesContainer>
               <Files
                 data={files}
-                keyExtractor={(item, index) =>
-                  item.file.type == "success"
-                    ? item.file.name + index
-                    : String(Math.random())
-                }
-                horizontal={true}
-                contentContainerStyle={{
-                  alignItems: "center",
-                }}
+                keyExtractor={(item, index) => String(index)}
                 renderItem={({ item, index }) => {
                   return (
-                    <File>
-                      <RemoveFileButton onPress={() => removeFile(index)}>
-                        <Feather name="x" size={14} color={colors.secondary} />
-                      </RemoveFileButton>
-                      {item.file.type === "success" && item.type === "image" ? (
-                        <ImageFile source={{ uri: item.file.uri }} />
-                      ) : (
-                        <OtherFile>
-                          <Feather
-                            name="file-text"
-                            size={25}
-                            color={colors.black}
-                          />
-                        </OtherFile>
-                      )}
-                    </File>
+                    <SelectedFile
+                      file={item}
+                      onRemoveFile={() => removeFile(index)}
+                    />
                   );
                 }}
               />
@@ -461,27 +446,21 @@ const Chat: React.FC = () => {
               onChangeText={handleSetMessage}
               value={message}
               placeholderTextColor={colors.light_gray}
-              maxLength={500}
-              multiline
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
               <SendButton>
-                <Feather
-                  name="send"
-                  size={24}
-                  color={colors.primary}
-                  onPress={handleMessageSubmit}
-                  style={{
-                    transform: [
-                      {
-                        rotate: "45deg",
-                      },
-                    ],
-                  }}
-                />
+                {message.length > 0 && (
+                  <Feather
+                    name="send"
+                    size={24}
+                    color={colors.primary}
+                    onPress={handleMessageSubmit}
+                    style={{ transform: [{ rotate: "45deg" }] }}
+                  />
+                )}
               </SendButton>
               {message.length <= 0 && (
                 <AudioContainer>

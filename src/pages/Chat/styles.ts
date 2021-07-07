@@ -1,5 +1,4 @@
-import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TextInput } from "react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -8,7 +7,12 @@ export const Container = styled.View`
   background-color: ${(props) => props.theme.colors.background};
 `;
 
-export const Messages = styled.FlatList`` as unknown as typeof FlatList;
+export const Messages = styled.FlatList.attrs({
+  inverted: true,
+  removeClippedSubviews: true,
+  maxToRenderPerBatch: 5,
+  initialNumToRender: 10
+})`` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`
   flex: 1;
@@ -22,7 +26,10 @@ export const FilesContainer = styled.View`
   border-radius: 10px;
 `;
 
-export const Files = styled.FlatList`` as unknown as typeof FlatList;
+export const Files = styled.FlatList.attrs({
+  horizontal: true,
+  contentContainerStyle: { alignItems: "center" }
+})`` as unknown as typeof FlatList;
 
 export const File = styled.View`
   position: relative;
@@ -112,9 +119,14 @@ export const OptionsButton = styled.TouchableOpacity`
   margin-right: 10px;
 `;
 
-export const SendButton = styled.TouchableOpacity``;
+export const SendButton = styled.TouchableOpacity`
+`;
 
-export const MessageInput = styled.TextInput`
+export const MessageInput = styled.TextInput.attrs({
+  multiline: true,
+  maxLength: 500,
+  
+})`
   flex: 1;
   font-size: 15px;
   font-family: ${fonts.text};
@@ -130,5 +142,4 @@ export const EmojiBoardContainer = styled.View`
 export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.TouchableOpacity`
-  margin-left: 12px;
 `;

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import LottieView from "lottie-react-native";
 import { Audio } from "expo-av";
 import {
   Container,
@@ -10,55 +11,56 @@ import {
   AudioDurationContainer,
   AudioDuration,
 } from "./styles";
-
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
-import { millisToTime } from "../../utils/format";
+import { millisToTime } from "../../../utils/format";
 import { useNavigation } from "@react-navigation/native";
+import { AudioData } from "../../../../@types/interfaces";
 
 interface IAudioPlayer {
-  url: string;
+  audio: AudioData;
 }
 
-const AudioPlayer = ({ url }: IAudioPlayer) => {
+const AudioPlayer = ({ audio }: IAudioPlayer) => {
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState<number>(0);
   const [currentPosition, setCurrentPosition] = useState(0);
 
   const navigation = useNavigation();
   const { colors } = useTheme();
 
   useEffect(() => {
-    loadAudio();
+    (async () => {
+      if (!sound || sound._loaded) {
+        return await loadAudio();
+      }
+    })();
   }, []);
 
-  async function loadAudio() {
-    if (sound) return;
+  const loadAudio = useCallback(async () => {
+    if (sound && sound._loaded) return;
+
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
       shouldDuckAndroid: false,
+      staysActiveInBackground: false,
     });
 
-    const newSound = await Audio.Sound.createAsync({ uri: url });
+    const newSound = await Audio.Sound.createAsync({ uri: audio.url });
 
     if (newSound.status.isLoaded) {
-      const status = newSound.status;
-      setDuration(Number(status.durationMillis));
-      setSound(newSound.sound);
-
       newSound.sound.setOnPlaybackStatusUpdate(async (status) => {
         if (!status.isLoaded) return;
 
         if (status.didJustFinish) {
           return await handleFinish();
         } else {
-          setIsPlaying(status.isPlaying);
           setCurrentPosition(status.positionMillis);
         }
       });
+      setSound(newSound.sound);
     }
 
     navigation.addListener("blur", async () => {
@@ -66,28 +68,32 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
         await newSound.sound.pauseAsync();
       }
     });
-  }
+  }, [audio.url]);
 
   async function handleFinish() {
+    await sound?.unloadAsync();
     setIsPlaying(false);
     onChangePosition(0);
-    await sound?.unloadAsync();
   }
 
   const handlePlayPauseAudio = async () => {
     if (!sound) return;
+    if (!sound._loaded) {
+      await loadAudio();
+    }
 
     if (isPlaying) {
       await sound.pauseAsync();
     } else {
       await sound.playFromPositionAsync(currentPosition);
     }
+
     setIsPlaying(!isPlaying);
   };
 
-  const onChangePosition = (value: number) => {
+  const onChangePosition = async (value: number) => {
     setCurrentPosition(value);
-    sound?.setPositionAsync(value);
+    await sound?.setPositionAsync(value);
   };
 
   return (
@@ -103,9 +109,9 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
           </AudioController>
           <SeekBarContainer>
             <SeekBar
-              step={1}
+              step={200}
               minimumValue={0}
-              maximumValue={duration}
+              maximumValue={audio.duration}
               value={currentPosition}
               thumbTintColor={colors.secondary}
               minimumTrackTintColor={colors.primary}
@@ -114,11 +120,20 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
             />
           </SeekBarContainer>
           <AudioDurationContainer>
-            <AudioDuration>
-              {isPlaying
-                ? millisToTime(currentPosition)
-                : millisToTime(duration)}
-            </AudioDuration>
+            {!sound?._loaded ? (
+              <LottieView
+                style={{ width: 20, transform: [{ scale: 1.3 }] }}
+                source={require("../../../assets/loading.json")}
+                autoPlay
+                loop
+              />
+            ) : (
+              <AudioDuration>
+                {isPlaying
+                  ? millisToTime(currentPosition)
+                  : millisToTime(audio.duration)}
+              </AudioDuration>
+            )}
           </AudioDurationContainer>
         </AudioControllerContainer>
       </AudioContainerWrapper>
@@ -126,4 +141,6 @@ const AudioPlayer = ({ url }: IAudioPlayer) => {
   );
 };
 
-export default AudioPlayer;
+export default React.memo(AudioPlayer, (prev, next) => {
+  return prev.audio.url !== next.audio.url;
+});

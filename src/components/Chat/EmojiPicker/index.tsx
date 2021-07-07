@@ -5,7 +5,7 @@ import _ from "lodash";
 import { FlatList } from "react-native";
 import Toast from "react-native-simple-toast";
 import { useTheme } from "styled-components";
-import { StorageService } from "../../services/Storage";
+import { StorageService } from "../../../services/Storage";
 import {
   Container,
   Emoji,

@@ -18,6 +18,7 @@ export const HeaderTitle = styled.Text`
   font-size: 20px;
   font-family: ${fonts.heading};
   color: #fff;
+  margin-left: 5px;
 `;
 
 export const RightContainer = styled.View`
@@ -29,5 +30,5 @@ export const RightContainer = styled.View`
 export const LeftContainer = styled(RightContainer)``;
 
 export const HeaderButton = styled.TouchableOpacity`
-  margin-right: 15px;
+  margin: 0px 5px;
 `;
