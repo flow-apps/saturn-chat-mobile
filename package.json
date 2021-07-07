@@ -20,6 +20,7 @@
     "date-fns": "^2.22.1",
     "date-fns-timezone": "^0.1.4",
     "emoji-datasource": "^7.0.2",
+    "emoji-js": "^3.5.0",
     "expo": "^41.0.1",
     "expo-app-loading": "^1.0.3",
     "expo-av": "~9.1.2",
@@ -34,6 +35,7 @@
     "expo-media-library": "~12.0.2",
     "expo-status-bar": "~1.0.4",
     "form-data": "^4.0.0",
+    "lodash": "^4.17.21",
     "lottie-react-native": "3.5.0",
     "markdown-it": "^12.0.6",
     "markdown-it-linkscheme": "^1.0.2",
@@ -66,8 +68,6 @@
     "@types/socket.io-client": "^3.0.0",
     "@types/styled-components": "^5.1.9",
     "@types/styled-components-react-native": "^5.1.1",
-    "emoji-js": "^3.5.0",
-    "lodash": "^4.17.21",
     "typescript": "~4.0.0"
   },
   "private": true
