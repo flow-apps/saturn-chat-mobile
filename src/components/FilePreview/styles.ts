@@ -42,7 +42,7 @@ export const FileOpenAction = styled.View`
   justify-content: center;
 `;
 
-export const FileDownloadButton = styled.TouchableOpacity`
+export const FileButton = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
 `;

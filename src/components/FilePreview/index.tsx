@@ -6,7 +6,7 @@ import * as FileSystem from "expo-file-system";
 import {
   Container,
   FileContainer,
-  FileDownloadButton,
+  FileButton,
   FileIconContainer,
   FileImagePreview,
   FileInfosContainer,
@@ -21,6 +21,7 @@ import { useState } from "react";
 import { convertBytesToMB } from "../../utils/convertSize";
 import config from "../../config";
 import Toast from "react-native-simple-toast";
+import { useNavigation } from "@react-navigation/native";
 
 interface IFileProps {
   name: string;
@@ -31,6 +32,8 @@ interface IFileProps {
 
 const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
+  const navigation = useNavigation();
+
   const { colors } = useTheme();
 
   const handleDownloadFile = () => {
@@ -85,6 +88,13 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
     }
   };
 
+  const handleGoImagePreview = () => {
+    return navigation.navigate("ImagePreview", {
+      name,
+      url,
+    });
+  };
+
   return (
     <Container>
       <Alert
@@ -106,11 +116,13 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
         </FileInfosContainer>
         <FileOpenAction>
           {type === "image" ? (
-            <FileImagePreview source={{ uri: url }} />
+            <FileButton onPress={handleGoImagePreview}>
+              <FileImagePreview source={{ uri: url }} />
+            </FileButton>
           ) : (
-            <FileDownloadButton onPress={handleDownloadFile}>
+            <FileButton onPress={handleDownloadFile}>
               <Feather name="download" size={30} color={colors.secondary} />
-            </FileDownloadButton>
+            </FileButton>
           )}
         </FileOpenAction>
       </FileContainer>
