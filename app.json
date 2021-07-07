@@ -21,7 +21,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": ["**/*", "./src/assets"],
     "ios": {
       "supportsTablet": true
     },

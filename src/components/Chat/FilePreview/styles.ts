@@ -25,7 +25,10 @@ export const FileInfosContainer = styled.View`
   justify-content: center;
 `;
 
-export const FileName = styled.Text`
+export const FileName = styled.Text.attrs({
+  numberOfLines: 1,
+  lineBreakMode: "middle"
+})`
   font-size: 12px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.black};
@@ -47,7 +50,10 @@ export const FileButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-export const FileImagePreview = styled.Image`
+export const FileImagePreview = styled.Image.attrs({
+  width: 50,
+  height: 50
+})`
   width: 50px;
   height: 50px;
   border-radius: 5px;

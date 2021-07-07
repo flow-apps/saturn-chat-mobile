@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { Container, ImageContainer, Image } from "./styles";
 
@@ -13,7 +13,7 @@ import {
   State,
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
-import { Animated, Dimensions, Easing } from "react-native";
+import ReactNative, { Animated, Dimensions, Easing } from "react-native";
 import { HeaderButton } from "../../components/Header/styles";
 
 const ImagePreview = () => {
@@ -38,6 +38,10 @@ const ImagePreview = () => {
 
   const route = useRoute();
   const { name, url } = route.params as { name: string; url: string };
+
+  useEffect(() => {
+    ReactNative.Image.prefetch(url)
+  }, [])
 
   const onPinchStateChange = (
     event: GestureEvent<PinchGestureHandlerEventPayload>

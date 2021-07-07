@@ -401,14 +401,10 @@ const Chat: React.FC = () => {
             data={oldMessages}
             keyExtractor={(item) => String(item.id)}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
-            maxToRenderPerBatch={5}
-            initialNumToRender={10}
-            removeClippedSubviews
             ListFooterComponent={
               fetching && !fetchedAll ? <LoadingIndicator /> : <></>
             }
             renderItem={renderMessage}
-            inverted
           />
         </MessageContainer>
         <FormContainer>
@@ -418,8 +414,6 @@ const Chat: React.FC = () => {
               <Files
                 data={files}
                 keyExtractor={(item, index) => String(index)}
-                horizontal={true}
-                contentContainerStyle={{ alignItems: "center" }}
                 renderItem={({ item, index }) => {
                   return (
                     <SelectedFile
@@ -452,8 +446,6 @@ const Chat: React.FC = () => {
               onChangeText={handleSetMessage}
               value={message}
               placeholderTextColor={colors.light_gray}
-              maxLength={500}
-              multiline
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>

@@ -1,12 +1,21 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
-import * as MediaLibrary from "expo-media-library";
+import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components";
+import { convertBytesToMB } from "../../../utils/convertSize";
+
 import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
+
+import Toast from "react-native-simple-toast";
+import Alert from "../../Alert";
+import config from "../../../config";
 
 import {
   Container,
-  FileContainer,
   FileButton,
+  FileContainer,
   FileIconContainer,
   FileImagePreview,
   FileInfosContainer,
@@ -14,14 +23,8 @@ import {
   FileOpenAction,
   FileSize,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
-import { useTheme } from "styled-components";
-import Alert from "../../Alert";
-import { useState } from "react";
-import { convertBytesToMB } from "../../../utils/convertSize";
-import config from "../../../config";
-import Toast from "react-native-simple-toast";
-import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import { Image } from "react-native";
 
 interface IFileProps {
   name: string;
@@ -33,8 +36,13 @@ interface IFileProps {
 const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const navigation = useNavigation();
-
   const { colors } = useTheme();
+
+  useEffect(() => {
+    if (type === "image") {
+      Image.prefetch(url)
+    }
+  }, [])
 
   const handleDownloadFile = () => {
     setDownloadWarning(true);
@@ -109,9 +117,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
       <FileContainer>
         <FileIconContainer>{renderIcon()}</FileIconContainer>
         <FileInfosContainer>
-          <FileName numberOfLines={1} lineBreakMode="middle">
-            {name}
-          </FileName>
+          <FileName>{name}</FileName>
           <FileSize>{convertBytesToMB(size)}MB</FileSize>
         </FileInfosContainer>
         <FileOpenAction>
