@@ -1,7 +1,8 @@
 import styled from "styled-components/native";
+import fonts from "../../styles/fonts";
 import { FlatList } from "react-native";
 import { FilesContainer } from "../../components/Chat/SelectedFiles/styles";
-import fonts from "../../styles/fonts";
+
 
 export const Container = styled.View`
   flex: 1;
@@ -20,31 +21,20 @@ export const MessageContainer = styled.View`
   padding: 0px 5px 0px 5px;
 `;
 
-export const ImageFile = styled.Image`
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
-`;
-
-export const OtherFile = styled.View`
-  width: 80px;
-  height: 80px;
+export const FileSendedProgressContainer = styled.View`
+  background-color: ${props => props.theme.colors.shape};
+  padding: 10px;
   align-items: center;
   justify-content: center;
-`;
-
-export const RemoveFileButton = styled.TouchableOpacity`
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  z-index: 5;
-  top: 3px;
-  right: 3px;
-  background-color: #88888888;
   border-radius: 10px;
-  align-items: center;
-  justify-content: center;
 `;
+
+export const FileSendedText = styled.Text`
+  font-family: ${fonts.heading};
+  font-size: 16px;
+  color: ${props => props.theme.colors.secondary};
+  margin-bottom: 10px;
+`
 
 export const RecordingAudioContainer = styled(FilesContainer)`
   height: 40px;

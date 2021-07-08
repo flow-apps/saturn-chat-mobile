@@ -9,6 +9,7 @@ import {
 
 import EmojiJS from "emoji-js";
 
+import { ProgressBar } from "react-native-paper";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
@@ -37,6 +38,8 @@ import {
   Container,
   EmojiBoardContainer,
   EmojiButton,
+  FileSendedProgressContainer,
+  FileSendedText,
   FormContainer,
   InputContainer,
   MessageContainer,
@@ -62,6 +65,8 @@ const Chat: React.FC = () => {
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
+  const [sendingFile, setSendingFile] = useState(false);
+  const [sendedFileProgress, setSendedFileProgress] = useState(0);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -339,6 +344,7 @@ const Chat: React.FC = () => {
         message,
       });
     } else {
+      setSendingFile(true);
       Toast.show("Enviando arquivos...");
       const filesData = new FormData();
 
@@ -354,16 +360,22 @@ const Chat: React.FC = () => {
         }
       });
 
-      const response = await api.post(
-        `/messages/SendAttachment/${id}?type=files`,
-        filesData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-      socket?.emit("new_message_with_files", {
-        message,
-        message_id: response.data.message_id,
-      });
+      await api
+        .post(`/messages/SendAttachment/${id}?type=files`, filesData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (event) => {
+            const totalSended = Math.round((event.loaded * 100) / event.total);
+            setSendedFileProgress(totalSended);
+          },
+        })
+        .then((response) => {
+          socket?.emit("new_message_with_files", {
+            message,
+            message_id: response.data.message_id,
+          });
+        });
+      setSendingFile(false);
+      setSendedFileProgress(0);
     }
     setFiles([]);
     setMessage("");
@@ -413,8 +425,21 @@ const Chat: React.FC = () => {
         </MessageContainer>
         <FormContainer>
           {recordingAudio && <RecordingAudio audioDuration={audioDuration} />}
-          {files.length > 0 && (
+          {files.length > 0 && !sendingFile && (
             <SelectedFiles files={files} onFileRemove={removeFile} />
+          )}
+
+          {sendingFile && (
+            <FileSendedProgressContainer>
+              <FileSendedText>
+                <Feather name="upload" size={16} /> {sendedFileProgress}% enviado
+              </FileSendedText>
+              <ProgressBar
+                progress={sendedFileProgress / 100}
+                color={colors.primary}
+                style={{ minWidth: "100%", height: 10, borderRadius: 10 }}
+              />
+            </FileSendedProgressContainer>
           )}
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
@@ -443,17 +468,18 @@ const Chat: React.FC = () => {
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
               <SendButton>
-                {message.length > 0 && (
-                  <Feather
-                    name="send"
-                    size={24}
-                    color={colors.primary}
-                    onPress={handleMessageSubmit}
-                    style={{ transform: [{ rotate: "45deg" }] }}
-                  />
-                )}
+                {message.length > 0 ||
+                  (files.length > 0 && (
+                    <Feather
+                      name="send"
+                      size={24}
+                      color={colors.primary}
+                      onPress={handleMessageSubmit}
+                      style={{ transform: [{ rotate: "45deg" }] }}
+                    />
+                  ))}
               </SendButton>
-              {message.length <= 0 && (
+              {message.length <= 0 && files.length <= 0 && (
                 <AudioContainer>
                   <AudioButton
                     onPressIn={recordAudio}
