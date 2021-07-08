@@ -15,7 +15,7 @@ interface HeaderProps {
   title: string;
   onPressTitle?: () => unknown;
   backButton?: boolean;
-  children?: React.ReactChild;
+  children?: JSX.Element[] | JSX.Element
 }
 
 const Header = ({ title, backButton, onPressTitle, children }: HeaderProps) => {

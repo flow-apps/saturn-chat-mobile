@@ -30,7 +30,6 @@ import EmojiPicker from "../../components/Chat/EmojiPicker";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Chat/Message";
-import SelectedFile from "../../components/Chat/SelectedFile";
 import api from "../../services/api";
 import {
   AudioButton,
@@ -38,9 +37,6 @@ import {
   Container,
   EmojiBoardContainer,
   EmojiButton,
-  File,
-  Files,
-  FilesContainer,
   FormContainer,
   InputContainer,
   MessageContainer,
@@ -52,6 +48,7 @@ import {
 } from "./styles";
 import RecordingAudio from "../../components/Chat/RecordingAudio";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import SelectedFiles from "../../components/Chat/SelectedFiles";
 
 const emoji = new EmojiJS();
 
@@ -314,6 +311,10 @@ const Chat: React.FC = () => {
     navigation.navigate("GroupConfig", { id });
   }, [id]);
 
+  const handleGoGroupParticipants = useCallback(() => {
+    navigation.navigate("Participants", { id });
+  }, [id]);
+
   const handleGoGroupInfos = useCallback(() => {
     navigation.navigate("GroupInfos", { id });
   }, [id]);
@@ -372,11 +373,6 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      <Header title={group.name} onPressTitle={handleGoGroupInfos} backButton>
-        <HeaderButton onPress={handleGoGroupConfig}>
-          <Feather name="more-vertical" size={22} color="#fff" />
-        </HeaderButton>
-      </Header>
       <Alert
         title="😱 Que coisa pesada!"
         content="Eu não consigo carregar algo tão pesado, tente algo de até 12MB!"
@@ -395,6 +391,14 @@ const Chat: React.FC = () => {
         okButtonAction={() => setAudioPermission(false)}
         visible={audioPermission}
       />
+      <Header title={group.name} onPressTitle={handleGoGroupInfos} backButton>
+        <HeaderButton onPress={handleGoGroupParticipants}>
+          <Feather name="users" size={22} color="#fff" />
+        </HeaderButton>
+        <HeaderButton onPress={handleGoGroupConfig}>
+          <Feather name="more-vertical" size={22} color="#fff" />
+        </HeaderButton>
+      </Header>
       <Container>
         <MessageContainer>
           <Messages
@@ -410,20 +414,7 @@ const Chat: React.FC = () => {
         <FormContainer>
           {recordingAudio && <RecordingAudio audioDuration={audioDuration} />}
           {files.length > 0 && (
-            <FilesContainer>
-              <Files
-                data={files}
-                keyExtractor={(item, index) => String(index)}
-                renderItem={({ item, index }) => {
-                  return (
-                    <SelectedFile
-                      file={item}
-                      onRemoveFile={() => removeFile(index)}
-                    />
-                  );
-                }}
-              />
-            </FilesContainer>
+            <SelectedFiles files={files} onFileRemove={removeFile} />
           )}
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>

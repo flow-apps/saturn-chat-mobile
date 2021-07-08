@@ -1,5 +1,6 @@
-import { FlatList, TextInput } from "react-native";
 import styled from "styled-components/native";
+import { FlatList } from "react-native";
+import { FilesContainer } from "../../components/Chat/SelectedFiles/styles";
 import fonts from "../../styles/fonts";
 
 export const Container = styled.View`
@@ -17,29 +18,6 @@ export const Messages = styled.FlatList.attrs({
 export const MessageContainer = styled.View`
   flex: 1;
   padding: 0px 5px 0px 5px;
-`;
-
-export const FilesContainer = styled.View`
-  height: 100px;
-  background-color: ${(props) => props.theme.colors.shape};
-  padding: 5px;
-  border-radius: 10px;
-`;
-
-export const Files = styled.FlatList.attrs({
-  horizontal: true,
-  contentContainerStyle: { alignItems: "center" }
-})`` as unknown as typeof FlatList;
-
-export const File = styled.View`
-  position: relative;
-  width: 80px;
-  height: 80px;
-  align-items: center;
-  justify-content: center;
-  margin-right: 10px;
-  background-color: ${(props) => props.theme.colors.dark_gray}44;
-  border-radius: 8px;
 `;
 
 export const ImageFile = styled.Image`

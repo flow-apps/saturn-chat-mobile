@@ -9,22 +9,19 @@ function usePersistedState<T>(key: string, initialState: any): Response<T> {
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    async function getItem() {
+    (async () => {
       const storagedValue = await storage.getItem(key);
 
       if (storagedValue) {
         setState(JSON.parse(storagedValue));
       }
-    }
-
-    getItem();
+    })();
   }, []);
 
   useEffect(() => {
-    async function changeState() {
+    (async () => {
       await storage.saveItem(key, JSON.stringify(state));
-    }
-    changeState();
+    })();
   }, [key, state]);
 
   return [state, setState];

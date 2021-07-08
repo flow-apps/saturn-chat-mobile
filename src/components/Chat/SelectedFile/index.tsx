@@ -6,7 +6,7 @@ import { DocumentResult } from "expo-document-picker";
 
 interface File {
   file: DocumentResult;
-  type: string
+  type: string;
 }
 
 interface FileProps {
@@ -16,6 +16,7 @@ interface FileProps {
 
 const SelectedFile = ({ onRemoveFile, file }: FileProps) => {
   const { colors } = useTheme();
+
   return (
     <File>
       <RemoveFileButton onPress={onRemoveFile}>
@@ -32,4 +33,4 @@ const SelectedFile = ({ onRemoveFile, file }: FileProps) => {
   );
 };
 
-export default SelectedFile;
+export default React.memo(SelectedFile);

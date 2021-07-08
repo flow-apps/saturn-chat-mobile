@@ -14,7 +14,7 @@ export const Container = styled.View`
 `;
 
 export const HeaderTitle = styled.Text`
-  width: 320px;
+  max-width: 320px;
   font-size: 20px;
   font-family: ${fonts.heading};
   color: #fff;
