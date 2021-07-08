@@ -39,6 +39,10 @@ const Login: React.FC = () => {
     await signIn(email, password);
   }
 
+  if (loading) {
+    return <Loading />
+  }
+
   return (
     <>
       <Header title="Faça o login" backButton />

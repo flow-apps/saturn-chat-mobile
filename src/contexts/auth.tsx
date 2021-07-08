@@ -4,10 +4,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../services/api";
 import { UserData } from "../../@types/interfaces";
 import FormData from "form-data";
+import Loading from "../components/Loading";
 
 interface AuthContextData {
   signed: boolean;
   loading: boolean;
+  loadingData: boolean;
   user: UserData | null;
   error: boolean;
   token: string;
@@ -21,11 +23,13 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export const AuthProvider: React.FC = ({ children }) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(true)
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     setError(false);
+    setLoadingData(true)
     async function loadStorageData() {
       const storageUser = await AsyncStorage.getItem("@FlowChat:user");
       const storageToken = await AsyncStorage.getItem("@FlowChat:token");
@@ -35,7 +39,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         setUser(JSON.parse(String(storageUser)));
         setToken(`Bearer ${storageToken}`);
       }
-      setLoading(false);
+      setLoadingData(false)
     }
 
     loadStorageData();
@@ -51,6 +55,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   async function signIn(email: string, password: string) {
+    setLoading(true)
     setError(false);
     auth
       .signIn(email, password)
@@ -60,10 +65,11 @@ export const AuthProvider: React.FC = ({ children }) => {
       })
       .catch(() => {
         setError(true);
-      });
+      }).finally(() => setLoading(false))
   }
 
   async function signUp(data: FormData) {
+    setLoading(true)
     setError(false);
     auth
       .signUp(data)
@@ -73,7 +79,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       })
       .catch(() => {
         setError(true);
-      });
+      }).finally(() => setLoading(false))
   }
 
   function signOut() {
@@ -89,6 +95,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       value={{
         signed: !!user,
         loading,
+        loadingData,
         user,
         signIn,
         signUp,

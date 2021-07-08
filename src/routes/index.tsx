@@ -6,9 +6,9 @@ import AppRoutes from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
 
 const Routes = () => {
-  const { signed, loading } = useAuth();
+  const { signed, loadingData } = useAuth();
 
-  if (loading) return <AppLoading />;
+  if (loadingData) return <AppLoading />;
 
   return (
     <NavigationContainer>

@@ -25,6 +25,7 @@ import {
   SelectAvatarTitle,
 } from "./styles";
 import formData from "form-data";
+import Loading from "../../../components/Loading";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImageInfo>();
@@ -38,7 +39,7 @@ const Register: React.FC = () => {
   const [passConfirmError, setPassConfirmError] = useState(false);
 
   const { colors } = useTheme();
-  const { signUp } = useAuth();
+  const { signUp, loading } = useAuth();
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
   const emailValidation = /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g;
@@ -117,6 +118,10 @@ const Register: React.FC = () => {
     });
 
     return signUp(data);
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   return (

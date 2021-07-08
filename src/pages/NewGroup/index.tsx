@@ -35,8 +35,10 @@ import { useNavigation } from "@react-navigation/core";
 import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import { color } from "react-native-reanimated";
+import Loading from "../../components/Loading";
 
 const NewGroup: React.FC = () => {
+  const [creating, setCreating] = useState(false)
   const [groupPhoto, setGroupPhoto] = useState<ImageInfo>();
   const [groupPhotoPreview, setGroupPhotoPreview] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -64,6 +66,7 @@ const NewGroup: React.FC = () => {
     data.append("privacy", isPublicGroup ? "PUBLIC" : "PRIVATE");
     data.append("tags", tags);
 
+    setCreating(true)
     api
       .post("/groups", data, {
         headers: {
@@ -75,7 +78,8 @@ const NewGroup: React.FC = () => {
           navigator.navigate("Groups");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setCreating(false))
   }
 
   function handleSetPublic() {
@@ -106,6 +110,10 @@ const NewGroup: React.FC = () => {
       setGroupPhotoPreview(photo.uri);
       return setGroupPhoto(photo);
     }
+  }
+
+  if (creating) {
+    return <Loading />
   }
 
   return (
