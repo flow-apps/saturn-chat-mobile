@@ -48,6 +48,19 @@ export const YourInviteLinkText = styled.Text`
 
 export const YourInviteCopyButton = styled.TouchableOpacity``;
 
+export const NewInviteContainer = styled.View``
+
+export const NewInviteButton = styled.TouchableOpacity`
+  margin-top: 20px;
+`
+
+export const NewInviteButtonText = styled.Text`
+  font-size: 16px;
+  font-family: ${fonts.text};
+  color: ${props => props.theme.colors.primary};
+  text-align: center;
+`
+
 export const InviteFriendsContainer = styled.View`
   margin-top: 20px;
 `;
@@ -62,12 +75,15 @@ export const InviteFriendsSubtitle = styled(YourInviteSubtitle)`
   color: ${(props) => props.theme.colors.secondary};
 `;
 
-export const FriendsListContainer = styled.View``;
+export const FriendsListContainer = styled.View`
+  margin-bottom: 20px;
+`;
 
 export const FriendContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 10px;
 `;
 
 export const FriendWrapper = styled.View`

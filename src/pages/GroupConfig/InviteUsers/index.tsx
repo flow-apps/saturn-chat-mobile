@@ -13,6 +13,9 @@ import {
   InviteFriendsContainer,
   InviteFriendsSubtitle,
   InviteFriendsTitle,
+  NewInviteButton,
+  NewInviteButtonText,
+  NewInviteContainer,
   YourInviteContainer,
   YourInviteCopyButton,
   YourInviteLinkContainer,
@@ -44,6 +47,13 @@ const InviteUsers: React.FC = () => {
               <Feather name="clipboard" size={22} color={colors.secondary} />
             </YourInviteCopyButton>
           </YourInviteLinkContainer>
+          <NewInviteContainer>
+            <NewInviteButton>
+              <NewInviteButtonText>
+                <Feather name="plus" size={16} /> Criar novo convite
+              </NewInviteButtonText>
+            </NewInviteButton>
+          </NewInviteContainer>
         </YourInviteContainer>
         <InviteFriendsContainer>
           <InviteFriendsTitle>
@@ -60,9 +70,16 @@ const InviteUsers: React.FC = () => {
               <FriendName>Pedro Henrique</FriendName>
             </FriendWrapper>
             <FriendInviteButton>
-                <FriendInviteButtonText>
-                    Convidar
-                </FriendInviteButtonText>
+              <FriendInviteButtonText>Convidar</FriendInviteButtonText>
+            </FriendInviteButton>
+          </FriendContainer>
+          <FriendContainer>
+            <FriendWrapper>
+              <FriendAvatar source={avatar} />
+              <FriendName>Pedro Henrique</FriendName>
+            </FriendWrapper>
+            <FriendInviteButton>
+              <FriendInviteButtonText>Convidar</FriendInviteButtonText>
             </FriendInviteButton>
           </FriendContainer>
         </FriendsListContainer>
