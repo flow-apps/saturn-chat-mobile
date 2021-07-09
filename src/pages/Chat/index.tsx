@@ -432,7 +432,8 @@ const Chat: React.FC = () => {
           {sendingFile && (
             <FileSendedProgressContainer>
               <FileSendedText>
-                <Feather name="upload" size={16} /> {sendedFileProgress}% enviado
+                <Feather name="upload" size={16} /> {sendedFileProgress}%
+                enviado
               </FileSendedText>
               <ProgressBar
                 progress={sendedFileProgress / 100}
@@ -468,16 +469,17 @@ const Chat: React.FC = () => {
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
               <SendButton>
-                {message.length > 0 ||
-                  (files.length > 0 && (
-                    <Feather
-                      name="send"
-                      size={24}
-                      color={colors.primary}
-                      onPress={handleMessageSubmit}
-                      style={{ transform: [{ rotate: "45deg" }] }}
-                    />
-                  ))}
+                {message.length > 0 || files.length > 0 ? (
+                  <Feather
+                    name="send"
+                    size={24}
+                    color={colors.primary}
+                    onPress={handleMessageSubmit}
+                    style={{ transform: [{ rotate: "45deg" }] }}
+                  />
+                ) : (
+                  <></>
+                )}
               </SendButton>
               {message.length <= 0 && files.length <= 0 && (
                 <AudioContainer>
