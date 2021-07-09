@@ -4,7 +4,7 @@ import fonts from "../../../styles/fonts";
 export const Container = styled.View`
   flex: 1;
   background: ${(props) => props.theme.colors.background};
-  padding: 0px 10px;
+  padding: 0px 15px;
 `;
 
 export const YourInviteContainer = styled.View`
@@ -68,7 +68,6 @@ export const FriendContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 5px;
 `;
 
 export const FriendWrapper = styled.View`
