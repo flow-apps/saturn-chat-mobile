@@ -1,4 +1,5 @@
-import { Animated, Dimensions } from "react-native";
+import { Animated, Dimensions, FlatList } from "react-native";
+import LottieView from "lottie-react-native"
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -81,3 +82,33 @@ export const GroupsList = styled.View`
   flex: 1;
   background-color: ${(props) => props.theme.colors.shape};
 `;
+
+export const GroupsListEmptyContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`
+
+export const GroupsListEmptyAnimation = styled(LottieView)`
+  width: 250px;
+  height: 250px;
+  margin-bottom: 10px;
+`
+
+export const GroupsListEmptyTitle = styled.Text`
+  font-size: 18px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.black};
+`
+
+export const GroupsListEmptySubTitle = styled.Text`
+  font-size: 16px;
+  font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.light_heading};
+  text-align: center;
+`
+
+export const GroupsListEmptyLink = styled(GroupsListEmptySubTitle)`
+  color: ${props => props.theme.colors.primary};
+  font-family: ${fonts.heading};
+`

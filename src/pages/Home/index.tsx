@@ -15,6 +15,11 @@ import {
   GroupImage,
   GroupsContainer,
   GroupsList,
+  GroupsListEmptyAnimation,
+  GroupsListEmptyContainer,
+  GroupsListEmptyLink,
+  GroupsListEmptySubTitle,
+  GroupsListEmptyTitle,
   GroupsSubtitle,
   GroupsTitle,
   NewGroupButton,
@@ -118,6 +123,25 @@ const Home: React.FC = () => {
         <GroupsList>
           <FlatList
             data={groups}
+            ListEmptyComponent={() => (
+              <GroupsListEmptyContainer>
+                <GroupsListEmptyAnimation
+                  source={require("../../assets/welcome.json")}
+                  speed={0.5}
+                  autoPlay
+                  loop={false}
+                />
+                <GroupsListEmptyTitle>
+                  Que tal começar entrando num grupo?
+                </GroupsListEmptyTitle>
+                <GroupsListEmptySubTitle>
+                  Acesse a aba{" "}
+                  <Feather name="search" size={16} color={colors.secondary} /> e
+                  pesquise algo ou entre no nosso{" "}
+                  <GroupsListEmptyLink>Grupo Oficial</GroupsListEmptyLink>!
+                </GroupsListEmptySubTitle>
+              </GroupsListEmptyContainer>
+            )}
             ListHeaderComponent={() => (
               <TitleWrapper>
                 <GroupsTitle>Acesse os grupos</GroupsTitle>
