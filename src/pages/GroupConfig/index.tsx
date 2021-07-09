@@ -58,6 +58,10 @@ const GroupConfig: React.FC = () => {
     navigation.navigate("Participants", { id });
   }
 
+  function handleGoInviteUsers() {
+    navigation.navigate("InviteUsers")
+  }
+
   if (loading) return <Loading />;
 
   return (
@@ -71,7 +75,7 @@ const GroupConfig: React.FC = () => {
               <Feather name="users" size={25} /> Participantes
             </OptionText>
           </OptionContainer>
-          <OptionContainer>
+          <OptionContainer onPress={handleGoInviteUsers}>
             <OptionText color={colors.primary}>
               <Feather name="user-plus" size={25} /> Convidar usuários
             </OptionText>

@@ -8,6 +8,7 @@ import GroupInfos from "../pages/GroupInfos";
 import Chat from "../pages/Chat";
 import Participants from "../pages/Participants";
 import ImagePreview from "../pages/ImagePreview";
+import InviteUsers from "../pages/GroupConfig/InviteUsers";
 
 const StackRoutes = createStackNavigator();
 
@@ -20,6 +21,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="UserProfile" component={UserProfile} />
       <StackRoutes.Screen name="Search" component={Search} />
       <StackRoutes.Screen name="GroupConfig" component={GroupConfig} />
+      <StackRoutes.Screen name="InviteUsers" component={InviteUsers} />
       <StackRoutes.Screen name="GroupInfos" component={GroupInfos} />
       <StackRoutes.Screen name="ImagePreview" component={ImagePreview} />
     </StackRoutes.Navigator>
