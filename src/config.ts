@@ -5,7 +5,7 @@ const documentsPath = FileSystem.documentDirectory;
 export default {
   API_URL: __DEV__ ? "http://192.168.0.112:3000" : "",
   FILE_PATHS: {
-    AUDIO: `${documentsPath}SaturnChat/Audios/`,
-    DOCUMENTS: `${documentsPath}SaturnChat/`,
+    AUDIO: `${documentsPath}`,
+    DOCUMENTS: `${documentsPath}`,
   },
 };

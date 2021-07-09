@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { Container, ImageContainer, Image } from "./styles";
 
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
+
+import Toast from "react-native-simple-toast";
+
 import { Feather } from "@expo/vector-icons";
 
 import {
@@ -15,6 +20,9 @@ import {
 } from "react-native-gesture-handler";
 import ReactNative, { Animated, Dimensions, Easing } from "react-native";
 import { HeaderButton } from "../../components/Header/styles";
+import { useCallback } from "react";
+import config from "../../config";
+import { Linking } from "react-native";
 
 const ImagePreview = () => {
   let _baseScale = new Animated.Value(1);
@@ -40,8 +48,8 @@ const ImagePreview = () => {
   const { name, url } = route.params as { name: string; url: string };
 
   useEffect(() => {
-    ReactNative.Image.prefetch(url)
-  }, [])
+    ReactNative.Image.prefetch(url);
+  }, []);
 
   const onPinchStateChange = (
     event: GestureEvent<PinchGestureHandlerEventPayload>
@@ -86,10 +94,14 @@ const ImagePreview = () => {
     }
   };
 
+  const downloadFile = useCallback(async () => {
+    await Linking.openURL(url);
+  }, [name, url]);
+
   return (
     <>
       <Header title={name} backButton>
-        <HeaderButton>
+        <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />
         </HeaderButton>
       </Header>

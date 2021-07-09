@@ -25,6 +25,7 @@ import {
 } from "./styles";
 import { useEffect } from "react";
 import { Image } from "react-native";
+import { Linking } from "react-native";
 
 interface IFileProps {
   name: string;
@@ -50,28 +51,8 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
 
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
-    const { granted } = await MediaLibrary.getPermissionsAsync();
-
-    if (!granted) {
-      const perm = await MediaLibrary.requestPermissionsAsync();
-
-      if (!perm.granted) {
-        return;
-      }
-    }
-
-    Toast.show("Iniciando download");
-
-    const filePath = config.FILE_PATHS.DOCUMENTS + name;
-
-    try {
-      FileSystem.downloadAsync(url, filePath).then(async ({ uri }) => {
-        Toast.show("Arquivo baixado com sucesso!");
-      });
-    } catch (error) {
-      Toast.show("Não foi possível realizar o download!");
-      new Error(error);
-    }
+  
+    Linking.openURL(url)
   }, [url, name]);
 
   const renderIcon = () => {
