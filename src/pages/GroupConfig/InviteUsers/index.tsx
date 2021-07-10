@@ -24,10 +24,15 @@ import {
   YourInviteTitle,
 } from "./styles";
 import { useTheme } from "styled-components";
+import { useNavigation } from "@react-navigation/native";
 import avatar from "../../../assets/avatar.jpg";
 
 const InviteUsers: React.FC = () => {
+  const navigation = useNavigation()
   const { colors } = useTheme();
+
+  const handleGoCreateNewInvite = () => navigation.navigate("NewInvites")
+
   return (
     <>
       <Header title="Convidar" backButton />
@@ -40,7 +45,7 @@ const InviteUsers: React.FC = () => {
             Você pode convidar usuários para o grupo usando este link:
           </YourInviteSubtitle>
           <YourInviteLinkContainer>
-            <YourInviteLinkText numberOfLines={1}>
+            <YourInviteLinkText numberOfLines={1} selectable>
               https://saturnchat.com/inv/77g8gop
             </YourInviteLinkText>
             <YourInviteCopyButton>
@@ -48,7 +53,7 @@ const InviteUsers: React.FC = () => {
             </YourInviteCopyButton>
           </YourInviteLinkContainer>
           <NewInviteContainer>
-            <NewInviteButton>
+            <NewInviteButton onPress={handleGoCreateNewInvite}>
               <NewInviteButtonText>
                 <Feather name="plus" size={16} /> Criar novo convite
               </NewInviteButtonText>
