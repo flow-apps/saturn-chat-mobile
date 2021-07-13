@@ -5,6 +5,10 @@ interface CreateInviteOptionProps {
   disabled?: boolean;
 }
 
+interface OptionCardProps {
+  selected?: boolean;
+}
+
 export const Container = styled.ScrollView`
   flex: 1;
   background-color: ${(props) => props.theme.colors.background};
@@ -70,8 +74,9 @@ export const CreateInviteLinkOptionScroll = styled.ScrollView.attrs({
   margin: 5px;
 `;
 
-export const CreateInviteLinkOptionCard = styled.TouchableOpacity`
+export const CreateInviteLinkOptionCard = styled.TouchableOpacity<OptionCardProps>`
   background: ${(props) => props.theme.colors.background};
+  border: ${props => props.selected ? `1px solid ${props.theme.colors.primary}` : "none"};
   border-radius: 5px;
   padding: 10px 25px;
   margin-right: 5px;

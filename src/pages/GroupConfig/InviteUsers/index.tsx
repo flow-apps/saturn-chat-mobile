@@ -64,14 +64,14 @@ const InviteUsers: React.FC = () => {
         </YourInviteContainer>
         <InviteFriendsContainer>
           <InviteFriendsTitle>
-            <Feather name="user-check" size={20} /> Convide seus amigos
+            <Feather name="user-check" size={20} /> Em breve
           </InviteFriendsTitle>
-          <InviteFriendsSubtitle>
+          {/* <InviteFriendsSubtitle>
             Eles precisarão aceitar o convite antes de entrar!
-          </InviteFriendsSubtitle>
+          </InviteFriendsSubtitle> */}
         </InviteFriendsContainer>
         <FriendsListContainer>
-          <FriendContainer>
+          {/* <FriendContainer>
             <FriendWrapper>
               <FriendAvatar source={avatar} />
               <FriendName>Pedro Henrique</FriendName>
@@ -88,7 +88,7 @@ const InviteUsers: React.FC = () => {
             <FriendInviteButton>
               <FriendInviteButtonText>Convidar</FriendInviteButtonText>
             </FriendInviteButton>
-          </FriendContainer>
+          </FriendContainer> */}
         </FriendsListContainer>
       </Container>
     </>

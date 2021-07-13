@@ -152,7 +152,11 @@ const NewInvites: React.FC = () => {
                 </CreateInviteLinkOptionLabel>
                 <CreateInviteLinkOptionScroll>
                   {expireInValues.map((value, index) => (
-                    <CreateInviteLinkOptionCard key={index} onPress={() => setExpireIn(value)}>
+                    <CreateInviteLinkOptionCard 
+                      selected={value === expireIn} 
+                      key={index} 
+                      onPress={() => setExpireIn(value)}
+                    >
                     <CreateInviteLinkOptionCardText>
                       {value} Dias
                     </CreateInviteLinkOptionCardText>
