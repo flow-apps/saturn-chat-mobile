@@ -24,14 +24,16 @@ import {
   YourInviteTitle,
 } from "./styles";
 import { useTheme } from "styled-components";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import avatar from "../../../assets/avatar.jpg";
 
 const InviteUsers: React.FC = () => {
   const navigation = useNavigation()
+  const route = useRoute()
+  const { id } = route.params as { id: string }
   const { colors } = useTheme();
 
-  const handleGoCreateNewInvite = () => navigation.navigate("NewInvites")
+  const handleGoCreateNewInvite = () => navigation.navigate("NewInvites", { id })
 
   return (
     <>

@@ -59,7 +59,7 @@ const GroupConfig: React.FC = () => {
   }
 
   function handleGoInviteUsers() {
-    navigation.navigate("InviteUsers")
+    navigation.navigate("InviteUsers", { id })
   }
 
   if (loading) return <Loading />;

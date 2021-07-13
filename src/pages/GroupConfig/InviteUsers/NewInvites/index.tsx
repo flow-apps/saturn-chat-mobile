@@ -32,11 +32,64 @@ import Clipboard from "expo-clipboard";
 import Switcher from "../../../../components/Switcher";
 import Input from "../../../../components/Input";
 import { useTheme } from "styled-components";
+import { useRoute } from "@react-navigation/native";
+import { useEffect } from "react";
+import api from "../../../../services/api";
+import FormData from "form-data";
+
+import * as Localize from "expo-localization"
+import { InviteData } from "../../../../../@types/interfaces";
+import { ConvertDate } from "../../../../utils/convertDate";
+import config from "../../../../config";
 
 const NewInvites: React.FC = () => {
+  const [invites, setInvites] = useState<InviteData[]>([])
   const [permanent, setPermanent] = useState(false);
   const [unlimitedUsages, setUnlimitedUsages] = useState(false);
   const [usages, setUsages] = useState("1");
+  const [expireIn, setExpireIn] = useState(1)
+
+  const convertDate = new ConvertDate()
+  const route = useRoute()
+  const { id } = route.params as { id: string }
+
+  const expireInValues = [
+    1, 7, 15, 30
+  ]
+
+  useEffect(() => {
+    (async () => {
+      const response = await api.get(`/invites/list/${id}`)
+
+      if (response.status === 200) {
+        setInvites(response.data)
+      }
+    })()
+  }, [])
+
+  const handleCreateInvite = async () => {
+    const response = await api.post("/invites", {
+      groupId: id,
+      isPermanent: String(permanent),
+      isUnlimitedUsage: String(unlimitedUsages),
+      usageAmount: Number(usages),
+      expireIn: expireIn,
+      expireTimezone: Localize.timezone
+    })    
+
+    if (response.status === 200) {      
+      setInvites(old => [response.data, ...old])
+    }
+
+  }
+
+  const handleDeleteInvite = async (id: string) => {
+    const response = await api.delete(`/invites/${id}`)
+
+    if (response.status === 204) {
+      setInvites(old => old.filter(inv => inv.id !== id))
+    }
+  }
 
   const handleCopyLink = (url: string) => {
     Clipboard.setString(url);
@@ -94,75 +147,59 @@ const NewInvites: React.FC = () => {
               <CreateInviteLinkConfig disabled={permanent}>
                 <CreateInviteLinkOptionLabel>
                   <CreateInviteLinkOptionText>
-                    Expirar em
+                    Expirar em { expireIn } dias
                   </CreateInviteLinkOptionText>
                 </CreateInviteLinkOptionLabel>
                 <CreateInviteLinkOptionScroll>
-                  <CreateInviteLinkOptionCard>
+                  {expireInValues.map((value, index) => (
+                    <CreateInviteLinkOptionCard key={index} onPress={() => setExpireIn(value)}>
                     <CreateInviteLinkOptionCardText>
-                      1 Dia
+                      {value} Dias
                     </CreateInviteLinkOptionCardText>
                   </CreateInviteLinkOptionCard>
-                  <CreateInviteLinkOptionCard>
-                    <CreateInviteLinkOptionCardText>
-                      7 Dias
-                    </CreateInviteLinkOptionCardText>
-                  </CreateInviteLinkOptionCard>
-                  <CreateInviteLinkOptionCard>
-                    <CreateInviteLinkOptionCardText>
-                      15 Dias
-                    </CreateInviteLinkOptionCardText>
-                  </CreateInviteLinkOptionCard>
-                  <CreateInviteLinkOptionCard>
-                    <CreateInviteLinkOptionCardText>
-                      30 Dias
-                    </CreateInviteLinkOptionCardText>
-                  </CreateInviteLinkOptionCard>
+                  ))}
                 </CreateInviteLinkOptionScroll>
               </CreateInviteLinkConfig>
             </CreateInviteLinkConfigs>
-            <Button title="Gerar" />
+            <Button title="Gerar" onPress={handleCreateInvite} />
           </CreateInviteLinkWrapper>
         </CreateInviteLinkContainer>
         <YourInvitesContainer>
           <YourInvitesTitle>Convites ativos</YourInvitesTitle>
           <YourInvitesList>
-            <InviteContainer>
+            {invites.map((invite, index) => (
+              <InviteContainer key={index}>
               <InviteLeftSide>
                 <InviteLink onLongPress={() => handleCopyLink("oi")}>
                   <Feather name="link" size={16} />{" "}
-                  https://saturnchat.com/inv/387tegd
+                  {config.API_URL}/inv/{invite.invite_code}
                 </InviteLink>
                 <InviteDuration>
                   <Feather name="clock" size={14} /> Expira em:{" "}
-                  <MaterialCommunityIcons name="infinity" />
+                  {
+                    invite.is_permanent ? <MaterialCommunityIcons name="infinity" /> : 
+                    convertDate.formatToDate(invite.expire_in, true)
+                  }
                 </InviteDuration>
-                <InviteUsage>Foi usado 10 vezes</InviteUsage>
+                <InviteUsage>
+                  Foi usado {invite.usage_amount} vezes de {""}
+                  {
+                    invite.is_unlimited_usage ? <MaterialCommunityIcons name="infinity" /> :
+                    invite.max_usage_amount
+                  }
+                </InviteUsage>
               </InviteLeftSide>
               <InviteRemoveButton>
                 <InviteRemoveText>
-                  <Feather name="trash" size={20} color={colors.red} />
+                  <Feather name="trash" 
+                    onPress={() => handleDeleteInvite(invite.id)} 
+                    size={20} 
+                    color={colors.red} 
+                  />
                 </InviteRemoveText>
               </InviteRemoveButton>
             </InviteContainer>
-            <InviteContainer>
-              <InviteLeftSide>
-                <InviteLink>
-                  <Feather name="link" size={16} />{" "}
-                  https://saturnchat.com/inv/387tegd
-                </InviteLink>
-                <InviteDuration>
-                  <Feather name="clock" size={14} /> Expira em:{" "}
-                  <MaterialCommunityIcons name="infinity" />
-                </InviteDuration>
-                <InviteUsage>Foi usado 3 vezes</InviteUsage>
-              </InviteLeftSide>
-              <InviteRemoveButton>
-                <InviteRemoveText>
-                  <Feather name="trash" size={20} color={colors.red} />
-                </InviteRemoveText>
-              </InviteRemoveButton>
-            </InviteContainer>
+            ))}
           </YourInvitesList>
         </YourInvitesContainer>
       </Container>

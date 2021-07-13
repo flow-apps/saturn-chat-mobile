@@ -11,13 +11,13 @@ class ConvertDate {
     }
   }
 
-  formatToDate(date: string, withHours?: boolean) {
+  formatToDate(date: string, withHours?: boolean, tz?: string) {
     const isoDate = parseISO(date);
     const tzDate = convertToTimeZone(isoDate, {
-      timeZone: Localize.timezone,
+      timeZone: tz || Localize.timezone,
     });
 
-    return format(tzDate, withHours ? "dd/MM/yy, hh:mm" : "dd/MM/yy");
+    return format(tzDate, withHours ? "dd/MM/yy, HH:mm" : "dd/MM/yy");
   }
 
   formatToHour(date: string) {

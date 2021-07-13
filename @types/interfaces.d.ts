@@ -53,3 +53,16 @@ export interface FileData {
   size: number;
   type: "unknown" | string;
 }
+
+export interface InviteData {
+  id: string
+  group_id: string
+  invite_code: string
+  is_permanent: boolean
+  is_unlimited_usage: boolean
+  max_usage_amount: number
+  usage_amount: number
+  expire_in: string
+  expire_timezone: string
+  created_at: string
+}
