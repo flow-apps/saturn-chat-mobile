@@ -22,7 +22,6 @@ const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState(true);
-  const [isPublic, setIsPublic] = useState(true);
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -42,24 +41,24 @@ const GroupConfig: React.FC = () => {
     })();
   }, [id]);
 
-  function handleSetNotifications() {
+  const handleSetNotifications = () => {
     setNotifications(!notifications);
   }
 
-  function handleSetIsPublic() {
-    setIsPublic(!isPublic);
-  }
-
-  function handleGoGroupInfos() {
+  const handleGoGroupInfos = () => {
     navigation.navigate("GroupInfos", { id });
   }
 
-  function handleGoParticipants() {
+  const handleGoParticipants = () => {
     navigation.navigate("Participants", { id });
   }
 
-  function handleGoInviteUsers() {
+  const handleGoInviteUsers = () => {
     navigation.navigate("InviteUsers", { id })
+  }
+
+  const handleGoEditGroup = () => {
+    navigation.navigate("EditGroup", { id })
   }
 
   if (loading) return <Loading />;
@@ -75,14 +74,19 @@ const GroupConfig: React.FC = () => {
               <Feather name="users" size={25} /> Participantes
             </OptionText>
           </OptionContainer>
-          <OptionContainer onPress={handleGoInviteUsers}>
+          <OptionContainer hidden={group.owner.id !== user?.id} onPress={handleGoInviteUsers}>
             <OptionText color={colors.primary}>
               <Feather name="user-plus" size={25} /> Convidar usuários
             </OptionText>
           </OptionContainer>
+          <OptionContainer hidden={group.owner.id !== user?.id} onPress={handleGoEditGroup}>
+            <OptionText>
+              <Feather name="edit-3" size={25} /> Editar grupo
+            </OptionText>
+          </OptionContainer>
           <OptionContainer onPress={handleGoGroupInfos}>
             <OptionText>
-              <Feather name="file-text" size={25} /> Ver detalhes
+              <Feather name="file" size={25} /> Ver detalhes
             </OptionText>
           </OptionContainer>
           <OptionContainer>
@@ -94,25 +98,11 @@ const GroupConfig: React.FC = () => {
               onChangeValue={handleSetNotifications}
             />
           </OptionContainer>
-          {group.owner.id === user?.id && (
-            <>
-              <SectionTitle>Segurança</SectionTitle>
-              <OptionContainer>
-                <OptionText>
-                  <Feather name="users" size={25} /> Tornar Público
-                </OptionText>
-                <Switcher
-                  currentValue={isPublic}
-                  onChangeValue={handleSetIsPublic}
-                />
-              </OptionContainer>
-            </>
-          )}
           <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
           {group.owner.id === user?.id ? (
             <OptionContainer>
               <OptionText color={colors.red}>
-                <Feather name="trash-2" size={25} /> Apagar grupo
+                <Feather name="trash" size={25} /> Apagar grupo
               </OptionText>
             </OptionContainer>
           ) : (

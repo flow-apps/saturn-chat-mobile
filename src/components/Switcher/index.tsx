@@ -1,6 +1,6 @@
 import React from "react";
-// import { Switch } from "react-native-switch";
-import { Switch } from "react-native-paper";
+import { Switch } from "react-native";
+// import { Switch } from "react-native-paper";
 import { useTheme } from "styled-components";
 
 interface SwitcherProps {

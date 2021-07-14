@@ -128,7 +128,11 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!socket) return;
+    connectSockets()
+  }, [socket]);
+
+  const connectSockets = useCallback(() => {
+    if (!socket || !navigation.isFocused()) return;
 
     socket.on("sended_user_message", (msg) => {
       setOldMessages((old) => [msg, ...old]);
@@ -141,7 +145,7 @@ const Chat: React.FC = () => {
     socket.on("delete_user_message", (msgID) => {
       setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
-  }, [socket]);
+  }, [socket])
 
   const recordAudio = async () => {
     if (recordingAudio) return;

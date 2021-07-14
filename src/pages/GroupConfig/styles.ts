@@ -10,6 +10,10 @@ interface SectionTitleProps {
   color?: string;
 }
 
+interface OptionContainerProps {
+  hidden?: boolean;
+}
+
 export const Container = styled.ScrollView`
   flex: 1;
   padding: 10px;
@@ -18,7 +22,7 @@ export const Container = styled.ScrollView`
 
 export const OptionsContainer = styled.View`
   width: 100%;
-  margin-top: 5px;
+  margin-top: -5px;
 `;
 
 export const SectionTitle = styled.Text<SectionTitleProps>`
@@ -30,7 +34,8 @@ export const SectionTitle = styled.Text<SectionTitleProps>`
     props.color ? props.color : props.theme.colors.dark_heading};
 `;
 
-export const OptionContainer = styled.TouchableOpacity`
+export const OptionContainer = styled.TouchableOpacity<OptionContainerProps>`
+  display: ${(props) => (!props.hidden ? "flex" : "none")};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

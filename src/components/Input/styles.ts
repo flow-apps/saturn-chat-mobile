@@ -8,4 +8,5 @@ export const Container = styled.TextInput`
   font-family: ${fonts.text};
   font-size: 16px;
   color: ${(props) => props.theme.colors.black};
+  background-color: ${(props) => props.theme.colors.background};
 `;

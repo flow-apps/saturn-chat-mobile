@@ -4,9 +4,9 @@ import fonts from "../../styles/fonts";
 
 export const Container = styled.View`
   width: 100%;
-  height: 57px;
-  margin-top: ${getStatusBarHeight()}px;
-  padding: 10px;
+  padding: 0px 10px;
+  height: ${getStatusBarHeight() + 60}px;
+  padding-top: ${getStatusBarHeight()}px;
   background: ${(props) => props.theme.colors.primary};
   justify-content: space-between;
   align-items: center;

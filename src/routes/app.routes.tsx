@@ -10,6 +10,7 @@ import Participants from "../pages/Participants";
 import ImagePreview from "../pages/ImagePreview";
 import InviteUsers from "../pages/GroupConfig/InviteUsers";
 import NewInvites from "../pages/GroupConfig/InviteUsers/NewInvites";
+import EditGroup from "../pages/GroupConfig/EditGroup";
 
 const StackRoutes = createStackNavigator();
 
@@ -22,6 +23,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="UserProfile" component={UserProfile} />
       <StackRoutes.Screen name="Search" component={Search} />
       <StackRoutes.Screen name="GroupConfig" component={GroupConfig} />
+      <StackRoutes.Screen name="EditGroup" component={EditGroup} />
       <StackRoutes.Screen name="InviteUsers" component={InviteUsers} />
       <StackRoutes.Screen name="NewInvites" component={NewInvites} />
       <StackRoutes.Screen name="GroupInfos" component={GroupInfos} />
