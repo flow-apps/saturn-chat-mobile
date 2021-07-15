@@ -1,16 +1,17 @@
-import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
+import React from "react";
+import Routes from "./src/routes";
+import AppLoading from "expo-app-loading";
+import { AuthProvider } from "./src/contexts/auth";
+import { ThemeControllerProvider } from "./src/contexts/theme";
+import { AppearanceProvider } from "react-native-appearance";
+
 import {
   Poppins_400Regular,
   Poppins_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/poppins";
+import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 import { Roboto_500Medium } from "@expo-google-fonts/roboto";
-import AppLoading from "expo-app-loading";
-import React from "react";
-import { AuthProvider } from "./src/contexts/auth";
-import { ThemeControllerProvider } from "./src/contexts/theme";
-import { AppearanceProvider } from "react-native-appearance";
-import Routes from "./src/routes";
 
 export default function App() {
   const [fontLoaded] = useFonts({
