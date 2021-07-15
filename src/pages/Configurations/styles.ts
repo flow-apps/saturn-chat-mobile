@@ -22,7 +22,7 @@ export const ConfigsContainer = styled.View`
   margin-top: 10px;
 `;
 
-export const ConfigContainer = styled.View`
+export const ConfigContainer = styled.TouchableOpacity`
   align-items: center;
   justify-content: space-between;
   flex-direction: row;

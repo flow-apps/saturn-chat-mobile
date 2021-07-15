@@ -11,6 +11,7 @@ import ImagePreview from "../pages/ImagePreview";
 import InviteUsers from "../pages/GroupConfig/InviteUsers";
 import NewInvites from "../pages/GroupConfig/InviteUsers/NewInvites";
 import EditGroup from "../pages/GroupConfig/EditGroup";
+import EditProfile from "../pages/Configurations/EditProfile";
 
 const StackRoutes = createStackNavigator();
 
@@ -18,6 +19,7 @@ const AppRoutes = () => {
   return (
     <StackRoutes.Navigator headerMode="none">
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
+      <StackRoutes.Screen name="EditProfile" component={EditProfile} />
       <StackRoutes.Screen name="Chat" component={Chat} />
       <StackRoutes.Screen name="Participants" component={Participants} />
       <StackRoutes.Screen name="UserProfile" component={UserProfile} />

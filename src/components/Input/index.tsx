@@ -2,19 +2,24 @@ import React from "react";
 import { TextInputProps } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
-import { Container } from "./styles";
+import { Container, Label, MainInput } from "./styles";
 
-interface InputProps extends TextInputProps {}
+interface InputProps extends TextInputProps {
+  label?: string;
+}
 
-const Input = ({ ...rest }: InputProps) => {
+const Input = ({ label, ...rest }: InputProps) => {
   const { colors } = useTheme();
 
   return (
-    <Container
-      placeholderTextColor={colors.dark_gray}
-      as={TextInput}
-      {...rest}
-    />
+    <Container>
+      {label && <Label>{label}</Label>}
+      <MainInput
+        placeholderTextColor={colors.dark_gray}
+        as={TextInput}
+        {...rest}
+      />
+    </Container>
   );
 };
 

@@ -13,6 +13,7 @@ interface AuthContextData {
   user: UserData | null;
   error: boolean;
   token: string;
+  updateUser: (data: any) => Promise<void>;
   signIn(email: string, password: string): Promise<void>;
   signUp(data: FormData): Promise<void>;
   signOut(): void;
@@ -23,39 +24,40 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export const AuthProvider: React.FC = ({ children }) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState<UserData | null>(null);
-  const [loadingData, setLoadingData] = useState(true)
+  const [loadingData, setLoadingData] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     setError(false);
-    setLoadingData(true)
+    setLoadingData(true);
     async function loadStorageData() {
-      const storageUser = await AsyncStorage.getItem("@FlowChat:user");
-      const storageToken = await AsyncStorage.getItem("@FlowChat:token");
+      const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
+      const storageToken = await AsyncStorage.getItem("@SaturnChat:token");
 
       if (storageUser && storageToken) {
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
         setUser(JSON.parse(String(storageUser)));
         setToken(`Bearer ${storageToken}`);
       }
-      setLoadingData(false)
+      setLoadingData(false);
     }
 
     loadStorageData();
   }, []);
 
   async function updateUser(data: any) {
-    await AsyncStorage.multiSet([
-      ["@FlowChat:user", JSON.stringify(data.user)],
-      ["@FlowChat:token", data.token],
-    ]);
-    api.defaults.headers["authorization"] = `Bearer ${data.token}`;
+    await AsyncStorage.setItem("@SaturnChat:user", JSON.stringify(data.user));
+
+    if (data.token) {
+      await AsyncStorage.setItem("@SaturnChat:token", data.token);
+      api.defaults.headers["authorization"] = `Bearer ${data.token}`;
+    }
     setUser(data.user);
   }
 
   async function signIn(email: string, password: string) {
-    setLoading(true)
+    setLoading(true);
     setError(false);
     auth
       .signIn(email, password)
@@ -65,11 +67,12 @@ export const AuthProvider: React.FC = ({ children }) => {
       })
       .catch(() => {
         setError(true);
-      }).finally(() => setLoading(false))
+      })
+      .finally(() => setLoading(false));
   }
 
   async function signUp(data: FormData) {
-    setLoading(true)
+    setLoading(true);
     setError(false);
     auth
       .signUp(data)
@@ -79,15 +82,18 @@ export const AuthProvider: React.FC = ({ children }) => {
       })
       .catch(() => {
         setError(true);
-      }).finally(() => setLoading(false))
+      })
+      .finally(() => setLoading(false));
   }
 
   function signOut() {
-    AsyncStorage.multiRemove(["@FlowChat:user", "@FlowChat:token"]).then(() => {
-      api.defaults.headers["authorization"] = undefined;
-      setUser(null);
-      setError(false);
-    });
+    AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
+      () => {
+        api.defaults.headers["authorization"] = undefined;
+        setUser(null);
+        setError(false);
+      }
+    );
   }
 
   return (
@@ -100,6 +106,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         signIn,
         signUp,
         signOut,
+        updateUser,
         token,
         error,
       }}

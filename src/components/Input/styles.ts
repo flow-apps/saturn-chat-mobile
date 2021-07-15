@@ -1,7 +1,11 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.TextInput`
+export const Container = styled.View`
+  
+`;
+
+export const MainInput = styled.TextInput`
   border-radius: 10px;
   padding: 15px;
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
@@ -10,3 +14,10 @@ export const Container = styled.TextInput`
   color: ${(props) => props.theme.colors.black};
   background-color: ${(props) => props.theme.colors.background};
 `;
+
+export const Label = styled.Text`
+  color: ${props => props.theme.colors.light_heading};
+  font-size: 18px;
+  font-family: ${fonts.heading};
+  margin-bottom: 5px;
+`

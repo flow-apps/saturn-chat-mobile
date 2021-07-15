@@ -16,16 +16,23 @@ import { useThemeController } from "../../contexts/theme";
 import Button from "../../components/Button";
 import { useTheme } from "styled-components";
 import Alert from "../../components/Alert";
+import { useNavigation } from "@react-navigation/native";
 
 const Configurations: React.FC = () => {
-  const { signOut } = useAuth();
   const [confirmSignOut, setConfirmSignOut] = useState(false);
+
+  const navigation = useNavigation()
+  const { signOut } = useAuth();
   const { toggleTheme, currentThemeName } = useThemeController();
   const { colors } = useTheme();
 
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
   }, []);
+
+  const handleGoEditProfile = useCallback(() => {
+    navigation.navigate("EditProfile")
+  }, [])
 
   return (
     <>
@@ -44,6 +51,11 @@ const Configurations: React.FC = () => {
           <SectionContainer>
             <SectionTitle>Geral</SectionTitle>
             <ConfigsContainer>
+            <ConfigContainer onPress={handleGoEditProfile}>
+                <ConfigTitle>
+                  <Feather name="edit" size={16} /> Editar perfil
+                </ConfigTitle>
+              </ConfigContainer>
               <ConfigContainer>
                 <ConfigTitle>
                   <Feather name="moon" size={16} /> Modo Escuro
