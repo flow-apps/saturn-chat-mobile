@@ -13,7 +13,6 @@ import {
 } from "./styles";
 
 import AppLoading from "expo-app-loading";
-import { useAuth } from "../../../contexts/auth";
 
 const OnBoarding: React.FC = () => {
   const [loading, setLoading] = useState(true);

@@ -3,9 +3,9 @@ import React from "react";
 import hero from "../../../assets/chatting.png";
 import Button from "../../../components/Button";
 import {
+  Container,
   ButtonContainer,
   ButtonsContainer,
-  Container,
   HeroImage,
   ImageWrapper,
   Subtitle,
@@ -28,10 +28,14 @@ const Home: React.FC = () => {
     <Container>
       <Wrapper>
         <ImageWrapper>
-          <HeroImage source={hero} />
+          <HeroImage 
+            source={require("../../../assets/auth.json")}
+            loop={false}
+            autoPlay
+          />
         </ImageWrapper>
-        <Title>Seja muito bem-vindo!</Title>
-        <Subtitle>Tem muitas coisas legais te esperando no Flow Chat!</Subtitle>
+        <Title>Vamos começar?</Title>
+        <Subtitle>Acesse ou crie sua conta para começar a usar o app!</Subtitle>
         <ButtonsContainer>
           <ButtonContainer>
             <Button title="Criar conta" onPress={registerNavigate} />
