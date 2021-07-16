@@ -4,13 +4,14 @@ import {
   ConfigsContainer,
   ConfigTitle,
   Container,
+  CurrentValueText,
   SectionContainer,
   SectionsContainer,
   SectionTitle,
 } from "./styles";
 import Header from "../../components/Header";
 import { useAuth } from "../../contexts/auth";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import Switcher from "../../components/Switcher";
 import { useThemeController } from "../../contexts/theme";
 import Button from "../../components/Button";
@@ -18,10 +19,12 @@ import { useTheme } from "styled-components";
 import Alert from "../../components/Alert";
 import { useNavigation } from "@react-navigation/native";
 
+import * as Localize from "expo-localization"
+
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const { signOut } = useAuth();
   const { toggleTheme, currentThemeName } = useThemeController();
   const { colors } = useTheme();
@@ -31,8 +34,12 @@ const Configurations: React.FC = () => {
   }, []);
 
   const handleGoEditProfile = useCallback(() => {
-    navigation.navigate("EditProfile")
-  }, [])
+    navigation.navigate("EditProfile");
+  }, []);
+
+  const handleGoSwitchLanguage = useCallback(() => {
+    navigation.navigate("SwitchLanguage");
+  }, []);
 
   return (
     <>
@@ -51,10 +58,16 @@ const Configurations: React.FC = () => {
           <SectionContainer>
             <SectionTitle>Geral</SectionTitle>
             <ConfigsContainer>
-            <ConfigContainer onPress={handleGoEditProfile}>
+              <ConfigContainer onPress={handleGoEditProfile}>
                 <ConfigTitle>
                   <Feather name="edit" size={16} /> Editar perfil
                 </ConfigTitle>
+              </ConfigContainer>
+              <ConfigContainer onPress={handleGoSwitchLanguage}>
+                <ConfigTitle>
+                  <MaterialCommunityIcons name="translate" size={17} /> Idiomas
+                </ConfigTitle>
+                <CurrentValueText>{ Localize.locale }</CurrentValueText>
               </ConfigContainer>
               <ConfigContainer>
                 <ConfigTitle>

@@ -34,3 +34,7 @@ export const ConfigTitle = styled.Text`
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.black};
 `;
+
+export const CurrentValueText = styled(ConfigTitle)`
+  color: ${(props) => props.theme.colors.dark_heading};
+`

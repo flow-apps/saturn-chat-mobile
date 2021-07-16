@@ -55,7 +55,7 @@ const Alert = ({
       animationType="fade"
       transparent
     >
-      <StatusBar backgroundColor="#000" animated style="light" />
+      <StatusBar backgroundColor="#00000055" animated style="light" />
       <TouchableWithoutFeedback onPress={cancelButtonAction}>
         <AlertContainer>
           <AlertModal>
