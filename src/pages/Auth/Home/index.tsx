@@ -1,6 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
 import React from "react";
-import hero from "../../../assets/chatting.png";
 import Button from "../../../components/Button";
 import {
   Container,
