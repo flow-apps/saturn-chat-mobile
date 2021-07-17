@@ -140,6 +140,8 @@ const Chat: React.FC = () => {
 
     socket.on("new_user_message", (msg) => {
       setOldMessages((old) => [msg, ...old]);
+
+      socket.emit("set_read_message", msg.id)
     });
 
     socket.on("delete_user_message", (msgID) => {

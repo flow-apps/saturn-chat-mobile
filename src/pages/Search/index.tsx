@@ -160,7 +160,7 @@ const Search: React.FC = () => {
                     <GroupName numberOfLines={2}>{item.name}</GroupName>
                     <GroupDesc numberOfLines={3}>{item.description}</GroupDesc>
                     <GroupParticipantsText>
-                      87 participantes
+                      {item?.participantsAmount} participantes
                     </GroupParticipantsText>
                   </GroupInfosContainer>
                 </GroupCard>

@@ -30,16 +30,17 @@ export const GroupName = styled.Text`
 `;
 
 export const UnreadMessages = styled.View`
-  background-color: ${(props) => props.theme.colors.secondary};
-  width: 30px;
+  background-color: ${(props) => props.theme.colors.primary};
+  width: 50px;
   height: 30px;
   align-items: center;
   justify-content: center;
-  border-radius: 15px;
+  border-radius: 25px;
 `;
 
 export const UnreadMessagesText = styled.Text`
-  color: ${(props) => props.theme.colors.white};
+  color: #fff;
+  font-family: ${fonts.heading};
 `;
 
 export const HLWrapper = styled.View`

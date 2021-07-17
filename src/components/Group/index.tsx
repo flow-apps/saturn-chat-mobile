@@ -27,7 +27,7 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
         </GroupInfos>
         {unreadMessages > 0 && (
           <UnreadMessages>
-            <UnreadMessagesText>{unreadMessages}</UnreadMessagesText>
+            <UnreadMessagesText>{unreadMessages > 99 ? "99+" : unreadMessages}</UnreadMessagesText>
           </UnreadMessages>
         )}
       </Container>

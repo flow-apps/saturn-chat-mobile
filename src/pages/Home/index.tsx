@@ -39,7 +39,7 @@ export interface ParticipantData {
 }
 
 const Home: React.FC = () => {
-  const [groups, setGroups] = useState<ParticipantData[]>([]);
+  const [groups, setGroups] = useState<GroupData[]>([]);
   const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const { colors } = useTheme();
@@ -107,11 +107,11 @@ const Home: React.FC = () => {
             renderItem={({ item }) => (
               <GroupButton
                 activeOpacity={0.5}
-                onPress={() => handleGoChat(item.group.id)}
+                onPress={() => handleGoChat(item.id)}
               >
                 <GroupImage
                   source={{
-                    uri: item.group.group_avatar && item.group.group_avatar.url,
+                    uri: item.group_avatar && item.group_avatar.url,
                   }}
                 />
               </GroupButton>
@@ -154,11 +154,11 @@ const Home: React.FC = () => {
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
               <Group
-                name={item.group.name}
-                image={item.group.group_avatar && item.group.group_avatar.url}
-                unreadMessages={0}
+                name={item.name}
+                image={item.group_avatar && item.group_avatar.url}
+                unreadMessages={item?.unreadMessagesAmount}
                 activeOpacity={0.5}
-                onPress={() => handleGoChat(item.group.id)}
+                onPress={() => handleGoChat(item.id)}
               />
             )}
           />

@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "audit-fix": "yarn-audit-fix"
+    "audit-fix": "yarn-audit-fix",
+    "bundle-size": "react-native-bundle-visualizer --platform android"
   },
   "dependencies": {
     "@expo-google-fonts/fira-code": "^0.1.0",
@@ -71,6 +72,7 @@
     "@types/socket.io-client": "^3.0.0",
     "@types/styled-components": "^5.1.9",
     "@types/styled-components-react-native": "^5.1.1",
+    "react-native-bundle-visualizer": "^2.2.1",
     "typescript": "~4.0.0",
     "yarn-audit-fix": "^6.3.5"
   },

@@ -101,7 +101,7 @@ const GroupInfos: React.FC = () => {
               </JoinGroupContainer>
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>
-                  <ParticipantsNumber>290</ParticipantsNumber>
+                  <ParticipantsNumber>{group?.participantsAmount}</ParticipantsNumber>
                   <ParticipantsTitle>Participantes</ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>
