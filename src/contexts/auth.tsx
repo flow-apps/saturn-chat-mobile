@@ -44,14 +44,16 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     loadStorageData();
-  }, []);
+  }, []);  
 
   async function updateUser(data: any) {
     await AsyncStorage.setItem("@SaturnChat:user", JSON.stringify(data.user));
 
     if (data.token) {
-      await AsyncStorage.setItem("@SaturnChat:token", data.token);
+      setToken(data.token)
       api.defaults.headers["authorization"] = `Bearer ${data.token}`;
+
+      await AsyncStorage.setItem("@SaturnChat:token", data.token);
     }
     setUser(data.user);
   }
@@ -91,6 +93,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       () => {
         api.defaults.headers["authorization"] = undefined;
         setUser(null);
+        setToken("")
         setError(false);
       }
     );

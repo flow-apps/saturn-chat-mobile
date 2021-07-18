@@ -52,6 +52,7 @@ import {
 import RecordingAudio from "../../components/Chat/RecordingAudio";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import SelectedFiles from "../../components/Chat/SelectedFiles";
+import { FileService, FileServiceErrors } from "../../services/file";
 
 const emoji = new EmojiJS();
 
@@ -88,6 +89,8 @@ const Chat: React.FC = () => {
 
   const messageInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
+
+  const fileService = new FileService(filesSizeUsed);
   const recording = new Audio.Recording();
 
   const { colors } = useTheme();
@@ -128,7 +131,7 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    connectSockets()
+    connectSockets();
   }, [socket]);
 
   const connectSockets = useCallback(() => {
@@ -141,13 +144,13 @@ const Chat: React.FC = () => {
     socket.on("new_user_message", (msg) => {
       setOldMessages((old) => [msg, ...old]);
 
-      socket.emit("set_read_message", msg.id)
+      socket.emit("set_read_message", msg.id);
     });
 
     socket.on("delete_user_message", (msgID) => {
       setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
-  }, [socket])
+  }, [socket]);
 
   const recordAudio = async () => {
     if (recordingAudio) return;
@@ -251,26 +254,31 @@ const Chat: React.FC = () => {
   }, [page]);
 
   const handleFileSelector = useCallback(async () => {
-    const file = await DocumentPicker.getDocumentAsync({});
+    const fileRes = await fileService.get();
 
-    if (file.type === "success") {
-      const fileSize = Math.trunc(file.size / 1000 / 1000);
-      const type = MimeTypes.lookup(file.name).split("/")[0];
-      if (fileSize > 12 || filesSizeUsed + fileSize > 12) {
-        return setLargeFile(true);
-      }
+    if (!fileRes.error) {
+      if (fileRes.selectedFile?.file.type !== "success") return;
 
+      const file = fileRes.selectedFile;
       const isSelected = files.find(
-        (f) => f.file.type === "success" && f.file.name === file.name
+        (f) => f.file.type !== "cancel" && f.file.name === file.file.name
       );
 
-      if (isSelected) {
-        return setIsSelectedFile(true);
-      }
+      if (isSelected) return setIsSelectedFile(true);
+      if (fileRes.usageSize) setFilesSizeUsed((used) => used + fileRes.usageSize);
+      
+      setFiles((oldFiles) => [
+        { file: file.file, type: file.type },
+        ...oldFiles,
+      ]);
 
-      setFilesSizeUsed((used) => used + fileSize);
-      setFiles((oldFiles) => [{ file, type }, ...oldFiles]);
+      return;
     }
+
+    const errorType = fileRes.errorType;
+
+    if (errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT)
+      return setLargeFile(true);
   }, [files]);
 
   const removeFile = (position: number) => {
@@ -356,30 +364,37 @@ const Chat: React.FC = () => {
 
       files.map((file) => {
         if (file.file.type === "success") {
-          const type = MimeTypes.lookup(file.file.name);
+          const type = MimeTypes.lookup(file.file.name);          
 
           filesData.append("attachment", {
-            uri: file.file.uri,
-            type,
             name: file.file.name,
+            uri: "file://" + file.file.uri,
+            type,
           });
         }
       });
 
-      await api
-        .post(`/messages/SendAttachment/${id}?type=files`, filesData, {
-          headers: { "Content-Type": "multipart/form-data" },
+      await api.post(`messages/SendAttachment/${id}?type=files`, filesData, {
+          headers: { 
+            "Content-Type": "multipart/form-data"
+          },
           onUploadProgress: (event) => {
             const totalSended = Math.round((event.loaded * 100) / event.total);
             setSendedFileProgress(totalSended);
           },
         })
         .then((response) => {
+          
+          console.log(response)
           socket?.emit("new_message_with_files", {
             message,
             message_id: response.data.message_id,
           });
-        });
+        })
+        .catch(error => {
+          console.log(JSON.stringify(error.request));
+          
+        })
       setSendingFile(false);
       setSendedFileProgress(0);
     }

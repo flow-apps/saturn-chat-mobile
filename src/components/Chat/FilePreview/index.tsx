@@ -4,13 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
-
-import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
-
-import Toast from "react-native-simple-toast";
 import Alert from "../../Alert";
-import config from "../../../config";
 
 import {
   Container,

@@ -1,0 +1,50 @@
+import * as DocumentPicker from "expo-document-picker";
+import * as MimeTypes from "react-native-mime-types";
+
+enum FileServiceErrors {
+  FILE_SIZE_REACHED_LIMIT = 0,
+  FILE_CANCELLED = 1,
+}
+
+class FileService {
+  readonly filesSizeUsed: number;
+  readonly sizeLimit: number;
+
+  constructor(sizeUsed: number, limit?: number) {
+    this.filesSizeUsed = sizeUsed;
+    this.sizeLimit = limit || 12;
+  }
+
+  async get() {
+    const file = await DocumentPicker.getDocumentAsync({});
+
+    if (file.type === "success") {
+      const fileSize = Math.trunc(file.size / 1000 / 1000);
+      const usageSize = this.filesSizeUsed + fileSize;
+      const type = MimeTypes.lookup(file.name).split("/")[0] as string;
+      if (fileSize > this.sizeLimit || usageSize > this.sizeLimit) {
+        return {
+          error: true,
+          errorType: FileServiceErrors.FILE_SIZE_REACHED_LIMIT,
+        };
+      }
+
+      return {
+        error: false,
+        errorType: null,
+        usageSize,
+        selectedFile: {
+          file,
+          type,
+        },
+      };
+    } else {
+      return {
+        error: true,
+        errorType: FileServiceErrors.FILE_CANCELLED,
+      };
+    }
+  }
+}
+
+export { FileService, FileServiceErrors };
