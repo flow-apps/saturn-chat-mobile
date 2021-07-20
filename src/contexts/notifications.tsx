@@ -6,6 +6,7 @@ import { useCallback } from "react"
 import { Alert, Platform } from "react-native"
 import { useTheme } from "styled-components"
 import api from "../services/api"
+import { useAuth } from "./auth"
 
 interface NotificationsContextProps {
   expoToken: string
@@ -26,6 +27,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
 
   const [expoToken, setExpoToken] = useState("")
 
+  const { signed } = useAuth()
   const { colors } = useTheme()
 
   const registerForPushNotifications = useCallback(async () => {
@@ -66,6 +68,22 @@ const NotificationsProvider: React.FC = ({ children }) => {
         groupId: "messages"
       })
     }
+
+    await Notifications.setNotificationCategoryAsync("message", [
+      {
+        identifier: "markAsRead",
+        buttonTitle: "Marcar como lido",
+      },
+      {
+        identifier: "replyMessage",
+        buttonTitle: "Responder",
+        textInput: {
+          placeholder: "Sua mensagem...",
+          submitButtonTitle: "enviar"
+        }
+      }
+    ])
+
     return token
 
   }, [expoToken])

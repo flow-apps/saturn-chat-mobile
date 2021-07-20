@@ -54,6 +54,8 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import SelectedFiles from "../../components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "../../services/file";
 
+import * as Notifications from "expo-notifications";
+
 const emoji = new EmojiJS();
 
 interface File {
@@ -70,8 +72,9 @@ const Chat: React.FC = () => {
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
+  
   const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<MessageData[]>([])
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
 
   const [audioInterval, setAudioInterval] = useState<number>();
@@ -127,7 +130,30 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchOldMessages();
+    (async () => {
+      await fetchOldMessages();
+
+      Notifications.addNotificationResponseReceivedListener(async (res) => {
+        if (res.actionIdentifier === "replyMessage") {
+          const msg = res.userText;
+          if (msg) {
+            socket?.emit("new_user_message", { message: msg });
+            await Notifications.dismissNotificationAsync(
+              res.notification.request.identifier
+            );
+          }
+        }
+
+        else if (res.actionIdentifier === "markAsRead") {
+          const messageID = res.notification.request.content.data.id as string;
+
+          await Notifications.dismissNotificationAsync(
+            res.notification.request.identifier
+          );
+          socket?.emit("set_read_message", messageID);
+        }
+      });
+    })();
   }, []);
 
   useEffect(() => {
@@ -138,17 +164,22 @@ const Chat: React.FC = () => {
     if (!socket || !navigation.isFocused()) return;
 
     socket.on("sended_user_message", (msg) => {
-      setOldMessages((old) => [msg, ...old]);
+      if (navigation.isFocused()) {
+        setOldMessages((old) => [msg, ...old]);
+      }
     });
 
     socket.on("new_user_message", (msg) => {
-      setOldMessages((old) => [msg, ...old]);
-
+      if (navigation.isFocused()) {
+        setOldMessages((old) => [msg, ...old]);
+      }
       socket.emit("set_read_message", msg.id);
     });
 
     socket.on("delete_user_message", (msgID) => {
-      setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
+      if (navigation.isFocused()) {
+         setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
+      }
     });
   }, [socket]);
 
@@ -235,7 +266,7 @@ const Chat: React.FC = () => {
     }
   };
 
-  const fetchOldMessages = useCallback(async () => {
+  const fetchOldMessages = async () => {
     setFetching(true);
     const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
 
@@ -251,7 +282,7 @@ const Chat: React.FC = () => {
     }
 
     setFetching(false);
-  }, [page]);
+  }
 
   const handleFileSelector = useCallback(async () => {
     const fileRes = await fileService.get();
@@ -265,8 +296,9 @@ const Chat: React.FC = () => {
       );
 
       if (isSelected) return setIsSelectedFile(true);
-      if (fileRes.usageSize) setFilesSizeUsed((used) => used + fileRes.usageSize);
-      
+      if (fileRes.usageSize)
+        setFilesSizeUsed((used) => used + fileRes.usageSize);
+
       setFiles((oldFiles) => [
         { file: file.file, type: file.type },
         ...oldFiles,
@@ -286,12 +318,11 @@ const Chat: React.FC = () => {
     setFiles(filteredFiles);
   };
 
-  const handleFetchMoreMessages = useCallback(
-    async (event: NativeScrollEvent) => {
+  const handleFetchMoreMessages = async (event: NativeScrollEvent) => {
       if (fetchedAll) return;
 
       const { layoutMeasurement, contentOffset, contentSize } = event;
-      const paddingToBottom = 1;
+      const paddingToBottom = 5;
       const listHeight = layoutMeasurement.height + contentOffset.y;
 
       if (listHeight >= contentSize.height - paddingToBottom) {
@@ -300,21 +331,18 @@ const Chat: React.FC = () => {
           await fetchOldMessages();
         }
       }
-    },
-    [page]
-  );
+    }
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
+      const lastMessage = index !== 0 ? oldMessages[index - 1] : ({} as MessageData)
       return (
         <Message
           message={item}
           socket={socket as Socket}
           index={index}
           user={user as unknown as UserData}
-          lastMessage={
-            index !== 0 ? oldMessages[index - 1] : ({} as MessageData)
-          }
+          lastMessage={lastMessage}
         />
       );
     },
@@ -324,7 +352,7 @@ const Chat: React.FC = () => {
   const handleSetMessage = useCallback((message: string) => {
     const emojifiedMessage = emoji.replace_colons(message);
     setMessage(emojifiedMessage);
-  }, []);
+  }, [message]);
 
   const handleGoGroupConfig = useCallback(() => {
     navigation.navigate("GroupConfig", { id });
@@ -338,7 +366,7 @@ const Chat: React.FC = () => {
     navigation.navigate("GroupInfos", { id });
   }, [id]);
 
-  function handleShowEmojiPicker() {
+  const handleShowEmojiPicker = useCallback(() => {
     if (!showEmojiPicker) {
       setShowEmojiPicker(true);
       return Keyboard.dismiss();
@@ -346,13 +374,13 @@ const Chat: React.FC = () => {
 
     setShowEmojiPicker(false);
     if (messageInputRef.current) messageInputRef.current.focus();
-  }
+  }, [showEmojiPicker])
 
   function handleSelectEmoji(emoji: string) {
     setMessage((old) => old + emoji);
   }
 
-  async function handleMessageSubmit() {
+  const handleMessageSubmit = useCallback(async () => {
     if (!files.length) {
       socket?.emit("new_user_message", {
         message,
@@ -364,7 +392,7 @@ const Chat: React.FC = () => {
 
       files.map((file) => {
         if (file.file.type === "success") {
-          const type = MimeTypes.lookup(file.file.name);          
+          const type = MimeTypes.lookup(file.file.name);
 
           filesData.append("attachment", {
             name: file.file.name,
@@ -374,9 +402,10 @@ const Chat: React.FC = () => {
         }
       });
 
-      await api.post(`messages/SendAttachment/${id}?type=files`, filesData, {
-          headers: { 
-            "Content-Type": "multipart/form-data"
+      await api
+        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
           onUploadProgress: (event) => {
             const totalSended = Math.round((event.loaded * 100) / event.total);
@@ -384,23 +413,21 @@ const Chat: React.FC = () => {
           },
         })
         .then((response) => {
-          
-          console.log(response)
+          console.log(response);
           socket?.emit("new_message_with_files", {
             message,
             message_id: response.data.message_id,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(JSON.stringify(error.request));
-          
-        })
+        });
       setSendingFile(false);
       setSendedFileProgress(0);
     }
     setFiles([]);
     setMessage("");
-  }
+  }, [message])
 
   if (loading || !socket) return <Loading />;
 
@@ -436,7 +463,8 @@ const Chat: React.FC = () => {
         <MessageContainer>
           <Messages
             data={oldMessages}
-            keyExtractor={(item) => String(item.id)}
+            windowSize={18}
+            keyExtractor={(item) => item.id}
             onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
             ListFooterComponent={
               fetching && !fetchedAll ? <LoadingIndicator /> : <></>

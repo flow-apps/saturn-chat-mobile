@@ -29,14 +29,6 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   const navigation = useNavigation();
   const { colors } = useTheme();
 
-  useEffect(() => {
-    (async () => {
-      if (!sound || sound._loaded) {
-        return await loadAudio();
-      }
-    })();
-  }, []);
-
   const loadAudio = useCallback(async () => {
     if (sound && sound._loaded) return;
 
@@ -77,15 +69,16 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   }
 
   const handlePlayPauseAudio = async () => {
-    if (!sound) return;
-    if (!sound._loaded) {
+    if (!sound || !sound._loaded) {
       await loadAudio();
     }
 
+    if (!sound) return
+
     if (isPlaying) {
-      await sound.pauseAsync();
+      await sound?.pauseAsync();
     } else {
-      await sound.playFromPositionAsync(currentPosition);
+      await sound?.playFromPositionAsync(currentPosition);
     }
 
     setIsPlaying(!isPlaying);
@@ -97,7 +90,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   };
 
   return (
-    <Container loading={!sound || sound?._loading}>
+    <Container loading={sound?._loading}>
       <AudioContainerWrapper>
         <AudioControllerContainer>
           <AudioController onPress={handlePlayPauseAudio}>
@@ -120,7 +113,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
             />
           </SeekBarContainer>
           <AudioDurationContainer>
-            {!sound?._loaded ? (
+            {sound?._loading ? (
               <LottieView
                 style={{ width: 20, transform: [{ scale: 1.3 }] }}
                 source={require("../../../assets/loading.json")}
