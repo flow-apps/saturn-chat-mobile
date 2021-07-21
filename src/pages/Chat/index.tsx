@@ -3,7 +3,6 @@ import {
   Keyboard,
   ListRenderItem,
   NativeScrollEvent,
-  Platform,
   TextInput,
 } from "react-native";
 
@@ -21,7 +20,6 @@ import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
 
 import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
 import * as MimeTypes from "react-native-mime-types";
 
 import FormData from "form-data";
@@ -53,6 +51,7 @@ import RecordingAudio from "../../components/Chat/RecordingAudio";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import SelectedFiles from "../../components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "../../services/file";
+import { RecordService } from "../../services/record";
 
 const emoji = new EmojiJS();
 
@@ -60,6 +59,8 @@ interface File {
   file: DocumentPicker.DocumentResult;
   type: string;
 }
+
+const recordService = new RecordService();
 
 const Chat: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -74,7 +75,6 @@ const Chat: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
 
-  const [audioInterval, setAudioInterval] = useState<number>();
   const [audioPermission, setAudioPermission] = useState(false);
   const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
   const [audioDuration, setAudioDuration] = useState(0);
@@ -91,7 +91,6 @@ const Chat: React.FC = () => {
   const navigation = useNavigation();
 
   const fileService = new FileService(filesSizeUsed);
-  const recording = new Audio.Recording();
 
   const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
@@ -156,26 +155,15 @@ const Chat: React.FC = () => {
     if (recordingAudio) return;
 
     try {
-      const permission = await Audio.getPermissionsAsync();
+      const record = await recordService.start({
+        onDurationUpdate(duration) {
+          setAudioDuration(duration);
+        },
+      });
 
-      if (!permission.granted) {
-        const { granted } = await Audio.requestPermissionsAsync();
-
-        if (!granted) return;
+      if (record) {
+        setRecordingAudio(record.recording);
       }
-
-      recording
-        .prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
-        .then(async (status) => {
-          await recording.startAsync();
-          setRecordingAudio(recording);
-
-          const durationInterval = setInterval(async () => {
-            setAudioDuration((old) => old + 1000);
-          }, 1000);
-
-          setAudioInterval(durationInterval);
-        });
     } catch (error) {
       setRecordingAudio(undefined);
       new Error(error);
@@ -186,50 +174,38 @@ const Chat: React.FC = () => {
     try {
       if (!recordingAudio) return;
 
-      clearInterval(audioInterval);
-      setAudioInterval(undefined);
+      await recordService.finish({
+        audio: recordingAudio,
+        async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
+          const audioData = new FormData();
 
-      await recordingAudio.stopAndUnloadAsync();
+          setRecordingAudio(undefined);
+          setAudioDuration(0);
 
-      if (recordingAudio._finalDurationMillis < 1000) {
-        return Toast.show("Aperte e segure para gravar");
-      }
+          audioData.append("duration", duration);
+          audioData.append("size", audioInfos.size);
+          audioData.append("attachment", {
+            uri: audioURI,
+            name: `attachment_audio${extension}`,
+            type: `audio/${extension.replace(".", "")}`,
+          });
 
-      const duration = recordingAudio._finalDurationMillis;
-      const uri = recordingAudio.getURI();
+          const sendedAudio = await api.post(
+            `/messages/SendAttachment/${id}?type=voice_message`,
+            audioData,
+            {
+              headers: {
+                "Content-Type": `multipart/form-data`,
+              },
+            }
+          );
 
-      if (!uri) return;
-
-      const audioInfos = await FileSystem.getInfoAsync(uri);
-
-      setRecordingAudio(undefined);
-      setAudioDuration(0);
-
-      const extension =
-        Platform.OS === "android"
-          ? Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.android.extension
-          : Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.ios.extension;
-      const audioData = new FormData();
-
-      audioData.append("duration", duration);
-      audioData.append("size", audioInfos.size);
-      audioData.append("attachment", {
-        uri,
-        name: `attachment_audio${extension}`,
-        type: `audio/${extension.replace(".", "")}`,
+          socket?.emit("new_voice_message", {
+            audio: sendedAudio.data,
+            message,
+          });
+        },
       });
-
-      const sendedAudio = await api.post(
-        `/messages/SendAttachment/${id}?type=voice_message`,
-        audioData,
-        {
-          headers: {
-            "Content-Type": `multipart/form-data`,
-          },
-        }
-      );
-
-      socket?.emit("new_voice_message", { audio: sendedAudio.data, message });
     } catch (error) {
       new Error(error);
     }
@@ -265,8 +241,9 @@ const Chat: React.FC = () => {
       );
 
       if (isSelected) return setIsSelectedFile(true);
-      if (fileRes.usageSize) setFilesSizeUsed((used) => used + fileRes.usageSize);
-      
+      if (fileRes.usageSize)
+        setFilesSizeUsed((used) => used + fileRes.usageSize);
+
       setFiles((oldFiles) => [
         { file: file.file, type: file.type },
         ...oldFiles,
@@ -324,7 +301,7 @@ const Chat: React.FC = () => {
   const handleSetMessage = useCallback((message: string) => {
     const emojifiedMessage = emoji.replace_colons(message);
     setMessage(emojifiedMessage);
-  }, []);
+  }, [message]);
 
   const handleGoGroupConfig = useCallback(() => {
     navigation.navigate("GroupConfig", { id });
@@ -364,7 +341,7 @@ const Chat: React.FC = () => {
 
       files.map((file) => {
         if (file.file.type === "success") {
-          const type = MimeTypes.lookup(file.file.name);          
+          const type = MimeTypes.lookup(file.file.name);
 
           filesData.append("attachment", {
             name: file.file.name,
@@ -374,9 +351,10 @@ const Chat: React.FC = () => {
         }
       });
 
-      await api.post(`messages/SendAttachment/${id}?type=files`, filesData, {
-          headers: { 
-            "Content-Type": "multipart/form-data"
+      await api
+        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
           onUploadProgress: (event) => {
             const totalSended = Math.round((event.loaded * 100) / event.total);
@@ -384,17 +362,15 @@ const Chat: React.FC = () => {
           },
         })
         .then((response) => {
-          
-          console.log(response)
+          console.log(response);
           socket?.emit("new_message_with_files", {
             message,
             message_id: response.data.message_id,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(JSON.stringify(error.request));
-          
-        })
+        });
       setSendingFile(false);
       setSendedFileProgress(0);
     }

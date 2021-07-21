@@ -96,7 +96,6 @@ export const MessageInput = styled.TextInput.attrs({
   
 })`
   flex: 1;
-  font-size: 15px;
   font-family: ${fonts.text};
   margin: 0px 10px;
   max-height: 120px;
