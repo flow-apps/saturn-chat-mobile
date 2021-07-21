@@ -54,9 +54,7 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import SelectedFiles from "../../components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "../../services/file";
 
-import * as Notifications from "expo-notifications";
-
-import { getWebsocket } from "../../services/websocket"
+import { getWebsocket } from "../../services/websocket";
 
 const emoji = new EmojiJS();
 
@@ -74,7 +72,7 @@ const Chat: React.FC = () => {
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  
+
   const [message, setMessage] = useState<string>("");
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
 
@@ -104,7 +102,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async function () {
       setLoading(true);
-      const connectedSocket = getWebsocket(token)
+      const connectedSocket = getWebsocket(token);
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {
@@ -120,31 +118,30 @@ const Chat: React.FC = () => {
     })();
   }, []);
 
-  useEffect(() => { fetchOldMessages() }, []);
+  useEffect(() => {
+    fetchOldMessages();
+  }, []);
 
-  useEffect(() => connectSockets, [socket]);
+  useEffect(() => {
+    connectSockets()
+  }, [socket]);
 
   const connectSockets = useCallback(() => {
-    if (!socket || !navigation.isFocused()) return;
+    if (!socket) return;
 
     socket.on("sended_user_message", (msg) => {
-      if (navigation.isFocused()) {
-        setOldMessages((old) => [msg, ...old]);
-      }
+      setOldMessages((old) => [msg, ...old]);
     });
 
     socket.on("new_user_message", (msg) => {
-      if (navigation.isFocused()) {
-        setOldMessages((old) => [msg, ...old]);
-      }
+      setOldMessages((old) => [msg, ...old]);
       socket.emit("set_read_message", msg.id);
     });
 
     socket.on("delete_user_message", (msgID) => {
-      if (navigation.isFocused()) {
-         setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
-      }
+      setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
+
   }, [socket]);
 
   const recordAudio = async () => {
@@ -246,7 +243,7 @@ const Chat: React.FC = () => {
     }
 
     setFetching(false);
-  }
+  };
 
   const handleFileSelector = useCallback(async () => {
     const fileRes = await fileService.get();
@@ -283,23 +280,24 @@ const Chat: React.FC = () => {
   };
 
   const handleFetchMoreMessages = async (event: NativeScrollEvent) => {
-      if (fetchedAll) return;
+    if (fetchedAll) return;
 
-      const { layoutMeasurement, contentOffset, contentSize } = event;
-      const paddingToBottom = 5;
-      const listHeight = layoutMeasurement.height + contentOffset.y;
+    const { layoutMeasurement, contentOffset, contentSize } = event;
+    const paddingToBottom = 5;
+    const listHeight = layoutMeasurement.height + contentOffset.y;
 
-      if (listHeight >= contentSize.height - paddingToBottom) {
-        if (!fetching) {
-          setPage((old) => old + 1);
-          await fetchOldMessages();
-        }
+    if (listHeight >= contentSize.height - paddingToBottom) {
+      if (!fetching) {
+        setPage((old) => old + 1);
+        await fetchOldMessages();
       }
     }
+  };
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
-      const lastMessage = index !== 0 ? oldMessages[index - 1] : ({} as MessageData)
+      const lastMessage =
+        index !== 0 ? oldMessages[index - 1] : ({} as MessageData);
       return (
         <Message
           message={item}
@@ -313,10 +311,13 @@ const Chat: React.FC = () => {
     [oldMessages]
   );
 
-  const handleSetMessage = useCallback((message: string) => {
-    const emojifiedMessage = emoji.replace_colons(message);
-    setMessage(emojifiedMessage);
-  }, [message]);
+  const handleSetMessage = useCallback(
+    (message: string) => {
+      const emojifiedMessage = emoji.replace_colons(message);
+      setMessage(emojifiedMessage);
+    },
+    [message]
+  );
 
   const handleGoGroupConfig = useCallback(() => {
     navigation.navigate("GroupConfig", { id });
@@ -338,7 +339,7 @@ const Chat: React.FC = () => {
 
     setShowEmojiPicker(false);
     if (messageInputRef.current) messageInputRef.current.focus();
-  }, [showEmojiPicker])
+  }, [showEmojiPicker]);
 
   function handleSelectEmoji(emoji: string) {
     setMessage((old) => old + emoji);
@@ -391,7 +392,7 @@ const Chat: React.FC = () => {
     }
     setFiles([]);
     setMessage("");
-  }, [message])
+  }, [message]);
 
   if (loading || !socket) return <Loading />;
 

@@ -2,7 +2,6 @@ import React from "react";
 import Routes from "./src/routes";
 import AppLoading from "expo-app-loading";
 
-
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
