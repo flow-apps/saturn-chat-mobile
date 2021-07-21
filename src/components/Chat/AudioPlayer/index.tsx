@@ -43,6 +43,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
     const newSound = await Audio.Sound.createAsync({ uri: audio.url });
 
     if (newSound.status.isLoaded) {
+      setSound(newSound.sound);
       newSound.sound.setOnPlaybackStatusUpdate(async (status) => {
         if (!status.isLoaded) return;
 
@@ -52,18 +53,19 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
           setCurrentPosition(status.positionMillis);
         }
       });
-      setSound(newSound.sound);
     }
+
 
     navigation.addListener("blur", async () => {
       if (newSound.sound._loaded) {
         await newSound.sound.pauseAsync();
       }
     });
-  }, [audio.url]);
+  }, []);
 
   async function handleFinish() {
     await sound?.unloadAsync();
+    setSound(undefined)
     setIsPlaying(false);
     onChangePosition(0);
   }
@@ -73,15 +75,15 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
       await loadAudio();
     }
 
-    if (!sound) return
+    if (sound) {
+      if (isPlaying) {
+        await sound?.pauseAsync();
+      } else {
+        await sound?.playFromPositionAsync(currentPosition);
+      }
 
-    if (isPlaying) {
-      await sound?.pauseAsync();
-    } else {
-      await sound?.playFromPositionAsync(currentPosition);
+      setIsPlaying(!isPlaying);
     }
-
-    setIsPlaying(!isPlaying);
   };
 
   const onChangePosition = async (value: number) => {
@@ -113,7 +115,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
             />
           </SeekBarContainer>
           <AudioDurationContainer>
-            {sound?._loading ? (
+            {sound && sound?._loading ? (
               <LottieView
                 style={{ width: 20, transform: [{ scale: 1.3 }] }}
                 source={require("../../../assets/loading.json")}

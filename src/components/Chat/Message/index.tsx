@@ -1,17 +1,22 @@
-import { useNavigation } from "@react-navigation/native";
-import { format, parseISO } from "date-fns";
-import { convertToTimeZone } from "date-fns-timezone";
-import Clipboard from "expo-clipboard";
-import * as Localize from "expo-localization";
-// import MarkdownIt from "markdown-it";
 import React, { memo, useCallback, useState } from "react";
+
+import isSameMinute from "date-fns/isSameMinute";
+import parseISO from "date-fns/parseISO";
+import format from "date-fns/format";
+import { convertToTimeZone } from "date-fns-timezone";
+
+import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-import Markdown, { MarkdownIt } from "react-native-markdown-display";
-import Toast from "react-native-simple-toast";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { MessageData, UserData } from "../../../../@types/interfaces";
+
+import Clipboard from "expo-clipboard";
+import * as Localize from "expo-localization";
+
+import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import Alert from "../../Alert";
+import Toast from "react-native-simple-toast";
 import AudioPlayer from "../AudioPlayer";
 import FilePreview from "../FilePreview";
 import MessageOptions from "../../MessageOptions";
@@ -75,7 +80,6 @@ const Message = ({
     }
 
     const lastAuthorIsEqual = lastMessage.author.id !== message.author.id;
-
     if (lastAuthorIsEqual) {
       return (
         <MessageAuthorContainer>
@@ -85,6 +89,29 @@ const Message = ({
       );
     }
   }, [message, lastMessage, index]);
+
+  const renderDate = () => {
+    if (index === 0) {
+      return (
+        <MessageDateContainer>
+          <MessageDate>{formatHour(message.created_at)}</MessageDate>
+        </MessageDateContainer>
+      )
+    } else {
+      const date = (date: string) => parseISO(date)
+      const same = isSameMinute(date(message.created_at), date(lastMessage.created_at))
+
+      if (!same) {
+        return (
+          <MessageDateContainer>
+            <MessageDate>{formatHour(message.created_at)}</MessageDate>
+          </MessageDateContainer>
+        )
+      } else {
+        return <></>
+      }
+    }
+  }
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
@@ -222,9 +249,7 @@ const Message = ({
               );
             })}
         </MessageContentContainer>
-        <MessageDateContainer>
-          <MessageDate>{formatHour(message.created_at)}</MessageDate>
-        </MessageDateContainer>
+        {renderDate()}
         {renderAuthor()}
       </Container>
     </>

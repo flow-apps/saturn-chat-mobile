@@ -15,7 +15,7 @@ export const Container = memo(styled.View<IMessageProps>`
 export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 3px;
 `;
 
 export const MessageAvatar = styled.Image`

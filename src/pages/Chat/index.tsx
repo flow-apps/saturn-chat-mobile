@@ -141,6 +141,12 @@ const Chat: React.FC = () => {
       setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
 
+    navigation.addListener("blur", () => {
+      socket.off("sended_user_message")
+      socket.off("new_user_message")
+      socket.off("delete_user_message")
+    })
+
   }, [socket]);
 
   const recordAudio = async () => {
