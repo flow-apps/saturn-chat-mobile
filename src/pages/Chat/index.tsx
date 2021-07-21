@@ -14,7 +14,7 @@ import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
 import { HeaderButton } from "../../components/Header/styles";
@@ -56,6 +56,8 @@ import { FileService, FileServiceErrors } from "../../services/file";
 
 import * as Notifications from "expo-notifications";
 
+import { getWebsocket } from "../../services/websocket"
+
 const emoji = new EmojiJS();
 
 interface File {
@@ -74,7 +76,6 @@ const Chat: React.FC = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<MessageData[]>([])
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
 
   const [audioInterval, setAudioInterval] = useState<number>();
@@ -103,17 +104,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async function () {
       setLoading(true);
-      const connectedSocket = io("http://192.168.0.112:3000/", {
-        path: "/socket.io/",
-        jsonp: false,
-        reconnection: true,
-        reconnectionAttempts: Infinity,
-        reconnectionDelay: 1000,
-        transports: ["websocket"],
-        query: {
-          token,
-        },
-      });
+      const connectedSocket = getWebsocket(token)
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {
@@ -129,36 +120,9 @@ const Chat: React.FC = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      await fetchOldMessages();
+  useEffect(() => { fetchOldMessages() }, []);
 
-      Notifications.addNotificationResponseReceivedListener(async (res) => {
-        if (res.actionIdentifier === "replyMessage") {
-          const msg = res.userText;
-          if (msg) {
-            socket?.emit("new_user_message", { message: msg });
-            await Notifications.dismissNotificationAsync(
-              res.notification.request.identifier
-            );
-          }
-        }
-
-        else if (res.actionIdentifier === "markAsRead") {
-          const messageID = res.notification.request.content.data.id as string;
-
-          await Notifications.dismissNotificationAsync(
-            res.notification.request.identifier
-          );
-          socket?.emit("set_read_message", messageID);
-        }
-      });
-    })();
-  }, []);
-
-  useEffect(() => {
-    connectSockets();
-  }, [socket]);
+  useEffect(() => connectSockets, [socket]);
 
   const connectSockets = useCallback(() => {
     if (!socket || !navigation.isFocused()) return;
