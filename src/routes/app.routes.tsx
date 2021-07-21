@@ -18,7 +18,7 @@ const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
   return (
-    <StackRoutes.Navigator headerMode="none">
+    <StackRoutes.Navigator headerMode="none" screenOptions={{  }}>
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="EditProfile" component={EditProfile} />
       <StackRoutes.Screen name="SwitchLanguage" component={SwitchLanguage} />

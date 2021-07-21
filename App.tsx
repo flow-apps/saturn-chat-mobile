@@ -1,9 +1,11 @@
 import React from "react";
 import Routes from "./src/routes";
 import AppLoading from "expo-app-loading";
+
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
+import { NotificationsProvider } from "./src/contexts/notifications"
 
 import {
   Poppins_400Regular,
@@ -27,7 +29,9 @@ export default function App() {
     <AppearanceProvider>
       <ThemeControllerProvider>
         <AuthProvider>
-          <Routes />
+          <NotificationsProvider>
+            <Routes />
+          </NotificationsProvider>
         </AuthProvider>
       </ThemeControllerProvider>
     </AppearanceProvider>

@@ -3,7 +3,6 @@ import fonts from "../../styles/fonts";
 import { FlatList } from "react-native";
 import { FilesContainer } from "../../components/Chat/SelectedFiles/styles";
 
-
 export const Container = styled.View`
   flex: 1;
   background-color: ${(props) => props.theme.colors.background};
@@ -11,9 +10,8 @@ export const Container = styled.View`
 
 export const Messages = styled.FlatList.attrs({
   inverted: true,
-  removeClippedSubviews: true,
-  maxToRenderPerBatch: 5,
-  initialNumToRender: 10
+  maxToRenderPerBatch: 10,
+  initialNumToRender: 20,
 })`` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`
