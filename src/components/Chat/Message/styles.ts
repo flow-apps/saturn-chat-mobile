@@ -15,18 +15,18 @@ export const Container = memo(styled.View<IMessageProps>`
 export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  margin-top: 3px;
+  margin-top: 5px;
 `;
 
 export const MessageAvatar = styled.Image`
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
   margin-right: 5px;
 `;
 
 export const MessageAuthorName = styled.Text`
-  font-size: 14px;
+  font-size: 12px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.light_heading};
 `;
@@ -81,10 +81,11 @@ export const MessageOptionsContainer = styled.View`
 
 export const MessageDateContainer = styled.View`
   margin-top: 5px;
+  margin-bottom: -3px;
 `;
 
 export const MessageDate = styled.Text`
   color: ${(props) => props.theme.colors.dark_heading};
   font-family: ${fonts.text};
-  font-size: 12px;
+  font-size: 11px;
 `;

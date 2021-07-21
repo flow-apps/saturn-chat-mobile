@@ -10,8 +10,8 @@ export const Container = styled.View`
 
 export const Messages = styled.FlatList.attrs({
   inverted: true,
-  maxToRenderPerBatch: 10,
-  initialNumToRender: 20,
+  maxToRenderPerBatch: 30,
+  initialNumToRender: 30,
 })`` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`
