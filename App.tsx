@@ -6,6 +6,7 @@ import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
 import { NotificationsProvider } from "./src/contexts/notifications"
+import { AdsProvider } from "./src/contexts/ads"
 
 import {
   Poppins_400Regular,
@@ -30,7 +31,9 @@ export default function App() {
       <ThemeControllerProvider>
         <AuthProvider>
           <NotificationsProvider>
-            <Routes />
+            <AdsProvider>
+              <Routes />
+            </AdsProvider>
           </NotificationsProvider>
         </AuthProvider>
       </ThemeControllerProvider>

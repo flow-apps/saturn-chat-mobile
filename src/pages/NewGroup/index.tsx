@@ -24,6 +24,7 @@ import {
   SwitcherText,
   ButtonWrapper,
   TextArea,
+  AdWrapper,
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
@@ -36,6 +37,7 @@ import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import { color } from "react-native-reanimated";
 import Loading from "../../components/Loading";
+import Banner from "../../components/Ads/Banner";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false)
@@ -122,6 +124,9 @@ const NewGroup: React.FC = () => {
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View>
+            <AdWrapper>
+              <Banner />
+            </AdWrapper>
             <SelectGroupPhotoContainer>
               <SelectGroupPhoto
                 style={{

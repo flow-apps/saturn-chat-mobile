@@ -26,7 +26,10 @@
     "assetBundlePatterns": ["**/*", "./src/assets"],
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "0.0.1"
+      "buildNumber": "0.0.1",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-5955119850349278~4502310341"
+      }
     },
     "android": {
       "allowBackup": true,
@@ -34,6 +37,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0088FF"
+      },
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-5955119850349278~6592119770"
       }
     },
     "web": {

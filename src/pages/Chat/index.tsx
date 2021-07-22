@@ -54,6 +54,7 @@ import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
 import { getWebsocket } from "../../services/websocket";
+import Banner from "../../components/Ads/Banner";
 
 const emoji = new EmojiJS();
 

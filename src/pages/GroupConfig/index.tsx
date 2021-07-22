@@ -17,6 +17,7 @@ import { GroupData } from "../../../@types/interfaces";
 import { useEffect } from "react";
 import api from "../../services/api";
 import Loading from "../../components/Loading";
+import { Banner } from "../GroupInfos/styles";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);

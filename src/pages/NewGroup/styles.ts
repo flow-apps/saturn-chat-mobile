@@ -11,7 +11,7 @@ export const SelectGroupPhotoContainer = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 35px;
 `;
 
 export const SelectGroupPhoto = styled.TouchableOpacity`
@@ -85,3 +85,7 @@ export const SwitcherText = styled.Text`
 export const ButtonWrapper = styled.View`
   margin: -5px 0 10px 0;
 `;
+
+export const AdWrapper = styled.View`
+  margin-top: 15px;
+`
