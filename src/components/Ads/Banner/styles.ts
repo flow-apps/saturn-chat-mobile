@@ -1,12 +1,7 @@
 import styled from 'styled-components/native';
 import fonts from '../../../styles/fonts';
 
-type BannerProps = {
-  premium: boolean
-}
-
-export const Container = styled.View<BannerProps>`
-  display: ${props => props.premium ? "none" : "flex"};
+export const Container = styled.View`
 `;
 
 export const RemoveBanner = styled.TouchableOpacity`
@@ -23,4 +18,7 @@ export const RemoveBannerText = styled.Text`
 export const BannerContainer = styled.View`
   width: 100%;
   align-items: center;
+  border: 1px solid ${props => props.theme.colors.secondary};
+  padding: 5px;
+  border-radius: 5px;
 `

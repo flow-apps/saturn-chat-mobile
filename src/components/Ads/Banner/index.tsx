@@ -1,20 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdMobBanner } from "expo-ads-admob"
 import { BannerContainer, Container, RemoveBanner, RemoveBannerText } from './styles';
 import { Platform, Dimensions } from 'react-native';
 import { Feather } from "@expo/vector-icons"
 import config from '../../../config';
-import { useState } from 'react';
-import { useEffect } from 'react';
 
 type BannerProps = {
   isPremium?: boolean
+  size?: 'banner' | 'largeBanner' | 'mediumRectangle' | 'fullBanner' | 'leaderboard' | 'smartBannerPortrait' | 'smartBannerLandscape';
 }
 
-const Banner = ({ isPremium = false }: BannerProps) => {
-
-  const [portrait, setPortrait] = useState(false)
-
+const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER
   const adUnitProdID = Platform.select({
     android: config.ADS.PROD_ADS_IDS.android.BANNER,
@@ -22,26 +18,21 @@ const Banner = ({ isPremium = false }: BannerProps) => {
   })
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID
 
-  useEffect(() => {
-    Dimensions.addEventListener("change", ({ screen }) => {
-      const width = screen.width
-      const height = screen.height
-      setPortrait(height > width)
-    })
-  })
+  if (isPremium) return <></>
 
 
   return (
-    <Container premium={isPremium}>
+    <Container>
       <RemoveBanner>
         <RemoveBannerText>
-          <Feather name="info" /> Remover anúncios
+          <Feather name="info" /> Remover anúncio
         </RemoveBannerText>
       </RemoveBanner>
       <BannerContainer>
         <AdMobBanner 
           adUnitID={adUnitID}
-          bannerSize={portrait ? "smartBannerPortrait" : "smartBannerLandscape"}
+          bannerSize={size}
+          servePersonalizedAds
         />
       </BannerContainer>
     </Container>

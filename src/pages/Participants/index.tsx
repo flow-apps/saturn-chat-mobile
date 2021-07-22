@@ -26,6 +26,8 @@ import { ConvertDate } from "../../utils/convertDate";
 import { useCallback } from "react";
 import { useTheme } from "styled-components";
 import { ActivityIndicator } from "react-native";
+import Banner from "../../components/Ads/Banner";
+import { AdBannerWrapper } from "../GroupInfos/styles";
 
 const Participants: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipantData[]>([]);
@@ -88,30 +90,35 @@ const Participants: React.FC = () => {
     }
   };
 
-  const renderItem = ({ item }: { item: ParticipantData }) => {
+  const renderItem = ({ item, index }: { item: ParticipantData, index: number }) => {
     return (
-      <ParticipantContainer onPress={() => handleGoUserProfile(item.user_id)}>
-        <Participant>
-          <ParticipantAvatar source={{ uri: item.user.avatar.url }} />
-          <ParticipantInfosWrapper>
-            <ParticipanteName numberOfLines={1}>
-              {item.user.name}
-            </ParticipanteName>
-            <JoinedDate>
-              {item.group.owner.id === item.user.id
-                ? "Criou em "
-                : "Entrou em "}
-              {convertDate.formatToDate(item.participating_since)}
-            </JoinedDate>
-          </ParticipantInfosWrapper>
-          <JoinedDateContainer></JoinedDateContainer>
-        </Participant>
-        {item.group.owner.id === item.user_id && (
-          <OwnerTagContainer>
-            <OwnerTag>Dono</OwnerTag>
-          </OwnerTagContainer>
-        )}
-      </ParticipantContainer>
+      <>
+        {
+          index % 12 === 0 && <AdBannerWrapper><Banner /></AdBannerWrapper>
+        }
+        <ParticipantContainer onPress={() => handleGoUserProfile(item.user_id)}>
+          <Participant>
+            <ParticipantAvatar source={{ uri: item.user.avatar.url }} />
+            <ParticipantInfosWrapper>
+              <ParticipanteName numberOfLines={1}>
+                {item.user.name}
+              </ParticipanteName>
+              <JoinedDate>
+                {item.group.owner.id === item.user.id
+                  ? "Criou em "
+                  : "Entrou em "}
+                {convertDate.formatToDate(item.participating_since)}
+              </JoinedDate>
+            </ParticipantInfosWrapper>
+            <JoinedDateContainer></JoinedDateContainer>
+          </Participant>
+          {item.group.owner.id === item.user_id && (
+            <OwnerTagContainer>
+              <OwnerTag>Dono</OwnerTag>
+            </OwnerTagContainer>
+          )}
+        </ParticipantContainer>
+      </>
     );
   };
 

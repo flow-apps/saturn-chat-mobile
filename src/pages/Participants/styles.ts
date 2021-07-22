@@ -74,3 +74,7 @@ export const ParticipanteName = styled.Text`
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.black};
 `;
+
+export const AdBannerWrapper = styled.View`
+  margin: 5px 0px;
+`

@@ -17,7 +17,7 @@ import { GroupData } from "../../../@types/interfaces";
 import { useEffect } from "react";
 import api from "../../services/api";
 import Loading from "../../components/Loading";
-import { Banner } from "../GroupInfos/styles";
+import Banner from "../../components/Ads/Banner";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -113,6 +113,7 @@ const GroupConfig: React.FC = () => {
               </OptionText>
             </OptionContainer>
           )}
+          <Banner size="largeBanner" />
         </OptionsContainer>
       </Container>
     </>

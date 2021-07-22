@@ -38,6 +38,7 @@ import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import { color } from "react-native-reanimated";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
+import { showInterstitial } from "../../services/ads";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false)
@@ -75,7 +76,7 @@ const NewGroup: React.FC = () => {
           "Content-Type": `multipart/form-data`,
         },
       })
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
           navigator.navigate("Groups");
         }

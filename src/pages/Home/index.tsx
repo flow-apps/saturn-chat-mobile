@@ -9,6 +9,7 @@ import Group from "../../components/Group";
 import Header from "../../components/Header";
 import { HeaderButton } from "../../components/Header/styles";
 import Loading from "../../components/Loading";
+import { showInterstitial } from "../../services/ads";
 import api from "../../services/api";
 import {
   Container,
@@ -70,10 +71,9 @@ const Home: React.FC = () => {
 
   const handleGoUserProfile = () => navigation.navigate("UserProfile");
 
-  const handleGoChat = useCallback(
-    (id: string) => navigation.navigate("Chat", { id }),
-    []
-  );
+  const handleGoChat = useCallback(async (id: string) => {
+    navigation.navigate("Chat", { id })
+  }, []);
 
   const handleGoNewGroup = () => navigation.navigate("NewGroup");
 

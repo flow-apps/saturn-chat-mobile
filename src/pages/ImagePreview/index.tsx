@@ -1,13 +1,7 @@
 import { useRoute } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/Header";
 import { Container, ImageContainer, Image } from "./styles";
-
-import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
-
-import Toast from "react-native-simple-toast";
-
 import { Feather } from "@expo/vector-icons";
 
 import {
@@ -18,10 +12,9 @@ import {
   State,
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
-import ReactNative, { Animated, Dimensions, Easing } from "react-native";
+import ReactNative, { Animated, Easing } from "react-native";
 import { HeaderButton } from "../../components/Header/styles";
 import { useCallback } from "react";
-import config from "../../config";
 import { Linking } from "react-native";
 
 const ImagePreview = () => {
