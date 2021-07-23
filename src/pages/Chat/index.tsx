@@ -3,6 +3,7 @@ import {
   Keyboard,
   ListRenderItem,
   NativeScrollEvent,
+  NativeSyntheticEvent,
   TextInput,
 } from "react-native";
 
@@ -122,7 +123,7 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    connectSockets()
+    connectSockets();
   }, [socket]);
 
   const connectSockets = useCallback(() => {
@@ -142,11 +143,10 @@ const Chat: React.FC = () => {
     });
 
     navigation.addListener("blur", () => {
-      socket.off("sended_user_message")
-      socket.off("new_user_message")
-      socket.off("delete_user_message")
-    })
-
+      socket.off("sended_user_message");
+      socket.off("new_user_message");
+      socket.off("delete_user_message");
+    });
   }, [socket]);
 
   const recordAudio = async () => {
@@ -211,7 +211,7 @@ const Chat: React.FC = () => {
 
   const fetchOldMessages = async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=60`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -261,10 +261,12 @@ const Chat: React.FC = () => {
     setFiles(filteredFiles);
   };
 
-  const handleFetchMoreMessages = async (event: NativeScrollEvent) => {
+  const handleFetchMoreMessages = async (
+    event: NativeSyntheticEvent<NativeScrollEvent>
+  ) => {
     if (fetchedAll) return;
 
-    const { layoutMeasurement, contentOffset, contentSize } = event;
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
     const paddingToBottom = 5;
     const listHeight = layoutMeasurement.height + contentOffset.y;
 
@@ -293,10 +295,13 @@ const Chat: React.FC = () => {
     [oldMessages]
   );
 
-  const handleSetMessage = useCallback((message: string) => {
-    const emojifiedMessage = emoji.replace_colons(message);
-    setMessage(emojifiedMessage);
-  }, [message]);
+  const handleSetMessage = useCallback(
+    (message: string) => {
+      const emojifiedMessage = emoji.replace_colons(message);
+      setMessage(emojifiedMessage);
+    },
+    [message]
+  );
 
   const handleGoGroupConfig = useCallback(() => {
     navigation.navigate("GroupConfig", { id });
@@ -373,6 +378,9 @@ const Chat: React.FC = () => {
     setMessage("");
   }, [message]);
 
+  const getItemID = (item: MessageData) => item.id;
+  const renderFooter = () => fetching && !fetchedAll ? <LoadingIndicator /> : <></>
+
   if (loading || !socket) return <Loading />;
 
   return (
@@ -407,13 +415,15 @@ const Chat: React.FC = () => {
         <MessageContainer>
           <Messages
             data={oldMessages}
-            windowSize={18}
-            keyExtractor={(item) => item.id}
-            onScroll={(event) => handleFetchMoreMessages(event.nativeEvent)}
-            ListFooterComponent={
-              fetching && !fetchedAll ? <LoadingIndicator /> : <></>
-            }
+            extraData={oldMessages}
+            keyExtractor={getItemID}
+            onScroll={handleFetchMoreMessages}
+            ListFooterComponent={renderFooter}
+            windowSize={35}
+            scrollEventThrottle={500}
             renderItem={renderMessage}
+            removeClippedSubviews
+            legacyImplementation
           />
         </MessageContainer>
         <FormContainer>
@@ -487,12 +497,16 @@ const Chat: React.FC = () => {
             </OptionsContainer>
           </InputContainer>
 
-          <EmojiBoardContainer>
-            <EmojiPicker
-              onClick={handleSelectEmoji}
-              visible={showEmojiPicker}
-            />
-          </EmojiBoardContainer>
+          {showEmojiPicker ? (
+            <EmojiBoardContainer>
+              <EmojiPicker
+                onClick={handleSelectEmoji}
+                visible={showEmojiPicker}
+              />
+            </EmojiBoardContainer>
+          ) : (
+            <></>
+          )}
         </FormContainer>
       </Container>
     </>

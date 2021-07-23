@@ -14,7 +14,7 @@ import { MessageData, UserData } from "../../../../@types/interfaces";
 import Clipboard from "expo-clipboard";
 import * as Localize from "expo-localization";
 
-import Markdown, { MarkdownIt } from "react-native-markdown-display";
+import Markdown, { MarkdownIt, RenderRules } from "react-native-markdown-display";
 import Alert from "../../Alert";
 import Toast from "react-native-simple-toast";
 import AudioPlayer from "../AudioPlayer";
@@ -34,6 +34,8 @@ import {
   MessageDateContainer,
   MessageLink,
 } from "./styles";
+import { useMemo } from "react";
+import { RenderRule } from "markdown-it/lib/renderer";
 
 interface MessageProps {
   user: UserData;
@@ -42,6 +44,13 @@ interface MessageProps {
   index: number;
   socket: Socket;
 }
+
+const markdownRules = MarkdownIt({
+  linkify: true,
+  typographer: true,
+})
+  .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
+  .use(require("markdown-it-linkscheme"));
 
 const Message = ({
   message,
@@ -54,36 +63,79 @@ const Message = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
 
+  const renderRules = useMemo(() => {
+
+    const rules: RenderRules = {
+      paragraph: (node, children) => (
+        <MessageContent
+          isRight={message.author.id === user.id}
+          key={node.key}
+        >
+          {children}
+        </MessageContent>
+      ),
+      link: (node, children) => (
+        <MessageLink
+          onPress={() => alertLink(node.attributes.href)}
+          onLongPress={() => copyLink(node.attributes.href)}
+          key={node.key}
+        >
+          {children}
+        </MessageLink>
+      ),
+      code_inline: (node) => (
+        <MessageCodeInline key={node.key}>
+          {node.content}
+        </MessageCodeInline>
+      ),
+      fence: (node) => {
+        let { content } = node;
+
+        if (
+          typeof node.content === "string" &&
+          node.content.charAt(node.content.length - 1) === "\n"
+        ) {
+          content = node.content.substring(0, node.content.length - 1);
+        }
+
+        return (
+          <MessageCodeBlock key={node.key}>
+            <MessageCodeBlockText>{content}</MessageCodeBlockText>
+          </MessageCodeBlock>
+        );
+      },
+    }
+
+    return rules
+  }, [message, lastMessage, user, index])
+
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const markdownRules = MarkdownIt({
-    linkify: true,
-    typographer: true,
-  })
-    .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
-    .use(require("markdown-it-linkscheme"));
 
   const handleGoUserProfile = (userID: string) => {
     navigation.navigate("UserProfile", { id: userID });
   };
 
   const renderAuthor = useCallback(() => {
-    if (index === 0) {
+    if (index === 0 || lastMessage.author.id !== message.author.id) {
       return (
         <MessageAuthorContainer
           onPress={() => handleGoUserProfile(message.author.id)}
         >
-          <MessageAvatar source={{ uri: message.author.avatar.url }} />
-          <MessageAuthorName>{message.author.name}</MessageAuthorName>
-        </MessageAuthorContainer>
-      );
-    }
-
-    const lastAuthorIsEqual = lastMessage.author.id !== message.author.id;
-    if (lastAuthorIsEqual) {
-      return (
-        <MessageAuthorContainer>
-          <MessageAvatar source={{ uri: message.author.avatar.url }} />
+          {message.author.avatar ? (
+            <MessageAvatar
+              defaultSource={require("../../../assets/avatar-placeholder.png")}
+              source={{ uri: message.author.avatar.url }}
+              width={22}
+              height={22}
+            />
+          ) : (
+            <MessageAvatar
+              source={require("../../../assets/avatar-placeholder.png")}
+              width={22}
+              height={22}
+            />
+          )}
           <MessageAuthorName>{message.author.name}</MessageAuthorName>
         </MessageAuthorContainer>
       );
@@ -96,22 +148,25 @@ const Message = ({
         <MessageDateContainer>
           <MessageDate>{formatHour(message.created_at)}</MessageDate>
         </MessageDateContainer>
-      )
+      );
     } else {
-      const date = (date: string) => parseISO(date)
-      const same = isSameMinute(date(message.created_at), date(lastMessage.created_at))
+      const date = (date: string) => parseISO(date);
+      const same = isSameMinute(
+        date(message.created_at),
+        date(lastMessage.created_at)
+      );
 
       if (!same) {
         return (
           <MessageDateContainer>
             <MessageDate>{formatHour(message.created_at)}</MessageDate>
           </MessageDateContainer>
-        )
+        );
       } else {
-        return <></>
+        return <></>;
       }
     }
-  }
+  };
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
@@ -150,6 +205,24 @@ const Message = ({
     return setShowLinkAlert(false);
   }, []);
 
+  const renderFiles = useCallback(() => {
+    if(message.files) {
+      return message.files.map((file) => {
+        return (
+          <FilePreview
+            key={file.id}
+            name={file.original_name}
+            url={file.url}
+            size={file.size}
+            type={file.type}
+          />
+        );
+      })
+    }
+  }, [message.files])
+
+  const handleCloseMsgOptions = () => setMsgOptions(false)
+
   return (
     <>
       <Container key={index} isRight={message.author.id === user.id}>
@@ -167,7 +240,7 @@ const Message = ({
             visible={showLinkAlert}
           />
           <MessageOptions
-            close={() => setMsgOptions(false)}
+            close={handleCloseMsgOptions}
             visible={msgOptions}
             message={message}
             options={[
@@ -188,66 +261,15 @@ const Message = ({
           />
           <Markdown
             markdownit={markdownRules}
+            rules={renderRules}
             mergeStyle
-            rules={{
-              paragraph: (node, children) => (
-                <MessageContent
-                  isRight={message.author.id === user.id}
-                  key={node.key}
-                >
-                  {children}
-                </MessageContent>
-              ),
-              link: (node, children) => (
-                <MessageLink
-                  onPress={() => alertLink(node.attributes.href)}
-                  onLongPress={() => copyLink(node.attributes.href)}
-                  key={node.key}
-                >
-                  {children}
-                </MessageLink>
-              ),
-              code_inline: (node) => (
-                <MessageCodeInline key={node.key}>
-                  {node.content}
-                </MessageCodeInline>
-              ),
-              fence: (node) => {
-                let { content } = node;
-
-                if (
-                  typeof node.content === "string" &&
-                  node.content.charAt(node.content.length - 1) === "\n"
-                ) {
-                  content = node.content.substring(0, node.content.length - 1);
-                }
-
-                return (
-                  <MessageCodeBlock key={node.key}>
-                    <MessageCodeBlockText>{content}</MessageCodeBlockText>
-                  </MessageCodeBlock>
-                );
-              },
-            }}
           >
             {message.message}
           </Markdown>
           {message.voice_message && (
             <AudioPlayer audio={message.voice_message} />
           )}
-
-          {message.files &&
-            message.files.map((file) => {
-              return (
-                <FilePreview
-                  key={file.id}
-                  name={file.original_name}
-                  url={file.url}
-                  size={file.size}
-                  type={file.type}
-                />
-              );
-            })}
+          {renderFiles()}
         </MessageContentContainer>
         {renderDate()}
         {renderAuthor()}

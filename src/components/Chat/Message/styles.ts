@@ -1,16 +1,15 @@
-import { memo } from "react";
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
 
 interface IMessageProps {
   isRight?: boolean;
 }
-export const Container = memo(styled.View<IMessageProps>`
+export const Container = styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
   width: 100%;
   padding: 0 10px;
   margin: 5px 0;
-`);
+`;
 
 export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
