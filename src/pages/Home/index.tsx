@@ -9,7 +9,6 @@ import Group from "../../components/Group";
 import Header from "../../components/Header";
 import { HeaderButton } from "../../components/Header/styles";
 import Loading from "../../components/Loading";
-import { showInterstitial } from "../../services/ads";
 import api from "../../services/api";
 import {
   Container,

@@ -87,7 +87,7 @@ const Configurations: React.FC = () => {
             </ConfigsContainer>
           </SectionContainer>
         </SectionsContainer>
-        <Banner size="mediumRectangle" />
+        <Banner />
       </Container>
     </>
   );
