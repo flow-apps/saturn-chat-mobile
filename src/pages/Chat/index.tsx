@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Keyboard,
   ListRenderItem,
@@ -211,7 +211,7 @@ const Chat: React.FC = () => {
 
   const fetchOldMessages = async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=40`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -294,6 +294,8 @@ const Chat: React.FC = () => {
     },
     [oldMessages]
   );
+
+  const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages])
 
   const handleSetMessage = useCallback(
     (message: string) => {
@@ -419,11 +421,10 @@ const Chat: React.FC = () => {
             keyExtractor={getItemID}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
-            windowSize={35}
-            scrollEventThrottle={500}
-            renderItem={renderMessage}
+            windowSize={30}
+            scrollEventThrottle={41}
+            renderItem={memoizedRenderMessage}
             removeClippedSubviews
-            legacyImplementation
           />
         </MessageContainer>
         <FormContainer>
