@@ -14,5 +14,6 @@ export default {
     dark_heading: "#bdbdbd",
     light_heading: "#cccccc",
     red: "#FF2419",
+    green: "#249903"
   },
 };

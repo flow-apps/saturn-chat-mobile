@@ -17,6 +17,7 @@ declare module "styled-components/native" {
       dark_heading: string;
       light_heading: string;
       red: string;
+      green: string;
     };
   }
 }

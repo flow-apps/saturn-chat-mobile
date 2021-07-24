@@ -13,13 +13,14 @@ import {
   useFonts,
 } from "@expo-google-fonts/poppins";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
-import { Roboto_500Medium } from "@expo-google-fonts/roboto";
+import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 
 export default function App() {
   const [fontLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_600SemiBold,
     Roboto_500Medium,
+    Roboto_900Black,
     FiraCode_500Medium,
   });
 

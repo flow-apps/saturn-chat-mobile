@@ -1,7 +1,8 @@
 import io from "socket.io-client"
+import config from "../config"
 
 function getWebsocket(token: string) {
-  const socket = io("http://192.168.0.112:3000/", {
+  const socket = io(config.API_URL, {
       path: "/socket.io/",
       jsonp: false,
       withCredentials: true,

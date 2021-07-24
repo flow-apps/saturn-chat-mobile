@@ -20,6 +20,7 @@ import Alert from "../../components/Alert";
 import { useNavigation } from "@react-navigation/native";
 
 import * as Localize from "expo-localization"
+import fonts from "../../styles/fonts";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -31,6 +32,10 @@ const Configurations: React.FC = () => {
 
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
+  }, []);
+
+  const handleGoPurchasePremium = useCallback(() => {
+    navigation.navigate("PurchasePremium");
   }, []);
 
   const handleGoEditProfile = useCallback(() => {
@@ -58,6 +63,13 @@ const Configurations: React.FC = () => {
           <SectionContainer>
             <SectionTitle>Geral</SectionTitle>
             <ConfigsContainer>
+              <ConfigContainer onPress={handleGoPurchasePremium}>
+                <ConfigTitle 
+                  color={colors.secondary}
+                >
+                  <Feather name="star" size={16} /> Seja uma Estrela
+                </ConfigTitle>
+              </ConfigContainer>
               <ConfigContainer onPress={handleGoEditProfile}>
                 <ConfigTitle>
                   <Feather name="edit" size={16} /> Editar perfil

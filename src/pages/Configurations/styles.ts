@@ -29,10 +29,14 @@ export const ConfigContainer = styled.TouchableOpacity`
   padding: 10px 0;
 `;
 
-export const ConfigTitle = styled.Text`
+type ConfigTitleProps = {
+  color?: string;
+}
+
+export const ConfigTitle = styled.Text<ConfigTitleProps>`
   font-size: 16px;
   font-family: ${fonts.text};
-  color: ${(props) => props.theme.colors.black};
+  color: ${(props) => props.color ? props.color : props.theme.colors.black};
 `;
 
 export const CurrentValueText = styled(ConfigTitle)`
