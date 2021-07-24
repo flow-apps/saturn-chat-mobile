@@ -25,9 +25,13 @@ import {
   VantageContent,
 } from "./styles";
 import { useTheme } from "styled-components";
+import { useNavigation } from "@react-navigation/native";
 
 const Premium: React.FC = () => {
+  const navigation = useNavigation()
   const { colors } = useTheme();
+
+  const handleGoChoosePlan = () => navigation.navigate("ChoosePlan")
 
   return (
     <>
@@ -59,7 +63,7 @@ const Premium: React.FC = () => {
           </SubtitleWrapper>
           <BuyWrapper>
             <BuyBonusText>Assine e ganhe 1 mês grátis!</BuyBonusText>
-            <BuyButton>
+            <BuyButton onPress={handleGoChoosePlan}>
               <BuyButtonText>
                 <Feather name="star" size={18} /> Obter a partir de R$ 39
                 {Localize.decimalSeparator}99

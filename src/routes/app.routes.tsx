@@ -14,6 +14,7 @@ import EditGroup from "../pages/GroupConfig/EditGroup";
 import EditProfile from "../pages/Configurations/EditProfile";
 import SwitchLanguage from "../pages/Configurations/SwitchLanguage";
 import Premium from "../pages/Configurations/Premium";
+import ChoosePlan from "../pages/Configurations/Premium/ChoosePlan";
 
 const StackRoutes = createStackNavigator();
 
@@ -22,6 +23,7 @@ const AppRoutes = () => {
     <StackRoutes.Navigator headerMode="none" screenOptions={{  }}>
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="PurchasePremium" component={Premium} />
+      <StackRoutes.Screen name="ChoosePlan" component={ChoosePlan} />
       <StackRoutes.Screen name="EditProfile" component={EditProfile} />
       <StackRoutes.Screen name="SwitchLanguage" component={SwitchLanguage} />
       <StackRoutes.Screen name="Chat" component={Chat} />
