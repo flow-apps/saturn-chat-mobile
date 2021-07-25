@@ -8,4 +8,10 @@ export default {
     AUDIO: `${documentsPath}`,
     DOCUMENTS: `${documentsPath}`,
   },
+  ADS: {
+    TEST_ADS_IDS: {
+      BANNER: "ca-app-pub-3940256099942544/2934735716",
+      INTERSTITIAL: "ca-app-pub-3940256099942544/1033173712",
+    },
+  },
 };

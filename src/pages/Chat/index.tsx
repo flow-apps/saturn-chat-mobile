@@ -55,6 +55,8 @@ import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
 import { getWebsocket } from "../../services/websocket";
+import Banner from "../../components/Ads/Banner";
+import { showInterstitial } from "../../services/ads";
 
 const emoji = new EmojiJS();
 
@@ -100,8 +102,9 @@ const Chat: React.FC = () => {
   const { token, user } = useAuth();
 
   useEffect(() => {
-    (async function () {
+    (async () => {
       setLoading(true);
+      await showInterstitial({})
       const connectedSocket = getWebsocket(token);
 
       connectedSocket.emit("connect_in_chat", id);

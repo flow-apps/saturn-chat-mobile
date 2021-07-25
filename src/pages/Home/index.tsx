@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
 import { GroupData, UserData } from "../../../@types/interfaces";
+import Banner from "../../components/Ads/Banner";
 import Group from "../../components/Group";
 import Header from "../../components/Header";
 import { HeaderButton } from "../../components/Header/styles";
@@ -69,10 +70,9 @@ const Home: React.FC = () => {
 
   const handleGoUserProfile = () => navigation.navigate("UserProfile");
 
-  const handleGoChat = useCallback(
-    (id: string) => navigation.navigate("Chat", { id }),
-    []
-  );
+  const handleGoChat = useCallback(async (id: string) => {
+    navigation.navigate("Chat", { id })
+  }, []);
 
   const handleGoNewGroup = () => navigation.navigate("NewGroup");
 
@@ -148,19 +148,27 @@ const Home: React.FC = () => {
                 <GroupsSubtitle>
                   Você está em {groupsCount} grupos
                 </GroupsSubtitle>
+                <Banner />
               </TitleWrapper>
             )}
             endFillColor={colors.shape}
             keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-              <Group
-                name={item.name}
-                image={item.group_avatar && item.group_avatar.url}
-                unreadMessages={item?.unreadMessagesAmount}
-                activeOpacity={0.5}
-                onPress={() => handleGoChat(item.id)}
-              />
-            )}
+            renderItem={({ item, index }) => {
+              return (
+                <>
+                  <Group
+                    name={item.name}
+                    image={item.group_avatar && item.group_avatar.url}
+                    unreadMessages={item?.unreadMessagesAmount}
+                    activeOpacity={0.5}
+                    onPress={() => handleGoChat(item.id)}
+                  />
+                  { index > 0 && index % 5 === 0 ? (
+                    <Banner />
+                  ) : <></>}
+                </>
+              )
+            }}
           />
         </GroupsList>
       </GroupsContainer>

@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.View`
+export const Container = styled.ScrollView`
   flex: 1;
   background-color: ${(props) => props.theme.colors.background};
 `;

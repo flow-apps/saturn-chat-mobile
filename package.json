@@ -24,6 +24,7 @@
     "emoji-datasource": "^7.0.2",
     "emoji-js": "^3.5.0",
     "expo": "^42.0.0",
+    "expo-ads-admob": "~10.1.2",
     "expo-app-loading": "^1.0.3",
     "expo-av": "~9.2.3",
     "expo-clipboard": "~1.1.0",

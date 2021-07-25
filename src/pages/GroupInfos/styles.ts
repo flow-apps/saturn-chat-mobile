@@ -139,3 +139,7 @@ export const ParticipantsTitle = styled.Text`
   margin-top: -5px;
   color: ${(props) => props.theme.colors.black};
 `;
+
+export const AdBannerWrapper = styled.View`
+  margin: 10px 0px;
+`

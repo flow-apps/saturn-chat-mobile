@@ -8,7 +8,6 @@ import {
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { MessageData } from "../../../@types/interfaces";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useAuth } from "../../contexts/auth";
 import { StatusBar } from "expo-status-bar";
 

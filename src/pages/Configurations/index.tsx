@@ -21,6 +21,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import * as Localize from "expo-localization"
 import fonts from "../../styles/fonts";
+import Banner from "../../components/Ads/Banner";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -98,6 +99,7 @@ const Configurations: React.FC = () => {
             </ConfigsContainer>
           </SectionContainer>
         </SectionsContainer>
+        <Banner />
       </Container>
     </>
   );

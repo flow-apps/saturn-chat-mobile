@@ -1,4 +1,5 @@
 import React from "react";
+import AdBanner from "../../components/Ads/Banner"
 import { Feather } from "@expo/vector-icons";
 import Header from "../../components/Header";
 import {
@@ -76,12 +77,15 @@ const UserProfile: React.FC = () => {
               {userInfos?.participating.map((participant, index) => {
                 return (
                   participant.group.privacy !== "PRIVATE" && (
-                    <Group
-                      key={index}
-                      name={participant.group.name}
-                      image={participant.group.group_avatar.url}
-                      onPress={() => handleGoGroupInfos(participant.group.id)}
-                    />
+                    <>
+                      {index % 5 === 0 && <AdBanner key={index} />}
+                      <Group
+                        key={participant.id}
+                        name={participant.group.name}
+                        image={participant.group.group_avatar.url}
+                        onPress={() => handleGoGroupInfos(participant.group.id)}
+                      />
+                    </>
                   )
                 );
               })}

@@ -13,5 +13,6 @@ web-build/
 # macOS
 .DS_Store
 
-#Others
-.vscode/
+# others
+.vscode
+secrets.json
