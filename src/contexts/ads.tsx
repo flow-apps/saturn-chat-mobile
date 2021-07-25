@@ -3,6 +3,7 @@ import { Alert, Platform } from "react-native"
 import * as Ads from "expo-ads-admob"
 import Constants from "expo-constants"
 import config from "../config"
+import secrets from "../secrets.json"
 
 interface ADSContextProps {
   unitID: string
@@ -20,12 +21,12 @@ const AdsProvider: React.FC = ({ children }) => {
 
       if (!isAvailable) return 
 
-      await Ads.setTestDeviceIDAsync("0e0abd67-09ac-4d13-b2d5-a0acffd3ca79")
+      await Ads.setTestDeviceIDAsync(secrets.AdsID.deviceTestID)
 
       const testID = "google-test-id"
       const productionID = Platform.select({
-        android: config.ADS.PRODUCTIONS_UNIT_IDS.android,
-        ios: config.ADS.PRODUCTIONS_UNIT_IDS.ios
+        android: secrets.AdsAppID.android,
+        ios: secrets.AdsAppID.ios
       })
       const adUnitID = Constants.isDevice && __DEV__ ? testID : productionID
       if (adUnitID) setUnitID(adUnitID)
