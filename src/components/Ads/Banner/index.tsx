@@ -10,6 +10,7 @@ import { Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import config from "../../../config";
 import secrets from "../../../secrets.json";
+import { useNavigation } from "@react-navigation/native";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -31,11 +32,14 @@ const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
   });
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
 
+  const navigation = useNavigation()
+  const handleGoPremium = () => navigation.navigate("PurchasePremium")
+
   if (isPremium) return <></>;
 
   return (
     <Container>
-      <RemoveBanner>
+      <RemoveBanner onPress={handleGoPremium}>
         <RemoveBannerText>
           <Feather name="info" /> Remover anúncio
         </RemoveBannerText>
