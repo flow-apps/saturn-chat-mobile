@@ -110,7 +110,7 @@ const Premium: React.FC = () => {
                 </VantageIconContainer>
                 <VantageContent>
                    Aumente a quantidade de participantes que você pode ter em
-                  seus grupos de 1000 para 50{Localize.digitGroupingSeparator}
+                  seus grupos de 200 para 10{Localize.digitGroupingSeparator}
                   000 participantes.
                 </VantageContent>
               </VantageContainer>

@@ -2,9 +2,7 @@ import React, { useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
-  KeyboardAvoidingView,
   Platform,
-  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -35,10 +33,9 @@ import api from "../../services/api";
 import { useNavigation } from "@react-navigation/core";
 import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
-import { color } from "react-native-reanimated";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
-import { showInterstitial } from "../../services/ads";
+import { useAds } from "../../contexts/ads";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false)
@@ -48,6 +45,8 @@ const NewGroup: React.FC = () => {
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
+
+  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const navigator = useNavigation();
 
@@ -78,6 +77,9 @@ const NewGroup: React.FC = () => {
       })
       .then(async (response) => {
         if (response.status === 200) {
+          const isReady = await Interstitial.getIsReadyAsync();
+          if (isReady) await Interstitial.showAdAsync();
+          
           navigator.navigate("Groups");
         }
       })

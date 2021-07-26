@@ -55,8 +55,7 @@ import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
 import { getWebsocket } from "../../services/websocket";
-import Banner from "../../components/Ads/Banner";
-import { showInterstitial } from "../../services/ads";
+import { useAds } from "../../contexts/ads";
 
 const emoji = new EmojiJS();
 
@@ -97,6 +96,7 @@ const Chat: React.FC = () => {
 
   const fileService = new FileService(filesSizeUsed);
 
+  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { id } = useRoute().params as { id: string };
   const { token, user } = useAuth();
@@ -104,7 +104,9 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await showInterstitial({})
+      const isReady = await Interstitial.getIsReadyAsync();
+      if (isReady) await Interstitial.showAdAsync();
+      
       const connectedSocket = getWebsocket(token);
 
       connectedSocket.emit("connect_in_chat", id);

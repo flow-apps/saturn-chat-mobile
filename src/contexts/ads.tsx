@@ -2,11 +2,12 @@ import React, { createContext, useState, useEffect, useContext } from "react"
 import { Alert, Platform } from "react-native"
 import * as Ads from "expo-ads-admob"
 import Constants from "expo-constants"
-import config from "../config"
 import secrets from "../secrets.json"
+import config from "../config"
 
 interface ADSContextProps {
-  unitID: string
+  unitID: string;
+  Interstitial: typeof Ads.AdMobInterstitial;
 }
 
 const AdsContext = createContext<ADSContextProps>({} as ADSContextProps)
@@ -14,6 +15,8 @@ const AdsContext = createContext<ADSContextProps>({} as ADSContextProps)
 const AdsProvider: React.FC = ({ children }) => {
 
   const [unitID, setUnitID] = useState("")
+  const [Interstitial, setInterstitial] = useState<typeof Ads.AdMobInterstitial>
+    (Ads.AdMobInterstitial)
 
   useEffect(() => {
     (async () => {
@@ -41,9 +44,38 @@ const AdsProvider: React.FC = ({ children }) => {
     })()
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      const interstitial = Ads.AdMobInterstitial
+      const adUnitTestID = config.ADS.TEST_ADS_IDS.INTERSTITIAL
+      const adUnitProdID = Platform.select({
+        android: secrets.AdsID.productionKeys.interstitial.android,
+        ios: secrets.AdsID.productionKeys.interstitial.ios,
+      })
+      const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID
+
+      if (!adUnitID) {
+        return
+      }
+      
+      await interstitial.setAdUnitID(adUnitID)
+      await interstitial.requestAdAsync()
+
+      interstitial.addEventListener("interstitialDidClose", async () => {
+        await interstitial.requestAdAsync()
+      })
+      interstitial.addEventListener("interstitialWillLeaveApplication",
+      interstitial.dismissAdAsync
+    )
+
+      setInterstitial(interstitial)
+    })()
+  }, [])
+
   return (
     <AdsContext.Provider value={{
-      unitID
+      unitID,
+      Interstitial
     }}>
       { children }
     </AdsContext.Provider>
