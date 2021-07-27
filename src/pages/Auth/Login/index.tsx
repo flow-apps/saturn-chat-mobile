@@ -7,6 +7,7 @@ import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
 import Loading from "../../../components/Loading";
+import { useAnalytics } from "../../../contexts/analytics";
 import { useAuth } from "../../../contexts/auth";
 import {
   Container,
@@ -29,6 +30,8 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>("");
 
   const navigator = useNavigation();
+
+  const { analytics } = useAnalytics()
   const { signIn, error, loading } = useAuth();
 
   function handleNavigateSignUp() {
@@ -37,6 +40,9 @@ const Login: React.FC = () => {
 
   async function handleLogin() {
     await signIn(email, password);
+    await analytics.logEvent("login", {
+      method: "email/password"
+    })
   }
 
   if (loading) {

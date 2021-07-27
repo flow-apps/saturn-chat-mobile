@@ -1,4 +1,5 @@
 import * as DocumentPicker from "expo-document-picker";
+import { Platform } from "react-native";
 import * as MimeTypes from "react-native-mime-types";
 
 enum FileServiceErrors {
@@ -15,6 +16,14 @@ class FileService {
     this.sizeLimit = limit || 12;
   }
 
+  private getCorrectURI(uri: string) {
+    if (Platform.OS === "android") {
+      return encodeURI(`file://${uri}`)
+    }
+
+    return uri
+  }
+
   async get() {
     const file = await DocumentPicker.getDocumentAsync({});
 
@@ -28,6 +37,8 @@ class FileService {
           errorType: FileServiceErrors.FILE_SIZE_REACHED_LIMIT,
         };
       }
+
+      file.uri = this.getCorrectURI(file.uri)
 
       return {
         error: false,

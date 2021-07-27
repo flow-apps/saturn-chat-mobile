@@ -32,6 +32,7 @@ import {
   ParticipantsNumber,
   ParticipantsTitle,
 } from "./styles";
+import { useAnalytics } from "../../contexts/analytics";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -39,6 +40,8 @@ const GroupInfos: React.FC = () => {
   const [isParticipating, setIsParticipating] = useState(false);
   const navigation = useNavigation();
   const { id } = useRoute().params as { id: string };
+
+  const { analytics } = useAnalytics()
 
   useEffect(() => {
     async function getGroup() {
@@ -67,12 +70,10 @@ const GroupInfos: React.FC = () => {
 
     if (response.status === 200) {
       setIsParticipating(true);
-      return navigation.navigate("Chat", {
-        screen: "ChatTalk",
-        params: {
-          id: group?.id,
-        },
-      });
+      await analytics.logEvent("join_group", {
+        group_id: id
+      })
+      return navigation.navigate("Chat", { id });
     }
   }
   if (loading || !group) return <Loading />;

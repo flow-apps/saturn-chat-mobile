@@ -37,6 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     android: {
       allowBackup: true,
       package: "com.flowapps.saturnchat",
+      googleServicesFile: "./google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#0088FF",

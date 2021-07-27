@@ -20,7 +20,7 @@ const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
   return (
-    <StackRoutes.Navigator headerMode="none" screenOptions={{  }}>
+    <StackRoutes.Navigator headerMode="none">
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="PurchasePremium" component={Premium} />
       <StackRoutes.Screen name="ChoosePlan" component={ChoosePlan} />

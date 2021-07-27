@@ -1,13 +1,16 @@
-import { Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import React, { useState } from "react";
-import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import { useTheme } from "styled-components";
+import * as ImagePicker from "expo-image-picker";
 import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
+import Loading from "../../../components/Loading";
+import formData from "form-data";
+
+import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
+import { Feather } from "@expo/vector-icons";
+import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useTheme } from "styled-components";
 import { useAuth } from "../../../contexts/auth";
 import {
   Avatar,
@@ -24,8 +27,7 @@ import {
   SelectAvatarSubtitle,
   SelectAvatarTitle,
 } from "./styles";
-import formData from "form-data";
-import Loading from "../../../components/Loading";
+import { useAnalytics } from "../../../contexts/analytics";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImageInfo>();
@@ -40,6 +42,8 @@ const Register: React.FC = () => {
 
   const { colors } = useTheme();
   const { signUp, loading } = useAuth();
+  const { analytics } = useAnalytics()
+
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
   const emailValidation = /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g;
@@ -117,7 +121,10 @@ const Register: React.FC = () => {
       type: `image/${fileType}`,
     });
 
-    return signUp(data);
+    await signUp(data);
+    await analytics.logEvent("sign_up", {
+      method: "email/password"
+    })
   }
 
   if (loading) {

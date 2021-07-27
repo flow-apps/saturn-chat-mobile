@@ -34,6 +34,7 @@ import { GroupData } from "../../../@types/interfaces";
 import api from "../../services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
+import { useAnalytics } from "../../contexts/analytics";
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,8 @@ const Search: React.FC = () => {
   const [loadedAll, setLoadedAll] = useState(false);
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [query, setQuery] = useState("");
+
+  const { analytics } = useAnalytics()
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -55,6 +58,9 @@ const Search: React.FC = () => {
     setLoadedAll(false);
     setPage(0);
 
+    await analytics.logEvent("search", {
+      search_term: query
+    })
     const response = await api.get(`/groups/search?q=${query}`);
 
     if (response.status === 200) {

@@ -10,7 +10,8 @@ import { Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import config from "../../../config";
 import secrets from "../../../secrets.json";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useAnalytics } from "../../../contexts/analytics";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -25,6 +26,8 @@ type BannerProps = {
 };
 
 const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
+  const { analytics } = useAnalytics()
+  const { name } = useRoute()
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
     android: secrets.AdsID.productionKeys.banner.android,
@@ -33,7 +36,12 @@ const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
 
   const navigation = useNavigation()
-  const handleGoPremium = () => navigation.navigate("PurchasePremium")
+  const handleGoPremium = async () => {
+    await analytics.logEvent("RemoveBannerAD", {
+      requested_in: name
+    })
+    navigation.navigate("PurchasePremium")
+  }
 
   if (isPremium) return <></>;
 

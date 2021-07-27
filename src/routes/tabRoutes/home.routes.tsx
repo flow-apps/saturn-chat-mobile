@@ -7,7 +7,7 @@ import Home from "../../pages/Home";
 import NewGroup from "../../pages/NewGroup";
 import fonts from "../../styles/fonts";
 
-const tabRoutes = createBottomTabNavigator();
+const tabRoutes = createBottomTabNavigator()
 
 const HomeRoutes = () => {
   const { colors } = useTheme();

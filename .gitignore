@@ -16,3 +16,4 @@ web-build/
 # others
 .vscode
 secrets.json
+google-services.json
