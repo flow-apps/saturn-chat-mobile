@@ -5,10 +5,10 @@ import { useAuth } from "../contexts/auth";
 import AppRoutes from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
 import { navigationRef } from "./rootNavigation";
-import { useAnalytics } from "../contexts/analytics";
+import { useFirebase } from "../contexts/firebase";
 
 const Routes = () => {
-  const { analytics } = useAnalytics()
+  const { analytics } = useFirebase()
   const { signed, loadingData } = useAuth();
 
   const routeNameRef = useRef<string>()

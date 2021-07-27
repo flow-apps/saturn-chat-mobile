@@ -17,3 +17,4 @@ web-build/
 .vscode
 secrets.json
 google-services.json
+GoogleService-Info.plist

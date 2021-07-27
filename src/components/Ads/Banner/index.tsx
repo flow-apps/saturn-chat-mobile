@@ -11,7 +11,7 @@ import { Feather } from "@expo/vector-icons";
 import config from "../../../config";
 import secrets from "../../../secrets.json";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useAnalytics } from "../../../contexts/analytics";
+import { useFirebase } from "../../../contexts/firebase";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -26,7 +26,7 @@ type BannerProps = {
 };
 
 const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
-  const { analytics } = useAnalytics()
+  const { analytics } = useFirebase()
   const { name } = useRoute()
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({

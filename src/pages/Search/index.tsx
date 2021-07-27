@@ -34,7 +34,7 @@ import { GroupData } from "../../../@types/interfaces";
 import api from "../../services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
-import { useAnalytics } from "../../contexts/analytics";
+import { useFirebase } from "../../contexts/firebase";
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ const Search: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [query, setQuery] = useState("");
 
-  const { analytics } = useAnalytics()
+  const { analytics } = useFirebase()
   const { colors } = useTheme();
   const navigation = useNavigation();
 

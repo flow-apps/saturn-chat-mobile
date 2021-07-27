@@ -36,6 +36,7 @@ import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
 import { useAds } from "../../contexts/ads";
+import { useFirebase } from "../../contexts/firebase";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false)
@@ -46,6 +47,7 @@ const NewGroup: React.FC = () => {
   const [tags, setTags] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
 
+  const { analytics } = useFirebase()
   const { Interstitial } = useAds();
   const { colors } = useTheme();
   const navigator = useNavigation();
@@ -79,6 +81,10 @@ const NewGroup: React.FC = () => {
         if (response.status === 200) {
           const isReady = await Interstitial.getIsReadyAsync();
           if (isReady) await Interstitial.showAdAsync();
+
+          await analytics.logEvent("created_group", {
+            group_id: response.data.id
+          })
           
           navigator.navigate("Groups");
         }

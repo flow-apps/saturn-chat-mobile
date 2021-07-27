@@ -109,11 +109,18 @@ const Home: React.FC = () => {
                 activeOpacity={0.5}
                 onPress={() => handleGoChat(item.id)}
               >
-                <GroupImage
-                  source={{
-                    uri: item.group_avatar && item.group_avatar.url,
-                  }}
-                />
+                {item.group_avatar && item.group_avatar.url ? (
+                  <GroupImage
+                    defaultSource={require("../../assets/avatar-placeholder.png")}
+                    source={{ uri: item.group_avatar.url }}
+                    width={70}
+                    height={70}
+                  />
+                ) : (
+                  <GroupImage
+                    source={require("../../assets/avatar-placeholder.png")}
+                  />
+                )}
               </GroupButton>
             )}
           />

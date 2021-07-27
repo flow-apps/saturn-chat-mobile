@@ -7,7 +7,7 @@ import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
 import { NotificationsProvider } from "./src/contexts/notifications"
 import { AdsProvider } from "./src/contexts/ads"
-import { AnalyticsProvider } from "./src/contexts/analytics"
+import { FirebaseProvider } from "./src/contexts/firebase"
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 
@@ -29,7 +29,7 @@ export default function App() {
   if (!fontLoaded) return <AppLoading />;
 
   return (
-    <AnalyticsProvider>
+    <FirebaseProvider>
       <AppearanceProvider>
         <ThemeControllerProvider>
           <AuthProvider>
@@ -41,6 +41,6 @@ export default function App() {
           </AuthProvider>
         </ThemeControllerProvider>
       </AppearanceProvider>
-    </AnalyticsProvider>
+    </FirebaseProvider>
   );
 }

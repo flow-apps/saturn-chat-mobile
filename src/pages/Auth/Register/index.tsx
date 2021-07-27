@@ -27,7 +27,7 @@ import {
   SelectAvatarSubtitle,
   SelectAvatarTitle,
 } from "./styles";
-import { useAnalytics } from "../../../contexts/analytics";
+import { useFirebase } from "../../../contexts/firebase";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImageInfo>();
@@ -42,7 +42,7 @@ const Register: React.FC = () => {
 
   const { colors } = useTheme();
   const { signUp, loading } = useAuth();
-  const { analytics } = useAnalytics()
+  const { analytics } = useFirebase()
 
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;

@@ -32,7 +32,7 @@ import {
   ParticipantsNumber,
   ParticipantsTitle,
 } from "./styles";
-import { useAnalytics } from "../../contexts/analytics";
+import { useAnalytics } from "../../contexts/firebase";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();

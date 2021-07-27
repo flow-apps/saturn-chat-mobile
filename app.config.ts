@@ -30,6 +30,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ios: {
       supportsTablet: true,
       buildNumber: "0.0.1",
+      bundleIdentifier: "com.flowapps.saturnchat",
+      googleServicesFile: "./GoogleService-Info.plist",
       config: {
         googleMobileAdsAppId: secrets.AdsAppID.ios,
       },

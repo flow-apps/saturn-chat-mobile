@@ -7,7 +7,7 @@ import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
 import Loading from "../../../components/Loading";
-import { useAnalytics } from "../../../contexts/analytics";
+import { useFirebase } from "../../../contexts/firebase";
 import { useAuth } from "../../../contexts/auth";
 import {
   Container,
@@ -31,7 +31,7 @@ const Login: React.FC = () => {
 
   const navigator = useNavigation();
 
-  const { analytics } = useAnalytics()
+  const { analytics } = useFirebase()
   const { signIn, error, loading } = useAuth();
 
   function handleNavigateSignUp() {

@@ -1,16 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import * as Analytics from "expo-firebase-analytics"
 import Constants, { ExecutionEnvironment } from "expo-constants"
 import uuid from "react-native-uuid"
+
+import * as Analytics from "expo-firebase-analytics"
 import { useAuth } from "./auth";
 
-type AnalyticsContextProps = {
+type FirebaseContextProps = {
   analytics: typeof Analytics
 }
 
-const AnalyticsContext = createContext<AnalyticsContextProps>({} as AnalyticsContextProps)
+const FirebaseContext = createContext<FirebaseContextProps>({} as FirebaseContextProps)
 
-const AnalyticsProvider: React.FC = ({ children }) => {
+const FirebaseProvider: React.FC = ({ children }) => {
 
   const [analytics, setAnalytics] = useState<typeof Analytics>(Analytics)
   const { user } = useAuth()
@@ -30,20 +31,20 @@ const AnalyticsProvider: React.FC = ({ children }) => {
   }, [])
 
   return (
-    <AnalyticsContext.Provider
+    <FirebaseContext.Provider
       value={{
         analytics
       }}
     >
       {children}
-    </AnalyticsContext.Provider>
+    </FirebaseContext.Provider>
   )
 }
 
-const useAnalytics = () => {
-  const context = useContext(AnalyticsContext)
+const useFirebase = () => {
+  const context = useContext(FirebaseContext)
 
   return context
 }
 
-export { AnalyticsProvider, useAnalytics }
+export { FirebaseProvider, useFirebase }

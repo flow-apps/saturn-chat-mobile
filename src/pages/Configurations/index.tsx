@@ -20,7 +20,6 @@ import Alert from "../../components/Alert";
 import { useNavigation } from "@react-navigation/native";
 
 import * as Localize from "expo-localization"
-import fonts from "../../styles/fonts";
 import Banner from "../../components/Ads/Banner";
 
 const Configurations: React.FC = () => {
