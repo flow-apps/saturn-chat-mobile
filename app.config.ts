@@ -50,5 +50,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     web: {
       favicon: "./assets/favicon.png",
+      config: {
+        firebase: secrets.Firebase.web_config
+      }
     },
 });
