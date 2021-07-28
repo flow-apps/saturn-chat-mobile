@@ -12,7 +12,6 @@ export const Messages = styled.FlatList.attrs({
   maxToRenderPerBatch: 20,
   initialNumToRender: 20,
 })`
-  scale-y: -1;
 ` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`

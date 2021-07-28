@@ -56,6 +56,7 @@ import { RecordService } from "../../services/record";
 
 import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
+import Typing from "../../components/Chat/Typing";
 
 const emoji = new EmojiJS();
 
@@ -78,6 +79,9 @@ const Chat: React.FC = () => {
 
   const [message, setMessage] = useState<string>("");
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
+  const [typingUsers, setTypingUsers] = useState<UserData[]>([])
+  const [isTyping, setIsTyping] = useState(false)
+  const [typingTimeout, setTypingTimeout] = useState<number>()
 
   const [audioPermission, setAudioPermission] = useState(false);
   const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
@@ -143,6 +147,15 @@ const Chat: React.FC = () => {
       socket.emit("set_read_message", msg.id);
     });
 
+    socket.on("new_user_typing", (user: UserData) => {
+      setTypingUsers(old => [...old, user])      
+    })
+
+    socket.on("deleted_user_typing", (userID) => {
+      const filteredUsers = typingUsers.filter(tu => tu.id !== userID)     
+      setTypingUsers(filteredUsers)
+    })
+
     socket.on("delete_user_message", (msgID) => {
       setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
@@ -151,8 +164,30 @@ const Chat: React.FC = () => {
       socket.off("sended_user_message");
       socket.off("new_user_message");
       socket.off("delete_user_message");
+      socket.off("new_user_typing")
+      socket.offAny()
     });
   }, [socket]);
+
+  const handleTypingTimeout = () => {
+    setIsTyping(false)
+    socket?.emit("remove_user_typing", { typing: false, userID: user?.id })
+  }
+
+  const handleTyping = () => {
+    if (!isTyping) {
+      setIsTyping(true)
+
+      socket?.emit("add_user_typing", { typing: true })
+      const timeout = setTimeout(handleTypingTimeout, 1000)
+
+      setTypingTimeout(timeout)
+      return
+    } 
+    clearTimeout(typingTimeout)
+    const timeout = setTimeout(handleTypingTimeout, 1000)
+    setTypingTimeout(timeout)
+  }
 
   const recordAudio = async () => {
     if (recordingAudio) return;
@@ -337,10 +372,9 @@ const Chat: React.FC = () => {
   }
 
   const handleMessageSubmit = useCallback(async () => {
+    handleTypingTimeout()
     if (!files.length) {
-      socket?.emit("new_user_message", {
-        message,
-      });
+      socket?.emit("new_user_message", { message });
     } else {
       setSendingFile(true);
       Toast.show("Enviando arquivos...");
@@ -419,10 +453,12 @@ const Chat: React.FC = () => {
         </HeaderButton>
       </Header>
       <Container>
+        <Typing typingUsers={typingUsers} />
         <MessageContainer>
           <Messages
             data={oldMessages}
             extraData={oldMessages}
+            style={{ scaleY: -1 }}
             keyExtractor={getItemID}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
@@ -466,12 +502,13 @@ const Chat: React.FC = () => {
             <MessageInput
               ref={messageInputRef}
               as={TextInput}
+              placeholderTextColor={colors.light_gray}
               placeholder={
                 recordingAudio ? "Gravando audio..." : "Sua mensagem..."
               }
               onChangeText={handleSetMessage}
+              onTextInput={handleTyping}
               value={message}
-              placeholderTextColor={colors.light_gray}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>

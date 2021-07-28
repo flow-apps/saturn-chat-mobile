@@ -225,7 +225,7 @@ const Message = ({
 
   return (
     <>
-      <Container key={index} isRight={message.author.id === user.id}>
+      <Container key={index} isRight={message.author.id === user.id} style={{ scaleY: -1 }}>
         <MessageContentContainer
           isRight={message.author.id === user.id}
           onLongPress={() => setMsgOptions(true)}

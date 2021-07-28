@@ -9,7 +9,6 @@ export const Container = styled.View<IMessageProps>`
   width: 100%;
   padding: 0 10px;
   margin: 5px 0;
-  scale-y: -1;
 `;
 
 export const MessageAuthorContainer = styled.TouchableOpacity`

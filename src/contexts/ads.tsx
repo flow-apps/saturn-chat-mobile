@@ -23,8 +23,7 @@ const AdsProvider: React.FC = ({ children }) => {
       const isAvailable = await Ads.isAvailableAsync()
 
       if (!isAvailable) return 
-
-      await Ads.setTestDeviceIDAsync(secrets.AdsID.deviceTestID)
+      if (__DEV__) await Ads.setTestDeviceIDAsync(secrets.AdsID.deviceTestID)
 
       const testID = "google-test-id"
       const productionID = Platform.select({
