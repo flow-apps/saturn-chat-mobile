@@ -32,7 +32,7 @@ import {
   ParticipantsNumber,
   ParticipantsTitle,
 } from "./styles";
-import { useAnalytics } from "../../contexts/firebase";
+import { useFirebase } from "../../contexts/firebase";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -41,7 +41,7 @@ const GroupInfos: React.FC = () => {
   const navigation = useNavigation();
   const { id } = useRoute().params as { id: string };
 
-  const { analytics } = useAnalytics()
+  const { analytics } = useFirebase()
 
   useEffect(() => {
     async function getGroup() {
@@ -86,7 +86,20 @@ const GroupInfos: React.FC = () => {
           <BasicInfosContainer>
             <ImagesContainer>
               <Banner />
-              <Avatar source={{ uri: group.group_avatar.url }} />
+              {
+                group.group_avatar ? (
+                  <Avatar
+                    defaultSource={require("../../assets/avatar-placeholder.png")}
+                    source={{ uri: group.group_avatar.url }}
+                    width={70}
+                    height={70}
+                  />
+                ) : (
+                  <Avatar
+                    source={require("../../assets/avatar-placeholder.png")}
+                  />
+                )
+              }
             </ImagesContainer>
             <BasicInfos>
               <GroupName>{group.name}</GroupName>

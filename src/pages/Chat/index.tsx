@@ -179,13 +179,13 @@ const Chat: React.FC = () => {
       setIsTyping(true)
 
       socket?.emit("add_user_typing", { typing: true })
-      const timeout = setTimeout(handleTypingTimeout, 1000)
+      const timeout = setTimeout(handleTypingTimeout, 5000)
 
       setTypingTimeout(timeout)
       return
     } 
     clearTimeout(typingTimeout)
-    const timeout = setTimeout(handleTypingTimeout, 1000)
+    const timeout = setTimeout(handleTypingTimeout, 5000)
     setTypingTimeout(timeout)
   }
 

@@ -108,6 +108,20 @@ const EditGroup: React.FC = () => {
     }
   };
 
+  const renderAvatar = () => {
+    if (newAvatar) {
+      return <AvatarImage source={{ uri: newAvatar }} />
+    }
+
+    const avatar = group?.group_avatar
+
+    if (avatar) {
+      return <AvatarImage source={{ uri: avatar.url }} />
+    } else {
+      return <AvatarImage source={require("../../../assets/avatar-placeholder.png")} />
+    }
+  }
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -141,9 +155,7 @@ const EditGroup: React.FC = () => {
                 Trocar avatar
               </SwitchAvatarButtonText>
             </SwitchAvatarButton>
-            <AvatarImage
-              source={{ uri: newAvatar ? newAvatar : group?.group_avatar.url }}
-            />
+            {renderAvatar()}
           </AvatarContainer>
           <FieldContainer>
             <Input placeholder="Nome" value={name} onChangeText={setName} />

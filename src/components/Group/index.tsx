@@ -7,9 +7,7 @@ import {
   GroupName,
   UnreadMessages,
   UnreadMessagesText,
-  HLWrapper,
 } from "./styles";
-import HorizontalLine from "../HorizontalLine";
 
 interface GroupProps extends TouchableOpacityProps {
   name: string;
@@ -22,23 +20,25 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
     <>
       <Container as={TouchableOpacity} {...rest}>
         <GroupInfos>
-        {image && image ? (
-                  <GroupImage
-                    defaultSource={require("../../assets/avatar-placeholder.png")}
-                    source={{ uri: image }}
-                    width={70}
-                    height={70}
-                  />
-                ) : (
-                  <GroupImage
-                    source={require("../../assets/avatar-placeholder.png")}
-                  />
-                )}
+          {image ? (
+            <GroupImage
+              defaultSource={require("../../assets/avatar-placeholder.png")}
+              source={{ uri: image }}
+              width={70}
+              height={70}
+            />
+          ) : (
+            <GroupImage
+              source={require("../../assets/avatar-placeholder.png")}
+            />
+          )}
           <GroupName numberOfLines={1}>{name}</GroupName>
         </GroupInfos>
         {unreadMessages > 0 && (
           <UnreadMessages>
-            <UnreadMessagesText>{unreadMessages > 99 ? "99+" : unreadMessages}</UnreadMessagesText>
+            <UnreadMessagesText>
+              {unreadMessages > 99 ? "99+" : unreadMessages}
+            </UnreadMessagesText>
           </UnreadMessages>
         )}
       </Container>

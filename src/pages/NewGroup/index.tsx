@@ -39,7 +39,7 @@ import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 
 const NewGroup: React.FC = () => {
-  const [creating, setCreating] = useState(false)
+  const [creating, setCreating] = useState(false);
   const [groupPhoto, setGroupPhoto] = useState<ImageInfo>();
   const [groupPhotoPreview, setGroupPhotoPreview] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -47,12 +47,10 @@ const NewGroup: React.FC = () => {
   const [tags, setTags] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
 
-  const { analytics } = useFirebase()
+  const { analytics } = useFirebase();
   const { Interstitial } = useAds();
   const { colors } = useTheme();
   const navigator = useNavigation();
-
-  const descriptionInput = useRef() as any;
 
   async function handleCreateGroup() {
     const data = new FormData();
@@ -70,7 +68,7 @@ const NewGroup: React.FC = () => {
     data.append("privacy", isPublicGroup ? "PUBLIC" : "PRIVATE");
     data.append("tags", tags);
 
-    setCreating(true)
+    setCreating(true);
     api
       .post("/groups", data, {
         headers: {
@@ -83,14 +81,14 @@ const NewGroup: React.FC = () => {
           if (isReady) await Interstitial.showAdAsync();
 
           await analytics.logEvent("created_group", {
-            group_id: response.data.id
-          })
-          
+            group_id: response.data.id,
+          });
+
           navigator.navigate("Groups");
         }
       })
       .catch((err) => console.log(err))
-      .finally(() => setCreating(false))
+      .finally(() => setCreating(false));
   }
 
   function handleSetPublic() {
@@ -114,7 +112,6 @@ const NewGroup: React.FC = () => {
       quality: 0.7,
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: true,
     });
 
     if (!photo.cancelled) {
@@ -124,7 +121,7 @@ const NewGroup: React.FC = () => {
   }
 
   if (creating) {
-    return <Loading />
+    return <Loading />;
   }
 
   return (
@@ -164,31 +161,31 @@ const NewGroup: React.FC = () => {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
                 <Input
+                  label="Nome do grupo"
                   placeholderTextColor={colors.light_gray}
-                  placeholder="Nome do grupo (máx. 100 caracteres)"
+                  placeholder="máx. 100 caracteres"
                   maxLength={100}
                   selectionColor={colors.secondary}
                   returnKeyType="go"
-                  onSubmitEditing={() => descriptionInput.current.focus()}
                   value={name}
                   onChangeText={setName}
                 />
                 <TextArea
+                  label="Descreva seu grupo"
                   multiline
                   placeholderTextColor={colors.light_gray}
                   selectionColor={colors.secondary}
-                  placeholder="Descrição (máx. 500 caracteres)"
+                  placeholder="máx. 500 caracteres"
                   maxLength={500}
-                  ref={descriptionInput}
                   value={description}
                   onChangeText={setDescription}
                 />
                 <TextArea
+                  label="Tags do grupo"
                   multiline
                   placeholderTextColor={colors.light_gray}
                   selectionColor={colors.secondary}
-                  placeholder="Tags do grupo (separe por vírgula)"
-                  ref={descriptionInput}
+                  placeholder="separe por vírgula"
                   value={tags}
                   onChangeText={setTags}
                 />

@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
+import TextInput from "../../components/Input"
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -53,7 +54,7 @@ export const Form = styled.View`
   flex: 1;
 `;
 
-export const Input = styled.TextInput`
+export const Input = styled(TextInput)`
   border-radius: 10px;
   padding: 15px;
   border: 1px solid ${(props) => props.theme.colors.dark_gray};

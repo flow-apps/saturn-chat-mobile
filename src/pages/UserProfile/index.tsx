@@ -24,6 +24,7 @@ import { useState } from "react";
 import Loading from "../../components/Loading";
 import { UserData } from "../../../@types/interfaces";
 import api from "../../services/api";
+import { View } from "react-native";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ const UserProfile: React.FC = () => {
 
   const handleGoGroupInfos = (groupID: string) => {
     navigation.navigate("GroupInfos", { id: groupID });
-  };
+  };  
 
   if (loading) return <Loading />;
 
@@ -75,17 +76,18 @@ const UserProfile: React.FC = () => {
             </GroupsTitle>
             <Groups>
               {userInfos?.participating.map((participant, index) => {
+                const avatar = participant.group.group_avatar
                 return (
                   participant.group.privacy !== "PRIVATE" && (
-                    <>
-                      {index % 5 === 0 && <AdBanner key={index} />}
+                    <View key={index * 1.5}>
+                      {index % 5 === 0 && <AdBanner />}
                       <Group
                         key={participant.id}
                         name={participant.group.name}
-                        image={participant.group.group_avatar.url}
+                        image={avatar ? avatar.url : ""}
                         onPress={() => handleGoGroupInfos(participant.group.id)}
                       />
-                    </>
+                    </View>
                   )
                 );
               })}
