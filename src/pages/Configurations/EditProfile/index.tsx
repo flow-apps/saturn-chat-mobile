@@ -91,6 +91,22 @@ const EditProfile: React.FC = () => {
     }
   };
 
+  
+  const renderAvatar = () => {
+    if (newAvatar) {
+      return <AvatarImage source={{ uri: newAvatar }} />
+    }
+
+    const avatar = user?.avatar
+
+    if (avatar) {
+      return <AvatarImage source={{ uri: avatar.url }} />
+    } else {
+      return <AvatarImage source={require("../../../assets/avatar-placeholder.png")} />
+    }
+  }
+
+
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -123,7 +139,7 @@ const EditProfile: React.FC = () => {
                 Trocar avatar
               </SwitchAvatarButtonText>
             </SwitchAvatarButton>
-            <AvatarImage source={{ uri: newAvatar || user?.avatar.url }} />
+            {renderAvatar()}
           </AvatarContainer>
           <FieldsContainer>
             <FieldContainer>

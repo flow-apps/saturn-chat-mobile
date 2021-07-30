@@ -90,15 +90,34 @@ const Participants: React.FC = () => {
     }
   };
 
-  const renderItem = ({ item, index }: { item: ParticipantData, index: number }) => {
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: ParticipantData;
+    index: number;
+  }) => {
     return (
       <>
-        {
-          index % 12 === 0 && <AdBannerWrapper><Banner /></AdBannerWrapper>
-        }
+        {index % 12 === 0 && (
+          <AdBannerWrapper>
+            <Banner />
+          </AdBannerWrapper>
+        )}
         <ParticipantContainer onPress={() => handleGoUserProfile(item.user_id)}>
           <Participant>
-            <ParticipantAvatar source={{ uri: item.user.avatar.url }} />
+            {item.user.avatar ? (
+              <ParticipantAvatar
+                source={{ uri: item.user.avatar.url }}
+                defaultSource={require("../../assets/avatar-placeholder.png")}
+                width={60}
+                height={60}
+              />
+            ) : (
+              <ParticipantAvatar
+                source={require("../../assets/avatar-placeholder.png")}
+              />
+            )}
             <ParticipantInfosWrapper>
               <ParticipanteName numberOfLines={1}>
                 {item.user.name}

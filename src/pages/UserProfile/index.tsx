@@ -63,7 +63,20 @@ const UserProfile: React.FC = () => {
           <BasicInfosContainer>
             <ImagesContainer>
               <Banner />
-              <Avatar source={{ uri: userInfos?.avatar.url }} />
+              {
+                userInfos.avatar ? (
+                  <Avatar 
+                    source={{ uri: userInfos?.avatar.url }}
+                    defaultSource={require("../../assets/avatar-placeholder.png")}
+                    width={180}
+                    height={180}
+                  />
+                ) : (
+                  <Avatar 
+                    source={require("../../assets/avatar-placeholder.png")}
+                  />
+                )
+              }
             </ImagesContainer>
             <BasicInfos>
               <UserName>{userInfos?.name}</UserName>
