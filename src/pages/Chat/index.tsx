@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Keyboard,
   ListRenderItem,
@@ -68,6 +74,15 @@ interface File {
 const recordService = new RecordService();
 
 const Chat: React.FC = () => {
+
+  const messageInputRef = useRef<TextInput>(null);
+  const navigation = useNavigation();
+
+  const { Interstitial } = useAds();
+  const { colors } = useTheme();
+  const { id } = useRoute().params as { id: string };
+  const { token, user } = useAuth();
+
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
@@ -79,39 +94,31 @@ const Chat: React.FC = () => {
 
   const [message, setMessage] = useState<string>("");
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
-  const [typingUsers, setTypingUsers] = useState<UserData[]>([])
-  const [isTyping, setIsTyping] = useState(false)
-  const [typingTimeout, setTypingTimeout] = useState<number>()
+  const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState<number>();
 
   const [audioPermission, setAudioPermission] = useState(false);
   const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket>(getWebsocket(token));
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
 
-  const messageInputRef = useRef<TextInput>(null);
-  const navigation = useNavigation();
-
   const fileService = new FileService(filesSizeUsed);
-
-  const { Interstitial } = useAds();
-  const { colors } = useTheme();
-  const { id } = useRoute().params as { id: string };
-  const { token, user } = useAuth();
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       const isReady = await Interstitial.getIsReadyAsync();
       if (isReady) await Interstitial.showAdAsync();
-      
-      const connectedSocket = getWebsocket(token);
+
+      const connectedSocket = !socket ? getWebsocket(token) : socket
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {
@@ -148,13 +155,13 @@ const Chat: React.FC = () => {
     });
 
     socket.on("new_user_typing", (user: UserData) => {
-      setTypingUsers(old => [...old, user])      
-    })
+      setTypingUsers((old) => [...old, user]);
+    });
 
     socket.on("deleted_user_typing", (userID) => {
-      const filteredUsers = typingUsers.filter(tu => tu.id !== userID)     
-      setTypingUsers(filteredUsers)
-    })
+      const filteredUsers = typingUsers.filter((tu) => tu.id !== userID);
+      setTypingUsers(filteredUsers);
+    });
 
     socket.on("delete_user_message", (msgID) => {
       setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
@@ -164,30 +171,30 @@ const Chat: React.FC = () => {
       socket.off("sended_user_message");
       socket.off("new_user_message");
       socket.off("delete_user_message");
-      socket.off("new_user_typing")
-      socket.offAny()
+      socket.off("new_user_typing");
+      socket.offAny();
     });
   }, [socket]);
 
   const handleTypingTimeout = () => {
-    setIsTyping(false)
-    socket?.emit("remove_user_typing", { typing: false, userID: user?.id })
-  }
+    setIsTyping(false);
+    socket?.emit("remove_user_typing", { typing: false, userID: user?.id });
+  };
 
   const handleTyping = () => {
     if (!isTyping) {
-      setIsTyping(true)
+      setIsTyping(true);
 
-      socket?.emit("add_user_typing", { typing: true })
-      const timeout = setTimeout(handleTypingTimeout, 5000)
+      socket?.emit("add_user_typing", { typing: true });
+      const timeout = setTimeout(handleTypingTimeout, 5000);
 
-      setTypingTimeout(timeout)
-      return
-    } 
-    clearTimeout(typingTimeout)
-    const timeout = setTimeout(handleTypingTimeout, 5000)
-    setTypingTimeout(timeout)
-  }
+      setTypingTimeout(timeout);
+      return;
+    }
+    clearTimeout(typingTimeout);
+    const timeout = setTimeout(handleTypingTimeout, 5000);
+    setTypingTimeout(timeout);
+  };
 
   const recordAudio = async () => {
     if (recordingAudio) return;
@@ -335,7 +342,7 @@ const Chat: React.FC = () => {
     [oldMessages]
   );
 
-  const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages])
+  const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
 
   const handleSetMessage = useCallback(
     (message: string) => {
@@ -372,8 +379,8 @@ const Chat: React.FC = () => {
   }
 
   const handleMessageSubmit = useCallback(async () => {
-    handleTypingTimeout()
-    if (!files.length) {
+    handleTypingTimeout();
+    if (files.length <= 0) {
       socket?.emit("new_user_message", { message });
     } else {
       setSendingFile(true);
@@ -392,8 +399,7 @@ const Chat: React.FC = () => {
         }
       });
 
-      await api
-        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
+      await api.post(`messages/SendAttachment/${id}?type=files`, filesData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -403,7 +409,7 @@ const Chat: React.FC = () => {
           },
         })
         .then((response) => {
-          console.log(response);
+          console.log(response.data);
           socket?.emit("new_message_with_files", {
             message,
             message_id: response.data.message_id,
@@ -420,7 +426,8 @@ const Chat: React.FC = () => {
   }, [message]);
 
   const getItemID = (item: MessageData) => item.id;
-  const renderFooter = () => fetching && !fetchedAll ? <LoadingIndicator /> : <></>
+  const renderFooter = () =>
+    fetching && !fetchedAll ? <LoadingIndicator /> : <></>;
 
   if (loading || !socket) return <Loading />;
 

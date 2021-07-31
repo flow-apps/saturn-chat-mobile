@@ -36,6 +36,9 @@ class RecordService {
         if (!granted) return;
       }
 
+      if (!this.recording || this.recording._isDoneRecording) 
+        this.recording = new Audio.Recording();
+
       this.recording
         .prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
         .then(async () => {
