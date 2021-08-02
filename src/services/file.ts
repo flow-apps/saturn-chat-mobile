@@ -38,7 +38,7 @@ class FileService {
         };
       }
 
-      file.uri = this.getCorrectURI(file.uri)
+      file.uri = this.getCorrectURI(file.uri)      
 
       return {
         error: false,

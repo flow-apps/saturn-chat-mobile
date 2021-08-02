@@ -80,7 +80,8 @@ const Chat: React.FC = () => {
 
   const { Interstitial } = useAds();
   const { colors } = useTheme();
-  const { id } = useRoute().params as { id: string };
+  const route = useRoute()
+  const { id } = route.params as { id: string };
   const { token, user } = useAuth();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -167,11 +168,13 @@ const Chat: React.FC = () => {
       setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
     });
 
+    socket.on("deleted_group", (groupID) => {
+
+      if (route.name === "Chat")
+        navigation.navigate("Groups")
+    })
+
     navigation.addListener("blur", () => {
-      socket.off("sended_user_message");
-      socket.off("new_user_message");
-      socket.off("delete_user_message");
-      socket.off("new_user_typing");
       socket.offAny();
     });
   }, [socket]);
@@ -274,7 +277,7 @@ const Chat: React.FC = () => {
     setFetching(false);
   };
 
-  const handleFileSelector = useCallback(async () => {
+  const handleFileSelector = async () => {
     const fileRes = await fileService.get();
 
     if (!fileRes.error) {
@@ -287,12 +290,12 @@ const Chat: React.FC = () => {
 
       if (isSelected) return setIsSelectedFile(true);
       if (fileRes.usageSize)
-        setFilesSizeUsed((used) => used + fileRes.usageSize);
-
+        setFilesSizeUsed((used) => used + fileRes.usageSize);      
+      
       setFiles((oldFiles) => [
         { file: file.file, type: file.type },
         ...oldFiles,
-      ]);
+      ]);      
 
       return;
     }
@@ -301,7 +304,7 @@ const Chat: React.FC = () => {
 
     if (errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT)
       return setLargeFile(true);
-  }, [files]);
+  }
 
   const removeFile = (position: number) => {
     const filteredFiles = files.filter((f, index) => index !== position);
@@ -380,26 +383,34 @@ const Chat: React.FC = () => {
 
   const handleMessageSubmit = useCallback(async () => {
     handleTypingTimeout();
+
+    if (files.length <= 0 && message.length === 0) return
+    
     if (files.length <= 0) {
       socket?.emit("new_user_message", { message });
-    } else {
+      setMessage("");
+      return
+    }
+    
+    if (files.length > 0) {
       setSendingFile(true);
       Toast.show("Enviando arquivos...");
-      const filesData = new FormData();
+      const filesData = new FormData();      
 
       files.map((file) => {
         if (file.file.type === "success") {
-          const type = MimeTypes.lookup(file.file.name);
+          const type = MimeTypes.lookup(file.file.name);          
 
           filesData.append("attachment", {
             name: file.file.name,
-            uri: "file://" + file.file.uri,
+            uri: file.file.uri,
             type,
           });
         }
       });
 
-      await api.post(`messages/SendAttachment/${id}?type=files`, filesData, {
+      const response = await api
+        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -408,21 +419,20 @@ const Chat: React.FC = () => {
             setSendedFileProgress(totalSended);
           },
         })
-        .then((response) => {
-          console.log(response.data);
-          socket?.emit("new_message_with_files", {
-            message,
-            message_id: response.data.message_id,
-          });
-        })
-        .catch((error) => {
-          console.log(JSON.stringify(error.request));
+        
+      if (response.status === 200) {
+        console.log(response.data);
+        socket?.emit("new_message_with_files", {
+          message,
+          message_id: response.data.message_id,
         });
+      }
       setSendingFile(false);
       setSendedFileProgress(0);
+      setFiles([]);
+      setMessage("")
     }
-    setFiles([]);
-    setMessage("");
+
   }, [message]);
 
   const getItemID = (item: MessageData) => item.id;
@@ -525,7 +535,7 @@ const Chat: React.FC = () => {
                 {message.length > 0 || files.length > 0 ? (
                   <Feather
                     name="send"
-                    size={24}
+                    size={28}
                     color={colors.primary}
                     onPress={handleMessageSubmit}
                     style={{ transform: [{ rotate: "45deg" }] }}
@@ -540,7 +550,7 @@ const Chat: React.FC = () => {
                     onPressIn={recordAudio}
                     onPressOut={stopRecordAudio}
                   >
-                    <Feather name="mic" size={24} color={colors.secondary} />
+                    <Feather name="mic" size={28} color={colors.secondary} />
                   </AudioButton>
                 </AudioContainer>
               )}

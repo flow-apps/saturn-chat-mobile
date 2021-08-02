@@ -18,11 +18,13 @@ import { useEffect } from "react";
 import api from "../../services/api";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
+import Alert from "../../components/Alert";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState(true);
+  const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -44,29 +46,45 @@ const GroupConfig: React.FC = () => {
 
   const handleSetNotifications = () => {
     setNotifications(!notifications);
-  }
+  };
 
   const handleGoGroupInfos = () => {
     navigation.navigate("GroupInfos", { id });
-  }
+  };
 
   const handleGoParticipants = () => {
     navigation.navigate("Participants", { id });
-  }
+  };
 
   const handleGoInviteUsers = () => {
-    navigation.navigate("InviteUsers", { id })
-  }
+    navigation.navigate("InviteUsers", { id });
+  };
 
   const handleGoEditGroup = () => {
-    navigation.navigate("EditGroup", { id })
-  }
+    navigation.navigate("EditGroup", { id });
+  };
+
+  const deleteGroup = async () => {
+    setShowDeleteGroupAlert(false)
+    await api.delete(`/group/${id}`);
+
+    navigation.navigate("Groups");
+  };
 
   if (loading) return <Loading />;
 
   return (
     <>
       <Header title="Opções do grupo" backButton />
+      <Alert
+        visible={showDeleteGroupAlert}
+        title="⚠ Cuidado, isso é perigoso!"
+        content={`Essa ação é IRREVERSÍVEL! Ao apagar o grupo "${group.name}" você também estará apagando todas as mensagens, arquivos e qualquer outra coisa que esteja mantendo nesse grupo!`}
+        okButtonText="Apagar"
+        cancelButtonText="Cancelar"
+        cancelButtonAction={() => setShowDeleteGroupAlert(false)}
+        okButtonAction={deleteGroup}
+      />
       <Container>
         <OptionsContainer>
           <SectionTitle>Gerais</SectionTitle>
@@ -75,12 +93,18 @@ const GroupConfig: React.FC = () => {
               <Feather name="users" size={25} /> Participantes
             </OptionText>
           </OptionContainer>
-          <OptionContainer hidden={group.owner.id !== user?.id} onPress={handleGoInviteUsers}>
+          <OptionContainer
+            hidden={group.owner.id !== user?.id}
+            onPress={handleGoInviteUsers}
+          >
             <OptionText color={colors.primary}>
               <Feather name="user-plus" size={25} /> Convidar usuários
             </OptionText>
           </OptionContainer>
-          <OptionContainer hidden={group.owner.id !== user?.id} onPress={handleGoEditGroup}>
+          <OptionContainer
+            hidden={group.owner.id !== user?.id}
+            onPress={handleGoEditGroup}
+          >
             <OptionText>
               <Feather name="edit-3" size={25} /> Editar grupo
             </OptionText>
@@ -101,7 +125,7 @@ const GroupConfig: React.FC = () => {
           </OptionContainer>
           <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
           {group.owner.id === user?.id ? (
-            <OptionContainer>
+            <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>
               <OptionText color={colors.red}>
                 <Feather name="trash" size={25} /> Apagar grupo
               </OptionText>
