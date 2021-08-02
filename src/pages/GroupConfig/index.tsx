@@ -25,6 +25,7 @@ const GroupConfig: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState(true);
   const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
+  const [showExitGroupAlert, setShowExitGroup] = useState(false)
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -66,10 +67,23 @@ const GroupConfig: React.FC = () => {
 
   const deleteGroup = async () => {
     setShowDeleteGroupAlert(false)
-    await api.delete(`/group/${id}`);
+    const res = await api.delete(`/group/${id}`);
 
-    navigation.navigate("Groups");
+    if (res.status === 204) {
+      console.log("OK!");
+      navigation.navigate("Groups");
+    }
   };
+
+  const exitGroup = async () => {
+    setShowExitGroup(false)
+    const res = await api.delete(`/group/participant/exit/${id}`)
+
+    if (res.status === 204) {
+      console.log("OK!");
+      navigation.navigate("Groups");
+    }
+  }
 
   if (loading) return <Loading />;
 
@@ -84,6 +98,14 @@ const GroupConfig: React.FC = () => {
         cancelButtonText="Cancelar"
         cancelButtonAction={() => setShowDeleteGroupAlert(false)}
         okButtonAction={deleteGroup}
+      />
+      <Alert 
+        visible={showExitGroupAlert}
+        title="😥 Tem certeza que quer ir embora?"
+        content={`Ao sair do grupo, suas mensagens serão mantidas, porém, você não receberá notificações de novas mensagens e precisará ser convidado(a) para entrar novamente ao grupo (caso seja privado)!`}
+        okButtonText="Sair"
+        okButtonAction={exitGroup}
+        cancelButtonAction={() => setShowExitGroup(false)}
       />
       <Container>
         <OptionsContainer>
@@ -131,7 +153,7 @@ const GroupConfig: React.FC = () => {
               </OptionText>
             </OptionContainer>
           ) : (
-            <OptionContainer>
+            <OptionContainer onPress={() => setShowExitGroup(true)}>
               <OptionText color={colors.red}>
                 <Feather name="log-out" size={25} /> Sair do grupo
               </OptionText>

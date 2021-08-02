@@ -161,7 +161,20 @@ const Search: React.FC = () => {
               onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
               renderItem={({ item }) => (
                 <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
-                  <GroupImage source={{ uri: item.group_avatar.url }} />
+                  {
+                    item.group_avatar ? (
+                      <GroupImage 
+                        defaultSource={require("../../assets/avatar-placeholder.png")}
+                        source={{ uri: item.group_avatar.url }} 
+                        width={120}
+                        height={120}
+                      />
+                    ) : (
+                      <GroupImage 
+                        source={require("../../assets/avatar-placeholder.png")}
+                      />
+                    )
+                  }
                   <GroupInfosContainer>
                     <GroupName numberOfLines={2}>{item.name}</GroupName>
                     <GroupDesc numberOfLines={3}>{item.description}</GroupDesc>

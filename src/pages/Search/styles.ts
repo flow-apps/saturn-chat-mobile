@@ -120,12 +120,14 @@ export const GroupImage = styled.Image`
 `;
 
 export const GroupName = styled.Text`
+  flex: 1;
   font-family: ${fonts.heading};
   font-size: 16px;
   color: ${(props) => props.theme.colors.black};
 `;
 
 export const GroupDesc = styled.Text`
+  flex: 1;
   font-family: ${fonts.text};
   font-size: 14px;
   color: ${(props) => props.theme.colors.black};
