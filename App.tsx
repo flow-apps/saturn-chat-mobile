@@ -26,7 +26,7 @@ export default function App() {
     FiraCode_500Medium,
   });
 
-  if (!fontLoaded) return <AppLoading />;
+  if (!fontLoaded) return <AppLoading />
 
   return (
     <FirebaseProvider>

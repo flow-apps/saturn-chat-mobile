@@ -8,9 +8,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     version: "0.0.1",
     orientation: "default",
     icon: "./assets/icon.png",
+    experiments: {
+      turboModules: true,
+    },
+    isDetached: true,
     androidNavigationBar: {
-      barStyle: "light-content",
-      backgroundColor: "#171717",
+      visible: "sticky-immersive"
     },
     androidStatusBar: {
       backgroundColor: "#0088ff",
