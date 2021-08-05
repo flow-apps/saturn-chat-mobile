@@ -108,10 +108,11 @@ const Participants: React.FC = () => {
           <Participant>
             {item.user.avatar ? (
               <ParticipantAvatar
-                source={{ uri: item.user.avatar.url }}
-                defaultSource={require("../../assets/avatar-placeholder.png")}
-                width={60}
-                height={60}
+                source={{
+                  uri: item.user.avatar.url,
+                  cache: "immutable",
+                  priority: "high",
+                }}
               />
             ) : (
               <ParticipantAvatar

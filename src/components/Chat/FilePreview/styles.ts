@@ -1,5 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
+import FastImage from 'react-native-fast-image'
+
 
 export const Container = styled.View`
   min-width: 100%;
@@ -50,10 +52,7 @@ export const FileButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-export const FileImagePreview = styled.Image.attrs({
-  width: 50,
-  height: 50
-})`
+export const FileImagePreview = styled(FastImage)`
   width: 50px;
   height: 50px;
   border-radius: 5px;

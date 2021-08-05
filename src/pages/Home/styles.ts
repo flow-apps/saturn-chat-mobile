@@ -1,4 +1,5 @@
-import { Animated, Dimensions, FlatList } from "react-native";
+import { Animated, Dimensions } from "react-native";
+import FastImage from 'react-native-fast-image'
 import LottieView from "lottie-react-native"
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
@@ -42,7 +43,7 @@ export const GroupButton = styled.TouchableOpacity`
   margin-right: 15px;
 `;
 
-export const GroupImage = styled.Image`
+export const GroupImage = styled(FastImage)`
   width: 70px;
   height: 70px;
   border-radius: 35px;

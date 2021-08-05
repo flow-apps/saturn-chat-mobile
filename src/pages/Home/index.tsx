@@ -71,7 +71,7 @@ const Home: React.FC = () => {
   const handleGoUserProfile = () => navigation.navigate("UserProfile");
 
   const handleGoChat = useCallback(async (id: string) => {
-    navigation.navigate("Chat", { id })
+    navigation.navigate("Chat", { id });
   }, []);
 
   const handleGoNewGroup = () => navigation.navigate("NewGroup");
@@ -111,10 +111,11 @@ const Home: React.FC = () => {
               >
                 {item.group_avatar && item.group_avatar.url ? (
                   <GroupImage
-                    defaultSource={require("../../assets/avatar-placeholder.png")}
-                    source={{ uri: item.group_avatar.url }}
-                    width={70}
-                    height={70}
+                    source={{
+                      uri: item.group_avatar.url,
+                      priority: "high",
+                      cache: "immutable",
+                    }}
                   />
                 ) : (
                   <GroupImage
@@ -170,11 +171,9 @@ const Home: React.FC = () => {
                     activeOpacity={0.5}
                     onPress={() => handleGoChat(item.id)}
                   />
-                  { index > 0 && index % 5 === 0 ? (
-                    <Banner />
-                  ) : <></>}
+                  {index > 0 && index % 5 === 0 ? <Banner /> : <></>}
                 </>
-              )
+              );
             }}
           />
         </GroupsList>

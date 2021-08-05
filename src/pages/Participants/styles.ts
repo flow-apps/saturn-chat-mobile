@@ -1,7 +1,8 @@
-import { FlatList, RectButton } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
+import { ParticipantData } from "../Home";
+import FastImage from 'react-native-fast-image'
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import { ParticipantData } from "../Home";
 
 export const Container = styled.View`
   flex: 1;
@@ -62,7 +63,7 @@ export const Participant = styled.View`
   align-items: center;
 `;
 
-export const ParticipantAvatar = styled.Image`
+export const ParticipantAvatar = styled(FastImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;

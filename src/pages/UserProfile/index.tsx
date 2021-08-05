@@ -1,5 +1,5 @@
 import React from "react";
-import AdBanner from "../../components/Ads/Banner"
+import AdBanner from "../../components/Ads/Banner";
 import { Feather } from "@expo/vector-icons";
 import Header from "../../components/Header";
 import {
@@ -51,7 +51,7 @@ const UserProfile: React.FC = () => {
 
   const handleGoGroupInfos = (groupID: string) => {
     navigation.navigate("GroupInfos", { id: groupID });
-  };  
+  };
 
   if (loading) return <Loading />;
 
@@ -63,20 +63,19 @@ const UserProfile: React.FC = () => {
           <BasicInfosContainer>
             <ImagesContainer>
               <Banner />
-              {
-                userInfos.avatar ? (
-                  <Avatar 
-                    source={{ uri: userInfos?.avatar.url }}
-                    defaultSource={require("../../assets/avatar-placeholder.png")}
-                    width={180}
-                    height={180}
-                  />
-                ) : (
-                  <Avatar 
-                    source={require("../../assets/avatar-placeholder.png")}
-                  />
-                )
-              }
+              {userInfos.avatar ? (
+                <Avatar
+                  source={{
+                    uri: userInfos?.avatar.url,
+                    cache: "immutable",
+                    priority: "high",
+                  }}
+                />
+              ) : (
+                <Avatar
+                  source={require("../../assets/avatar-placeholder.png")}
+                />
+              )}
             </ImagesContainer>
             <BasicInfos>
               <UserName>{userInfos?.name}</UserName>
@@ -89,7 +88,7 @@ const UserProfile: React.FC = () => {
             </GroupsTitle>
             <Groups>
               {userInfos?.participating.map((participant, index) => {
-                const avatar = participant.group.group_avatar
+                const avatar = participant.group.group_avatar;
                 return (
                   participant.group.privacy !== "PRIVATE" && (
                     <View key={index * 1.5}>

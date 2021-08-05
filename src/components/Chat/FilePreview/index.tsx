@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
 import Alert from "../../Alert";
+import FastImage from "react-native-fast-image";
 
 import {
   Container,
@@ -35,9 +36,15 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
 
   useEffect(() => {
     if (type === "image") {
-      Image.prefetch(url)
+      FastImage.preload([
+        {
+          uri: url,
+          cache: "immutable",
+          priority: "high",
+        },
+      ]);
     }
-  }, [])
+  }, []);
 
   const handleDownloadFile = () => {
     setDownloadWarning(true);
@@ -45,8 +52,8 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
 
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
-  
-    Linking.openURL(url)
+
+    Linking.openURL(url);
   }, [url, name]);
 
   const renderIcon = () => {
@@ -98,7 +105,9 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
         <FileOpenAction>
           {type === "image" ? (
             <FileButton onPress={handleGoImagePreview}>
-              <FileImagePreview source={{ uri: url }} />
+              <FileImagePreview
+                source={{ uri: url, cache: "immutable", priority: "high" }}
+              />
             </FileButton>
           ) : (
             <FileButton onPress={handleDownloadFile}>

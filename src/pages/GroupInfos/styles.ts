@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
+import FastImage from 'react-native-fast-image'
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -23,7 +24,7 @@ export const Banner = styled.View`
   width: 100%;
 `;
 
-export const Avatar = styled.Image`
+export const Avatar = styled(FastImage)`
   width: 180px;
   height: 180px;
   border-radius: 90px;

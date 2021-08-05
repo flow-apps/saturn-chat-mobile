@@ -124,16 +124,15 @@ const Message = ({
         >
           {message.author.avatar ? (
             <MessageAvatar
-              defaultSource={require("../../../assets/avatar-placeholder.png")}
-              source={{ uri: message.author.avatar.url }}
-              width={22}
-              height={22}
+              source={{ 
+                uri: message.author.avatar.url,
+                cache: "immutable",
+                priority: "high"
+              }}
             />
           ) : (
             <MessageAvatar
               source={require("../../../assets/avatar-placeholder.png")}
-              width={22}
-              height={22}
             />
           )}
           <MessageAuthorName>{message.author.name}</MessageAuthorName>
@@ -143,7 +142,7 @@ const Message = ({
   }, [message, lastMessage, index]);
 
   const renderDate = () => {
-    if (index === 0) {
+    if (index === 0 || lastMessage.author.id !== message.author.id) {
       return (
         <MessageDateContainer>
           <MessageDate>{formatHour(message.created_at)}</MessageDate>

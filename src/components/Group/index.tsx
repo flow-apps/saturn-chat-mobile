@@ -3,10 +3,10 @@ import { TouchableOpacityProps, TouchableOpacity } from "react-native";
 import {
   Container,
   GroupInfos,
-  GroupImage,
   GroupName,
   UnreadMessages,
   UnreadMessagesText,
+  GroupImage,
 } from "./styles";
 
 interface GroupProps extends TouchableOpacityProps {
@@ -22,10 +22,11 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
         <GroupInfos>
           {image ? (
             <GroupImage
-              defaultSource={require("../../assets/avatar-placeholder.png")}
-              source={{ uri: image }}
-              width={70}
-              height={70}
+              source={{ 
+                uri: image,
+                cache: "immutable",
+                priority: "high"
+              }}
             />
           ) : (
             <GroupImage

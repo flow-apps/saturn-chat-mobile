@@ -11,7 +11,23 @@
 
 -dontnote **
 
+# React Native Fast Image
+
+-keep public class com.dylanvann.fastimage.* {*;}
+-keep public class com.dylanvann.fastimage.** {*;}
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+# Expo Constants
+
 -keep class host.exp.exponent.generated.AppConstants { *; }
+
+# Expo Notifications
+
 -keep class expo.modules.notifications.NotificationsScoper { *; }
 
 ##### Crashlytics #####

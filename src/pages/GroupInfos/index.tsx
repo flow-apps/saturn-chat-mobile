@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AdBanner from "../../components/Ads/Banner"
+import AdBanner from "../../components/Ads/Banner";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { GroupData } from "../../../@types/interfaces";
@@ -41,7 +41,7 @@ const GroupInfos: React.FC = () => {
   const navigation = useNavigation();
   const { id } = useRoute().params as { id: string };
 
-  const { analytics } = useFirebase()
+  const { analytics } = useFirebase();
 
   useEffect(() => {
     async function getGroup() {
@@ -71,8 +71,8 @@ const GroupInfos: React.FC = () => {
     if (response.status === 200) {
       setIsParticipating(true);
       await analytics.logEvent("join_group", {
-        group_id: id
-      })
+        group_id: id,
+      });
       return navigation.navigate("Chat", { id });
     }
   }
@@ -86,20 +86,19 @@ const GroupInfos: React.FC = () => {
           <BasicInfosContainer>
             <ImagesContainer>
               <Banner />
-              {
-                group.group_avatar ? (
-                  <Avatar
-                    defaultSource={require("../../assets/avatar-placeholder.png")}
-                    source={{ uri: group.group_avatar.url }}
-                    width={70}
-                    height={70}
-                  />
-                ) : (
-                  <Avatar
-                    source={require("../../assets/avatar-placeholder.png")}
-                  />
-                )
-              }
+              {group.group_avatar ? (
+                <Avatar
+                  source={{
+                    uri: group.group_avatar.url,
+                    cache: "immutable",
+                    priority: "high",
+                  }}
+                />
+              ) : (
+                <Avatar
+                  source={require("../../assets/avatar-placeholder.png")}
+                />
+              )}
             </ImagesContainer>
             <BasicInfos>
               <GroupName>{group.name}</GroupName>
@@ -117,7 +116,9 @@ const GroupInfos: React.FC = () => {
               </JoinGroupContainer>
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>
-                  <ParticipantsNumber>{group?.participantsAmount}</ParticipantsNumber>
+                  <ParticipantsNumber>
+                    {group?.participantsAmount}
+                  </ParticipantsNumber>
                   <ParticipantsTitle>Participantes</ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>

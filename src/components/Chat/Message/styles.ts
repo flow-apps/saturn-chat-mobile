@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
+import FastImage from 'react-native-fast-image'
 
 interface IMessageProps {
   isRight?: boolean;
@@ -8,7 +9,7 @@ export const Container = styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
   width: 100%;
   padding: 0 10px;
-  margin: 5px 0;
+  margin: 03px 0;
 `;
 
 export const MessageAuthorContainer = styled.TouchableOpacity`
@@ -17,7 +18,7 @@ export const MessageAuthorContainer = styled.TouchableOpacity`
   margin-top: 5px;
 `;
 
-export const MessageAvatar = styled.Image`
+export const MessageAvatar = styled(FastImage)`
   width: 22px;
   height: 22px;
   border-radius: 11px;

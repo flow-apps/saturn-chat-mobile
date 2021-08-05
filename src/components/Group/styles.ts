@@ -1,3 +1,4 @@
+import FastImage from 'react-native-fast-image'
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
@@ -15,7 +16,7 @@ export const GroupInfos = styled.View`
   align-items: center;
 `;
 
-export const GroupImage = styled.Image`
+export const GroupImage = styled(FastImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;

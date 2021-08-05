@@ -25,7 +25,9 @@ class FileService {
   }
 
   async get() {
-    const file = await DocumentPicker.getDocumentAsync({});
+    const file = await DocumentPicker.getDocumentAsync({
+      copyToCacheDirectory: true
+    });
 
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1000 / 1000);

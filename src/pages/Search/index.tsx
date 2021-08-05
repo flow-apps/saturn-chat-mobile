@@ -43,7 +43,7 @@ const Search: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [query, setQuery] = useState("");
 
-  const { analytics } = useFirebase()
+  const { analytics } = useFirebase();
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -59,8 +59,8 @@ const Search: React.FC = () => {
     setPage(0);
 
     await analytics.logEvent("search", {
-      search_term: query
-    })
+      search_term: query,
+    });
     const response = await api.get(`/groups/search?q=${query}`);
 
     if (response.status === 200) {
@@ -161,20 +161,19 @@ const Search: React.FC = () => {
               onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
               renderItem={({ item }) => (
                 <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
-                  {
-                    item.group_avatar ? (
-                      <GroupImage 
-                        defaultSource={require("../../assets/avatar-placeholder.png")}
-                        source={{ uri: item.group_avatar.url }} 
-                        width={120}
-                        height={120}
-                      />
-                    ) : (
-                      <GroupImage 
-                        source={require("../../assets/avatar-placeholder.png")}
-                      />
-                    )
-                  }
+                  {item.group_avatar ? (
+                    <GroupImage
+                      source={{
+                        uri: item.group_avatar.url,
+                        cache: "immutable",
+                        priority: "high",
+                      }}
+                    />
+                  ) : (
+                    <GroupImage
+                      source={require("../../assets/avatar-placeholder.png")}
+                    />
+                  )}
                   <GroupInfosContainer>
                     <GroupName numberOfLines={2}>{item.name}</GroupName>
                     <GroupDesc numberOfLines={3}>{item.description}</GroupDesc>
