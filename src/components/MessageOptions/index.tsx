@@ -9,7 +9,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { MessageData } from "../../../@types/interfaces";
 import { useAuth } from "../../contexts/auth";
-import { StatusBar } from "expo-status-bar";
+import { TouchableOpacity,StatusBar } from "react-native";
 
 interface IOptions {
   content: string;
@@ -50,9 +50,14 @@ const MessageOptions = ({
         animationType="fade"
         transparent
       >
-        <StatusBar backgroundColor="#000" style="light" animated />
+        <TouchableOpacity
+          activeOpacity={1}
+          onPressOut={close}
+          style={{ flex: 1 }}
+        >
         <MessageOptionsContainer>
           <MessageOptionsModal>
+            <StatusBar barStyle="light-content" />
             {options.map((option, index) =>
               option.onlyOwner && message.author.id === user?.id ? (
                 <Option
@@ -84,6 +89,7 @@ const MessageOptions = ({
             )}
           </MessageOptionsModal>
         </MessageOptionsContainer>
+        </TouchableOpacity>
       </Container>
     </>
   );

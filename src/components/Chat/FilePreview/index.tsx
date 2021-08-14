@@ -19,8 +19,9 @@ import {
   FileSize,
 } from "./styles";
 import { useEffect } from "react";
-import { Image } from "react-native";
-import { Linking } from "react-native";
+import RNFetchBlob from "rn-fetch-blob";
+import { Linking, PermissionsAndroid, Platform } from "react-native";
+import SimpleToast from "react-native-simple-toast";
 
 interface IFileProps {
   name: string;
@@ -53,7 +54,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
 
-    Linking.openURL(url);
+    await Linking.openURL(url)
   }, [url, name]);
 
   const renderIcon = () => {

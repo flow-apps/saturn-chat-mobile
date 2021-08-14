@@ -21,6 +21,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import * as Localize from "expo-localization"
 import Banner from "../../components/Ads/Banner";
+import { Linking } from "react-native";
+import config from "../../config";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -45,6 +47,14 @@ const Configurations: React.FC = () => {
   const handleGoSwitchLanguage = useCallback(() => {
     navigation.navigate("SwitchLanguage");
   }, []);
+
+  const handleGoPrivacyPolicie = async () => {
+    await Linking.openURL(`${config.WEBSITE_URL}/privacy`)
+  }
+
+  const handleGoGuidelines = async () => {
+    await Linking.openURL(`${config.WEBSITE_URL}/guidelines`)
+  }
 
   return (
     <>
@@ -89,6 +99,16 @@ const Configurations: React.FC = () => {
                   currentValue={currentThemeName === "dark"}
                   onChangeValue={toggleTheme}
                 />
+              </ConfigContainer>
+              <ConfigContainer onPress={handleGoPrivacyPolicie}>
+                <ConfigTitle>
+                  <Feather name="lock" size={16} /> Politícas de Privacidade
+                </ConfigTitle>
+              </ConfigContainer>
+              <ConfigContainer onPress={handleGoGuidelines}>
+                <ConfigTitle>
+                  <Feather name="info" size={16} /> Diretrizes da Comunidade
+                </ConfigTitle>
               </ConfigContainer>
               <Button
                 title="Sair da conta"

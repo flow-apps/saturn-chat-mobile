@@ -24,7 +24,7 @@ const FirebaseProvider: React.FC = ({ children }) => {
       }
 
       Analytics.setClientId(uuid.v4().toString());
-      await Analytics.setDebugModeEnabled(__DEV__);
+      // await Analytics.setDebugModeEnabled(__DEV__);
 
       setAnalytics(analytics);
     })();

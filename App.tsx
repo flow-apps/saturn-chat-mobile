@@ -16,6 +16,7 @@ import {
   Poppins_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/poppins";
+import { StatusBar } from "react-native";
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -29,18 +30,21 @@ export default function App() {
   if (!fontLoaded) return <AppLoading />
 
   return (
-    <FirebaseProvider>
-      <AppearanceProvider>
-        <ThemeControllerProvider>
-          <AuthProvider>
-            <NotificationsProvider>
-              <AdsProvider>
-                <Routes />
-              </AdsProvider>
-            </NotificationsProvider>
-          </AuthProvider>
-        </ThemeControllerProvider>
-      </AppearanceProvider>
-    </FirebaseProvider>
+    <>
+      <FirebaseProvider>
+        <AppearanceProvider>
+          <ThemeControllerProvider>
+            <AuthProvider>
+              <NotificationsProvider>
+                <AdsProvider>
+                  <Routes />
+                  <StatusBar barStyle="light-content" />
+                </AdsProvider>
+              </NotificationsProvider>
+            </AuthProvider>
+          </ThemeControllerProvider>
+        </AppearanceProvider>
+      </FirebaseProvider>
+    </>
   );
 }
