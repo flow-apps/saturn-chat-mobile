@@ -63,6 +63,7 @@ import { RecordService } from "../../services/record";
 import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
 import Typing from "../../components/Chat/Typing";
+import { useFirebase } from "../../contexts/firebase";
 
 const emoji = new EmojiJS();
 
@@ -77,11 +78,12 @@ const Chat: React.FC = () => {
 
   const messageInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
-
-  const { Interstitial } = useAds();
-  const { colors } = useTheme();
   const route = useRoute()
   const { id } = route.params as { id: string };
+
+  const { Interstitial } = useAds();
+  const { analytics } = useFirebase()
+  const { colors } = useTheme();
   const { token, user } = useAuth();
 
   const [files, setFiles] = useState<File[]>([]);
@@ -367,6 +369,11 @@ const Chat: React.FC = () => {
     navigation.navigate("GroupInfos", { id });
   }, [id]);
 
+  const handleGoStar = () => {
+    navigation.navigate("PurchasePremium")
+    analytics.logEvent("IncreaseUpload")
+  }
+
   const handleShowEmojiPicker = useCallback(() => {
     if (!showEmojiPicker) {
       setShowEmojiPicker(true);
@@ -394,7 +401,6 @@ const Chat: React.FC = () => {
     
     if (files.length > 0) {
       setSendingFile(true);
-      Toast.show("Enviando arquivos...");
       const filesData = new FormData();      
 
       files.map((file) => {
@@ -447,6 +453,9 @@ const Chat: React.FC = () => {
         title="😱 Que coisa pesada!"
         content="Eu não consigo carregar algo tão pesado, tente algo de até 12MB!"
         okButtonAction={() => setLargeFile(false)}
+        extraButtonAction={handleGoStar}
+        extraButtonText="Obter plano Star"
+        extraButton
         visible={largeFile}
       />
       <Alert

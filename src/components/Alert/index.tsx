@@ -12,6 +12,8 @@ import {
   AlertOkButtonText,
   AlertCancelButton,
   AlertCancelButtonText,
+  AlertExtraButton,
+  AlertExtraButtonText,
 } from "./styles";
 import { TouchableWithoutFeedback } from "react-native";
 
@@ -20,8 +22,11 @@ interface AlertProps {
   content: string;
   okButtonText?: string;
   cancelButtonText?: string;
+  extraButtonText?: string;
   okButtonAction?: () => any;
   cancelButtonAction?: () => any;
+  extraButtonAction?: () => any;
+  extraButton?: boolean;
   visible: boolean;
 }
 
@@ -32,6 +37,9 @@ const Alert = ({
   cancelButtonText,
   okButtonAction,
   cancelButtonAction,
+  extraButton = true,
+  extraButtonText,
+  extraButtonAction,
   visible,
 }: AlertProps) => {
   const handleOkButton = useCallback(() => {
@@ -46,6 +54,13 @@ const Alert = ({
       return cancelButtonAction();
     }
   }, [cancelButtonAction]);
+
+  const handleExtraButton = useCallback(() => {
+    visible = false;
+    if (extraButtonAction) {
+      return extraButtonAction();
+    }
+  }, [extraButtonAction]);
 
   return (
     <Container
@@ -76,6 +91,15 @@ const Alert = ({
               ) : (
                 <></>
               )}
+              {
+                extraButton ? (
+                  <AlertExtraButton onPress={handleExtraButton}>
+                    <AlertExtraButtonText>{extraButtonText}</AlertExtraButtonText>
+                  </AlertExtraButton>
+                ) : (
+                  <></>
+                )
+              }
             </AlertButtonsContainer>
           </AlertModal>
         </AlertContainer>

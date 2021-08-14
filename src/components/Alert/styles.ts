@@ -35,7 +35,7 @@ export const AlertModal = styled.View`
 `;
 
 export const AlertButtonsContainer = styled.View`
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: flex-end;
 `;
 
@@ -55,4 +55,12 @@ export const AlertCancelButton = styled(AlertOkButton)`
 
 export const AlertCancelButtonText = styled(AlertOkButtonText)`
   color: ${(props) => props.theme.colors.red};
+`;
+
+export const AlertExtraButton = styled(AlertOkButton)`
+  margin-left: auto;
+`;
+
+export const AlertExtraButtonText = styled(AlertOkButtonText)`
+  color: ${(props) => props.theme.colors.secondary};
 `;
