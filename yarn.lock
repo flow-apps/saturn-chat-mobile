@@ -4845,6 +4845,11 @@ expo-image-picker@~10.2.2:
     expo-permissions "~12.1.1"
     uuid "7.0.2"
 
+expo-in-app-purchases@^10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/expo-in-app-purchases/-/expo-in-app-purchases-10.2.0.tgz#3236c78ba452db3c13f6c0cf845b6f7ba922fd02"
+  integrity sha512-KDEVAfxC+yxqvJSpnTG7yBMxb2nIXE3y4TkdeeHkOcFU+RsOGt7c6Ocu1Jd6fLOjbcS2ftA+9vvBCF3/2bLXDg==
+
 expo-keep-awake@~9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-9.2.0.tgz#9cbdcc8264c943ef29a58326236cd34267e98f43"

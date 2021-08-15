@@ -8,12 +8,13 @@ import formData from "form-data";
 
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import { Feather } from "@expo/vector-icons";
-import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Linking } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { useAuth } from "../../../contexts/auth";
 import {
   Avatar,
+  ConsentText,
   Container,
   FieldError,
   FieldInfo,
@@ -22,12 +23,14 @@ import {
   FormField,
   InputsContainer,
   Label,
+  Link,
   SelectAvatarButton,
   SelectAvatarContainer,
   SelectAvatarSubtitle,
   SelectAvatarTitle,
 } from "./styles";
 import { useFirebase } from "../../../contexts/firebase";
+import config from "../../../config";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImageInfo>();
@@ -42,7 +45,7 @@ const Register: React.FC = () => {
 
   const { colors } = useTheme();
   const { signUp, loading } = useAuth();
-  const { analytics } = useFirebase()
+  const { analytics } = useFirebase();
 
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
@@ -123,12 +126,20 @@ const Register: React.FC = () => {
 
     await signUp(data);
     await analytics.logEvent("sign_up", {
-      method: "email/password"
-    })
+      method: "email/password",
+    });
+  }
+
+  const handleGoPrivacyPolicie = async () => {
+    await Linking.openURL(`${config.WEBSITE_URL}/privacy`)
+  }
+
+  const handleGoGuidelines = async () => {
+    await Linking.openURL(`${config.WEBSITE_URL}/guidelines`)
   }
 
   if (loading) {
-    return <Loading />
+    return <Loading />;
   }
 
   return (
@@ -211,6 +222,11 @@ const Register: React.FC = () => {
                 </FormField>
               </InputsContainer>
               <Button title="Criar conta" onPress={handleSubmit} />
+              <ConsentText>
+                Ao clicar em "Criar conta" você aceita a nossa{" "}
+                <Link onPress={handleGoPrivacyPolicie}>Politica de Privacidade</Link> e também nossas{" "}
+                <Link onPress={handleGoGuidelines}>Diretrizes da Comunidade</Link>
+              </ConsentText>
             </FormContainer>
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>

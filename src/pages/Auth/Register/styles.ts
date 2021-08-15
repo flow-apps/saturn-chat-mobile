@@ -78,3 +78,15 @@ export const FieldInfo = styled.Text`
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
 `;
+
+export const ConsentText = styled.Text`
+  text-align: center;
+  margin-top: 15px;
+  font-size: 16px;
+  font-family: ${fonts.text};
+  color: ${props => props.theme.colors.light_heading};
+`
+
+export const Link = styled.Text`
+  color: ${props => props.theme.colors.secondary};
+`
