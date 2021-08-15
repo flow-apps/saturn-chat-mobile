@@ -15,6 +15,7 @@ import EditProfile from "../pages/Configurations/EditProfile";
 import SwitchLanguage from "../pages/Configurations/SwitchLanguage";
 import Premium from "../pages/Configurations/Premium";
 import ChoosePlan from "../pages/Configurations/Premium/ChoosePlan";
+import Invite from "../pages/Invite";
 
 const StackRoutes = createStackNavigator();
 
@@ -36,6 +37,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="NewInvites" component={NewInvites} />
       <StackRoutes.Screen name="GroupInfos" component={GroupInfos} />
       <StackRoutes.Screen name="ImagePreview" component={ImagePreview} />
+      <StackRoutes.Screen name="Invite" component={Invite} />
     </StackRoutes.Navigator>
   );
 };

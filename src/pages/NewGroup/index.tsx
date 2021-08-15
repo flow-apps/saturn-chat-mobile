@@ -204,7 +204,7 @@ const NewGroup: React.FC = () => {
                   />
                 </SwitcherContainer>
                 <ButtonWrapper>
-                  <Button title="Cria Grupo" onPress={handleCreateGroup} />
+                  <Button title="Criar grupo" onPress={handleCreateGroup} />
                 </ButtonWrapper>
               </FormContainer>
             </Form>
