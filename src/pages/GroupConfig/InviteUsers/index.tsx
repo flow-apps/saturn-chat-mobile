@@ -25,7 +25,7 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import avatar from "../../../assets/avatar.jpg";
+import config from "../../../config";
 
 const InviteUsers: React.FC = () => {
   const navigation = useNavigation()
@@ -48,7 +48,7 @@ const InviteUsers: React.FC = () => {
           </YourInviteSubtitle>
           <YourInviteLinkContainer>
             <YourInviteLinkText numberOfLines={1} selectable>
-              https://saturnchat.com/inv/77g8gop
+              {config.WEBSITE_URL}/invite/77g8gop
             </YourInviteLinkText>
             <YourInviteCopyButton>
               <Feather name="clipboard" size={22} color={colors.secondary} />
@@ -57,7 +57,7 @@ const InviteUsers: React.FC = () => {
           <NewInviteContainer>
             <NewInviteButton onPress={handleGoCreateNewInvite}>
               <NewInviteButtonText>
-                <Feather name="plus" size={16} /> Criar novo convite
+                <Feather name="plus" size={16} /> Gerenciar convites
               </NewInviteButtonText>
             </NewInviteButton>
           </NewInviteContainer>

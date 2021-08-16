@@ -126,6 +126,8 @@ export const InviteUsage = styled(InviteDuration)`
   color: ${(props) => props.theme.colors.light_heading};
 `;
 
-export const InviteRemoveButton = styled.TouchableOpacity``;
+export const InviteRemoveButton = styled.TouchableOpacity`
+  margin-left: auto;
+`;
 
 export const InviteRemoveText = styled.Text``;

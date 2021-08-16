@@ -59,6 +59,7 @@ export interface FileData {
 export interface InviteData {
   id: string
   group_id: string
+  group: GroupData;
   invite_code: string
   is_permanent: boolean
   is_unlimited_usage: boolean

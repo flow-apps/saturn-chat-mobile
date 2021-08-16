@@ -28,14 +28,13 @@ import {
   CreateInviteLinkOptionCardText,
 } from "./styles";
 import Toast from "react-native-simple-toast";
-import Clipboard from "expo-clipboard";
+import * as Clipboard from "expo-clipboard";
 import Switcher from "../../../../components/Switcher";
 import Input from "../../../../components/Input";
 import { useTheme } from "styled-components";
 import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import api from "../../../../services/api";
-import FormData from "form-data";
 
 import * as Localize from "expo-localization"
 import { InviteData } from "../../../../../@types/interfaces";
@@ -174,9 +173,11 @@ const NewInvites: React.FC = () => {
             {invites.map((invite, index) => (
               <InviteContainer key={index}>
               <InviteLeftSide>
-                <InviteLink onLongPress={() => handleCopyLink("oi")}>
+                <InviteLink numberOfLines={1} onLongPress={() => handleCopyLink(
+                  config.WEBSITE_URL + "/invite/" + invite.invite_code
+                )}>
                   <Feather name="link" size={16} />{" "}
-                  {config.API_URL}/inv/{invite.invite_code}
+                  /invite/{invite.invite_code}
                 </InviteLink>
                 <InviteDuration>
                   <Feather name="clock" size={14} /> Expira em:{" "}

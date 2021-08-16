@@ -1,4 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import AnimatedLottieView from 'lottie-react-native';
+import FastImage from 'react-native-fast-image';
 import { RectButton } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import fonts from '../../styles/fonts';
@@ -26,7 +28,19 @@ export const InviteTitle = styled.Text`
   margin: 15px 0;
 `
 
-export const InviteAvatarImage = styled.Image`
+export const InviteAnimationContainer = styled.View`
+  height: 150px;
+`
+
+export const InviteAnimation = styled(AnimatedLottieView)``
+
+export const InviteInvalidReason = styled.Text`
+  text-align: center;
+  color: ${props => props.theme.colors.light_heading};
+  font-family: ${fonts.text};
+`
+
+export const InviteAvatarImage = styled(FastImage)`
   width: 100px;
   height: 100px;
   margin: 0 auto;
@@ -38,7 +52,7 @@ export const InviteGroupName = styled.Text`
   font-family: ${fonts.heading};
   font-size: 18px;
   color: ${props => props.theme.colors.black};
-  margin: 10px 0 0 0;
+  margin: 10px 0 15px 0;
 `
 
 export const ParticipantsContainer = styled.Text`

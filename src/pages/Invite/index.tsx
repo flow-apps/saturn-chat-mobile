@@ -1,25 +1,98 @@
-import React from "react";
-import { Feather } from "@expo/vector-icons";
+import React, { useState } from "react";
 import {
   AcceptInviteButton,
   AcceptInviteText,
   Container,
+  InviteAnimation,
   InviteAvatarImage,
   InviteContainer,
   InviteGroupName,
   InviteTitle,
-  ParticipantsContainer,
+  InviteAnimationContainer,
+  InviteInvalidReason,
 } from "./styles";
 import { StatusBar } from "expo-status-bar";
-import { useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { InviteData } from "../../../@types/interfaces";
+import api from "../../services/api";
+import Loading from "../../components/Loading";
+import { ParticipantData } from "../Home";
+import SimpleToast from "react-native-simple-toast";
 
 const Invite: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [invite, setInvite] = useState<null | InviteData>(null);
+  const [participating, setParticipating] = useState(false)
 
-  const route = useRoute()
-  const params = route.params
+  const route = useRoute();
+  const navigation = useNavigation();
+  const params = route.params as { inviteID: string };
+  const inviteID = params.inviteID;
 
-  console.log(params);
-  
+  useFocusEffect(() => {
+    (async () => {
+      setLoading(true);
+      api
+        .get(`/invites/${inviteID}`)
+        .then((res) => {
+          if (res.status === 200) {
+            setInvite(res.data);
+          }
+        })
+        .catch(() => setInvite(null));
+
+      setLoading(false);
+    })();
+  });
+
+  if (loading) return <Loading />;
+
+  if (!invite) {
+    return (
+      <>
+        <StatusBar translucent />
+        <Container
+          colors={["#0061ff", "#0059ff"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.5, y: 0.5 }}
+        >
+          <InviteContainer>
+            <InviteAnimationContainer>
+              <InviteAnimation
+                source={require("../../assets/crying.json")}
+                autoPlay
+                loop
+              />
+            </InviteAnimationContainer>
+            <InviteGroupName>Convite inválido</InviteGroupName>
+            <InviteInvalidReason>
+              O convite pode ter sido expirado, apagado ou ter atingido seu
+              número máximo de usos. Peça outro.
+            </InviteInvalidReason>
+          </InviteContainer>
+        </Container>
+      </>
+    );
+  }
+
+  const handleJoin = async () => {
+    await api
+      .get(`/inv/join/${invite.id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          const data = res.data as ParticipantData;
+
+          navigation.navigate("Chat", { id: data.group_id });
+        }
+      })
+      .catch((err) => {
+        SimpleToast.show("Erro ao usar o convite");
+      });
+  };
 
   return (
     <>
@@ -31,12 +104,24 @@ const Invite: React.FC = () => {
       >
         <InviteContainer>
           <InviteTitle>Você foi convidado(a) para o grupo:</InviteTitle>
-          <InviteAvatarImage source={require("../../assets/avatar.jpg")} />
-          <InviteGroupName>Game Santos</InviteGroupName>
-          <ParticipantsContainer>
-            <Feather name="users" /> 80 participantes
-          </ParticipantsContainer>
-          <AcceptInviteButton>
+          {invite?.group.group_avatar ? (
+            <InviteAvatarImage
+              source={{
+                cache: "immutable",
+                priority: "high",
+                uri: invite.group.group_avatar.url,
+              }}
+            />
+          ) : (
+            <InviteAvatarImage
+              source={require("../../assets/avatar-placeholder.png")}
+            />
+          )}
+          <InviteGroupName>{invite?.group.name}</InviteGroupName>
+          <AcceptInviteButton 
+            onPress={handleJoin}
+            enabled={!participating}
+          >
             <AcceptInviteText>Aceitar convite</AcceptInviteText>
           </AcceptInviteButton>
         </InviteContainer>
