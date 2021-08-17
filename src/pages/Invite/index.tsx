@@ -22,11 +22,13 @@ import api from "../../services/api";
 import Loading from "../../components/Loading";
 import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";
+import { useAuth } from "../../contexts/auth";
 
 const Invite: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [invite, setInvite] = useState<null | InviteData>(null);
-  const [participating, setParticipating] = useState(false)
+  const [participating, setParticipating] = useState(false);
+  const { user } = useAuth();
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -37,10 +39,16 @@ const Invite: React.FC = () => {
     (async () => {
       setLoading(true);
       api
-        .get(`/invites/${inviteID}`)
+        .get(`/invites/${inviteID}?user_id=${user?.id}`)
         .then((res) => {
           if (res.status === 200) {
-            setInvite(res.data);
+            setInvite(res.data.invite);
+
+            if (res.data.participant) {
+              setParticipating(true);
+            } else {
+              setParticipating(false);
+            }
           }
         })
         .catch(() => setInvite(null));
@@ -118,11 +126,10 @@ const Invite: React.FC = () => {
             />
           )}
           <InviteGroupName>{invite?.group.name}</InviteGroupName>
-          <AcceptInviteButton 
-            onPress={handleJoin}
-            enabled={!participating}
-          >
-            <AcceptInviteText>Aceitar convite</AcceptInviteText>
+          <AcceptInviteButton onPress={handleJoin} enabled={!participating}>
+            <AcceptInviteText>
+              {participating ? "Você já entrou" : "Aceitar convite"}
+            </AcceptInviteText>
           </AcceptInviteButton>
         </InviteContainer>
       </Container>
