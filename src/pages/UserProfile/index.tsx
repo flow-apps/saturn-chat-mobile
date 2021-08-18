@@ -25,6 +25,7 @@ import Loading from "../../components/Loading";
 import { UserData } from "../../../@types/interfaces";
 import api from "../../services/api";
 import { View } from "react-native";
+import PremiumName from "../../components/PremiumName";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -78,7 +79,12 @@ const UserProfile: React.FC = () => {
               )}
             </ImagesContainer>
             <BasicInfos>
-              <UserName>{userInfos?.name}</UserName>
+              <PremiumName 
+                name={userInfos?.name} 
+                nameSize={22} 
+                color={colors.light_heading}
+                align="center"
+              />
             </BasicInfos>
           </BasicInfosContainer>
           <GroupsContainer>

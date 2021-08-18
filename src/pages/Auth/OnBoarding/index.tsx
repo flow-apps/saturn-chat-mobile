@@ -3,7 +3,6 @@ import Boarding from "react-native-onboarding-swiper";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { useTheme } from "styled-components";
-import { StorageService } from "../../../services/Storage";
 import {
   ActionButton,
   ActionButtonText,
@@ -13,35 +12,30 @@ import {
 } from "./styles";
 
 import AppLoading from "expo-app-loading";
+import { usePersistedState } from "../../../hooks/usePersistedState";
 
 const OnBoarding: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [hasBoarded, setHasBoarded] = usePersistedState<boolean>(
+    "@SaturnChat:hasBoarded",
+    false
+  );
 
-  const storage = new StorageService();
   const navigation = useNavigation();
   const { colors } = useTheme();
 
   useEffect(() => {
     (async () => {
-      storage.getItem("@SaturnChat:onBoard").then((boarded) => {
-        if (!boarded) return;
-
-        const hasBoarded = JSON.parse(boarded);
-        if (hasBoarded.hasOnBoarded) {
-          navigation.navigate("Home");
-        }
-      });
+      setLoading(true);
+      if (hasBoarded) {
+        navigation.navigate("Home");
+      }
+      setLoading(false);
     })();
-    setLoading(false);
   }, []);
 
   const handleComplete = async () => {
-    await storage.saveItem(
-      "@SaturnChat:onBoard",
-      JSON.stringify({
-        hasOnBoarded: true,
-      })
-    );
+    setHasBoarded(true);
 
     navigation.navigate("Home");
   };

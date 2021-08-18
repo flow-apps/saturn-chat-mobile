@@ -19,9 +19,10 @@ const Routes = () => {
     prefixes: [config.WEBSITE_URL, "saturnchat://"],
     config: {
       screens: {
-        Invite: "invite/:inviteID"
+        Invite: "invite/:inviteID",
+        [signed ? "Groups" : "OnBoarding"]: "*"
       },
-      initialRouteName: signed ? "Groups" : "OnBoarding"
+      initialRouteName: signed ? "Groups" : "OnBoarding",
     },
   }
   

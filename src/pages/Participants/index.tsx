@@ -28,6 +28,7 @@ import { useTheme } from "styled-components";
 import { ActivityIndicator } from "react-native";
 import Banner from "../../components/Ads/Banner";
 import { AdBannerWrapper } from "../GroupInfos/styles";
+import PremiumName from "../../components/PremiumName";
 
 const Participants: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipantData[]>([]);
@@ -120,9 +121,7 @@ const Participants: React.FC = () => {
               />
             )}
             <ParticipantInfosWrapper>
-              <ParticipanteName numberOfLines={1}>
-                {item.user.name}
-              </ParticipanteName>
+              <PremiumName name={item.user.name} nameSize={16} />
               <JoinedDate>
                 {item.group.owner.id === item.user.id
                   ? "Criou em "

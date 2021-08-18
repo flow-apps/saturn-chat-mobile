@@ -50,10 +50,10 @@ export const GroupsContainer = styled.View`
 `;
 
 export const GroupsTitle = styled.Text`
-  font-size: 25px;
+  font-size: 20px;
   font-family: ${fonts.heading};
-  color: ${(props) => props.theme.colors.light_heading};
-  margin-bottom: 15px;
+  color: ${(props) => props.theme.colors.dark_heading};
+  margin: 10px 0;
 `;
 
 export const Groups = styled.View``;

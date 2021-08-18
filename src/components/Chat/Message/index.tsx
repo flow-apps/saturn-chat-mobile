@@ -36,6 +36,7 @@ import {
 } from "./styles";
 import { useMemo } from "react";
 import { RenderRule } from "markdown-it/lib/renderer";
+import PremiumName from "../../PremiumName";
 
 interface MessageProps {
   user: UserData;
@@ -135,7 +136,11 @@ const Message = ({
               source={require("../../../assets/avatar-placeholder.png")}
             />
           )}
-          <MessageAuthorName>{message.author.name}</MessageAuthorName>
+          <PremiumName 
+            name={message.author.name}
+            nameSize={12}
+            color={colors.light_heading}
+          />
         </MessageAuthorContainer>
       );
     }
