@@ -38,7 +38,6 @@ export default function App() {
               <NotificationsProvider>
                 <AdsProvider>
                   <Routes />
-                  <StatusBar barStyle="light-content" />
                 </AdsProvider>
               </NotificationsProvider>
             </AuthProvider>

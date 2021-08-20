@@ -69,6 +69,7 @@ export const MessageCodeInline = styled(MessageContent)`
 
 export const MessageLink = styled(MessageContent)`
   color: ${(props) => props.theme.colors.secondary};
+  font-family: ${fonts["text-bold"]}
 `;
 
 export const MessageOptionsContainer = styled.View`

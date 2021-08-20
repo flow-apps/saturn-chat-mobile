@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import {
   Container,
   HeaderTitle,
@@ -6,7 +6,7 @@ import {
   HeaderButton,
   LeftContainer,
 } from "./styles";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { StatusBar } from "expo-status-bar";
@@ -30,7 +30,7 @@ const Header = ({ title, backButton, onPressTitle, children }: HeaderProps) => {
 
   return (
     <Container>
-      <StatusBar backgroundColor={colors.primary} style="inverted" />
+      <StatusBar backgroundColor={colors.primary} style="light" />
       <RightContainer>
         {backButton && (
           <HeaderButton onPress={handleBack}>

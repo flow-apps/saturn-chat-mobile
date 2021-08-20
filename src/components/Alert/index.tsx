@@ -69,8 +69,8 @@ const Alert = ({
       onDismiss={cancelButtonAction}
       animationType="fade"
       transparent
+      statusBarTranslucent
     >
-      <StatusBar backgroundColor="#00000055" animated style="light" />
       <TouchableWithoutFeedback onPress={cancelButtonAction}>
         <AlertContainer>
           <AlertModal>
