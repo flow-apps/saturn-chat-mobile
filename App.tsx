@@ -8,6 +8,7 @@ import { AppearanceProvider } from "react-native-appearance";
 import { NotificationsProvider } from "./src/contexts/notifications"
 import { AdsProvider } from "./src/contexts/ads"
 import { FirebaseProvider } from "./src/contexts/firebase"
+import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs"
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 
@@ -16,7 +17,6 @@ import {
   Poppins_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/poppins";
-import { StatusBar } from "react-native";
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -37,7 +37,9 @@ export default function App() {
             <AuthProvider>
               <NotificationsProvider>
                 <AdsProvider>
-                  <Routes />
+                  <RemoteConfigsProvider>
+                    <Routes />
+                  </RemoteConfigsProvider>
                 </AdsProvider>
               </NotificationsProvider>
             </AuthProvider>

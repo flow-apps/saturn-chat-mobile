@@ -1,7 +1,12 @@
 import React from "react";
 import Header from "../../../components/Header";
 import * as Localize from "expo-localization";
-import { Feather, FontAwesome, Foundation, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome,
+  Foundation,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import {
   Container,
   ContentWrapper,
@@ -26,12 +31,14 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import { useRemoteConfigs } from "../../../contexts/remoteConfigs";
 
 const Premium: React.FC = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const { colors } = useTheme();
+  const { allConfigs } = useRemoteConfigs();
 
-  const handleGoChoosePlan = () => navigation.navigate("ChoosePlan")
+  const handleGoChoosePlan = () => navigation.navigate("ChoosePlan");
 
   return (
     <>
@@ -76,10 +83,13 @@ const Premium: React.FC = () => {
               <VantageContainer>
                 <VantageIconContainer>
                   <VantageIcon>
-                    {" "}<FontAwesome name="ban" size={26} color={colors.red} />
+                    {" "}
+                    <FontAwesome name="ban" size={26} color={colors.red} />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>Totalmente livre de anúncios chatos!</VantageContent>
+                <VantageContent>
+                  Totalmente livre de anúncios chatos!
+                </VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -88,7 +98,9 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Aumente em 10x o espaço para envio de arquivos, de 12MB para incríveis 120MB de envio.
+                  Aumente em 10x o espaço para envio de arquivos, de{" "}
+                  {allConfigs.default_file_upload}MB para incríveis{" "}
+                  {allConfigs.premium_file_upload}MB de envio.
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
@@ -98,20 +110,25 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                   Aumente a quantidade de grupos que você pode criar de 2 para
-                  20 grupos.
+                  Aumente a quantidade de grupos que você pode criar de{" "}
+                  {allConfigs.default_max_groups} para{" "}
+                  {allConfigs.premium_max_groups} grupos.
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
                   <VantageIcon>
-                    <Feather name="plus-circle" size={26} color={colors.light_primary} />
+                    <Feather
+                      name="plus-circle"
+                      size={26}
+                      color={colors.light_primary}
+                    />
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                   Aumente a quantidade de participantes que você pode ter em
-                  seus grupos de 200 para 10{Localize.digitGroupingSeparator}
-                  000 participantes.
+                  Aumente a quantidade de participantes que você pode ter em
+                  seus grupos de {allConfigs.default_max_participants} para{" "}
+                  {allConfigs.premium_max_participants} participantes.
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
@@ -121,23 +138,34 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Ganhe um selo exclusivo ao lado do seu nome para sair ostentando!
+                  Ganhe um selo exclusivo ao lado do seu nome para sair
+                  ostentando!
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
                   <VantageIcon>
-                    <MaterialCommunityIcons name="dev-to" size={28} color="#FF5E0D" />
+                    <MaterialCommunityIcons
+                      name="dev-to"
+                      size={28}
+                      color="#FF5E0D"
+                    />
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Apoie o desenvolvimento do aplicativo e a trazer muitas novidades ❤
+                  Apoie o desenvolvimento do aplicativo e a trazer muitas
+                  novidades ❤
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
                   <VantageIcon>
-                    {" "}<Foundation name="page-export-csv" size={30} color={colors.green} />
+                    {" "}
+                    <Foundation
+                      name="page-export-csv"
+                      size={30}
+                      color={colors.green}
+                    />
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
