@@ -22,13 +22,12 @@ const HomeRoutes = () => {
         labelPosition: "below-icon",
         keyboardHidesTabBar: true,
         labelStyle: {
-          fontSize: 14,
+          fontSize: 12,
           fontFamily: fonts.heading,
-          marginTop: 5,
         },
         style: {
           padding: 15,
-          height: 55,
+          height: 56,
           elevation: 10,
           zIndex: 90,
           backgroundColor: `${colors.shape}`,
@@ -43,7 +42,7 @@ const HomeRoutes = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons
               name="chat-bubble-outline"
-              size={size - 3}
+                size={size - 4}
               color={color}
             />
           ),
@@ -56,7 +55,7 @@ const HomeRoutes = () => {
         options={{
           title: "Configurações",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="cog" size={size - 3} color={color} />
+              <FontAwesome name="cog" size={size - 4} color={color} />
           ),
         }}
       />
@@ -67,7 +66,7 @@ const HomeRoutes = () => {
         options={{
           title: "Novo Grupo",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="plus" size={size - 3} color={color} />
+              <Feather name="plus" size={size - 3} color={color} />
           ),
           unmountOnBlur: true,
         }}
