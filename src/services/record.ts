@@ -64,7 +64,7 @@ class RecordService {
       if (!audio) return;
       await audio.stopAndUnloadAsync();
 
-      if (audio._finalDurationMillis < 1500) {
+      if (audio._finalDurationMillis < 1000) {
         return Toast.show("Aperte e segure para gravar");
       }
 
