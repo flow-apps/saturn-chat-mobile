@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
+import api from "../services/api";
+import secrets from "../secrets.json"
 
 import { useCallback } from "react";
 import { Alert, Platform } from "react-native";
 import { useTheme } from "styled-components";
-import api from "../services/api";
 import { useAuth } from "./auth";
 import { getWebsocket } from "../services/websocket";
 import { navigate } from "../routes/rootNavigation";
@@ -59,7 +60,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
 
     newToken = (
       await Notifications.getExpoPushTokenAsync({
-        development: __DEV__,
+        experienceId: secrets.ExpoExperienceID,
       })
     ).data;
 

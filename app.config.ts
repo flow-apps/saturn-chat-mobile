@@ -40,6 +40,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     },
     android: {
+      // @ts-ignore
+      jsEngine: "hermes", 
       allowBackup: true,
       package: "com.flowapps.saturnchat",
       googleServicesFile: "./google-services.json",
