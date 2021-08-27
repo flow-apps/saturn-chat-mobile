@@ -63,6 +63,8 @@ const NotificationsProvider: React.FC = ({ children }) => {
       })
     ).data;
 
+    console.log(newToken)
+
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
         name: "default",

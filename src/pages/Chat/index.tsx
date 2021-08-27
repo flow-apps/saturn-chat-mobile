@@ -64,7 +64,6 @@ import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
 import Typing from "../../components/Chat/Typing";
 import { useFirebase } from "../../contexts/firebase";
-import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 
 const emoji = new EmojiJS();
 
@@ -76,16 +75,16 @@ interface File {
 const recordService = new RecordService();
 
 const Chat: React.FC = () => {
+
   const messageInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
-  const route = useRoute();
+  const route = useRoute()
   const { id } = route.params as { id: string };
 
   const { Interstitial } = useAds();
-  const { analytics } = useFirebase();
+  const { analytics } = useFirebase()
   const { colors } = useTheme();
   const { token, user } = useAuth();
-  const { allConfigs, userConfigs } = useRemoteConfigs();
 
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -114,7 +113,7 @@ const Chat: React.FC = () => {
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
 
-  const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
+  const fileService = new FileService(filesSizeUsed);
 
   useEffect(() => {
     (async () => {
@@ -122,7 +121,7 @@ const Chat: React.FC = () => {
       const isReady = await Interstitial.getIsReadyAsync();
       if (isReady) await Interstitial.showAdAsync();
 
-      const connectedSocket = !socket ? getWebsocket(token) : socket;
+      const connectedSocket = !socket ? getWebsocket(token) : socket
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {
@@ -172,8 +171,10 @@ const Chat: React.FC = () => {
     });
 
     socket.on("deleted_group", (groupID) => {
-      if (route.name === "Chat") navigation.navigate("Groups");
-    });
+
+      if (route.name === "Chat")
+        navigation.navigate("Groups")
+    })
 
     navigation.addListener("blur", () => {
       socket.offAny();
@@ -291,12 +292,12 @@ const Chat: React.FC = () => {
 
       if (isSelected) return setIsSelectedFile(true);
       if (fileRes.usageSize)
-        setFilesSizeUsed((used) => used + fileRes.usageSize);
-
+        setFilesSizeUsed((used) => used + fileRes.usageSize);      
+      
       setFiles((oldFiles) => [
         { file: file.file, type: file.type },
         ...oldFiles,
-      ]);
+      ]);      
 
       return;
     }
@@ -305,7 +306,7 @@ const Chat: React.FC = () => {
 
     if (errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT)
       return setLargeFile(true);
-  };
+  }
 
   const removeFile = (position: number) => {
     const filteredFiles = files.filter((f, index) => index !== position);
@@ -369,9 +370,9 @@ const Chat: React.FC = () => {
   }, [id]);
 
   const handleGoStar = () => {
-    navigation.navigate("PurchasePremium");
-    analytics.logEvent("IncreaseUpload");
-  };
+    navigation.navigate("PurchasePremium")
+    analytics.logEvent("IncreaseUpload")
+  }
 
   const handleShowEmojiPicker = useCallback(() => {
     if (!showEmojiPicker) {
@@ -390,21 +391,21 @@ const Chat: React.FC = () => {
   const handleMessageSubmit = useCallback(async () => {
     handleTypingTimeout();
 
-    if (files.length <= 0 && message.length === 0) return;
-
+    if (files.length <= 0 && message.length === 0) return
+    
     if (files.length <= 0) {
       socket?.emit("new_user_message", { message });
       setMessage("");
-      return;
+      return
     }
-
+    
     if (files.length > 0) {
       setSendingFile(true);
-      const filesData = new FormData();
+      const filesData = new FormData();      
 
       files.map((file) => {
         if (file.file.type === "success") {
-          const type = MimeTypes.lookup(file.file.name);
+          const type = MimeTypes.lookup(file.file.name);          
 
           filesData.append("attachment", {
             name: file.file.name,
@@ -414,10 +415,8 @@ const Chat: React.FC = () => {
         }
       });
 
-      const response = await api.post(
-        `messages/SendAttachment/${id}?type=files`,
-        filesData,
-        {
+      const response = await api
+        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -425,9 +424,8 @@ const Chat: React.FC = () => {
             const totalSended = Math.round((event.loaded * 100) / event.total);
             setSendedFileProgress(totalSended);
           },
-        }
-      );
-
+        })
+        
       if (response.status === 200) {
         console.log(response.data);
         socket?.emit("new_message_with_files", {
@@ -438,8 +436,9 @@ const Chat: React.FC = () => {
       setSendingFile(false);
       setSendedFileProgress(0);
       setFiles([]);
-      setMessage("");
+      setMessage("")
     }
+
   }, [message]);
 
   const getItemID = (item: MessageData) => item.id;
@@ -452,7 +451,7 @@ const Chat: React.FC = () => {
     <>
       <Alert
         title="😱 Que coisa pesada!"
-        content={`Eu não consigo carregar algo tão pesado, tente algo de até ${userConfigs.fileUpload}MB!`}
+        content="Eu não consigo carregar algo tão pesado, tente algo de até 12MB!"
         okButtonAction={() => setLargeFile(false)}
         extraButtonAction={handleGoStar}
         extraButtonText="Obter plano Star"
