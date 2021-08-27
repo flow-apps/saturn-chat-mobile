@@ -67,7 +67,7 @@ export const JoinGroupButtonText = styled.Text<{ participating?: boolean }>`
   font-size: 16px;
   font-family: ${fonts.text};
   color: ${(props) =>
-    props.participating ? props.theme.colors.black : "#fff"};
+    props.participating ? "#fff" : props.theme.colors.black};
 `;
 
 export const GroupTagsContainer = styled.View``;
