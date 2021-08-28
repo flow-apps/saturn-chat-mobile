@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
 import FastImage from 'react-native-fast-image'
+import { Dimensions } from "react-native";
 
 interface IMessageProps {
   isRight?: boolean;

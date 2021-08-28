@@ -4,14 +4,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../services/api";
 import { UserData } from "../../@types/interfaces";
 import FormData from "form-data";
-import Loading from "../components/Loading";
+import { usePersistedState } from "../hooks/usePersistedState";
 
 interface AuthContextData {
   signed: boolean;
   loading: boolean;
   loadingData: boolean;
   user: UserData | null;
-  error: boolean;
+  loginError: boolean;
+  registerError: boolean;
   token: string;
   updateUser: (data: any) => Promise<void>;
   signIn(email: string, password: string): Promise<void>;
@@ -26,10 +27,14 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [loginError, setLoginError] = useState(false);
+  const [registerError, setRegisterError] = useState(false);
+  const [storedToken, setStoredToken] = usePersistedState(
+    "@SaturnChat:NotificationToken",
+    ""
+  );
 
   useEffect(() => {
-    setError(false);
     setLoadingData(true);
     async function loadStorageData() {
       const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
@@ -44,57 +49,59 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     loadStorageData();
-  }, []);  
+  }, []);
 
   async function updateUser(data: any) {
-    await AsyncStorage.setItem("@SaturnChat:user", JSON.stringify(data.user));
-
     if (data.token) {
-      setToken(data.token)
-      api.defaults.headers["authorization"] = `Bearer ${data.token}`;
-
-      await AsyncStorage.setItem("@SaturnChat:token", data.token);
+      await AsyncStorage.setItem("@SaturnChat:token", data.token, () => {
+        api.defaults.headers["authorization"] = `Bearer ${data.token}`;
+        setToken(data.token);
+      });
     }
-    setUser(data.user);
+    await AsyncStorage.setItem("@SaturnChat:user", JSON.stringify(data.user), () => {
+      setUser(data.user);
+    });
   }
 
   async function signIn(email: string, password: string) {
     setLoading(true);
-    setError(false);
+    setLoginError(false);
     auth
       .signIn(email, password)
       .then(async (response) => {
         await updateUser(response.data);
-        setError(false);
+        setLoginError(false);
       })
       .catch(() => {
-        setError(true);
+        setLoginError(true);
       })
       .finally(() => setLoading(false));
   }
 
   async function signUp(data: FormData) {
     setLoading(true);
-    setError(false);
+    setRegisterError(false);
     auth
       .signUp(data)
       .then(async (response) => {
         await updateUser(response.data);
-        setError(false);
+        setRegisterError(false);
       })
       .catch(() => {
-        setError(true);
+        setRegisterError(true);
       })
       .finally(() => setLoading(false));
   }
 
   function signOut() {
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
-      () => {
+      async () => {
+        await api.delete(`/users/notify/unregister/${storedToken}`)
+
         api.defaults.headers["authorization"] = undefined;
+        setStoredToken("");
         setUser(null);
-        setToken("")
-        setError(false);
+        setToken("");
       }
     );
   }
@@ -111,7 +118,8 @@ export const AuthProvider: React.FC = ({ children }) => {
         signOut,
         updateUser,
         token,
-        error,
+        registerError,
+        loginError,
       }}
     >
       {children}

@@ -107,7 +107,7 @@ const Chat: React.FC = () => {
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
-  const [socket, setSocket] = useState<Socket>(getWebsocket(token));
+  const [socket, setSocket] = useState<Socket | null>();
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -119,10 +119,11 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
+      setSocket(await getWebsocket(token))
       const isReady = await Interstitial.getIsReadyAsync();
       if (isReady) await Interstitial.showAdAsync();
 
-      const connectedSocket = !socket ? getWebsocket(token) : socket;
+      const connectedSocket = socket || await getWebsocket(token);
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {

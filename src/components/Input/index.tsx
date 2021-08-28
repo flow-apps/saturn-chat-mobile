@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInputProps } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput } from "react-native";
 import { useTheme } from "styled-components";
 import { Container, Label, MainInput } from "./styles";
 
@@ -10,15 +10,21 @@ interface InputProps extends TextInputProps {
 
 const Input = ({ label, ...rest }: InputProps) => {
   const { colors } = useTheme();
+  const [focused, setFocused] = useState(false)
 
   return (
-    <Container>
+    <Container
+    >
       {label && <Label>{label}</Label>}
       <MainInput
-        placeholderTextColor={colors.dark_gray}
+        placeholderTextColor={colors.dark_gray + "88"}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        focused={focused}
         as={TextInput}
         {...rest}
       />
+
     </Container>
   );
 };

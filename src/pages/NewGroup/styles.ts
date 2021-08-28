@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 import TextInput from "../../components/Input"
+import Input from "../../components/Input";
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -54,19 +55,13 @@ export const Form = styled.View`
   flex: 1;
 `;
 
-export const Input = styled(TextInput)`
-  border-radius: 10px;
-  padding: 15px;
-  border: 1px solid ${(props) => props.theme.colors.dark_gray};
-  font-family: ${fonts.text};
-  font-size: 16px;
+export const FormInput = styled(Input)`
   margin-bottom: 20px;
-  max-height: 400px;
-  color: ${(props) => props.theme.colors.black};
 `;
 
 export const TextArea = styled(Input)`
   max-height: 600px;
+  margin-bottom: 20px;
 `;
 
 export const SwitcherContainer = styled.View`

@@ -32,7 +32,7 @@ const Login: React.FC = () => {
   const navigator = useNavigation();
 
   const { analytics } = useFirebase()
-  const { signIn, error, loading } = useAuth();
+  const { signIn, loginError, loading } = useAuth();
 
   function handleNavigateSignUp() {
     navigator.navigate("Register");
@@ -57,7 +57,7 @@ const Login: React.FC = () => {
           <WelcomeContainer>
             <WelcomeTitle>Olá,{"\n"}Bem-vindo de volta</WelcomeTitle>
           </WelcomeContainer>
-          {error && (
+          {loginError && (
             <ErrorContainer>
               <ErrorText>
                 Erro ao fazer login, verifique seus dados ou crie uma conta

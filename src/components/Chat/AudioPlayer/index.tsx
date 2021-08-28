@@ -30,7 +30,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   const { colors } = useTheme();
 
   const loadAudio = useCallback(async () => {
-    if (sound && sound._loaded) return;
+    if (sound) return;
 
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
@@ -71,7 +71,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   }
 
   const handlePlayPauseAudio = async () => {
-    if (!sound || !sound._loaded) {
+    if (!sound) {
       await loadAudio();
     }
 
@@ -104,14 +104,13 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
           </AudioController>
           <SeekBarContainer>
             <SeekBar
-              step={200}
               minimumValue={0}
               maximumValue={audio.duration}
               value={currentPosition}
               thumbTintColor={colors.secondary}
               minimumTrackTintColor={colors.primary}
               maximumTrackTintColor={colors.dark_gray}
-              onValueChange={onChangePosition}
+              onSlidingComplete={onChangePosition}
             />
           </SeekBarContainer>
           <AudioDurationContainer>

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import api from "../services/api";
-import secrets from "../secrets.json"
+import secrets from "../secrets.json";
 
 import { useCallback } from "react";
 import { Alert, Platform } from "react-native";
@@ -10,6 +10,7 @@ import { useTheme } from "styled-components";
 import { useAuth } from "./auth";
 import { getWebsocket } from "../services/websocket";
 import { navigate } from "../routes/rootNavigation";
+import { usePersistedState } from "../hooks/usePersistedState";
 
 interface NotificationsContextProps {
   expoToken: string;
@@ -28,9 +29,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-
 const NotificationsProvider: React.FC = ({ children }) => {
   const [expoToken, setExpoToken] = useState("");
+  const [storedToken, setStoredToken] = usePersistedState(
+    "@SaturnChat:NotificationToken",
+    ""
+  );
 
   const { signed, token } = useAuth();
   const { colors } = useTheme();
@@ -114,9 +118,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
 
         socket?.emit("new_user_message", { message: msg });
         await Notifications.dismissNotificationAsync(notification);
-      } 
-      
-      else if (res.actionIdentifier === "markAsRead") {
+      } else if (res.actionIdentifier === "markAsRead") {
         const messageID = res.notification.request.content.data.id as string;
 
         await Notifications.dismissNotificationAsync(
@@ -135,6 +137,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
 
       if (newToken) {
         setExpoToken(newToken);
+        setStoredToken(newToken);
 
         await api.post("/users/notify/register", {
           notificationToken: newToken,

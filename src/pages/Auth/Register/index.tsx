@@ -44,7 +44,7 @@ const Register: React.FC = () => {
   const [passConfirmError, setPassConfirmError] = useState(false);
 
   const { colors } = useTheme();
-  const { signUp, loading } = useAuth();
+  const { signUp, loading, registerError } = useAuth();
   const { analytics } = useFirebase();
 
   const passwordValidation =

@@ -5,10 +5,10 @@ import AppLoading from "expo-app-loading";
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
-import { NotificationsProvider } from "./src/contexts/notifications"
-import { AdsProvider } from "./src/contexts/ads"
-import { FirebaseProvider } from "./src/contexts/firebase"
-import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs"
+import { NotificationsProvider } from "./src/contexts/notifications";
+import { AdsProvider } from "./src/contexts/ads";
+import { FirebaseProvider } from "./src/contexts/firebase";
+import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs";
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 
@@ -27,13 +27,13 @@ export default function App() {
     FiraCode_500Medium,
   });
 
-  if (!fontLoaded) return <AppLoading />
+  if (!fontLoaded) return <AppLoading />;
 
   return (
     <>
-      <FirebaseProvider>
+      <ThemeControllerProvider>
         <AppearanceProvider>
-          <ThemeControllerProvider>
+          <FirebaseProvider>
             <AuthProvider>
               <NotificationsProvider>
                 <AdsProvider>
@@ -43,9 +43,9 @@ export default function App() {
                 </AdsProvider>
               </NotificationsProvider>
             </AuthProvider>
-          </ThemeControllerProvider>
+          </FirebaseProvider>
         </AppearanceProvider>
-      </FirebaseProvider>
+      </ThemeControllerProvider>
     </>
   );
 }

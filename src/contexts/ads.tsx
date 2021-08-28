@@ -30,7 +30,7 @@ const AdsProvider: React.FC = ({ children }) => {
         android: secrets.AdsAppID.android,
         ios: secrets.AdsAppID.ios
       })
-      const adUnitID = Constants.isDevice && __DEV__ ? testID : productionID
+      const adUnitID = __DEV__ ? testID : productionID
       if (adUnitID) setUnitID(adUnitID)
 
       const status = await Ads.getPermissionsAsync()

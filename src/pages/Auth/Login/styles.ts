@@ -39,14 +39,14 @@ export const FieldsContainer = styled.View``;
 
 export const FieldContainer = styled.View`
   flex: 1;
-  margin-bottom: 15px;
+  margin-bottom: 35px;
 `;
 
 export const Label = styled.Text`
   font-size: 16px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.light_heading};
-  margin-bottom: 5px;
+  margin-bottom: -5px;
 `;
 
 export const ForgotPassword = styled.TouchableOpacity`

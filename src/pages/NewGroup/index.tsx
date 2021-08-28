@@ -17,7 +17,7 @@ import {
   SelectGroupPhotoSubtitle,
   FormContainer,
   Form,
-  Input,
+  FormInput,
   SwitcherContainer,
   SwitcherText,
   ButtonWrapper,
@@ -160,9 +160,8 @@ const NewGroup: React.FC = () => {
               <FormContainer
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
-                <Input
+                <FormInput
                   label="Nome do grupo"
-                  placeholderTextColor={colors.light_gray}
                   placeholder="máx. 100 caracteres"
                   maxLength={100}
                   selectionColor={colors.secondary}
@@ -173,7 +172,6 @@ const NewGroup: React.FC = () => {
                 <TextArea
                   label="Descreva seu grupo"
                   multiline
-                  placeholderTextColor={colors.light_gray}
                   selectionColor={colors.secondary}
                   placeholder="máx. 500 caracteres"
                   maxLength={500}
@@ -183,7 +181,6 @@ const NewGroup: React.FC = () => {
                 <TextArea
                   label="Tags do grupo"
                   multiline
-                  placeholderTextColor={colors.light_gray}
                   selectionColor={colors.secondary}
                   placeholder="separe por vírgula"
                   value={tags}
