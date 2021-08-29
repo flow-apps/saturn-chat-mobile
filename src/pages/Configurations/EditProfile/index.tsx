@@ -20,7 +20,7 @@ import {
   FieldsContainer,
   FormContainer,
   SwitchAvatarButton,
-  SwitchAvatarButtonText
+  SwitchAvatarButtonText,
 } from "./styles";
 
 const EditProfile: React.FC = () => {
@@ -28,6 +28,8 @@ const EditProfile: React.FC = () => {
   const [newAvatar, setNewAvatar] = useState("");
   const [user, setUser] = useState<UserData>();
   const [name, setName] = useState("");
+
+  const [isSendable, setIsSendable] = useState(false);
 
   const navigation = useNavigation();
   const { updateUser } = useAuth();
@@ -91,21 +93,29 @@ const EditProfile: React.FC = () => {
     }
   };
 
-  
   const renderAvatar = () => {
     if (newAvatar) {
-      return <AvatarImage source={{ uri: newAvatar }} />
+      return <AvatarImage source={{ uri: newAvatar }} />;
     }
 
-    const avatar = user?.avatar
+    const avatar = user?.avatar;
 
     if (avatar) {
-      return <AvatarImage source={{ uri: avatar.url }} />
+      return <AvatarImage source={{ uri: avatar.url }} />;
     } else {
-      return <AvatarImage source={require("../../../assets/avatar-placeholder.png")} />
+      return (
+        <AvatarImage
+          source={require("../../../assets/avatar-placeholder.png")}
+        />
+      );
     }
-  }
+  };
 
+  const handleCheckFields = () => {
+    if (name === user?.name) return setIsSendable(false);
+
+    return setIsSendable(true);
+  };
 
   useEffect(() => {
     (async () => {
@@ -143,10 +153,19 @@ const EditProfile: React.FC = () => {
           </AvatarContainer>
           <FieldsContainer>
             <FieldContainer>
-              <Input label="Nome" value={name} onChangeText={setName} />
+              <Input
+                label="Nome"
+                value={name}
+                onChangeText={setName}
+                onTextInput={handleCheckFields}
+              />
             </FieldContainer>
           </FieldsContainer>
-          <Button title="Concluir" onPress={handleSubmit} />
+          <Button
+            enabled={isSendable}
+            title="Concluir"
+            onPress={handleSubmit}
+          />
         </FormContainer>
       </Container>
     </>

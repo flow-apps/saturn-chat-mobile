@@ -1,18 +1,18 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.View``;
+export const Container = styled.View`
+`;
 
 export const MainInput = styled.TextInput<{ focused: boolean }>`
   font-family: ${fonts.text};
   font-size: 16px;
-  padding: 5px 15px;  
+  padding: 5px 4px;  
   border-bottom-width: 1px;
   border-bottom-color: ${props => props.focused ? props.theme.colors.secondary : props.theme.colors.dark_gray};
   color: ${(props) => props.theme.colors.black};
   background-color: ${(props) => props.theme.colors.background};
   margin-top: 8px;
-  margin-left: -10px;
 `;
 
 export const Label = styled.Text`

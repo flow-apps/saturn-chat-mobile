@@ -37,6 +37,7 @@ import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
 import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
+import { verifyBetweenValues } from "../../utils";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false);
@@ -46,6 +47,8 @@ const NewGroup: React.FC = () => {
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
+
+  const [isSendable, setIsSendable] = useState(false)
 
   const { analytics } = useFirebase();
   const { Interstitial } = useAds();
@@ -89,6 +92,15 @@ const NewGroup: React.FC = () => {
       })
       .catch((err) => console.log(err))
       .finally(() => setCreating(false));
+  }
+
+  function handleCheckFields() {
+    if (
+      verifyBetweenValues(name.length, 0, 100) &&
+      verifyBetweenValues(description.length, 0, 500)
+    )
+      return setIsSendable(true)
+    setIsSendable(false)
   }
 
   function handleSetPublic() {
@@ -168,6 +180,7 @@ const NewGroup: React.FC = () => {
                   returnKeyType="go"
                   value={name}
                   onChangeText={setName}
+                  onTextInput={handleCheckFields}
                 />
                 <TextArea
                   label="Descreva seu grupo"
@@ -177,6 +190,7 @@ const NewGroup: React.FC = () => {
                   maxLength={500}
                   value={description}
                   onChangeText={setDescription}
+                  onTextInput={handleCheckFields}
                 />
                 <TextArea
                   label="Tags do grupo"
@@ -201,7 +215,7 @@ const NewGroup: React.FC = () => {
                   />
                 </SwitcherContainer>
                 <ButtonWrapper>
-                  <Button title="Criar grupo" onPress={handleCreateGroup} />
+                  <Button enabled={isSendable} title="Criar grupo" onPress={handleCreateGroup} />
                 </ButtonWrapper>
               </FormContainer>
             </Form>

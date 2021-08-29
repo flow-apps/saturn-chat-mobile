@@ -1,33 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import Button from "../../../components/Button";
 import Header from "../../../components/Header";
+import Input from "../../../components/Input";
+import Loading from "../../../components/Loading";
+import Switcher from "../../../components/Switcher";
+import FormData from "form-data";
+import SimpleToast from "react-native-simple-toast";
+import api from "../../../services/api";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Alert } from "react-native";
+import { GroupData } from "../../../../@types/interfaces";
 import {
   AvatarContainer,
   AvatarImage,
   Container,
+  FieldContainer,
+  FormContainer,
   SwitchAvatarButton,
   SwitchAvatarButtonText,
-  FormContainer,
-  FieldContainer,
   SwitcherContainer,
   SwitcherText,
   TextArea,
 } from "./styles";
-
-import * as ImagePicker from "expo-image-picker";
-
-import Input from "../../../components/Input";
-import Button from "../../../components/Button";
-import Switcher from "../../../components/Switcher";
-import { useEffect } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import api from "../../../services/api";
-import { GroupData } from "../../../../@types/interfaces";
-import Loading from "../../../components/Loading";
-import SimpleToast from "react-native-simple-toast";
-import { Platform } from "react-native";
-import { Alert } from "react-native";
-import FormData from "form-data";
+import { verifyBetweenValues } from "../../../utils";
 
 const EditGroup: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -37,6 +34,7 @@ const EditGroup: React.FC = () => {
   const [tags, setTags] = useState("");
   const [isPublicGroup, setIsPublicGroup] = useState<boolean>(false);
   const [newAvatar, setNewAvatar] = useState<string | undefined>();
+  const [isSendable, setIsSendable] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -110,17 +108,34 @@ const EditGroup: React.FC = () => {
 
   const renderAvatar = () => {
     if (newAvatar) {
-      return <AvatarImage source={{ uri: newAvatar }} />
+      return <AvatarImage source={{ uri: newAvatar }} />;
     }
 
-    const avatar = group?.group_avatar
+    const avatar = group?.group_avatar;
 
     if (avatar) {
-      return <AvatarImage source={{ uri: avatar.url }} />
+      return <AvatarImage source={{ uri: avatar.url }} />;
     } else {
-      return <AvatarImage source={require("../../../assets/avatar-placeholder.png")} />
+      return (
+        <AvatarImage
+          source={require("../../../assets/avatar-placeholder.png")}
+        />
+      );
     }
-  }
+  };
+
+  const handleCheckFields = () => {
+    if (!verifyBetweenValues(name.length, 0, 100) && name === group?.name)
+      return setIsSendable(false);
+
+    if (
+      !verifyBetweenValues(description.length, 0, 500) &&
+      description === group?.description
+    )
+      return setIsSendable(false);
+
+    return setIsSendable(true);
+  };
 
   useEffect(() => {
     (async () => {
@@ -139,9 +154,7 @@ const EditGroup: React.FC = () => {
     })();
   }, []);
 
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -149,7 +162,10 @@ const EditGroup: React.FC = () => {
       <Container>
         <FormContainer>
           <AvatarContainer>
-            <SwitchAvatarButton onPress={handleSwitchAvatar} activeOpacity={0.6}>
+            <SwitchAvatarButton
+              onPress={handleSwitchAvatar}
+              activeOpacity={0.6}
+            >
               <SwitchAvatarButtonText>
                 <Feather name="camera" size={32} /> {"\n"}
                 Trocar avatar
@@ -158,7 +174,12 @@ const EditGroup: React.FC = () => {
             {renderAvatar()}
           </AvatarContainer>
           <FieldContainer>
-            <Input placeholder="Nome" value={name} onChangeText={setName} />
+            <Input
+              placeholder="Nome"
+              value={name}
+              onChangeText={setName}
+              onTextInput={handleCheckFields}
+            />
           </FieldContainer>
           <FieldContainer>
             <TextArea
@@ -166,6 +187,7 @@ const EditGroup: React.FC = () => {
               placeholder="Descrição"
               value={description}
               onChangeText={setDescription}
+              onTextInput={handleCheckFields}
             />
           </FieldContainer>
           <FieldContainer>
@@ -187,7 +209,11 @@ const EditGroup: React.FC = () => {
               />
             </SwitcherContainer>
           </FieldContainer>
-          <Button title="Concluir" onPress={handleSubmit} />
+          <Button
+            enabled={isSendable}
+            title="Concluir"
+            onPress={handleSubmit}
+          />
         </FormContainer>
       </Container>
     </>

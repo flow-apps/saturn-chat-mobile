@@ -6,6 +6,19 @@ export const Container = styled.ScrollView`
   background-color: ${(props) => props.theme.colors.background};
 `;
 
+
+export const ErrorContainer = styled.View`
+  padding: 10px;
+  margin: 15px 0;
+`;
+
+export const ErrorText = styled.Text`
+  text-align: center;
+  font-size: 18px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.red};
+`;
+
 export const FormContainer = styled.View`
   margin-top: 50px;
   padding: 15px;

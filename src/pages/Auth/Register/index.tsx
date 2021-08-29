@@ -16,6 +16,8 @@ import {
   Avatar,
   ConsentText,
   Container,
+  ErrorContainer,
+  ErrorText,
   FieldError,
   FieldInfo,
   FieldInfoContainer,
@@ -131,12 +133,12 @@ const Register: React.FC = () => {
   }
 
   const handleGoPrivacyPolicie = async () => {
-    await Linking.openURL(`${config.WEBSITE_URL}/privacy`)
-  }
+    await Linking.openURL(`${config.WEBSITE_URL}/privacy`);
+  };
 
   const handleGoGuidelines = async () => {
-    await Linking.openURL(`${config.WEBSITE_URL}/guidelines`)
-  }
+    await Linking.openURL(`${config.WEBSITE_URL}/guidelines`);
+  };
 
   if (loading) {
     return <Loading />;
@@ -166,6 +168,13 @@ const Register: React.FC = () => {
                     : "🖼 Esta foto está perfeita!"}
                 </SelectAvatarSubtitle>
               </SelectAvatarContainer>
+              {registerError && (
+                <ErrorContainer>
+                  <ErrorText>
+                    Erro ao se registrar, provavelmente o email já está em uso, tente fazer login
+                  </ErrorText>
+                </ErrorContainer>
+              )}
               <InputsContainer>
                 <FormField>
                   <Label>Nome</Label>
@@ -221,11 +230,20 @@ const Register: React.FC = () => {
                   )}
                 </FormField>
               </InputsContainer>
-              <Button title="Criar conta" onPress={handleSubmit} />
+              <Button
+                enabled={!emailError && !passError && !passConfirmError}
+                title="Criar conta"
+                onPress={handleSubmit}
+              />
               <ConsentText>
                 Ao clicar em "Criar conta" você aceita a nossa{" "}
-                <Link onPress={handleGoPrivacyPolicie}>Politica de Privacidade</Link> e também nossas{" "}
-                <Link onPress={handleGoGuidelines}>Diretrizes da Comunidade</Link>
+                <Link onPress={handleGoPrivacyPolicie}>
+                  Politica de Privacidade
+                </Link>{" "}
+                e também nossas{" "}
+                <Link onPress={handleGoGuidelines}>
+                  Diretrizes da Comunidade
+                </Link>
               </ConsentText>
             </FormContainer>
           </KeyboardAvoidingView>
