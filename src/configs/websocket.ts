@@ -11,4 +11,4 @@ export default {
   query: {
     token: ""
   }
-} as Partial<ManagerOptions & SocketOptions>
+}

@@ -99,13 +99,16 @@ export const AuthProvider: React.FC = ({ children }) => {
   function signOut() {
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
-        await api.delete(`/users/notify/unregister/${storedToken}`)
+
+        if (storedToken) {
+          await api.delete(`/users/notify/unregister/${storedToken}`)
+          setStoredToken("");
+        }
 
         api.defaults.headers["authorization"] = undefined;
         websocket.query.token = ""
-        setStoredToken("");
-        setUser(null);
         setToken("");
+        setUser(null);
       }
     );
   }
