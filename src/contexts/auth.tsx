@@ -5,6 +5,7 @@ import api from "../services/api";
 import { UserData } from "../../@types/interfaces";
 import FormData from "form-data";
 import { usePersistedState } from "../hooks/usePersistedState";
+import websocket from "../configs/websocket";
 
 interface AuthContextData {
   signed: boolean;
@@ -42,6 +43,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       if (storageUser && storageToken) {
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
+        websocket.query.token = `Bearer ${storageToken}`
         setUser(JSON.parse(String(storageUser)));
         setToken(`Bearer ${storageToken}`);
       }
@@ -55,6 +57,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     if (data.token) {
       await AsyncStorage.setItem("@SaturnChat:token", data.token, () => {
         api.defaults.headers["authorization"] = `Bearer ${data.token}`;
+        websocket.query.token = `Bearer ${data.token}`
         setToken(data.token);
       });
     }
@@ -99,6 +102,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         await api.delete(`/users/notify/unregister/${storedToken}`)
 
         api.defaults.headers["authorization"] = undefined;
+        websocket.query.token = ""
         setStoredToken("");
         setUser(null);
         setToken("");

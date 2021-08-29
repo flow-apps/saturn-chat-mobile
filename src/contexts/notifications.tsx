@@ -36,7 +36,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
     ""
   );
 
-  const { signed, token } = useAuth();
+  const { signed } = useAuth();
   const { colors } = useTheme();
 
   const registerForPushNotifications = useCallback(async () => {
@@ -103,7 +103,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
 
     Notifications.addNotificationResponseReceivedListener(async (res) => {
       if (!signed) return;
-      const socket = getWebsocket(token);
+      const socket = getWebsocket();
       const groupID = res.notification.request.content.data.group_id;
 
       if (res.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {

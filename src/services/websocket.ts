@@ -1,19 +1,9 @@
-import io, { Socket } from "socket.io-client";
+import io from "socket.io-client";
 import config from "../config";
+import websocket from "../configs/websocket";
 
-function getWebsocket(token: string) {
-  const socket = io(config.API_URL, {
-    path: "/socket.io/",
-    timeout: 2000,
-    reconnectionDelay: 500,
-    forceNew: true,
-    jsonp: false,
-    withCredentials: true,
-    transports: ["websocket"],
-    query: {
-      token,
-    },
-  }).connect();
+function getWebsocket() {
+  const socket = io(config.API_URL, websocket).connect();
 
   socket.compress(true)
 
