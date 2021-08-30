@@ -108,3 +108,7 @@ export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.TouchableOpacity`
 `;
+
+export const BannerWrapper = styled.View`
+  margin: 5px 0;
+`

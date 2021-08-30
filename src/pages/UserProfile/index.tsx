@@ -10,7 +10,6 @@ import {
   Container,
   ImagesContainer,
   UserProfileContainer,
-  UserName,
   GroupsContainer,
   GroupsTitle,
   Groups,
@@ -26,6 +25,7 @@ import { UserData } from "../../../@types/interfaces";
 import api from "../../services/api";
 import { View } from "react-native";
 import PremiumName from "../../components/PremiumName";
+import { useAds } from "../../contexts/ads";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -35,12 +35,15 @@ const UserProfile: React.FC = () => {
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation();
+  const { Interstitial }= useAds()
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
   useEffect(() => {
     (async () => {
       setLoading(true);
+      const isReady = await Interstitial.getIsReadyAsync();
+      if (isReady) await Interstitial.showAdAsync();
       const res = await api.get(`/users?user_id=${id}`);
 
       if (res.status === 200) {

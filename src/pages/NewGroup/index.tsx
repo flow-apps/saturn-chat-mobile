@@ -95,10 +95,7 @@ const NewGroup: React.FC = () => {
   }
 
   function handleCheckFields() {
-    if (
-      verifyBetweenValues(name.length, 0, 100) &&
-      verifyBetweenValues(description.length, 0, 500)
-    )
+    if (verifyBetweenValues(name.length, 0, 100))
       return setIsSendable(true)
     setIsSendable(false)
   }

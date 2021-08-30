@@ -40,6 +40,7 @@ import api from "../../services/api";
 import {
   AudioButton,
   AudioContainer,
+  BannerWrapper,
   Container,
   EmojiBoardContainer,
   EmojiButton,
@@ -65,6 +66,7 @@ import { useAds } from "../../contexts/ads";
 import Typing from "../../components/Chat/Typing";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import Banner from "../../components/Ads/Banner";
 
 const emoji = new EmojiJS();
 
@@ -84,8 +86,8 @@ const Chat: React.FC = () => {
   const { Interstitial } = useAds();
   const { analytics } = useFirebase();
   const { colors } = useTheme();
-  const { token, user } = useAuth();
-  const { allConfigs, userConfigs } = useRemoteConfigs();
+  const { user } = useAuth();
+  const { userConfigs } = useRemoteConfigs();
 
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -480,6 +482,9 @@ const Chat: React.FC = () => {
         </HeaderButton>
       </Header>
       <Container>
+        <BannerWrapper>
+          <Banner size="leaderboard" />
+        </BannerWrapper>
         <Typing typingUsers={typingUsers} />
         <MessageContainer>
           <Messages

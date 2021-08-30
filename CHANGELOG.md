@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version
 
+## 0.0.3
+
+- Add and configure React Native Firebase
+- Add more ads in many screens
+
 ## 0.0.2
 
 - Fix the websocket connection.
