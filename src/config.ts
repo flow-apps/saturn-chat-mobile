@@ -4,7 +4,7 @@ const documentsPath = FileSystem.documentDirectory;
 
 export default {
   API_URL: __DEV__ ? "http://192.168.0.112:3000" : "http://192.168.0.112:3000",
-  WEBSITE_URL: "https://saturn-chat-web.vercel.app",
+  WEBSITE_URL: "https://saturn-chat.vercel.app",
   FILE_PATHS: {
     AUDIO: `${documentsPath}`,
     DOCUMENTS: `${documentsPath}`,

@@ -8,6 +8,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     version: "0.0.1",
     orientation: "default",
     icon: "./assets/icon.png",
+    plugins: [
+      "@react-native-firebase/app",
+      "@react-native-firebase/perf",
+      "@react-native-firebase/crashlytics"
+    ],
     experiments: {
       turboModules: true,
     },

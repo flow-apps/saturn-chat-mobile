@@ -24,13 +24,14 @@ import expo.modules.updates.UpdatesController;
 
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
+import androidx.multidex.MultiDexApplication;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
 
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends MultiDexApplication implements ReactApplication {
   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
     new BasePackageList().getPackageList()
   );

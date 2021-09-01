@@ -2,6 +2,14 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version
 
+## 0.0.3_1
+
+- Add Firebase Crashlytics
+- Add Firebase Performance
+- Configure Firebase for more performance in Android
+- Add new website url
+- Add new Deep Linking for website
+
 ## 0.0.3
 
 - Add and configure React Native Firebase

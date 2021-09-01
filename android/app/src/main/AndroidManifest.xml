@@ -35,7 +35,14 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="https"/>
-        <data android:host="saturn-chat-web.vercel.app" android:pathPrefix="/" />
+        <data android:host="saturn-chat.vercel.app" android:pathPrefix="/" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="https"/>
+        <data android:host="saturnchat.app" android:pathPrefix="/" />
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>

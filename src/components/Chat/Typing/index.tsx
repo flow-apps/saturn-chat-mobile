@@ -11,7 +11,7 @@ const Typing = ({ typingUsers }: TypingProps) => {
 
   const { user } = useAuth()
   const validUsers = useMemo(() => {
-    return typingUsers.filter(TUser => TUser.id === user?.id)
+    return typingUsers.filter(TUser => TUser.id !== user?.id)
   }, [typingUsers.length])
 
   const userNames = validUsers.map(User => User.name)
