@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import Header from "../../components/Header";
+import perf from "@react-native-firebase/perf"
 
 import {
   Container,
@@ -72,6 +73,8 @@ const NewGroup: React.FC = () => {
     data.append("tags", tags);
 
     setCreating(true);
+    const trace = await perf()?.startTrace("create_group")
+    await trace.start()
     api
       .post("/groups", data, {
         headers: {
@@ -83,15 +86,20 @@ const NewGroup: React.FC = () => {
           const isReady = await Interstitial.getIsReadyAsync();
           if (isReady) await Interstitial.showAdAsync();
 
+          trace.putMetric("group_id", response.data.id)
           await analytics.logEvent("created_group", {
             group_id: response.data.id,
           });
 
           navigator.navigate("Groups");
+
         }
       })
       .catch((err) => console.log(err))
-      .finally(() => setCreating(false));
+      .finally(async () => {
+        await trace.stop()
+        setCreating(false)
+      });
   }
 
   function handleCheckFields() {

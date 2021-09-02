@@ -14,6 +14,8 @@ import {
 } from "react-native";
 
 import EmojiJS from "emoji-js";
+import perf from "@react-native-firebase/perf";
+import crashlytics from "@react-native-firebase/crashlytics";
 
 import { ProgressBar } from "react-native-paper";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
@@ -30,7 +32,6 @@ import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
 
 import FormData from "form-data";
-import Toast from "react-native-simple-toast";
 import Alert from "../../components/Alert";
 import EmojiPicker from "../../components/Chat/EmojiPicker";
 import Header from "../../components/Header";
@@ -392,10 +393,16 @@ const Chat: React.FC = () => {
   const handleMessageSubmit = useCallback(async () => {
     handleTypingTimeout();
 
-    if (files.length <= 0 && message.length === 0) return;
+    if (!files.length && !message.length) return;
 
     if (files.length <= 0) {
+      const trace = perf().newTrace("send_message_without_file");
+      await trace.start();
+
       socket?.emit("new_user_message", { message });
+
+      await trace.stop();
+
       setMessage("");
       return;
     }
@@ -403,6 +410,7 @@ const Chat: React.FC = () => {
     if (files.length > 0) {
       setSendingFile(true);
       const filesData = new FormData();
+      const trace = await perf().newTrace("send_message_with_files");
 
       files.map((file) => {
         if (file.file.type === "success") {
@@ -416,10 +424,9 @@ const Chat: React.FC = () => {
         }
       });
 
-      const response = await api.post(
-        `messages/SendAttachment/${id}?type=files`,
-        filesData,
-        {
+      await trace.start();
+      api
+        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -427,21 +434,27 @@ const Chat: React.FC = () => {
             const totalSended = Math.round((event.loaded * 100) / event.total);
             setSendedFileProgress(totalSended);
           },
-        }
-      );
-
-      if (response.status === 200) {
-        console.log(response.data);
-        socket?.emit("new_message_with_files", {
-          message,
-          message_id: response.data.message_id,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res.data);
+            socket?.emit("new_message_with_files", {
+              message,
+              message_id: res.data.message_id,
+            });
+          }
+        })
+        .catch((error) => {
+          crashlytics()?.recordError(error, "Send File Error");
         });
-      }
-      setSendingFile(false);
-      setSendedFileProgress(0);
-      setFiles([]);
-      setMessage("");
+
+      await trace.stop();
     }
+
+    setSendingFile(false);
+    setSendedFileProgress(0);
+    setFiles([]);
+    setMessage("");
   }, [message]);
 
   const getItemID = (item: MessageData) => item.id;

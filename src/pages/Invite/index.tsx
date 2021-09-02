@@ -23,12 +23,14 @@ import Loading from "../../components/Loading";
 import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";
 import { useAuth } from "../../contexts/auth";
+import { useFirebase } from "../../contexts/firebase";
 
 const Invite: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [invite, setInvite] = useState<null | InviteData>(null);
   const [participating, setParticipating] = useState(false);
   const { user } = useAuth();
+  const { analytics } = useFirebase()
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -94,6 +96,10 @@ const Invite: React.FC = () => {
         if (res.status === 200) {
           const data = res.data as ParticipantData;
 
+          analytics.logEvent("join_group", {
+            method: "invite",
+            group_id: data.group_id
+          })
           navigation.navigate("Chat", { id: data.group_id });
         }
       })

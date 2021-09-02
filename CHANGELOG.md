@@ -2,7 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version
 
-## 0.0.3_1
+## 0.0.3.2
+
+- Add HTTP Metric in Axios requests
+- Add Analytics in invite screen
+
+## 0.0.3.1
 
 - Add Firebase Crashlytics
 - Add Firebase Performance
@@ -10,16 +15,16 @@ NOTE: The versions here not represents the release versions, check the App Store
 - Add new website url
 - Add new Deep Linking for website
 
-## 0.0.3
+## 0.0.3.0
 
 - Add and configure React Native Firebase
 - Add more ads in many screens
 
-## 0.0.2
+## 0.0.2.0
 
 - Fix the websocket connection.
 
-## 0.0.1
+## 0.0.1.0
 
 - Add fields validation in many screens
 - Add disable option in buttons
