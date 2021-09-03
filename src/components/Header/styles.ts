@@ -1,3 +1,4 @@
+import { MotiView } from "moti";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";

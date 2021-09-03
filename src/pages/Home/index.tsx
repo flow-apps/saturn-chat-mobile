@@ -1,5 +1,6 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
+import { MotiView } from "moti";
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
@@ -89,15 +90,42 @@ const Home: React.FC = () => {
           </HeaderButton>
         </>
       </Header>
-      <QuickAccessGroupsContainer>
+      <QuickAccessGroupsContainer
+        from={{
+          opacity: 0.5,
+          translateY: 100
+        }}
+        animate={{
+          opacity: 1,
+          translateY: 0
+        }}
+        transition={{
+          type: "timing",
+          duration: 800
+        }}
+      >
         <QuickAccessTitle>Acesso rápido</QuickAccessTitle>
         <QuickAccessGroupsScroll>
           <FlatList
             horizontal
             ListHeaderComponent={() => (
-              <NewGroupButton onPress={handleGoNewGroup}>
-                <Feather name="plus" size={35} color={colors.secondary} />
-              </NewGroupButton>
+              <MotiView
+                from={{
+                  rotate: "90deg"
+                }}
+                animate={{
+                  rotate: "0deg"
+                }}
+                transition={{
+                  type: "timing",
+                  duration: 1000,
+                  delay: 800,
+                }}
+              >
+                <NewGroupButton onPress={handleGoNewGroup}>
+                  <Feather name="plus" size={35} color={colors.secondary} />
+                </NewGroupButton>
+              </MotiView>
             )}
             showsHorizontalScrollIndicator={false}
             data={groups}

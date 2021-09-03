@@ -3,13 +3,14 @@ import FastImage from 'react-native-fast-image'
 import LottieView from "lottie-react-native"
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
+import { MotiView } from "moti"
 
 export const Container = styled.View`
   flex: 1;
   background-color: ${(props) => props.theme.colors.background};
 `;
 
-export const QuickAccessGroupsContainer = styled.View`
+export const QuickAccessGroupsContainer = styled(MotiView)`
   width: 100%;
   padding: 10px;
   margin-top: 10px;

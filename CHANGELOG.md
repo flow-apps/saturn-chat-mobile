@@ -2,6 +2,13 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version
 
+## 0.0.4.0
+
+- Add Moti
+- Add animation in some components
+- Fix file selector
+  - Fix total files size on remove a file
+
 ## 0.0.3.2
 
 - Add HTTP Metric in Axios requests

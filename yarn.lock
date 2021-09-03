@@ -1237,7 +1237,7 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@emotion/is-prop-valid@^0.8.8":
+"@emotion/is-prop-valid@^0.8.2", "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
   resolved "https://registry.npmjs.org/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz"
   integrity sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==
@@ -2081,6 +2081,20 @@
   dependencies:
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
+
+"@motify/components@^0.12.3":
+  version "0.12.3"
+  resolved "https://registry.yarnpkg.com/@motify/components/-/components-0.12.3.tgz#69156409b869890c5263d6142b59b7850edd4633"
+  integrity sha512-5Rjx+jcDRHqDhU8Nllu2YdHgweB2UAND2li7ryq77nrVoN2sm6J+avvuzZZyhTRj5E10qjepVK16lbysrwd2Fg==
+  dependencies:
+    "@motify/core" "^0.12.3"
+
+"@motify/core@^0.12.3":
+  version "0.12.3"
+  resolved "https://registry.yarnpkg.com/@motify/core/-/core-0.12.3.tgz#dd5e56502ba1f92e3efb00575295ff3579187aa3"
+  integrity sha512-JDvMpsKLgq/villih/HMrziwZmVvhCOYYn8nXxeepgGa4754xrBKrrSH4VNxInimH+oqgdtF/d0FbMD5vrySEA==
+  dependencies:
+    framer-motion "^3.9.1"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -5247,6 +5261,24 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+framer-motion@^3.9.1:
+  version "3.10.6"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-3.10.6.tgz#67737ef05ed0408860751d81c919770ac831b394"
+  integrity sha512-OxOtKgQS4km9a8dm0IMBtNNp4f0DiHfQ/IzxKs818+Kg9V/Ve/pRUJ2dtWBb6+W4lIPNLgRSpbOwOACVj15XcQ==
+  dependencies:
+    framesync "5.2.0"
+    hey-listen "^1.0.8"
+    popmotion "9.3.1"
+    style-value-types "4.1.1"
+    tslib "^1.10.0"
+  optionalDependencies:
+    "@emotion/is-prop-valid" "^0.8.2"
+
+framesync@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/framesync/-/framesync-5.2.0.tgz#f14480654cd05a6af4c72c9890cad93556841643"
+  integrity sha512-dcl92w5SHc0o6pRK3//VBVNvu6WkYkiXmHG6ZIXrVzmgh0aDYMDAaoA3p3LH71JIdN5qmhDcfONFA4Lmq22tNA==
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.npmjs.org/fresh/-/fresh-0.5.2.tgz"
@@ -5557,6 +5589,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hermes-engine@0.5.2-rc1:
+  version "0.5.2-rc1"
+  resolved "https://registry.yarnpkg.com/hermes-engine/-/hermes-engine-0.5.2-rc1.tgz#01faccf58b45f6a4592443c1acf98f0ddbd5bf36"
+  integrity sha512-+cLjML2+XVSLPdEtU/b5FwtF+3yhxV8dfuviRS3MPdMxlxDlG/Iu3wFvTByOzTzWaQyPg+Q/68o5HLrL4QqJng==
+
 hermes-engine@~0.5.0:
   version "0.5.1"
   resolved "https://registry.npmjs.org/hermes-engine/-/hermes-engine-0.5.1.tgz"
@@ -5568,6 +5605,11 @@ hermes-profile-transformer@^0.0.6:
   integrity sha512-cnN7bQUm65UWOy6cbGcCcZ3rpwW8Q/j4OP5aWRhEry4Z2t2aR1cjrbp0BS+KiBN0smvP1caBgAuxutvyvJILzQ==
   dependencies:
     source-map "^0.7.3"
+
+hey-listen@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/hey-listen/-/hey-listen-1.0.8.tgz#8e59561ff724908de1aa924ed6ecc84a56a9aa68"
+  integrity sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==
 
 hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.3.0:
   version "3.3.2"
@@ -7270,6 +7312,14 @@ mockdate@^3.0.2:
   resolved "https://registry.npmjs.org/mockdate/-/mockdate-3.0.5.tgz"
   integrity sha512-iniQP4rj1FhBdBYS/+eQv7j1tadJ9lJtdzgOpvsOHng/GbcDh2Fhdeq+ZRldrPYdXvCyfFUmFeEwEGXZB5I/AQ==
 
+moti@^0.12.3:
+  version "0.12.3"
+  resolved "https://registry.yarnpkg.com/moti/-/moti-0.12.3.tgz#93709dc8d0b5cb1970dc8d974cbec1c1845ad695"
+  integrity sha512-Ln4D3v/G1qlPgvUJn2zyqw6dIU1gp/PWV0m0B07LM6Lm/m7sj/JPeytvsi8UScbc57eDxwsZMSjsmGlKh8YCQQ==
+  dependencies:
+    "@motify/components" "^0.12.3"
+    "@motify/core" "^0.12.3"
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
@@ -8088,6 +8138,16 @@ pngjs@^5.0.0:
   version "5.0.0"
   resolved "https://registry.npmjs.org/pngjs/-/pngjs-5.0.0.tgz"
   integrity sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==
+
+popmotion@9.3.1:
+  version "9.3.1"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.3.1.tgz#134319ed4b9b8e3ec506c99064f7b2f14bc05781"
+  integrity sha512-Qozvg8rz2OGeZwWuIjqlSXqqgWto/+QL24ll8sAAc0n71KY/wvN1W4sAASxTuHv8YWdDnk9u9IdadyPo2DGvDA==
+  dependencies:
+    framesync "5.2.0"
+    hey-listen "^1.0.8"
+    style-value-types "4.1.1"
+    tslib "^1.10.0"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -9423,6 +9483,14 @@ strip-final-newline@^2.0.0:
   resolved "https://registry.yarnpkg.com/strip-final-newline/-/strip-final-newline-2.0.0.tgz#89b852fb2fcbe936f6f4b3187afb0a12c1ab58ad"
   integrity sha512-BrpvfNAE3dcvq7ll3xVumzjKjZQ5tI1sEUIKr3Uoks0XUl45St3FlatVqef9prk4jRDzhW6WZg+3bk93y6pLjA==
 
+style-value-types@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-4.1.1.tgz#15d08bd9bb17ac3f5d4a863bf9d5e4eb8e4f0686"
+  integrity sha512-cNLrl6jk+I1T18ZI2KIp/fcqKVuykcNELDrOz7y+TYZR97xmNdN0ewupURvVFnQxVrRJv98TMBq92VMsggq3kw==
+  dependencies:
+    hey-listen "^1.0.8"
+    tslib "^1.10.0"
+
 styled-components@^5.2.3:
   version "5.2.3"
   resolved "https://registry.npmjs.org/styled-components/-/styled-components-5.2.3.tgz"
@@ -9677,6 +9745,11 @@ ts-interface-checker@^0.1.9:
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
+
+tslib@^1.10.0:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
+  integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
 tslib@^2.3.0:
   version "2.3.0"

@@ -30,7 +30,7 @@ const SelectedFile = ({ onRemoveFile, file }: FileProps) => {
         />
       ) : (
         <OtherFile>
-          <Feather name="file-text" size={25} color={colors.black} />
+          <Feather name="file" size={25} color={colors.black} />
         </OtherFile>
       )}
     </File>

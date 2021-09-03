@@ -1,3 +1,4 @@
+import 'react-native-reanimated'
 import React from "react";
 import Routes from "./src/routes";
 import AppLoading from "expo-app-loading";

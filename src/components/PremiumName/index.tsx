@@ -4,6 +4,7 @@ import { Container, EmblemContainer, Name, NameContainer } from "./styles";
 import { useTheme } from "styled-components";
 import fonts from "../../styles/fonts";
 import EmblemModal from "../Modals/EmblemModal";
+import { MotiView } from "moti";
 
 export interface PremiumNameProps {
   name: string;
@@ -40,9 +41,23 @@ const PremiumName = ({
           justifyContent: align === "center" ? "center" : "flex-start"
         }}
       >
-        <EmblemContainer onPress={handleEmblemDetails} isPremium={hasPremium || premium || false}>
-          <FontAwesome name="star" size={emblemSize || (nameSize || 16) + 4} color={colors.secondary} />
-        </EmblemContainer>
+        <MotiView
+          from={{
+            opacity: 0.8
+          }}
+          animate={{
+            opacity: 1
+          }}
+          transition={{
+            type: "timing",
+            duration: 1500,
+            loop: true
+          }}
+        >
+          <EmblemContainer onPress={handleEmblemDetails} isPremium={hasPremium || premium || false}>
+            <FontAwesome name="star" size={emblemSize || (nameSize || 16) + 4} color={colors.secondary} />
+          </EmblemContainer>
+        </MotiView>
         <NameContainer>
           <Name 
             name={name} 

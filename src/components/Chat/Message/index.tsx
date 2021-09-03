@@ -233,6 +233,7 @@ const Message = ({
         <MessageContentContainer
           isRight={message.author.id === user.id}
           onLongPress={() => setMsgOptions(true)}
+          delayLongPress={250}
         >
           <Alert
             title="⚠ Cuidado, pode ser perigoso"

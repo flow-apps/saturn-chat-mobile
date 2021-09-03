@@ -11,7 +11,7 @@ class FileService {
   readonly filesSizeUsed: number;
   readonly sizeLimit: number;
 
-  constructor(sizeUsed: number, limit?: number) {
+  constructor(sizeUsed: number, limit?: number) {    
     this.filesSizeUsed = sizeUsed;
     this.sizeLimit = limit || 12;
   }
@@ -28,10 +28,12 @@ class FileService {
     const file = await DocumentPicker.getDocumentAsync({
       copyToCacheDirectory: true
     });
-
+    
+    
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1000 / 1000);
       const usageSize = this.filesSizeUsed + fileSize;
+      console.log(usageSize);
       const type = MimeTypes.lookup(file.name).split("/")[0] as string;
       if (fileSize > this.sizeLimit || usageSize > this.sizeLimit) {
         return {
@@ -46,6 +48,7 @@ class FileService {
         error: false,
         errorType: null,
         usageSize,
+        fileSize,
         selectedFile: {
           file,
           type,

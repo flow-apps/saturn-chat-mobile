@@ -106,7 +106,7 @@ export const EmojiBoardContainer = styled.View`
 
 export const AudioContainer = styled.View``;
 
-export const AudioButton = styled.TouchableOpacity`
+export const AudioButton = styled.Pressable`
 `;
 
 export const BannerWrapper = styled.View`

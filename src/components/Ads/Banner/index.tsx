@@ -46,7 +46,18 @@ const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
   if (isPremium) return <></>;
 
   return (
-    <Container>
+    <Container
+      from={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+      }}
+      transition={{
+        type: "timing",
+        duration: 1200
+      }}
+    >
       <RemoveBanner onPress={handleGoPremium}>
         <RemoveBannerText>
           <Feather name="info" /> Remover anúncio

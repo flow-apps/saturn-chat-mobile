@@ -48,6 +48,7 @@ const MessageOptions = ({
         onRequestClose={close}
         onDismiss={close}
         animationType="fade"
+        statusBarTranslucent
         transparent
       >
         <TouchableOpacity

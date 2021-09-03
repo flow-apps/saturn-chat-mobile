@@ -68,6 +68,7 @@ import Typing from "../../components/Chat/Typing";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import Banner from "../../components/Ads/Banner";
+import { MotiView, useAnimationState } from "moti";
 
 const emoji = new EmojiJS();
 
@@ -116,6 +117,17 @@ const Chat: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
+
+  const toggleAnimationRecordingAudioState = useAnimationState({
+    recording: {
+      opacity: 1,
+      translationY: 0,
+    },
+    stopped: {
+      opacity: 0,
+      translationY: 20,
+    },
+  });
 
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
@@ -216,6 +228,7 @@ const Chat: React.FC = () => {
       if (record) {
         setRecordingAudio(record.recording);
       }
+      toggleAnimationRecordingAudioState.transitionTo("recording");
     } catch (error) {
       setRecordingAudio(undefined);
       new Error(error);
@@ -224,15 +237,16 @@ const Chat: React.FC = () => {
 
   const stopRecordAudio = async () => {
     try {
+      toggleAnimationRecordingAudioState.transitionTo("stopped");
       if (!recordingAudio) return;
 
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          const audioData = new FormData();
-
           setRecordingAudio(undefined);
           setAudioDuration(0);
+
+          const audioData = new FormData();
 
           audioData.append("duration", duration);
           audioData.append("size", audioInfos.size);
@@ -289,12 +303,15 @@ const Chat: React.FC = () => {
 
       const file = fileRes.selectedFile;
       const isSelected = files.find(
-        (f) => f.file.type !== "cancel" && f.file.name === file.file.name
+        (f) =>
+          f.file.type !== "cancel" &&
+          f.file.name === file.file.name &&
+          f.file.lastModified === f.file.lastModified
       );
 
       if (isSelected) return setIsSelectedFile(true);
       if (fileRes.usageSize)
-        setFilesSizeUsed((used) => used + fileRes.usageSize);
+        setFilesSizeUsed(fileRes.usageSize);
 
       setFiles((oldFiles) => [
         { file: file.file, type: file.type },
@@ -311,8 +328,14 @@ const Chat: React.FC = () => {
   };
 
   const removeFile = (position: number) => {
+    const file = files.filter((f, index) => index === position).shift()
+
+    if (file?.file.type !== "success") return
+
+    const fileSize = Math.trunc(file.file.size / 1000 / 1000)
     const filteredFiles = files.filter((f, index) => index !== position);
     setFiles(filteredFiles);
+    setFilesSizeUsed(used => used - fileSize)
   };
 
   const handleFetchMoreMessages = async (
@@ -437,7 +460,6 @@ const Chat: React.FC = () => {
         })
         .then((res) => {
           if (res.status === 200) {
-            console.log(res.data);
             socket?.emit("new_message_with_files", {
               message,
               message_id: res.data.message_id,
@@ -514,7 +536,11 @@ const Chat: React.FC = () => {
           />
         </MessageContainer>
         <FormContainer>
-          {recordingAudio && <RecordingAudio audioDuration={audioDuration} />}
+          {recordingAudio && (
+            <MotiView state={toggleAnimationRecordingAudioState}>
+              <RecordingAudio audioDuration={audioDuration} />
+            </MotiView>
+          )}
           {files.length > 0 && !sendingFile && (
             <SelectedFiles files={files} onFileRemove={removeFile} />
           )}
@@ -585,15 +611,13 @@ const Chat: React.FC = () => {
             </OptionsContainer>
           </InputContainer>
 
-          {showEmojiPicker ? (
+          {showEmojiPicker && (
             <EmojiBoardContainer>
               <EmojiPicker
                 onClick={handleSelectEmoji}
                 visible={showEmojiPicker}
               />
             </EmojiBoardContainer>
-          ) : (
-            <></>
           )}
         </FormContainer>
       </Container>

@@ -1,7 +1,8 @@
 import styled from 'styled-components/native';
 import fonts from '../../../styles/fonts';
+import { MotiView } from "moti"
 
-export const Container = styled.View`
+export const Container = styled(MotiView)`
 `;
 
 export const RemoveBanner = styled.TouchableOpacity`

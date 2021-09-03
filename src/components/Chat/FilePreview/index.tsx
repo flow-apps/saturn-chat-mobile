@@ -19,9 +19,7 @@ import {
   FileSize,
 } from "./styles";
 import { useEffect } from "react";
-import RNFetchBlob from "rn-fetch-blob";
-import { Linking, PermissionsAndroid, Platform } from "react-native";
-import SimpleToast from "react-native-simple-toast";
+import { Linking } from "react-native";
 
 interface IFileProps {
   name: string;
