@@ -14,6 +14,13 @@ import {
   TopOptionsContainer,
 } from "./styles";
 
+import EmojiJs from "emoji-js"
+
+const emojiJs = new EmojiJs()
+
+emojiJs.replace_mode = "unified"
+emojiJs.use_css_imgs = false
+
 const Storage = new StorageService();
 
 interface EmojiPickerProps {
@@ -134,14 +141,32 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
     return item.name;
   };
 
-  const renderEmoji = ({ item }: any) => (
-    <EmojiContainer onPress={() => handleSelectEmoji(item)}>
-      <Emoji>{item.unified && String(codeToEmoji(item.unified))}</Emoji>
-    </EmojiContainer>
-  );
+  const renderEmoji = ({ item }: any) => {
+
+    const emoji = String(codeToEmoji(item.unified))
+
+    return (
+      <EmojiContainer onPress={() => handleSelectEmoji(item)}>
+        <Emoji>{emojiJs.replace_unified(emoji)}</Emoji>
+      </EmojiContainer>
+    )
+  }
 
   return (
-    <Container visible={visible}>
+    <Container 
+      visible={visible}
+      from={{
+        translateY: 50,
+        opacity: 0
+      }}
+      animate={{
+        translateY: 0,
+        opacity: 1
+      }}
+      transition={{
+        type: "spring",
+      }}
+    >
       <TopOptionsContainer>
         <TopOption
           onLongPress={clearEmojisHistory}

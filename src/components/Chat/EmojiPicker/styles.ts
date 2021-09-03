@@ -1,3 +1,4 @@
+import { MotiView } from "moti";
 import { memo } from "react";
 import { Dimensions } from "react-native";
 import styled from "styled-components/native";
@@ -7,7 +8,7 @@ interface IContainerProps {
   visible: boolean;
 }
 
-export const Container = styled.View<IContainerProps>`
+export const Container = styled(MotiView)<IContainerProps>`
   display: ${(props) => (props.visible ? "flex" : "none")};
   height: 200px;
   background-color: ${(props) => props.theme.colors.shape};
