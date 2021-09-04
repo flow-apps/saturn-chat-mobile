@@ -2,6 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version
 
+## 0.0.4.1
+
+- Add animations in more components
+- Fix duplicates names in users typing
+- Remove ad from chat screen
+
 ## 0.0.4.0
 
 - Add Moti
