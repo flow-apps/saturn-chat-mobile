@@ -33,12 +33,15 @@ import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 import { useRemoteConfigs } from "../../../contexts/remoteConfigs";
 
+import { connectAsync } from "expo-in-app-purchases"
+
 const Premium: React.FC = () => {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const { allConfigs } = useRemoteConfigs();
 
   const handleGoChoosePlan = () => navigation.navigate("ChoosePlan");
+
 
   return (
     <>

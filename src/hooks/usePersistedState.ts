@@ -1,5 +1,5 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { StorageService } from "../services/Storage";
+import { StorageService } from "../services/storage";
 
 type Response<T> = [T, Dispatch<SetStateAction<T>>];
 

@@ -14,6 +14,8 @@ import { usePersistedState } from "../hooks/usePersistedState";
 
 interface NotificationsContextProps {
   expoToken: string;
+  enabled: boolean;
+  toggleEnabledNotifications: () => void
 }
 
 const NotificationsContext = createContext<NotificationsContextProps>(
@@ -31,6 +33,7 @@ Notifications.setNotificationHandler({
 
 const NotificationsProvider: React.FC = ({ children }) => {
   const [expoToken, setExpoToken] = useState("");
+  const [enabled, setEnabled] = useState(true)
   const [storedToken, setStoredToken] = usePersistedState(
     "@SaturnChat:NotificationToken",
     ""
@@ -131,6 +134,15 @@ const NotificationsProvider: React.FC = ({ children }) => {
     return newToken;
   }, [expoToken]);
 
+  const toggleEnabledNotifications = useCallback(async () => {
+    if (!signed || !expoToken.length) return
+    setEnabled(old => !old)
+
+    await api
+      .patch(`/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`)
+
+  }, [expoToken])
+
   useEffect(() => {
     (async () => {
       const newToken = await registerForPushNotifications();
@@ -142,7 +154,10 @@ const NotificationsProvider: React.FC = ({ children }) => {
         await api.post("/users/notify/register", {
           notificationToken: newToken,
           platform: Platform.OS,
-        });
+        })
+        .then(res => {
+          setEnabled(res.data.send_notifications)
+        })
       }
     })();
   }, []);
@@ -151,6 +166,8 @@ const NotificationsProvider: React.FC = ({ children }) => {
     <NotificationsContext.Provider
       value={{
         expoToken,
+        toggleEnabledNotifications,
+        enabled
       }}
     >
       {children}

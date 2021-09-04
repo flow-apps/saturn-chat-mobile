@@ -136,7 +136,7 @@ const GroupConfig: React.FC = () => {
               <Feather name="file" size={25} /> Ver detalhes
             </OptionText>
           </OptionContainer>
-          <OptionContainer>
+          {/* <OptionContainer>
             <OptionText>
               <Feather name="bell" size={25} /> Notificações
             </OptionText>
@@ -144,7 +144,7 @@ const GroupConfig: React.FC = () => {
               currentValue={notifications}
               onChangeValue={handleSetNotifications}
             />
-          </OptionContainer>
+          </OptionContainer> */}
           <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
           {group.owner.id === user?.id ? (
             <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>

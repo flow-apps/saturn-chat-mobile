@@ -114,17 +114,21 @@ const Register: React.FC = () => {
 
   async function handleSubmit() {
     const data = new formData();
-    const uriParts = avatar?.uri.split(".");
-    const fileType = uriParts?.pop();
 
     data.append("name", name);
     data.append("email", email);
     data.append("password", password);
-    data.append("avatar", {
-      uri: avatar?.uri,
-      name: `avatar.${fileType}`,
-      type: `image/${fileType}`,
-    });
+
+    if (avatar) {
+      const uriParts = avatar?.uri.split(".");
+      const fileType = uriParts?.pop();
+
+      data.append("avatar", {
+        uri: avatar?.uri,
+        name: `avatar.${fileType}`,
+        type: `image/${fileType}`,
+      });
+    }
 
     await signUp(data);
     await analytics.logEvent("sign_up", {
@@ -171,7 +175,8 @@ const Register: React.FC = () => {
               {registerError && (
                 <ErrorContainer>
                   <ErrorText>
-                    Erro ao se registrar, provavelmente o email já está em uso, tente fazer login
+                    Erro ao se registrar, provavelmente o email já está em uso,
+                    tente fazer login
                   </ErrorText>
                 </ErrorContainer>
               )}

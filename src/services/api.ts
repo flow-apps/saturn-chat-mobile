@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import config from "../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import perf, { FirebasePerformanceTypes } from "@react-native-firebase/perf";
+import SimpleToast from "react-native-simple-toast";
 
 const token = AsyncStorage.getItem("@SaturnChat:token") || undefined;
 
@@ -48,12 +49,12 @@ api.interceptors.response.use(
       const { httpMetric } = error.config.metadata as {
         httpMetric: FirebasePerformanceTypes.HttpMetric;
       };
-
       httpMetric.setHttpResponseCode(error.response.status);
       httpMetric.setResponseContentType(error.response.headers["content-type"]);
       httpMetric.putAttribute("message", error.response.data.message);
       await httpMetric.stop();
     } finally {
+      SimpleToast.show(`Request failed (${error.response.status})`);
       return Promise.reject(error);
     }
   }

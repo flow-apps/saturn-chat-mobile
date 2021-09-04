@@ -59,16 +59,19 @@ const NewGroup: React.FC = () => {
   async function handleCreateGroup() {
     const data = new FormData();
 
-    const uriParts = groupPhoto?.uri.split(".");
-    const fileType = uriParts?.pop();
-
+    
     data.append("name", name);
     data.append("description", description);
-    data.append("group_avatar", {
-      uri: groupPhoto?.uri,
-      name: `group_avatar.${fileType}`,
-      type: `image/${fileType}`,
-    });
+    if (groupPhoto) {
+      const uriParts = groupPhoto?.uri.split(".");
+      const fileType = uriParts?.pop();
+      
+      data.append("group_avatar", {
+        uri: groupPhoto?.uri,
+        name: `group_avatar.${fileType}`,
+        type: `image/${fileType}`,
+      });
+    }
     data.append("privacy", isPublicGroup ? "PUBLIC" : "PRIVATE");
     data.append("tags", tags);
 
@@ -83,16 +86,11 @@ const NewGroup: React.FC = () => {
       })
       .then(async (response) => {
         if (response.status === 200) {
-          const isReady = await Interstitial.getIsReadyAsync();
-          if (isReady) await Interstitial.showAdAsync();
-
+          navigator.navigate("Groups");
           trace.putMetric("group_id", response.data.id)
           await analytics.logEvent("created_group", {
             group_id: response.data.id,
           });
-
-          navigator.navigate("Groups");
-
         }
       })
       .catch((err) => console.log(err))

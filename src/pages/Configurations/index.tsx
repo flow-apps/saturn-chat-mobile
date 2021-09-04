@@ -23,6 +23,7 @@ import * as Localize from "expo-localization"
 import Banner from "../../components/Ads/Banner";
 import { Linking } from "react-native";
 import config from "../../config";
+import { useNotifications } from "../../contexts/notifications";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -30,6 +31,7 @@ const Configurations: React.FC = () => {
   const navigation = useNavigation();
   const { signOut } = useAuth();
   const { toggleTheme, currentThemeName } = useThemeController();
+  const { toggleEnabledNotifications, enabled } = useNotifications()
   const { colors } = useTheme();
 
   const handleSignOut = useCallback(() => {
@@ -100,9 +102,18 @@ const Configurations: React.FC = () => {
                   onChangeValue={toggleTheme}
                 />
               </ConfigContainer>
+              <ConfigContainer>
+                <ConfigTitle>
+                  <Feather name={enabled ? "bell" : "bell-off"} size={16} /> Notificações
+                </ConfigTitle>
+                <Switcher
+                  currentValue={enabled}
+                  onChangeValue={toggleEnabledNotifications}
+                />
+              </ConfigContainer>
               <ConfigContainer onPress={handleGoPrivacyPolicie}>
                 <ConfigTitle>
-                  <Feather name="lock" size={16} /> Politícas de Privacidade
+                  <Feather name="lock" size={16} /> Politicas de Privacidade
                 </ConfigTitle>
               </ConfigContainer>
               <ConfigContainer onPress={handleGoGuidelines}>

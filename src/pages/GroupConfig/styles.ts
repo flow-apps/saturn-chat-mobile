@@ -26,7 +26,7 @@ export const OptionsContainer = styled.View`
 `;
 
 export const SectionTitle = styled.Text<SectionTitleProps>`
-  font-size: 20px;
+  font-size: 18px;
   font-family: ${fonts.heading};
   margin: 15px 0;
   margin-left: 7px;
@@ -46,5 +46,5 @@ export const OptionText = styled.Text<OptionTextProps>`
   font-size: 18px;
   font-family: ${fonts.text};
   align-items: center;
-  color: ${(props) => (props.color ? props.color : props.theme.colors.black)};
+  color: ${(props) => (props.color || props.theme.colors.black)};
 `;
