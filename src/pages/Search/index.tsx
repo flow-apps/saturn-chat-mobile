@@ -35,6 +35,7 @@ import api from "../../services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { useFirebase } from "../../contexts/firebase";
+import { MotiView } from "@motify/components";
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -160,28 +161,43 @@ const Search: React.FC = () => {
               scrollEventThrottle={20}
               onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
               renderItem={({ item }) => (
-                <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
-                  {item.group_avatar ? (
-                    <GroupImage
-                      source={{
-                        uri: item.group_avatar.url,
-                        cache: "immutable",
-                        priority: "high",
-                      }}
-                    />
-                  ) : (
-                    <GroupImage
-                      source={require("../../assets/avatar-placeholder.png")}
-                    />
-                  )}
-                  <GroupInfosContainer>
-                    <GroupName numberOfLines={2}>{item.name}</GroupName>
-                    <GroupDesc numberOfLines={3}>{item.description}</GroupDesc>
-                    <GroupParticipantsText>
-                      {item?.participantsAmount} participantes
-                    </GroupParticipantsText>
-                  </GroupInfosContainer>
-                </GroupCard>
+                <MotiView
+                  from={{
+                    opacity: 0,
+                    translateX: 20
+                  }}
+                  animate={{
+                    opacity: 1,
+                    translateX: 0
+                  }}
+                  transition={{
+                    type: "timing",
+                    duration: 500
+                  }}
+                >
+                  <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
+                    {item.group_avatar ? (
+                      <GroupImage
+                        source={{
+                          uri: item.group_avatar.url,
+                          cache: "immutable",
+                          priority: "high",
+                        }}
+                      />
+                    ) : (
+                      <GroupImage
+                        source={require("../../assets/avatar-placeholder.png")}
+                      />
+                    )}
+                    <GroupInfosContainer>
+                      <GroupName numberOfLines={2}>{item.name}</GroupName>
+                      <GroupDesc numberOfLines={3}>{item.description}</GroupDesc>
+                      <GroupParticipantsText>
+                        {item?.participantsAmount} participantes
+                      </GroupParticipantsText>
+                    </GroupInfosContainer>
+                  </GroupCard>
+                </MotiView>
               )}
             />
           </ResultsContainer>

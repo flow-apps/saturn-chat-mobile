@@ -1,13 +1,14 @@
 import styled from "styled-components/native"
-import { ProgressBar } from "react-native-paper"
 import { FlatList } from "react-native"
+import { MotiView } from "@motify/components";
 
-export const FilesContainer = styled.View`
+export const FilesContainer = styled(MotiView)`
 position: relative;
   height: 100px;
   background-color: ${(props) => props.theme.colors.shape};
   padding: 5px;
   border-radius: 10px;
+  margin-top: 5px;
 `;
 
 export const Files = styled.FlatList.attrs({

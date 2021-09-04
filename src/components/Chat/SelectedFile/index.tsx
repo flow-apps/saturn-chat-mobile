@@ -18,7 +18,18 @@ const SelectedFile = ({ onRemoveFile, file }: FileProps) => {
   const { colors } = useTheme();    
 
   return (
-    <File>
+    <File
+      from={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+      }}
+      transition={{
+        type: "timing",
+        duration: 1000,
+      }}
+    >
       <RemoveFileButton onPress={onRemoveFile}>
         <Feather name="x" size={14} color={colors.secondary} />
       </RemoveFileButton>

@@ -14,7 +14,7 @@ const Typing = ({ typingUsers }: TypingProps) => {
     return typingUsers.filter(TUser => TUser.id !== user?.id)
   }, [typingUsers.length])
 
-  const userNames = validUsers.map(User => User.name)
+  const userNames = [...new Set(validUsers.map(User => User.name))]
 
   if (validUsers.length <= 0) return <></>
 

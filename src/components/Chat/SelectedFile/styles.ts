@@ -1,6 +1,7 @@
+import { MotiView } from "@motify/components";
 import styled from "styled-components/native"
 
-export const File = styled.View`
+export const File = styled(MotiView)`
   position: relative;
   width: 80px;
   height: 80px;

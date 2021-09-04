@@ -19,7 +19,16 @@ interface SelectedFilesProps {
 const SelectedFiles = ({ files, onFileRemove }: SelectedFilesProps) => {
   return (
     <>
-      <FilesContainer>
+      <FilesContainer
+        from={{
+          opacity: 0,
+          height: 0
+        }}
+        animate={{
+          opacity: 1,
+          height: 100
+        }}
+      >
         <Files
           data={files}
           keyExtractor={(item, index) => String(index)}

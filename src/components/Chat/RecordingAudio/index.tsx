@@ -8,7 +8,6 @@ import {
   RecordingAudioDuration,
 } from "./styles";
 import { useTheme } from "styled-components";
-import { MotiView } from "moti";
 
 interface RecordingAudioProps {
   audioDuration: number;
@@ -19,24 +18,11 @@ const RecordingAudio = ({ audioDuration }: RecordingAudioProps) => {
 
   return (
     <RecordingAudioContainer>
-      <MotiView
-        from={{
-          opacity: 1,
-        }}
-        animate={{
-          opacity: 0.1,
-        }}
-        transition={{
-          type: "timing",
-          duration: 800,
-        }}
-      >
-        <RecordingAudioWrapper>
-          <RecordingAudioText>
-            <Feather name="mic" size={20} color={colors.red} /> Gravando
-          </RecordingAudioText>
-        </RecordingAudioWrapper>
-      </MotiView>
+      <RecordingAudioWrapper>
+        <RecordingAudioText>
+          <Feather name="mic" size={20} color={colors.red} /> Gravando
+        </RecordingAudioText>
+      </RecordingAudioWrapper>
       <RecordingAudioDuration>
         {millisToTime(audioDuration)}
       </RecordingAudioDuration>

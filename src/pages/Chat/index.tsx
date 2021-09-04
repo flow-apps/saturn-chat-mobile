@@ -129,6 +129,17 @@ const Chat: React.FC = () => {
     },
   });
 
+  const toggleAnimationTypingState = useAnimationState({
+    typing: {
+      opacity: 1,
+      height: 40
+    },
+    stopTyping: {
+      opacity: 0,
+      height: 0
+    },
+  });
+
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   useEffect(() => {
@@ -196,6 +207,7 @@ const Chat: React.FC = () => {
   }, [socket]);
 
   const handleTypingTimeout = () => {
+    toggleAnimationTypingState.transitionTo("stopTyping")
     setIsTyping(false);
     socket?.emit("remove_user_typing", { typing: false, userID: user?.id });
   };
@@ -203,6 +215,7 @@ const Chat: React.FC = () => {
   const handleTyping = () => {
     if (!isTyping) {
       setIsTyping(true);
+      toggleAnimationTypingState.transitionTo("typing")
 
       socket?.emit("add_user_typing", { typing: true });
       const timeout = setTimeout(handleTypingTimeout, 5000);
@@ -229,7 +242,7 @@ const Chat: React.FC = () => {
         setRecordingAudio(record.recording);
       }
       toggleAnimationRecordingAudioState.transitionTo("recording");
-    } catch (error) {
+    } catch (error: any) {
       setRecordingAudio(undefined);
       new Error(error);
     }
@@ -272,7 +285,7 @@ const Chat: React.FC = () => {
           });
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       new Error(error);
     }
   };
@@ -517,10 +530,11 @@ const Chat: React.FC = () => {
         </HeaderButton>
       </Header>
       <Container>
-        <BannerWrapper>
-          <Banner size="leaderboard" />
-        </BannerWrapper>
-        <Typing typingUsers={typingUsers} />
+        <MotiView
+          state={toggleAnimationTypingState}
+        >
+          <Typing typingUsers={typingUsers} />
+        </MotiView>
         <MessageContainer>
           <Messages
             data={oldMessages}

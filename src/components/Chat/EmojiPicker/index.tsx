@@ -15,6 +15,7 @@ import {
 } from "./styles";
 
 import EmojiJs from "emoji-js"
+import { usePersistedState } from "../../../hooks/usePersistedState";
 
 const emojiJs = new EmojiJs()
 
@@ -45,6 +46,7 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
   const [lastEmojis, setLastEmojis] = useState<any[]>();
   const [emojisToRender, setEmojisToRender] = useState<any[]>([]);
   const [currentCategory, setCurrentCategory] = useState("");
+  const [history, setHistory] = usePersistedState<string[]>("@SaturnChat:EmojiHistory", [])
   const { colors } = useTheme();
 
   const emojisCategories = useMemo(() => {
@@ -71,7 +73,7 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
   const clearEmojisHistory = async () => {
     setLastEmojis([]);
     Toast.show("Histórico de emojis apagado");
-    return await Storage.deleteItem("@SaturnChat:EmojiHistory");
+    setHistory([])
   };
 
   useEffect(() => {
@@ -80,10 +82,8 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
 
   useEffect(() => {
     (async () => {
-      const history = await Storage.getItem("@SaturnChat:EmojiHistory");
-
       if (history) {
-        setLastEmojis(_.orderBy(JSON.parse(history), "sort_order"));
+        setLastEmojis(_.orderBy(history, "sort_order"));
       }
     })();
   }, []);
@@ -98,27 +98,19 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
   };
 
   const addToHistory = async (emoji: any) => {
-    const emojiHistory = await Storage.getItem("@SaturnChat:EmojiHistory");
 
-    if (emojiHistory) {
-      const parsedEmojiHistory = JSON.parse(emojiHistory);
-      const hasEmoji = JSON.parse(emojiHistory).filter(
+    if (history) {
+      const hasEmoji = history.filter(
         (e: any) => e.name === emoji.name
       );
 
       if (hasEmoji.length > 0) return;
 
-      const newHistory = [emoji, ...parsedEmojiHistory];
-
-      await Storage.saveItem(
-        "@SaturnChat:EmojiHistory",
-        JSON.stringify(newHistory)
-      );
+      const newHistory = [emoji, ...history];
+      setHistory(newHistory)
+     
     } else {
-      await Storage.saveItem(
-        "@SaturnChat:EmojiHistory",
-        JSON.stringify([emoji])
-      );
+      setHistory([emoji])
     }
   };
 

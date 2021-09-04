@@ -1,7 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
 import FastImage from 'react-native-fast-image'
-import { Dimensions } from "react-native";
 
 interface IMessageProps {
   isRight?: boolean;
@@ -70,7 +69,7 @@ export const MessageCodeInline = styled(MessageContent)`
 
 export const MessageLink = styled(MessageContent)`
   color: ${(props) => props.theme.colors.secondary};
-  font-family: ${fonts["text-bold"]}
+  font-family: ${fonts["text-bold"]};
 `;
 
 export const MessageOptionsContainer = styled.View`
