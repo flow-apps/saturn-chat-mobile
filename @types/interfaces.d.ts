@@ -28,7 +28,8 @@ export interface ParticipantsData {
   id: string;
   user: UserData;
   group: GroupData;
-  participant_since: string;
+  status: "ONLINE" | "OFFLINE"
+  participating_since: string;
 }
 
 export interface AudioData {

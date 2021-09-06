@@ -1,8 +1,9 @@
 import { FlatList } from "react-native-gesture-handler";
 import { ParticipantData } from "../Home";
-import FastImage from 'react-native-fast-image'
+import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
+import { ParticipantsData } from "../../../@types/interfaces";
 
 export const Container = styled.View`
   flex: 1;
@@ -14,7 +15,7 @@ export const ParticipantsContainer = styled.View`
 `;
 
 export const ParticipantsList =
-  styled.FlatList`` as unknown as FlatList<ParticipantData>;
+  styled.FlatList`` as unknown as FlatList<ParticipantsData>;
 
 export const SectionContainer = styled.View``;
 
@@ -63,6 +64,31 @@ export const Participant = styled.View`
   align-items: center;
 `;
 
+export const ParticipantAvatarContainer = styled.View`
+  position: relative;
+`;
+
+export const ParticipantStatus = styled.View<{ status: "ONLINE" | "OFFLINE" }>`
+  position: absolute;
+  background-color: ${(props) =>
+    props.status === "ONLINE"
+      ? props.theme.colors.green
+      : props.theme.colors.dark_gray
+  };
+
+  border: 1.5px solid
+    ${(props) =>
+      props.status === "ONLINE"
+        ? props.theme.colors.green + "99"
+        : props.theme.colors.dark_gray + "99"
+  };
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  bottom: 0px;
+  right: 15px;
+`;
+
 export const ParticipantAvatar = styled(FastImage)`
   width: 60px;
   height: 60px;
@@ -78,4 +104,4 @@ export const ParticipanteName = styled.Text`
 
 export const AdBannerWrapper = styled.View`
   margin: 5px 0px;
-`
+`;

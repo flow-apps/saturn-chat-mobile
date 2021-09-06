@@ -15,7 +15,7 @@ class ConvertDate {
     const isoDate = parseISO(date);
     const tzDate = convertToTimeZone(isoDate, {
       timeZone: tz || Localize.timezone,
-    });
+    });    
 
     return format(tzDate, withHours ? "dd/MM/yy, HH:mm" : "dd/MM/yy");
   }

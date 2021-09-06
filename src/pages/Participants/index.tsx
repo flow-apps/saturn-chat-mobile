@@ -15,12 +15,13 @@ import {
   ParticipantInfosWrapper,
   JoinedDateContainer,
   JoinedDate,
+  ParticipantAvatarContainer,
+  ParticipantStatus,
 } from "./styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import api from "../../services/api";
 import { useState } from "react";
-import { ParticipantData } from "../Home";
 import Loading from "../../components/Loading";
 import { ConvertDate } from "../../utils/convertDate";
 import { useCallback } from "react";
@@ -29,9 +30,12 @@ import { ActivityIndicator } from "react-native";
 import Banner from "../../components/Ads/Banner";
 import { AdBannerWrapper } from "../GroupInfos/styles";
 import PremiumName from "../../components/PremiumName";
+import { ParticipantsData } from "../../../@types/interfaces";
+import _ from "lodash";
+import { useAuth } from "../../contexts/auth";
 
 const Participants: React.FC = () => {
-  const [participants, setParticipants] = useState<ParticipantData[]>([]);
+  const [participants, setParticipants] = useState<ParticipantsData[]>([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadedAll, setLoadedAll] = useState(false);
@@ -41,6 +45,7 @@ const Participants: React.FC = () => {
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { colors } = useTheme();
+  const { user } = useAuth();
 
   const convertDate = new ConvertDate();
 
@@ -95,31 +100,36 @@ const Participants: React.FC = () => {
     item,
     index,
   }: {
-    item: ParticipantData;
+    item: ParticipantsData;
     index: number;
   }) => {
     return (
       <>
-        {index % 12 === 0 && (
+        {index % 15 === 0 && (
           <AdBannerWrapper>
             <Banner />
           </AdBannerWrapper>
         )}
-        <ParticipantContainer onPress={() => handleGoUserProfile(item.user_id)}>
+        <ParticipantContainer onPress={() => handleGoUserProfile(item.user.id)}>
           <Participant>
-            {item.user.avatar ? (
-              <ParticipantAvatar
-                source={{
-                  uri: item.user.avatar.url,
-                  cache: "immutable",
-                  priority: "high",
-                }}
+            <ParticipantAvatarContainer>
+              {item.user.avatar ? (
+                <ParticipantAvatar
+                  source={{
+                    uri: item.user.avatar.url,
+                    cache: "immutable",
+                    priority: "high",
+                  }}
+                />
+              ) : (
+                <ParticipantAvatar
+                  source={require("../../assets/avatar-placeholder.png")}
+                />
+              )}
+              <ParticipantStatus
+                status={item.user.id === user?.id ? "ONLINE" : item.status}
               />
-            ) : (
-              <ParticipantAvatar
-                source={require("../../assets/avatar-placeholder.png")}
-              />
-            )}
+            </ParticipantAvatarContainer>
             <ParticipantInfosWrapper>
               <PremiumName name={item.user.name} nameSize={16} />
               <JoinedDate>
@@ -131,7 +141,7 @@ const Participants: React.FC = () => {
             </ParticipantInfosWrapper>
             <JoinedDateContainer></JoinedDateContainer>
           </Participant>
-          {item.group.owner.id === item.user_id && (
+          {item.group.owner.id === item.user.id && (
             <OwnerTagContainer>
               <OwnerTag>Dono</OwnerTag>
             </OwnerTagContainer>

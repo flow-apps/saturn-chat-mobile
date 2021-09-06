@@ -93,7 +93,6 @@ const NewGroup: React.FC = () => {
           });
         }
       })
-      .catch((err) => console.log(err))
       .finally(async () => {
         await trace.stop()
         setCreating(false)

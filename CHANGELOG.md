@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version
 
+## 0.0.6.0
+
+- Online/offline system added
+- Removed all console.log's
+
 ## 0.0.5.0
 
 - Add toast for indicate request failed

@@ -19,7 +19,7 @@ import crashlytics from "@react-native-firebase/crashlytics";
 
 import { ProgressBar } from "react-native-paper";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/core";
+import { useFocusEffect, useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
@@ -67,7 +67,6 @@ import { useAds } from "../../contexts/ads";
 import Typing from "../../components/Chat/Typing";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
-import Banner from "../../components/Ads/Banner";
 import { MotiView, useAnimationState } from "moti";
 
 const emoji = new EmojiJS();
@@ -202,7 +201,9 @@ const Chat: React.FC = () => {
     });
 
     navigation.addListener("blur", () => {
+      socket.emit("leave_chat")
       socket.offAny();
+      socket.disconnect()
     });
   }, [socket]);
 
@@ -408,8 +409,8 @@ const Chat: React.FC = () => {
   }, [id]);
 
   const handleGoStar = () => {
-    navigation.navigate("PurchasePremium");
     analytics.logEvent("IncreaseUpload");
+    navigation.navigate("PurchasePremium");
   };
 
   const handleShowEmojiPicker = useCallback(() => {
