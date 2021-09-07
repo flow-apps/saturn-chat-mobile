@@ -40,7 +40,10 @@ class RecordService {
         this.recording = new Audio.Recording();
 
       this.recording
-        .prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
+        .prepareToRecordAsync({
+          ...Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY,
+          keepAudioActiveHint: true,
+        })
         .then(async () => {
           await this.recording.startAsync();
           

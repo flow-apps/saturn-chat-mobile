@@ -16,19 +16,23 @@ import SwitchLanguage from "../pages/Configurations/SwitchLanguage";
 import Premium from "../pages/Configurations/Premium";
 import ChoosePlan from "../pages/Configurations/Premium/ChoosePlan";
 import Invite from "../pages/Invite";
+import Participant from "../pages/Participants/Participant";
+import ChangeRole from "../pages/Participants/Participant/ChangeRole";
 
 const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
   return (
     <StackRoutes.Navigator headerMode="none">
-      <StackRoutes.Screen name="Groups" component={HomeRoutes} />
+      <StackRoutes.Screen name="Groups" component={Participant} />
       <StackRoutes.Screen name="PurchasePremium" component={Premium} />
       <StackRoutes.Screen name="ChoosePlan" component={ChoosePlan} />
       <StackRoutes.Screen name="EditProfile" component={EditProfile} />
       <StackRoutes.Screen name="SwitchLanguage" component={SwitchLanguage} />
       <StackRoutes.Screen name="Chat" component={Chat} />
       <StackRoutes.Screen name="Participants" component={Participants} />
+      <StackRoutes.Screen name="Participant" component={Participant} />
+      <StackRoutes.Screen name="ChangeRole" component={ChangeRole} />
       <StackRoutes.Screen name="UserProfile" component={UserProfile} />
       <StackRoutes.Screen name="Search" component={Search} />
       <StackRoutes.Screen name="GroupConfig" component={GroupConfig} />
