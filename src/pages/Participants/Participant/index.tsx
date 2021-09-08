@@ -11,7 +11,6 @@ import {
   ParticipantOptionsTitle,
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
-import Switcher from "../../../components/Switcher";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 
@@ -21,6 +20,10 @@ const Participant: React.FC = () => {
 
   const handleGoChangeRole = async () => {
     navigation.navigate("ChangeRole")
+  }
+
+  const handleGoPunishParticipant = async (type: string) => {
+    navigation.navigate("PunishParticipant", { type })
   }
 
   return (
@@ -46,10 +49,17 @@ const Participant: React.FC = () => {
                 </OptionName>
               </OptionNameWrapper>
             </ParticipantOptionContainer>
-            <ParticipantOptionContainer>
+            <ParticipantOptionContainer onPress={() => handleGoPunishParticipant("kick")}>
               <OptionNameWrapper>
                 <OptionName color={colors.red}>
                   <Feather name="user-x" size={16} /> Expulsar participante
+                </OptionName>
+              </OptionNameWrapper>
+            </ParticipantOptionContainer>
+            <ParticipantOptionContainer onPress={() => handleGoPunishParticipant("ban")}>
+              <OptionNameWrapper>
+                <OptionName color={colors.red}>
+                  <Feather name="slash" size={16} /> Banir participante
                 </OptionName>
               </OptionNameWrapper>
             </ParticipantOptionContainer>
