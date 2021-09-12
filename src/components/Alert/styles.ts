@@ -51,6 +51,7 @@ export const AlertOkButtonText = styled.Text`
 
 export const AlertCancelButton = styled(AlertOkButton)`
   margin-left: 25px;
+  margin-right: 25px;
 `;
 
 export const AlertCancelButtonText = styled(AlertOkButtonText)`

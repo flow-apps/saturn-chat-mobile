@@ -24,7 +24,12 @@ import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { GroupData, MessageData, ParticipantsData, UserData } from "../../../@types/interfaces";
+import {
+  GroupData,
+  MessageData,
+  ParticipantsData,
+  UserData,
+} from "../../../@types/interfaces";
 import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
 
@@ -110,13 +115,14 @@ const Chat: React.FC = () => {
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
-  const [participant, setParticipant] = useState<ParticipantsData>()
+  const [participant, setParticipant] = useState<ParticipantsData>();
   const [socket, setSocket] = useState<Socket>(getWebsocket());
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
+  const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   const toggleAnimationRecordingAudioState = useAnimationState({
     recording: {
@@ -132,15 +138,13 @@ const Chat: React.FC = () => {
   const toggleAnimationTypingState = useAnimationState({
     typing: {
       opacity: 1,
-      height: 40
+      height: 40,
     },
     stopTyping: {
       opacity: 0,
-      height: 0
+      height: 0,
     },
   });
-
-  const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   useEffect(() => {
     (async () => {
@@ -155,8 +159,13 @@ const Chat: React.FC = () => {
         setSocket(connectedSocket);
       });
 
-      const res = await api.get(`/group/${id}`);
-      if (res.status === 200) setGroup(res.data);
+      const groupRes = await api.get(`/group/${id}`);
+      const participantRes = await api.get(`/group/participant/${id}`);
+
+      if (groupRes.status === 200) setGroup(groupRes.data);
+      if (participantRes.status === 200) {        
+        setParticipant(participantRes.data.participant);
+      }
 
       Keyboard.addListener("keyboardDidShow", () => setShowEmojiPicker(false));
 
@@ -167,19 +176,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     fetchOldMessages();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const res = await api.get(`/group/participant/${id}`);
-
-      if (res.status === 200) {
-        setParticipant(res.data.participant);
-      }
-
-      setLoading(false);
-    })()
-  }, [])
 
   useEffect(() => {
     connectSockets();
@@ -215,13 +211,13 @@ const Chat: React.FC = () => {
     });
 
     navigation.addListener("blur", () => {
-      socket.emit("leave_chat")
+      socket.emit("leave_chat");
       socket.offAny();
     });
   }, [socket]);
 
   const handleTypingTimeout = () => {
-    toggleAnimationTypingState.transitionTo("stopTyping")
+    toggleAnimationTypingState.transitionTo("stopTyping");
     setIsTyping(false);
     socket?.emit("remove_user_typing", { typing: false, userID: user?.id });
   };
@@ -229,7 +225,7 @@ const Chat: React.FC = () => {
   const handleTyping = () => {
     if (!isTyping) {
       setIsTyping(true);
-      toggleAnimationTypingState.transitionTo("typing")
+      toggleAnimationTypingState.transitionTo("typing");
 
       socket?.emit("add_user_typing", { typing: true });
       const timeout = setTimeout(handleTypingTimeout, 5000);
@@ -337,8 +333,7 @@ const Chat: React.FC = () => {
       );
 
       if (isSelected) return setIsSelectedFile(true);
-      if (fileRes.usageSize)
-        setFilesSizeUsed(fileRes.usageSize);
+      if (fileRes.usageSize) setFilesSizeUsed(fileRes.usageSize);
 
       setFiles((oldFiles) => [
         { file: file.file, type: file.type },
@@ -355,14 +350,14 @@ const Chat: React.FC = () => {
   };
 
   const removeFile = (position: number) => {
-    const file = files.filter((f, index) => index === position).shift()
+    const file = files.filter((f, index) => index === position).shift();
 
-    if (file?.file.type !== "success") return
+    if (file?.file.type !== "success") return;
 
-    const fileSize = Math.trunc(file.file.size / 1000 / 1000)
+    const fileSize = Math.trunc(file.file.size / 1000 / 1000);
     const filteredFiles = files.filter((f, index) => index !== position);
     setFiles(filteredFiles);
-    setFilesSizeUsed(used => used - fileSize)
+    setFilesSizeUsed((used) => used - fileSize);
   };
 
   const handleFetchMoreMessages = async (
@@ -381,27 +376,6 @@ const Chat: React.FC = () => {
       }
     }
   };
-
-  const renderMessage = useCallback(
-    ({ item, index }: ListRenderItem<MessageData> | any) => {
-      const lastMessage =
-        index !== 0 ? oldMessages[index - 1] : ({} as MessageData);
-      return (
-        <Message
-          message={item}
-          socket={socket as Socket}
-          index={index}
-          user={user as unknown as UserData}
-          participant={participant as any as ParticipantsData}
-          lastMessage={lastMessage}
-          onReplyMessage={() => {}}
-        />
-      );
-    },
-    [oldMessages]
-  );
-
-  const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
 
   const handleSetMessage = useCallback(
     (message: string) => {
@@ -508,6 +482,26 @@ const Chat: React.FC = () => {
     setMessage("");
   }, [message]);
 
+  const renderMessage = useCallback(
+    ({ item, index }: ListRenderItem<MessageData> | any) => {
+      const lastMessage =
+        index !== 0 ? oldMessages[index - 1] : ({} as MessageData);
+            
+      return (
+        <Message
+          message={item}
+          socket={socket as Socket}
+          index={index}
+          user={user as unknown as UserData}
+          participant={participant}
+          lastMessage={lastMessage}
+          onReplyMessage={() => {}}
+        />
+      );
+    },
+    [oldMessages]
+  );
+  const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
   const getItemID = (item: MessageData) => item.id;
   const renderFooter = () =>
     fetching && !fetchedAll ? <LoadingIndicator /> : <></>;
@@ -546,9 +540,7 @@ const Chat: React.FC = () => {
         </HeaderButton>
       </Header>
       <Container>
-        <MotiView
-          state={toggleAnimationTypingState}
-        >
+        <MotiView state={toggleAnimationTypingState}>
           <Typing typingUsers={typingUsers} />
         </MotiView>
         <MessageContainer>

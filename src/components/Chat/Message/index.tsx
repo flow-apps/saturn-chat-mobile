@@ -38,6 +38,8 @@ import PremiumName from "../../PremiumName";
 import { ParticipantRoles } from "../../../../@types/enums";
 import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
 import { Participant } from "../../../pages/Participants/styles";
+import ReplyingMessage from "../ReplyingMessage";
+import MessageMark from "../../Markdown/MessageMark";
 
 interface MessageProps {
   user: UserData;
@@ -67,54 +69,7 @@ const Message = ({
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
-  const [msgOptions, setMsgOptions] = useState(false);
-
-  const renderRules = useMemo(() => {
-
-    const rules: RenderRules = {
-      paragraph: (node, children) => (
-        <MessageContent
-          isRight={message.author.id === user.id}
-          key={node.key}
-        >
-          {children}
-        </MessageContent>
-      ),
-      link: (node, children) => (
-        <MessageLink
-          onPress={() => alertLink(node.attributes.href)}
-          onLongPress={() => copyLink(node.attributes.href)}
-          key={node.key}
-        >
-          {children}
-        </MessageLink>
-      ),
-      code_inline: (node) => (
-        <MessageCodeInline key={node.key}>
-          {node.content}
-        </MessageCodeInline>
-      ),
-      fence: (node) => {
-        let { content } = node;
-
-        if (
-          typeof node.content === "string" &&
-          node.content.charAt(node.content.length - 1) === "\n"
-        ) {
-          content = node.content.substring(0, node.content.length - 1);
-        }
-
-        return (
-          <MessageCodeBlock key={node.key}>
-            <MessageCodeBlockText>{content}</MessageCodeBlockText>
-          </MessageCodeBlock>
-        );
-      },
-    }
-
-    return rules
-  }, [message, lastMessage, user, index])
-
+  const [msgOptions, setMsgOptions] = useState(false);  
   const navigation = useNavigation();
   const { colors } = useTheme();
 
@@ -204,11 +159,6 @@ const Message = ({
     return setShowLinkAlert(false);
   }, [linkUrl]);
 
-  const copyLink = useCallback((url: string) => {
-    Clipboard.setString(url);
-    Toast.show("Link copiado", Toast.SHORT);
-  }, []);
-
   const closeLink = useCallback(() => {
     setLinkUrl("");
     return setShowLinkAlert(false);
@@ -235,6 +185,7 @@ const Message = ({
   return (
     <>
       <Container key={index} isRight={message.author.id === user.id} style={{ scaleY: -1 }}>
+        <ReplyingMessage />
         <MessageContentContainer
           isRight={message.author.id === user.id}
           onLongPress={() => setMsgOptions(true)}
@@ -253,7 +204,7 @@ const Message = ({
             close={handleCloseMsgOptions}
             visible={msgOptions}
             message={message}
-            participant_role={participant.role}
+            participant_role={participant ? participant.role : ParticipantRoles.PARTICIPANT}
             options={[
               {
                 iconName: "corner-up-right",
@@ -272,16 +223,12 @@ const Message = ({
               },
             ]}
           />
-          <Markdown
-            markdownit={markdownRules}
-            rules={renderRules}
-            mergeStyle
-          >
-            {message.message}
-          </Markdown>
-          {message.voice_message && (
-            <AudioPlayer audio={message.voice_message} />
-          )}
+          <MessageMark 
+            message={message}
+            onPressLink={alertLink}
+            user={user}
+          />
+          {message.voice_message && (<AudioPlayer audio={message.voice_message} />)}
           {renderFiles()}
         </MessageContentContainer>
         {renderDate()}
