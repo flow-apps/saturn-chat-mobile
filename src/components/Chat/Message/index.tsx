@@ -9,14 +9,15 @@ import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { MessageData, ParticipantsData, UserData } from "../../../../@types/interfaces";
+import {
+  MessageData,
+  ParticipantsData,
+  UserData,
+} from "../../../../@types/interfaces";
 
-import Clipboard from "expo-clipboard";
 import * as Localize from "expo-localization";
 
-import Markdown, { MarkdownIt, RenderRules } from "react-native-markdown-display";
 import Alert from "../../Alert";
-import Toast from "react-native-simple-toast";
 import AudioPlayer from "../AudioPlayer";
 import FilePreview from "../FilePreview";
 import MessageOptions from "../../MessageOptions";
@@ -24,22 +25,18 @@ import {
   Container,
   MessageAuthorContainer,
   MessageAvatar,
-  MessageCodeBlock,
-  MessageCodeBlockText,
-  MessageCodeInline,
-  MessageContent,
   MessageContentContainer,
   MessageDate,
   MessageDateContainer,
-  MessageLink,
 } from "./styles";
-import { useMemo } from "react";
 import PremiumName from "../../PremiumName";
 import { ParticipantRoles } from "../../../../@types/enums";
 import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
-import { Participant } from "../../../pages/Participants/styles";
 import ReplyingMessage from "../ReplyingMessage";
 import MessageMark from "../../Markdown/MessageMark";
+import { Swipeable } from "react-native-gesture-handler";
+import { Feather } from "@expo/vector-icons";
+import Animated from "react-native-reanimated";
 
 interface MessageProps {
   user: UserData;
@@ -48,15 +45,8 @@ interface MessageProps {
   lastMessage: MessageData;
   index: number;
   socket: Socket;
-  onReplyMessage: (messageID: string, message: MessageData) => void
+  onReplyMessage: (messageID: string, message: MessageData) => void;
 }
-
-const markdownRules = MarkdownIt({
-  linkify: true,
-  typographer: true,
-})
-  .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
-  .use(require("markdown-it-linkscheme"));
 
 const Message = ({
   message,
@@ -65,13 +55,14 @@ const Message = ({
   participant,
   index,
   socket,
-  onReplyMessage
+  onReplyMessage,
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
-  const [msgOptions, setMsgOptions] = useState(false);  
+  const [msgOptions, setMsgOptions] = useState(false);
   const navigation = useNavigation();
   const { colors } = useTheme();
+  const isRight = message.author.id === user.id;
 
   const handleGoUserProfile = (userID: string) => {
     navigation.navigate("UserProfile", { id: userID });
@@ -85,10 +76,10 @@ const Message = ({
         >
           {message.author.avatar ? (
             <MessageAvatar
-              source={{ 
+              source={{
                 uri: message.author.avatar.url,
                 cache: "immutable",
-                priority: "high"
+                priority: "high",
               }}
             />
           ) : (
@@ -96,7 +87,7 @@ const Message = ({
               source={require("../../../assets/avatar-placeholder.png")}
             />
           )}
-          <PremiumName 
+          <PremiumName
             name={message.author.name}
             nameSize={12}
             color={colors.light_heading}
@@ -165,7 +156,7 @@ const Message = ({
   }, []);
 
   const renderFiles = useCallback(() => {
-    if(message.files) {
+    if (message.files) {
       return message.files.map((file) => {
         return (
           <FilePreview
@@ -176,64 +167,76 @@ const Message = ({
             type={file.type}
           />
         );
-      })
+      });
     }
-  }, [message.files])
+  }, [message.files]);
 
-  const handleCloseMsgOptions = () => setMsgOptions(false)
+  const handleCloseMsgOptions = () => setMsgOptions(false);
 
   return (
     <>
-      <Container key={index} isRight={message.author.id === user.id} style={{ scaleY: -1 }}>
-        <ReplyingMessage />
-        <MessageContentContainer
-          isRight={message.author.id === user.id}
-          onLongPress={() => setMsgOptions(true)}
-          delayLongPress={250}
-        >
-          <Alert
-            title="⚠ Cuidado, pode ser perigoso"
-            content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
-            cancelButtonText="Não"
-            okButtonText="Acessar"
-            cancelButtonAction={closeLink}
-            okButtonAction={openLink}
-            visible={showLinkAlert}
-          />
-          <MessageOptions
-            close={handleCloseMsgOptions}
-            visible={msgOptions}
-            message={message}
-            participant_role={participant ? participant.role : ParticipantRoles.PARTICIPANT}
-            options={[
-              {
-                iconName: "corner-up-right",
-                content: "Responder",
-                action: () => onReplyMessage(message.id, message),
-                onlyOwner: false,
-                authorizedRoles: ["ALL" as ParticipantRoles]
-              },
-              {
-                iconName: "trash-2",
-                content: "Excluir mensagem",
-                action: deleteMessage,
-                color: colors.red,
-                onlyOwner: true,
-                authorizedRoles: rolesForDeleteMessage
-              },
-            ]}
-          />
-          <MessageMark 
-            message={message}
-            onPressLink={alertLink}
-            user={user}
-          />
-          {message.voice_message && (<AudioPlayer audio={message.voice_message} />)}
-          {renderFiles()}
-        </MessageContentContainer>
-        {renderDate()}
-        {renderAuthor()}
-      </Container>
+      <Swipeable
+        friction={3}
+        overshootRight={isRight}
+        overshootLeft={!isRight}
+        onSwipeableClose={() => onReplyMessage(message.id, message)}
+        useNativeAnimations
+      >
+        <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
+          <ReplyingMessage />
+          <MessageContentContainer
+            isRight={isRight}
+            onLongPress={() => setMsgOptions(true)}
+            delayLongPress={250}
+          >
+            <Alert
+              title="⚠ Cuidado, pode ser perigoso"
+              content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
+              cancelButtonText="Não"
+              okButtonText="Acessar"
+              cancelButtonAction={closeLink}
+              okButtonAction={openLink}
+              visible={showLinkAlert}
+            />
+            <MessageOptions
+              close={handleCloseMsgOptions}
+              visible={msgOptions}
+              message={message}
+              participant_role={
+                participant ? participant.role : ParticipantRoles.PARTICIPANT
+              }
+              options={[
+                {
+                  iconName: "corner-up-right",
+                  content: "Responder",
+                  action: () => onReplyMessage(message.id, message),
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "trash-2",
+                  content: "Excluir mensagem",
+                  action: deleteMessage,
+                  color: colors.red,
+                  onlyOwner: true,
+                  authorizedRoles: rolesForDeleteMessage,
+                },
+              ]}
+            />
+            <MessageMark
+              message={message}
+              onPressLink={alertLink}
+              user={user}
+            />
+            {message.voice_message && (
+              <AudioPlayer audio={message.voice_message} />
+            )}
+            {renderFiles()}
+          </MessageContentContainer>
+          {renderDate()}
+          {renderAuthor()}
+        </Container>
+      </Swipeable>
     </>
   );
 };

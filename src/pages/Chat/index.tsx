@@ -495,7 +495,7 @@ const Chat: React.FC = () => {
           user={user as unknown as UserData}
           participant={participant}
           lastMessage={lastMessage}
-          onReplyMessage={() => {}}
+          onReplyMessage={() => console.log("Respondendo a mensagem")}
         />
       );
     },

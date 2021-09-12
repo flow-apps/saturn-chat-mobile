@@ -12,7 +12,7 @@ import {
   MessageLink,
 } from "./styles";
 
-import Clipboard from "expo-clipboard";
+import * as Clipboard from "expo-clipboard";
 import SimpleToast from "react-native-simple-toast";
 
 interface MessageMarkProps {
