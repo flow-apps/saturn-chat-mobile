@@ -59,6 +59,16 @@ import {
   Messages,
   OptionsButton,
   OptionsContainer,
+  ReplyingMessage,
+  ReplyingMessageAuthorName,
+  ReplyingMessageAuthorNameWrapper,
+  ReplyingMessageContainer,
+  ReplyingMessageContentContainer,
+  ReplyingMessageRemoveButton,
+  ReplyingMessageRemoveContainer,
+  ReplyingMessageTitle,
+  ReplyingMessageTitleWrapper,
+  ReplyingMessageWrapper,
   SendButton,
 } from "./styles";
 import Typing from "../../components/Chat/Typing";
@@ -163,7 +173,7 @@ const Chat: React.FC = () => {
       const participantRes = await api.get(`/group/participant/${id}`);
 
       if (groupRes.status === 200) setGroup(groupRes.data);
-      if (participantRes.status === 200) {        
+      if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
       }
 
@@ -486,7 +496,7 @@ const Chat: React.FC = () => {
     ({ item, index }: ListRenderItem<MessageData> | any) => {
       const lastMessage =
         index !== 0 ? oldMessages[index - 1] : ({} as MessageData);
-            
+
       return (
         <Message
           message={item}
@@ -567,7 +577,6 @@ const Chat: React.FC = () => {
           {files.length > 0 && !sendingFile && (
             <SelectedFiles files={files} onFileRemove={removeFile} />
           )}
-
           {sendingFile && (
             <FileSendedProgressContainer>
               <FileSendedText>
@@ -581,6 +590,37 @@ const Chat: React.FC = () => {
               />
             </FileSendedProgressContainer>
           )}
+
+          <ReplyingMessageContainer>
+            <ReplyingMessageContentContainer>
+              <ReplyingMessageTitleWrapper>
+                <ReplyingMessageTitle>
+                  <Feather name="corner-up-right" /> Você está respondendo:
+                </ReplyingMessageTitle>
+              </ReplyingMessageTitleWrapper>
+              <ReplyingMessageAuthorNameWrapper>
+                <ReplyingMessageAuthorName>
+                  Pedro Henrique
+                </ReplyingMessageAuthorName>
+              </ReplyingMessageAuthorNameWrapper>
+              <ReplyingMessageWrapper>
+                <ReplyingMessage
+                  numberOfLines={1}
+                >
+                  Olá, este é o teste de como as pessoas vão ver as mensagens
+                  que estão respondendo enquanto digitam. Este teste também
+                  serve para ver o tamanho máximo que isso ocupa na tela, para
+                  não atrapalhar a visualização da mensagem
+                </ReplyingMessage>
+              </ReplyingMessageWrapper>
+            </ReplyingMessageContentContainer>
+            <ReplyingMessageRemoveContainer>
+              <ReplyingMessageRemoveButton>
+                <Feather name="x" size={25} color={colors.black} />
+              </ReplyingMessageRemoveButton>
+            </ReplyingMessageRemoveContainer>
+          </ReplyingMessageContainer>
+          
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
               {!showEmojiPicker ? (

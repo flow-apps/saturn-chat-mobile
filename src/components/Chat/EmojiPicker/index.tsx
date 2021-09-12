@@ -208,6 +208,7 @@ const EmojiPicker = ({ onClick, visible }: EmojiPickerProps) => {
         numColumns={8}
         initialNumToRender={5}
         maxToRenderPerBatch={15}
+        updateCellsBatchingPeriod={100}
         renderItem={renderEmoji}
       />
     </Container>
