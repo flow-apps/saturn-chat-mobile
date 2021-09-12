@@ -1,6 +1,11 @@
 # (CHANGELOG) Saturn Chat Mobile
 
-NOTE: The versions here not represents the release versions, check the App Store's for real app version
+NOTE: The versions here not represents the release versions, check the App Store's for real app version.
+
+## 0.0.7.0
+
+- Add roles and verification for role change and use resources
+- Improve more performance in chat
 
 ## 0.0.6.0
 

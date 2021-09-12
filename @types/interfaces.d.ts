@@ -1,3 +1,5 @@
+import { ParticipantRoles } from "./enums"
+
 export interface UserData {
   id: string;
   name: string;
@@ -29,6 +31,7 @@ export interface ParticipantsData {
   user: UserData;
   group: GroupData;
   status: "ONLINE" | "OFFLINE"
+  role: ParticipantRoles
   participating_since: string;
 }
 

@@ -20,12 +20,15 @@ import {
 import { Feather } from "@expo/vector-icons";
 import roles from "./roles";
 import Button from "../../../../components/Button";
+import { useRoute } from "@react-navigation/core";
+import { ParticipantsData } from "../../../../../@types/interfaces";
 
 type Roles = "participant" | "moderator" | "admin";
 
 const ChangeRole: React.FC = () => {
+  const { participant, id } = useRoute().params as { participant: ParticipantsData, id: string }
   const { colors } = useTheme();
-  const [role, setRole] = useState<Roles>("participant");
+  const [role, setRole] = useState<Roles>(participant.role.toLocaleLowerCase() as Roles);
   const { name, description, permissions } = roles[role];
   const {
     create_invites,

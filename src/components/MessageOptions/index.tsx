@@ -9,7 +9,8 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { MessageData } from "../../../@types/interfaces";
 import { useAuth } from "../../contexts/auth";
-import { TouchableOpacity,StatusBar } from "react-native";
+import { TouchableOpacity, StatusBar } from "react-native";
+import { ParticipantRoles } from "../../../@types/enums";
 
 interface IOptions {
   content: string;
@@ -17,12 +18,14 @@ interface IOptions {
   onlyOwner: boolean;
   iconName?: keyof typeof Feather.glyphMap;
   color?: string;
+  authorizedRoles: ParticipantRoles[] | string[];
 }
 
 interface IMessageOptionsProps {
   visible: boolean;
   message: MessageData;
   options: IOptions[];
+  participant_role: ParticipantRoles;
   close: () => void;
 }
 
@@ -31,6 +34,7 @@ const MessageOptions = ({
   close,
   message,
   options = [],
+  participant_role,
 }: IMessageOptionsProps) => {
   const { user } = useAuth();
   const handleExecAction = useCallback((action: () => any) => {
@@ -56,24 +60,13 @@ const MessageOptions = ({
           onPressOut={close}
           style={{ flex: 1 }}
         >
-        <MessageOptionsContainer>
-          <MessageOptionsModal>
-            <StatusBar barStyle="light-content" />
-            {options.map((option, index) =>
-              option.onlyOwner && message.author.id === user?.id ? (
-                <Option
-                  key={index}
-                  onPress={() => handleExecAction(option.action)}
-                >
-                  <OptionText color={option.color}>
-                    {option.iconName && (
-                      <Feather name={option.iconName} size={18} />
-                    )}{" "}
-                    {option.content}
-                  </OptionText>
-                </Option>
-              ) : (
-                !option.onlyOwner && (
+          <MessageOptionsContainer>
+            <MessageOptionsModal>
+              <StatusBar barStyle="light-content" />
+              {options.map((option, index) =>
+                (option.onlyOwner && message.author.id === user?.id) ||
+                option.authorizedRoles[0] === "ALL" ||
+                option.authorizedRoles.includes(participant_role) ? (
                   <Option
                     key={index}
                     onPress={() => handleExecAction(option.action)}
@@ -85,11 +78,24 @@ const MessageOptions = ({
                       {option.content}
                     </OptionText>
                   </Option>
+                ) : (
+                  !option.onlyOwner && (
+                    <Option
+                      key={index}
+                      onPress={() => handleExecAction(option.action)}
+                    >
+                      <OptionText color={option.color}>
+                        {option.iconName && (
+                          <Feather name={option.iconName} size={18} />
+                        )}{" "}
+                        {option.content}
+                      </OptionText>
+                    </Option>
+                  )
                 )
-              )
-            )}
-          </MessageOptionsModal>
-        </MessageOptionsContainer>
+              )}
+            </MessageOptionsModal>
+          </MessageOptionsContainer>
         </TouchableOpacity>
       </Container>
     </>

@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { MessageData, UserData } from "../../../../@types/interfaces";
+import { MessageData, ParticipantsData, UserData } from "../../../../@types/interfaces";
 
 import Clipboard from "expo-clipboard";
 import * as Localize from "expo-localization";
@@ -23,7 +23,6 @@ import MessageOptions from "../../MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
-  MessageAuthorName,
   MessageAvatar,
   MessageCodeBlock,
   MessageCodeBlockText,
@@ -35,15 +34,19 @@ import {
   MessageLink,
 } from "./styles";
 import { useMemo } from "react";
-import { RenderRule } from "markdown-it/lib/renderer";
 import PremiumName from "../../PremiumName";
+import { ParticipantRoles } from "../../../../@types/enums";
+import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
+import { Participant } from "../../../pages/Participants/styles";
 
 interface MessageProps {
   user: UserData;
+  participant: ParticipantsData;
   message: MessageData;
   lastMessage: MessageData;
   index: number;
   socket: Socket;
+  onReplyMessage: (messageID: string, message: MessageData) => void
 }
 
 const markdownRules = MarkdownIt({
@@ -57,8 +60,10 @@ const Message = ({
   message,
   lastMessage,
   user,
+  participant,
   index,
   socket,
+  onReplyMessage
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -248,12 +253,14 @@ const Message = ({
             close={handleCloseMsgOptions}
             visible={msgOptions}
             message={message}
+            participant_role={participant.role}
             options={[
               {
                 iconName: "corner-up-right",
                 content: "Responder",
-                action: () => {},
+                action: () => onReplyMessage(message.id, message),
                 onlyOwner: false,
+                authorizedRoles: ["ALL" as ParticipantRoles]
               },
               {
                 iconName: "trash-2",
@@ -261,6 +268,7 @@ const Message = ({
                 action: deleteMessage,
                 color: colors.red,
                 onlyOwner: true,
+                authorizedRoles: rolesForDeleteMessage
               },
             ]}
           />

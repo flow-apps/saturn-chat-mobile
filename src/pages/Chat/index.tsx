@@ -24,7 +24,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
-import { GroupData, MessageData, UserData } from "../../../@types/interfaces";
+import { GroupData, MessageData, ParticipantsData, UserData } from "../../../@types/interfaces";
 import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
 
@@ -56,6 +56,7 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
+import Typing from "../../components/Chat/Typing";
 import RecordingAudio from "../../components/Chat/RecordingAudio";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import SelectedFiles from "../../components/Chat/SelectedFiles";
@@ -64,7 +65,6 @@ import { RecordService } from "../../services/record";
 
 import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
-import Typing from "../../components/Chat/Typing";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { MotiView, useAnimationState } from "moti";
@@ -110,6 +110,7 @@ const Chat: React.FC = () => {
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
+  const [participant, setParticipant] = useState<ParticipantsData>()
   const [socket, setSocket] = useState<Socket>(getWebsocket());
 
   const [page, setPage] = useState(0);
@@ -168,6 +169,19 @@ const Chat: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const res = await api.get(`/group/participant/${id}`);
+
+      if (res.status === 200) {
+        setParticipant(res.data.participant);
+      }
+
+      setLoading(false);
+    })()
+  }, [])
+
+  useEffect(() => {
     connectSockets();
   }, [socket]);
 
@@ -203,7 +217,6 @@ const Chat: React.FC = () => {
     navigation.addListener("blur", () => {
       socket.emit("leave_chat")
       socket.offAny();
-      socket.disconnect()
     });
   }, [socket]);
 
@@ -379,7 +392,9 @@ const Chat: React.FC = () => {
           socket={socket as Socket}
           index={index}
           user={user as unknown as UserData}
+          participant={participant as any as ParticipantsData}
           lastMessage={lastMessage}
+          onReplyMessage={() => {}}
         />
       );
     },
@@ -546,6 +561,7 @@ const Chat: React.FC = () => {
             ListFooterComponent={renderFooter}
             windowSize={30}
             scrollEventThrottle={41}
+            updateCellsBatchingPeriod={100}
             renderItem={memoizedRenderMessage}
             removeClippedSubviews
           />

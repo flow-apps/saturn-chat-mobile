@@ -63,8 +63,8 @@ const Participants: React.FC = () => {
     })();
   }, []);
 
-  const handleGoParticipant = (participantID: string) => {
-    navigation.navigate("Participant", { id: participantID });
+  const handleGoParticipant = (participant: ParticipantsData) => {
+    navigation.navigate("Participant", { participant });
   };
 
   const fetchMoreParticipants = useCallback(async () => {
@@ -110,7 +110,7 @@ const Participants: React.FC = () => {
             <Banner />
           </AdBannerWrapper>
         )}
-        <ParticipantContainer onPress={() => handleGoParticipant(item.id)}>
+        <ParticipantContainer onPress={() => handleGoParticipant(item)}>
           <Participant>
             <ParticipantAvatarContainer>
               {item.user.avatar ? (
