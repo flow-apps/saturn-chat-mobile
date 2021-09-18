@@ -13,6 +13,8 @@ import {
   GroupsContainer,
   GroupsTitle,
   Groups,
+  BioContainer,
+  BioContent,
 } from "./styles";
 import { useTheme } from "styled-components";
 import Group from "../../components/Group";
@@ -27,6 +29,8 @@ import { View } from "react-native";
 import PremiumName from "../../components/PremiumName";
 import { useAds } from "../../contexts/ads";
 
+import _ from "lodash"
+
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
@@ -35,7 +39,7 @@ const UserProfile: React.FC = () => {
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation();
-  const { Interstitial }= useAds()
+  const { Interstitial } = useAds();
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
@@ -82,13 +86,18 @@ const UserProfile: React.FC = () => {
               )}
             </ImagesContainer>
             <BasicInfos>
-              <PremiumName 
-                name={userInfos?.name} 
-                nameSize={22} 
+              <PremiumName
+                name={userInfos?.name}
+                nameSize={22}
                 color={colors.light_heading}
                 align="center"
               />
             </BasicInfos>
+            {!_.isNull(user?.bio) && user?.bio.length ? (
+              <BioContainer>
+                <BioContent>{user?.bio}</BioContent>
+              </BioContainer>
+            ): <></>}
           </BasicInfosContainer>
           <GroupsContainer>
             <GroupsTitle>

@@ -3,6 +3,7 @@ import { ParticipantRoles } from "./enums"
 export interface UserData {
   id: string;
   name: string;
+  bio: string;
   email: string;
   participating: ParticipantsData[];
   created_at: string;

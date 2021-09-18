@@ -47,4 +47,6 @@ export const FieldsContainer = styled.View`
   margin-bottom: 15px;
 `
 
-export const FieldContainer = styled.View``
+export const FieldContainer = styled.View`
+  margin-bottom: 15px;
+`

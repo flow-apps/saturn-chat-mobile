@@ -16,11 +16,13 @@ import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 import {
   Poppins_400Regular,
   Poppins_600SemiBold,
+  Poppins_300Light_Italic,
   useFonts,
 } from "@expo-google-fonts/poppins";
 
 export default function App() {
   const [fontLoaded] = useFonts({
+    Poppins_300Light_Italic,
     Poppins_400Regular,
     Poppins_600SemiBold,
     Roboto_500Medium,

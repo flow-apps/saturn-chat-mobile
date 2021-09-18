@@ -44,6 +44,17 @@ export const UserName = styled.Text`
   margin-bottom: 15px;
 `;
 
+export const BioContainer = styled.View`
+  padding: 0px 15px;
+`
+
+export const BioContent = styled.Text`
+  text-align: center;
+  color: ${props => props.theme.colors.light_heading};
+  font-family: ${fonts.quote};
+  margin-top: 20px;
+`
+
 export const GroupsContainer = styled.View`
   margin: 20px 0;
   padding: 0 15px;

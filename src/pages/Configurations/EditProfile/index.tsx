@@ -28,6 +28,7 @@ const EditProfile: React.FC = () => {
   const [newAvatar, setNewAvatar] = useState("");
   const [user, setUser] = useState<UserData>();
   const [name, setName] = useState("");
+  const [bio, setBio] = useState("")
 
   const [isSendable, setIsSendable] = useState(false);
 
@@ -37,6 +38,7 @@ const EditProfile: React.FC = () => {
   const handleSubmit = async () => {
     const newUser = await api.patch("/users/update", {
       name,
+      bio
     });
 
     if (newUser.status === 200) {
@@ -112,9 +114,9 @@ const EditProfile: React.FC = () => {
   };
 
   const handleCheckFields = () => {
-    if (name === user?.name) return setIsSendable(false);
-
-    return setIsSendable(true);
+    if (name === user?.name) setIsSendable(false);
+    if (name === user?.bio) setIsSendable(false);
+    else return setIsSendable(true);
   };
 
   useEffect(() => {
@@ -125,6 +127,7 @@ const EditProfile: React.FC = () => {
       if (res.status === 200) {
         setUser(res.data);
         setName(res.data.name);
+        setBio(res.data.bio)
       }
       setLoading(false);
     })();
@@ -158,6 +161,18 @@ const EditProfile: React.FC = () => {
                 value={name}
                 onChangeText={setName}
                 onTextInput={handleCheckFields}
+                maxLength={100}
+              />
+            </FieldContainer>
+            <FieldContainer>
+              <Input
+                label="Biografia"
+                placeholder={"máx. 100 caracteres"}
+                value={bio}
+                onChangeText={setBio}
+                onTextInput={handleCheckFields}
+                maxLength={100}
+                multiline={true}
               />
             </FieldContainer>
           </FieldsContainer>
