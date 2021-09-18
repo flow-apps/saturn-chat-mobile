@@ -16,6 +16,7 @@ import {
 } from "../../../../@types/interfaces";
 
 import * as Localize from "expo-localization";
+import * as Clipboard from "expo-clipboard"
 
 import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
@@ -32,11 +33,10 @@ import {
 import PremiumName from "../../PremiumName";
 import { ParticipantRoles } from "../../../../@types/enums";
 import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
-import ReplyingMessage from "../ReplyingMessage";
 import MessageMark from "../../Markdown/MessageMark";
 import { Swipeable } from "react-native-gesture-handler";
-import { Feather } from "@expo/vector-icons";
-import Animated from "react-native-reanimated";
+import SimpleToast from "react-native-simple-toast";
+
 
 interface MessageProps {
   user: UserData;
@@ -155,6 +155,11 @@ const Message = ({
     return setShowLinkAlert(false);
   }, []);
 
+  const handleCopyMessage = () => {
+    Clipboard.setString(message.message)
+    SimpleToast.show("Mensagem copiada")
+  }
+
   const renderFiles = useCallback(() => {
     if (message.files) {
       return message.files.map((file) => {
@@ -183,7 +188,7 @@ const Message = ({
         useNativeAnimations
       >
         <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-          <ReplyingMessage />
+          {/* <ReplyingMessage /> */}
           <MessageContentContainer
             isRight={isRight}
             onLongPress={() => setMsgOptions(true)}
@@ -206,16 +211,23 @@ const Message = ({
                 participant ? participant.role : ParticipantRoles.PARTICIPANT
               }
               options={[
+                // {
+                //   iconName: "corner-up-right",
+                //   content: "Responder",
+                //   action: () => onReplyMessage(message.id, message),
+                //   onlyOwner: false,
+                //   authorizedRoles: ["ALL" as ParticipantRoles],
+                // },
                 {
-                  iconName: "corner-up-right",
-                  content: "Responder",
-                  action: () => onReplyMessage(message.id, message),
+                  iconName: "copy",
+                  content: "Copiar",
+                  action: handleCopyMessage,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
                 },
                 {
                   iconName: "trash-2",
-                  content: "Excluir mensagem",
+                  content: "Excluir",
                   action: deleteMessage,
                   color: colors.red,
                   onlyOwner: true,

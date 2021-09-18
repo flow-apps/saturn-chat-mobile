@@ -12,11 +12,12 @@ const Typing = ({ typingUsers }: TypingProps) => {
   const { user } = useAuth()
   const validUsers = useMemo(() => {
     return typingUsers.filter(TUser => TUser.id !== user?.id)
-  }, [typingUsers.length])
+  }, [typingUsers])
 
-  const userNames = [...new Set(validUsers.map(User => User.name))]
-
+  
   if (validUsers.length <= 0) return <></>
+  
+  const userNames = [...new Set(validUsers.map(User => User.name))]
 
   return (
     <Container>

@@ -35,7 +35,6 @@ const GroupConfig: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const { user } = useAuth();
   const { id } = route.params as { id: string };
 
   useEffect(() => {

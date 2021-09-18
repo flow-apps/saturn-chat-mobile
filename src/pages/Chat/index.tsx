@@ -591,7 +591,7 @@ const Chat: React.FC = () => {
             </FileSendedProgressContainer>
           )}
 
-          <ReplyingMessageContainer>
+          {/* <ReplyingMessageContainer>
             <ReplyingMessageContentContainer>
               <ReplyingMessageTitleWrapper>
                 <ReplyingMessageTitle>
@@ -619,7 +619,7 @@ const Chat: React.FC = () => {
                 <Feather name="x" size={25} color={colors.black} />
               </ReplyingMessageRemoveButton>
             </ReplyingMessageRemoveContainer>
-          </ReplyingMessageContainer>
+          </ReplyingMessageContainer> */}
           
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
