@@ -33,7 +33,7 @@ import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 import { useRemoteConfigs } from "../../../contexts/remoteConfigs";
 
-import { connectAsync } from "expo-in-app-purchases"
+import { connectAsync } from "expo-in-app-purchases";
 
 const Premium: React.FC = () => {
   const navigation = useNavigation();
@@ -41,7 +41,6 @@ const Premium: React.FC = () => {
   const { allConfigs } = useRemoteConfigs();
 
   const handleGoChoosePlan = () => navigation.navigate("ChoosePlan");
-
 
   return (
     <>
@@ -101,7 +100,12 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Aumente em 10x o espaço para envio de arquivos, de{" "}
+                  Aumente em{" "}
+                  {Math.round(
+                    Number(allConfigs.premium_file_upload) /
+                      Number(allConfigs.default_file_upload)
+                  )}
+                  x o espaço para envio de arquivos, de{" "}
                   {allConfigs.default_file_upload}MB para incríveis{" "}
                   {allConfigs.premium_file_upload}MB de envio.
                 </VantageContent>

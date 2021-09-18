@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Keyboard,
@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import Header from "../../components/Header";
-import perf from "@react-native-firebase/perf"
+import perf from "@react-native-firebase/perf";
 
 import {
   Container,
@@ -24,6 +24,13 @@ import {
   ButtonWrapper,
   TextArea,
   AdWrapper,
+  AnimationContainer,
+  Animation,
+  ReachedLimitContainer,
+  ReachedLimitTitle,
+  ReachedLimitDescription,
+  ReachedLimitStarContainer,
+  ReachedLimitStarDescription,
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
@@ -36,36 +43,57 @@ import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
-import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 import { verifyBetweenValues } from "../../utils";
+import { UserData } from "../../../@types/interfaces";
+import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import _ from "lodash";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [groupPhoto, setGroupPhoto] = useState<ImageInfo>();
   const [groupPhotoPreview, setGroupPhotoPreview] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string>("");
   const [isPublicGroup, setIsPublicGroup] = useState(true);
+  const [user, setUser] = useState<UserData>({} as UserData);
 
-  const [isSendable, setIsSendable] = useState(false)
+  const [isSendable, setIsSendable] = useState(false);
 
   const { analytics } = useFirebase();
-  const { Interstitial } = useAds();
   const { colors } = useTheme();
+  const { userConfigs, allConfigs } = useRemoteConfigs();
+  const premium = false;
   const navigator = useNavigation();
 
-  async function handleCreateGroup() {
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const res = await api.get("/users/@me");
+
+      if (res.status === 200) {
+        setUser(res.data);
+      }
+
+      setLoading(false);
+    })();
+  }, []);
+
+  const handleGoPremium = () => {
+    navigator.navigate("PurchasePremium");
+  };
+
+  const handleCreateGroup = async () => {
     const data = new FormData();
 
-    
     data.append("name", name);
     data.append("description", description);
     if (groupPhoto) {
       const uriParts = groupPhoto?.uri.split(".");
       const fileType = uriParts?.pop();
-      
+
       data.append("group_avatar", {
         uri: groupPhoto?.uri,
         name: `group_avatar.${fileType}`,
@@ -76,8 +104,8 @@ const NewGroup: React.FC = () => {
     data.append("tags", tags);
 
     setCreating(true);
-    const trace = await perf()?.startTrace("create_group")
-    await trace.start()
+    const trace = await perf()?.startTrace("create_group");
+    await trace.start();
     api
       .post("/groups", data, {
         headers: {
@@ -87,29 +115,28 @@ const NewGroup: React.FC = () => {
       .then(async (response) => {
         if (response.status === 200) {
           navigator.navigate("Groups");
-          trace.putMetric("group_id", response.data.id)
+          trace.putMetric("group_id", response.data.id);
           await analytics.logEvent("created_group", {
             group_id: response.data.id,
           });
         }
       })
       .finally(async () => {
-        await trace.stop()
-        setCreating(false)
+        await trace.stop();
+        setCreating(false);
       });
-  }
+  };
 
-  function handleCheckFields() {
-    if (verifyBetweenValues(name.length, 0, 100))
-      return setIsSendable(true)
-    setIsSendable(false)
-  }
+  const handleCheckFields = () => {
+    if (verifyBetweenValues(name.length, 0, 100)) return setIsSendable(true);
+    setIsSendable(false);
+  };
 
-  function handleSetPublic() {
+  const handleSetPublic = () => {
     setIsPublicGroup(!isPublicGroup);
-  }
+  };
 
-  async function handleSelectGroupPhoto() {
+  const handleSelectGroupPhoto = async () => {
     const { granted } = await ImagePicker.getCameraPermissionsAsync();
 
     if (!granted) {
@@ -132,10 +159,48 @@ const NewGroup: React.FC = () => {
       setGroupPhotoPreview(photo.uri);
       return setGroupPhoto(photo);
     }
+  };
+
+  if (creating || loading) {
+    return <Loading />;
   }
 
-  if (creating) {
-    return <Loading />;
+  if (user && user.groups && user.groups.length >= userConfigs.amountGroups) {
+    return (
+      <Container>
+        <ReachedLimitContainer>
+          <AnimationContainer>
+            <Animation
+              source={require("../../assets/crying.json")}
+              autoPlay
+              loop
+            />
+          </AnimationContainer>
+          <ReachedLimitTitle>
+            Você atingiu o limite de {userConfigs.amountGroups} grupos!
+          </ReachedLimitTitle>
+          <ReachedLimitDescription>
+            Esse limite é estipulado para que todos possam ter suas comunidades
+            no Saturn Chat (caso queiram) e também para evitar problemas chatos
+            como spam.
+          </ReachedLimitDescription>
+          {!premium && (
+            <ReachedLimitStarContainer>
+              <ReachedLimitStarDescription>
+                Você também pode se tornar uma Estrela e criar até{" "}
+                {allConfigs.premium_max_groups} grupos com até{" "}
+                {allConfigs.premium_max_participants} participantes.
+              </ReachedLimitStarDescription>
+              <Button
+                title="Tornar-se Estrela"
+                bgColor={colors.secondary}
+                onPress={handleGoPremium}
+              />
+            </ReachedLimitStarContainer>
+          )}
+        </ReachedLimitContainer>
+      </Container>
+    );
   }
 
   return (
@@ -217,7 +282,11 @@ const NewGroup: React.FC = () => {
                   />
                 </SwitcherContainer>
                 <ButtonWrapper>
-                  <Button enabled={isSendable} title="Criar grupo" onPress={handleCreateGroup} />
+                  <Button
+                    enabled={isSendable}
+                    title="Criar grupo"
+                    onPress={handleCreateGroup}
+                  />
                 </ButtonWrapper>
               </FormContainer>
             </Form>

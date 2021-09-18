@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import TextInput from "../../components/Input"
 import Input from "../../components/Input";
+import AnimatedLottieView from "lottie-react-native";
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -84,4 +84,41 @@ export const ButtonWrapper = styled.View`
 
 export const AdWrapper = styled.View`
   margin-top: 15px;
-`
+`;
+
+export const ReachedLimitContainer = styled.View`
+  align-items: center;
+`;
+
+export const ReachedLimitTitle = styled.Text`
+  text-align: center;
+  font-size: 20px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.light_heading};
+  margin-bottom: 10px;
+`;
+
+export const ReachedLimitDescription = styled.Text`
+  text-align: center;
+  font-size: 15px;
+  font-family: ${fonts.text};
+  color: ${(props) => props.theme.colors.black};
+  margin-top: 10px;
+`;
+
+export const ReachedLimitStarContainer = styled.View`
+  margin-top: 20px;
+`;
+
+export const ReachedLimitStarDescription = styled(ReachedLimitDescription)`
+  margin-bottom: 10px;
+`;
+
+export const AnimationContainer = styled.View`
+  margin-top: 60px;
+`;
+
+export const Animation = styled(AnimatedLottieView)`
+  width: 300px;
+  height: 300px;
+`;

@@ -5,6 +5,7 @@ export interface UserData {
   name: string;
   bio: string;
   email: string;
+  groups: GroupData[];
   participating: ParticipantsData[];
   created_at: string;
   avatar: {
