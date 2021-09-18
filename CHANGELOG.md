@@ -2,6 +2,10 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.8.0
+
+- Add bio in user profile
+
 ## 0.0.7.0
 
 - Add roles and verification for role change and use resources
