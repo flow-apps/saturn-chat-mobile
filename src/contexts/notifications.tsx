@@ -136,7 +136,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
 
   const toggleEnabledNotifications = useCallback(async () => {
     if (!signed || !expoToken.length) return
-    setEnabled(old => !old)
+    setEnabled(old => !old)    
 
     await api
       .patch(`/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`)
@@ -155,7 +155,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
           notificationToken: newToken,
           platform: Platform.OS,
         })
-        .then(res => {
+        .then(res => {          
           setEnabled(res.data.send_notifications)
         })
       }

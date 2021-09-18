@@ -38,7 +38,7 @@ const RemoteConfigsProvider: React.FC = ({ children }) => {
       setInterval(async () => {
         const configs = await getRemoteConfigs("all")      
         setAllConfigs(configs)
-      }, 10000)
+      }, 30000)
     })()
   }, [])
 
