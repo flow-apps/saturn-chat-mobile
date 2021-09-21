@@ -429,7 +429,7 @@ const Chat: React.FC = () => {
   const handleMessageSubmit = useCallback(async () => {
     handleTypingTimeout();
 
-    if (!files.length && !message.length) return;
+    if (files.length <= 0 && message.length <= 0) return;
 
     if (files.length <= 0) {
       const trace = perf().newTrace("send_message_without_file");
@@ -503,7 +503,7 @@ const Chat: React.FC = () => {
           socket={socket as Socket}
           index={index}
           user={user as unknown as UserData}
-          participant={participant}
+          participant={participant as any}
           lastMessage={lastMessage}
           onReplyMessage={() => console.log("Respondendo a mensagem")}
         />

@@ -20,6 +20,7 @@ import {
 } from "./styles";
 import { useEffect } from "react";
 import { Linking } from "react-native";
+import { LinkUtils } from "../../../utils/link";
 
 interface IFileProps {
   name: string;
@@ -30,8 +31,9 @@ interface IFileProps {
 
 const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
-  const navigation = useNavigation();
   const { colors } = useTheme();
+  const linkUtils = new LinkUtils()
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (type === "image") {
@@ -52,7 +54,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
 
-    await Linking.openURL(url)
+    await linkUtils.openLink(url)
   }, [url, name]);
 
   const renderIcon = () => {

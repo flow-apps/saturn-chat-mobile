@@ -36,6 +36,7 @@ import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
 import MessageMark from "../../Markdown/MessageMark";
 import { Swipeable } from "react-native-gesture-handler";
 import SimpleToast from "react-native-simple-toast";
+import { LinkUtils } from "../../../utils/link";
 
 
 interface MessageProps {
@@ -60,8 +61,9 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
-  const navigation = useNavigation();
   const { colors } = useTheme();
+  const linkUtils = new LinkUtils()
+  const navigation = useNavigation();
   const isRight = message.author.id === user.id;
 
   const handleGoUserProfile = (userID: string) => {
@@ -142,12 +144,11 @@ const Message = ({
   }, []);
 
   const openLink = useCallback(async () => {
-    if (await Linking.canOpenURL(linkUrl)) {
-      await Linking.openURL(linkUrl);
-    }
-
+    setShowLinkAlert(false);
+    
+    await linkUtils.openLink(linkUrl)
+    
     setLinkUrl("");
-    return setShowLinkAlert(false);
   }, [linkUrl]);
 
   const closeLink = useCallback(() => {

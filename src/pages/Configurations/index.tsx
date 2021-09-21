@@ -24,6 +24,7 @@ import Banner from "../../components/Ads/Banner";
 import { Linking } from "react-native";
 import config from "../../config";
 import { useNotifications } from "../../contexts/notifications";
+import { LinkUtils } from "../../utils/link";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -33,6 +34,7 @@ const Configurations: React.FC = () => {
   const { toggleTheme, currentThemeName } = useThemeController();
   const { toggleEnabledNotifications, enabled } = useNotifications()
   const { colors } = useTheme();
+  const linkUtils = new LinkUtils()
 
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
@@ -51,11 +53,11 @@ const Configurations: React.FC = () => {
   }, []);
 
   const handleGoPrivacyPolicie = async () => {
-    await Linking.openURL(`${config.WEBSITE_URL}/privacy`)
+    await linkUtils.openLink(`${config.WEBSITE_URL}/privacy`)
   }
 
   const handleGoGuidelines = async () => {
-    await Linking.openURL(`${config.WEBSITE_URL}/guidelines`)
+    await linkUtils.openLink(`${config.WEBSITE_URL}/guidelines`)
   }
 
   return (

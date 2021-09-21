@@ -16,8 +16,10 @@ import ReactNative, { Animated, Easing } from "react-native";
 import { HeaderButton } from "../../components/Header/styles";
 import { useCallback } from "react";
 import { Linking } from "react-native";
+import { LinkUtils } from "../../utils/link";
 
 const ImagePreview = () => {
+  const linkUtils = new LinkUtils()
   let _baseScale = new Animated.Value(1);
   let _pinchScale = new Animated.Value(1);
   let _scale = new Animated.Value(0.8);
@@ -88,7 +90,7 @@ const ImagePreview = () => {
   };
 
   const downloadFile = useCallback(async () => {
-    await Linking.openURL(url);
+    await linkUtils.openLink(url)
   }, [name, url]);
 
   return (
