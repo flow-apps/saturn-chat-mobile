@@ -11,6 +11,7 @@ import {
   Container,
   FileButton,
   FileContainer,
+  FileIconActionWrapper,
   FileIconContainer,
   FileImagePreview,
   FileInfosContainer,
@@ -19,8 +20,8 @@ import {
   FileSize,
 } from "./styles";
 import { useEffect } from "react";
-import { Linking } from "react-native";
 import { LinkUtils } from "../../../utils/link";
+import { createThumbnail } from "react-native-create-thumbnail";
 
 interface IFileProps {
   name: string;
@@ -31,20 +32,32 @@ interface IFileProps {
 
 const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
+  const [videoThumb, setVideoThumb] = useState<string>();
   const { colors } = useTheme();
-  const linkUtils = new LinkUtils()
+  const linkUtils = new LinkUtils();
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (type === "image") {
-      FastImage.preload([
-        {
-          uri: url,
-          cache: "immutable",
-          priority: "high",
-        },
-      ]);
-    }
+    (async () => {
+      if (type === "image") {
+        FastImage.preload([
+          {
+            uri: url,
+            cache: "immutable",
+            priority: "high",
+          },
+        ]);
+      }
+
+      if (type === "video") {
+        const thumb = await createThumbnail({
+          url,
+          format: "jpeg",
+        });
+
+        setVideoThumb(thumb.path);
+      }
+    })();
   }, []);
 
   const handleDownloadFile = () => {
@@ -54,7 +67,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
 
-    await linkUtils.openLink(url)
+    await linkUtils.openLink(url);
   }, [url, name]);
 
   const renderIcon = () => {
@@ -77,6 +90,35 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
       default:
         return <Feather name="file" size={40} color={colors.black} />;
     }
+  };
+
+  const renderPreview = () => {
+    if (type === "image") {
+      return (
+        <FileButton onPress={handleGoImagePreview}>
+          <FileImagePreview
+            source={{ uri: url, cache: "immutable", priority: "high" }}
+          />
+        </FileButton>
+      );
+    } else if (type === "video") {
+      return (
+        <FileButton onPress={handleGoImagePreview}>
+          <FileIconActionWrapper>
+            <Feather name="play-circle" size={25} color={"#fff"} />
+          </FileIconActionWrapper>
+          <FileImagePreview
+            source={{ uri: videoThumb, cache: "immutable", priority: "high" }}
+          />
+        </FileButton>
+      );
+    }
+
+    return (
+      <FileButton onPress={handleDownloadFile}>
+        <Feather name="download" size={30} color={colors.secondary} />
+      </FileButton>
+    );
   };
 
   const handleGoImagePreview = () => {
@@ -103,19 +145,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
           <FileName>{name}</FileName>
           <FileSize>{convertBytesToMB(size)}MB</FileSize>
         </FileInfosContainer>
-        <FileOpenAction>
-          {type === "image" ? (
-            <FileButton onPress={handleGoImagePreview}>
-              <FileImagePreview
-                source={{ uri: url, cache: "immutable", priority: "high" }}
-              />
-            </FileButton>
-          ) : (
-            <FileButton onPress={handleDownloadFile}>
-              <Feather name="download" size={30} color={colors.secondary} />
-            </FileButton>
-          )}
-        </FileOpenAction>
+        <FileOpenAction>{renderPreview()}</FileOpenAction>
       </FileContainer>
     </Container>
   );

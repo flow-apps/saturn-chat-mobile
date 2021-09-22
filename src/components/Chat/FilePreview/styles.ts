@@ -48,6 +48,7 @@ export const FileOpenAction = styled.View`
 `;
 
 export const FileButton = styled.TouchableOpacity`
+  position: relative;
   align-items: center;
   justify-content: center;
 `;
@@ -57,3 +58,8 @@ export const FileImagePreview = styled(FastImage)`
   height: 50px;
   border-radius: 5px;
 `;
+
+export const FileIconActionWrapper = styled.View`
+  position: absolute;
+  z-index: 5;
+`
