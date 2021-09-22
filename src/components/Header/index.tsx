@@ -15,10 +15,17 @@ interface HeaderProps {
   title: string;
   onPressTitle?: () => unknown;
   backButton?: boolean;
-  children?: JSX.Element[] | JSX.Element
+  bgColor?: string;
+  children?: JSX.Element[] | JSX.Element;
 }
 
-const Header = ({ title, backButton, onPressTitle, children }: HeaderProps) => {
+const Header = ({
+  title,
+  backButton,
+  onPressTitle,
+  bgColor,
+  children,
+}: HeaderProps) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -29,8 +36,12 @@ const Header = ({ title, backButton, onPressTitle, children }: HeaderProps) => {
   }
 
   return (
-    <Container>
-      <StatusBar backgroundColor={colors.primary} style="light" />
+    <Container bgColor={bgColor}>
+      <StatusBar
+        backgroundColor={colors.primary}
+        translucent={bgColor === "transparent"}
+        style="light"
+      />
       <RightContainer>
         {backButton && (
           <HeaderButton onPress={handleBack}>

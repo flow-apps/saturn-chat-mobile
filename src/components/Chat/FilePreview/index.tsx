@@ -103,7 +103,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
       );
     } else if (type === "video") {
       return (
-        <FileButton onPress={handleGoImagePreview}>
+        <FileButton onPress={handleGoVideoPreview}>
           <FileIconActionWrapper>
             <Feather name="play-circle" size={25} color={"#fff"} />
           </FileIconActionWrapper>
@@ -125,6 +125,14 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
     return navigation.navigate("ImagePreview", {
       name,
       url,
+    });
+  };
+
+  const handleGoVideoPreview = () => {
+    return navigation.navigate("VideoPreview", {
+      name,
+      url,
+      poster: videoThumb
     });
   };
 

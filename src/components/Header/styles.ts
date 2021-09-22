@@ -3,12 +3,12 @@ import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 
-export const Container = styled.View`
+export const Container = styled.View<{ bgColor?: string; }>`
   width: 100%;
   padding: 0px 10px;
-  height: ${getStatusBarHeight() + 60}px;
-  padding-top: ${getStatusBarHeight()}px;
-  background: ${(props) => props.theme.colors.primary};
+  height: ${getStatusBarHeight() + 30}px;
+  padding-top: ${getStatusBarHeight() - 60}px;
+  background: ${(props) => props.bgColor || props.theme.colors.primary};
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
