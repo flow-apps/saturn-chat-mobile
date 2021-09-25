@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.10.0
+
+- Add Video Previewer with thumbnail
+- Add PDF Previewer
+
 ## 0.0.9.0
 
 - Open link in app (IN APP BROWSER)
