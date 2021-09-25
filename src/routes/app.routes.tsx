@@ -20,6 +20,7 @@ import Participant from "../pages/Participants/Participant";
 import ChangeRole from "../pages/Participants/Participant/ChangeRole";
 import PunishParticipant from "../pages/Participants/Participant/PunishParticipant";
 import VideoPreview from "../pages/VideoPreview";
+import PdfPreview from "../pages/PdfPreview";
 
 const StackRoutes = createStackNavigator();
 
@@ -45,6 +46,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="GroupInfos" component={GroupInfos} />
       <StackRoutes.Screen name="ImagePreview" component={ImagePreview} />
       <StackRoutes.Screen name="VideoPreview" component={VideoPreview} />
+      <StackRoutes.Screen name="PdfPreview" component={PdfPreview} />
       <StackRoutes.Screen name="Invite" component={Invite} />
     </StackRoutes.Navigator>
   );

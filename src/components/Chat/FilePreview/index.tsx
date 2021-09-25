@@ -6,6 +6,8 @@ import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
 import Alert from "../../Alert";
 import FastImage from "react-native-fast-image";
+import * as MimeTypes from "react-native-mime-types"
+import * as FileSystem from "expo-file-system"
 
 import {
   Container,
@@ -22,6 +24,8 @@ import {
 import { useEffect } from "react";
 import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
+import PdfThumb from "react-native-pdf-thumbnail"
+import config from "../../../config";
 
 interface IFileProps {
   name: string;
@@ -33,9 +37,11 @@ interface IFileProps {
 const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
+  const [pdfThumb, setPdfThumb] = useState<string>()
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation();
+  const mimeType = MimeTypes.lookup(name);
 
   useEffect(() => {
     (async () => {
@@ -49,7 +55,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
         ]);
       }
 
-      if (type === "video") {
+      else if (type === "video") {
         const thumb = await createThumbnail({
           url,
           format: "jpeg",
@@ -93,6 +99,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   };
 
   const renderPreview = () => {
+
     if (type === "image") {
       return (
         <FileButton onPress={handleGoImagePreview}>
@@ -112,8 +119,16 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
           />
         </FileButton>
       );
-    }
 
+    }
+    else if (type === "application" && mimeType === "application/pdf") {
+      return (
+        <FileButton onPress={handleGoPdfPreview}>
+          <Feather name="book-open" />
+        </FileButton>
+      );
+    }
+    
     return (
       <FileButton onPress={handleDownloadFile}>
         <Feather name="download" size={30} color={colors.secondary} />
@@ -135,6 +150,14 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
       poster: videoThumb
     });
   };
+
+  const handleGoPdfPreview = () => {
+    return navigation.navigate("PdfPreview", {
+      name,
+      url,
+    });
+  };
+
 
   return (
     <Container>
