@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
@@ -124,7 +124,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
     else if (type === "application" && mimeType === "application/pdf") {
       return (
         <FileButton onPress={handleGoPdfPreview}>
-          <Feather name="book-open" />
+          <MaterialCommunityIcons name="pdf-box" size={35} color={colors.secondary} />
         </FileButton>
       );
     }

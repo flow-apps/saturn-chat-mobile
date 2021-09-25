@@ -1,26 +1,34 @@
-import React from 'react';
-import Header from '../../components/Header';
+import React from "react";
+import Header from "../../components/Header";
 
-import PDFViewer from "react-native-pdf"
-import LoadingIndicator from '../../components/LoadingIndicator';
-import { useRoute } from '@react-navigation/core';
-import { Container } from './styles';
-import { LinkUtils } from '../../utils/link';
-
+import PDFViewer from "react-native-pdf";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import { useRoute } from "@react-navigation/core";
+import { Container } from "./styles";
+import { LinkUtils } from "../../utils/link";
+import { HeaderButton } from "../../components/Header/styles";
+import { Feather } from "@expo/vector-icons"
 
 const PdfPreview = () => {
-
-  const route = useRoute()
-  const { name, url } = route.params as { name: string; url: string }
-  const linkUtils = new LinkUtils()
+  const route = useRoute();
+  const { name, url } = route.params as { name: string; url: string };
+  const linkUtils = new LinkUtils();
 
   const handleOpenLink = async (link: string) => {
-    await linkUtils.openLink(link)
+    await linkUtils.openLink(link);
+  };
+
+  const downloadFile = async () => {
+    await linkUtils.openLink(url)
   }
 
   return (
     <>
-      <Header title={name} backButton />
+      <Header title={name} backButton>
+        <HeaderButton onPress={downloadFile}>
+          <Feather name="download" size={25} color="#fff" />
+        </HeaderButton>
+      </Header>
       <Container>
         <PDFViewer
           source={{ uri: url, cache: true }}
@@ -33,7 +41,7 @@ const PdfPreview = () => {
         />
       </Container>
     </>
-  )
-}
+  );
+};
 
 export default PdfPreview;
