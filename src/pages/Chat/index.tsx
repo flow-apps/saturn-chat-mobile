@@ -19,7 +19,7 @@ import crashlytics from "@react-native-firebase/crashlytics";
 
 import { ProgressBar } from "react-native-paper";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect, useRoute } from "@react-navigation/core";
+import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
@@ -32,6 +32,7 @@ import {
 } from "../../../@types/interfaces";
 import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
+import uuid from "react-native-uuid";
 
 import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
@@ -194,10 +195,13 @@ const Chat: React.FC = () => {
   const connectSockets = useCallback(() => {
     if (!socket) return;
 
-    socket.on("sended_user_message", (msg) => {
-      setOldMessages((old) => [msg, ...old]);
+    socket.on("sended_user_message", ({ msg, localReference }) => {
+      setOldMessages((old) =>
+        old.map((m) =>
+          m.localReference === localReference ? { ...msg, sended: true } : m
+        )
+      );
     });
-
     socket.on("new_user_message", (msg) => {
       setOldMessages((old) => [msg, ...old]);
       socket.emit("set_read_message", msg.id);
@@ -280,6 +284,7 @@ const Chat: React.FC = () => {
           setAudioDuration(0);
 
           const audioData = new FormData();
+          const localReference = uuid.v4() as string;
 
           audioData.append("duration", duration);
           audioData.append("size", audioInfos.size);
@@ -288,6 +293,25 @@ const Chat: React.FC = () => {
             name: `attachment_audio${extension}`,
             type: `audio/${extension.replace(".", "")}`,
           });
+
+          setOldMessages((old) => [
+            {
+              id: localReference,
+              author: user as UserData,
+              group,
+              message,
+              voice_message: {
+                duration,
+                size: Number(audioInfos.size),
+                url: audioInfos.uri,
+              },
+              files: [],
+              sended: false,
+              localReference,
+              created_at: new Date().toISOString(),
+            },
+            ...old,
+          ]);
 
           const sendedAudio = await api.post(
             `/messages/SendAttachment/${id}?type=voice_message`,
@@ -302,6 +326,7 @@ const Chat: React.FC = () => {
           socket?.emit("new_voice_message", {
             audio: sendedAudio.data,
             message,
+            localReference,
           });
         },
       });
@@ -427,19 +452,40 @@ const Chat: React.FC = () => {
   }
 
   const handleMessageSubmit = useCallback(async () => {
-    handleTypingTimeout();
-
     if (files.length <= 0 && message.length <= 0) return;
+
+    const localReference = uuid.v4() as string;
+    setOldMessages((old) => [
+      {
+        id: localReference,
+        author: user as UserData,
+        group,
+        message,
+        files: files.map((file) => ({
+          id: file.file.type === "success" ? file.file.name : "",
+          original_name: file.file.type === "success" ? file.file.name : "",
+          name: file.file.type === "success" ? file.file.name : "",
+          size: file.file.type === "success" ? file.file.file?.size || 0 : 0,
+          type: file.file.type === "success" ? file.type : "",
+          url: file.file.type === "success" ? file.file.uri : "",
+        })),
+        sended: false,
+        localReference,
+        created_at: new Date().toISOString(),
+      },
+      ...old,
+    ]);
+
+    setMessage("");
+    setFiles([]);
+    handleTypingTimeout();
 
     if (files.length <= 0) {
       const trace = perf().newTrace("send_message_without_file");
+
       await trace.start();
-
-      socket?.emit("new_user_message", { message });
-
+      socket?.emit("new_user_message", { message, localReference });
       await trace.stop();
-
-      setMessage("");
       return;
     }
 
@@ -460,6 +506,8 @@ const Chat: React.FC = () => {
         }
       });
 
+      filesData.append("message", message);
+
       await trace.start();
       api
         .post(`messages/SendAttachment/${id}?type=files`, filesData, {
@@ -474,8 +522,8 @@ const Chat: React.FC = () => {
         .then((res) => {
           if (res.status === 200) {
             socket?.emit("new_message_with_files", {
-              message,
               message_id: res.data.message_id,
+              localReference,
             });
           }
         })
@@ -488,8 +536,6 @@ const Chat: React.FC = () => {
 
     setSendingFile(false);
     setSendedFileProgress(0);
-    setFiles([]);
-    setMessage("");
   }, [message]);
 
   const renderMessage = useCallback(
@@ -505,11 +551,11 @@ const Chat: React.FC = () => {
           user={user as unknown as UserData}
           participant={participant as any}
           lastMessage={lastMessage}
-          onReplyMessage={() => console.log("Respondendo a mensagem")}
+          onReplyMessage={() => {}}
         />
       );
     },
-    [oldMessages]
+    [oldMessages.length]
   );
   const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
   const getItemID = (item: MessageData) => item.id;
@@ -620,7 +666,7 @@ const Chat: React.FC = () => {
               </ReplyingMessageRemoveButton>
             </ReplyingMessageRemoveContainer>
           </ReplyingMessageContainer> */}
-          
+
           <InputContainer>
             <EmojiButton onPress={handleShowEmojiPicker}>
               {!showEmojiPicker ? (
@@ -648,40 +694,37 @@ const Chat: React.FC = () => {
               <OptionsButton onPress={handleFileSelector}>
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
-              <SendButton>
-                {message.length > 0 || files.length > 0 ? (
+              {message.length > 0 || files.length > 0 ? (
+                <SendButton>
                   <Feather
                     name="send"
-                    size={28}
+                    size={30}
                     color={colors.primary}
                     onPress={handleMessageSubmit}
                     style={{ transform: [{ rotate: "45deg" }] }}
                   />
-                ) : (
-                  <></>
-                )}
-              </SendButton>
-              {message.length <= 0 && files.length <= 0 && (
+                </SendButton>
+              ) : (
                 <AudioContainer>
                   <AudioButton
                     onPressIn={recordAudio}
                     onPressOut={stopRecordAudio}
                   >
-                    <Feather name="mic" size={28} color={colors.secondary} />
+                    <Feather name="mic" size={30} color={colors.secondary} />
                   </AudioButton>
                 </AudioContainer>
               )}
             </OptionsContainer>
           </InputContainer>
 
-          {showEmojiPicker && (
+          {/* {showEmojiPicker && (
             <EmojiBoardContainer>
               <EmojiPicker
                 onClick={handleSelectEmoji}
                 visible={showEmojiPicker}
               />
             </EmojiBoardContainer>
-          )}
+          )} */}
         </FormContainer>
       </Container>
     </>

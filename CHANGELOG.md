@@ -2,6 +2,10 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.11.0
+
+- Add indicator for sending/sended message
+
 ## 0.0.10.0
 
 - Add Video Previewer with thumbnail

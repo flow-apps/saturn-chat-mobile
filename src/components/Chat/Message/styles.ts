@@ -4,6 +4,7 @@ import FastImage from 'react-native-fast-image'
 
 interface IMessageProps {
   isRight?: boolean;
+  sended?: boolean;
 }
 export const Container = styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
@@ -35,6 +36,7 @@ export const MessageContentContainer = styled.Pressable<IMessageProps>`
   position: relative;
   background-color: ${(props) =>
     !props.isRight ? props.theme.colors.shape : props.theme.colors.primary};
+  opacity: ${props => props.sended ? 1 : 0.5};
   padding: 12px;
   border-radius: 10px;
   min-width: 30%;

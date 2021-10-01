@@ -6,7 +6,6 @@ import format from "date-fns/format";
 import { convertToTimeZone } from "date-fns-timezone";
 
 import { useNavigation } from "@react-navigation/native";
-import { Linking } from "react-native";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import {
@@ -16,7 +15,7 @@ import {
 } from "../../../../@types/interfaces";
 
 import * as Localize from "expo-localization";
-import * as Clipboard from "expo-clipboard"
+import * as Clipboard from "expo-clipboard";
 
 import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
@@ -34,10 +33,9 @@ import PremiumName from "../../PremiumName";
 import { ParticipantRoles } from "../../../../@types/enums";
 import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
 import MessageMark from "../../Markdown/MessageMark";
-import { Swipeable } from "react-native-gesture-handler";
 import SimpleToast from "react-native-simple-toast";
 import { LinkUtils } from "../../../utils/link";
-
+import _ from "lodash";
 
 interface MessageProps {
   user: UserData;
@@ -62,9 +60,10 @@ const Message = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
   const { colors } = useTheme();
-  const linkUtils = new LinkUtils()
+  const linkUtils = new LinkUtils();
   const navigation = useNavigation();
   const isRight = message.author.id === user.id;
+  const sended = _.isUndefined(message?.sended) ? true : message.sended;
 
   const handleGoUserProfile = (userID: string) => {
     navigation.navigate("UserProfile", { id: userID });
@@ -97,9 +96,9 @@ const Message = ({
         </MessageAuthorContainer>
       );
     }
-  }, [message, lastMessage, index]);
+  }, [message.author, lastMessage.author]);
 
-  const renderDate = () => {
+  const renderDate = useCallback(() => {
     if (index === 0 || lastMessage.author.id !== message.author.id) {
       return (
         <MessageDateContainer>
@@ -123,7 +122,7 @@ const Message = ({
         return <></>;
       }
     }
-  };
+  }, [message.created_at, lastMessage.created_at]);
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
@@ -136,7 +135,7 @@ const Message = ({
 
   const deleteMessage = useCallback(() => {
     socket.emit("delete_user_message", message.id);
-  }, []);
+  }, [message.id]);
 
   const alertLink = useCallback((url: string) => {
     setLinkUrl(url);
@@ -145,21 +144,21 @@ const Message = ({
 
   const openLink = useCallback(async () => {
     setShowLinkAlert(false);
-    
-    await linkUtils.openLink(linkUrl)
-    
+
+    await linkUtils.openLink(linkUrl);
+
     setLinkUrl("");
   }, [linkUrl]);
 
   const closeLink = useCallback(() => {
     setLinkUrl("");
     return setShowLinkAlert(false);
-  }, []);
+  }, [linkUrl]);
 
-  const handleCopyMessage = () => {
-    Clipboard.setString(message.message)
-    SimpleToast.show("Mensagem copiada")
-  }
+  const handleCopyMessage = useCallback(() => {
+    Clipboard.setString(message.message);
+    SimpleToast.show("Mensagem copiada");
+  }, [message.message]);
 
   const renderFiles = useCallback(() => {
     if (message.files) {
@@ -178,82 +177,70 @@ const Message = ({
   }, [message.files]);
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
+  const handleOpenMsgOptions = () => setMsgOptions(true);
 
   return (
     <>
-      <Swipeable
-        friction={3}
-        overshootRight={isRight}
-        overshootLeft={!isRight}
-        onSwipeableClose={() => onReplyMessage(message.id, message)}
-        useNativeAnimations
-      >
-        <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-          {/* <ReplyingMessage /> */}
-          <MessageContentContainer
-            isRight={isRight}
-            onLongPress={() => setMsgOptions(true)}
-            delayLongPress={250}
-          >
-            <Alert
-              title="⚠ Cuidado, pode ser perigoso"
-              content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
-              cancelButtonText="Não"
-              okButtonText="Acessar"
-              cancelButtonAction={closeLink}
-              okButtonAction={openLink}
-              visible={showLinkAlert}
-            />
-            <MessageOptions
-              close={handleCloseMsgOptions}
-              visible={msgOptions}
-              message={message}
-              participant_role={
-                participant ? participant.role : ParticipantRoles.PARTICIPANT
-              }
-              options={[
-                // {
-                //   iconName: "corner-up-right",
-                //   content: "Responder",
-                //   action: () => onReplyMessage(message.id, message),
-                //   onlyOwner: false,
-                //   authorizedRoles: ["ALL" as ParticipantRoles],
-                // },
-                {
-                  iconName: "copy",
-                  content: "Copiar",
-                  action: handleCopyMessage,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                },
-                {
-                  iconName: "trash-2",
-                  content: "Excluir",
-                  action: deleteMessage,
-                  color: colors.red,
-                  onlyOwner: true,
-                  authorizedRoles: rolesForDeleteMessage,
-                },
-              ]}
-            />
-            <MessageMark
-              message={message}
-              onPressLink={alertLink}
-              user={user}
-            />
-            {message.voice_message && (
-              <AudioPlayer audio={message.voice_message} />
-            )}
-            {renderFiles()}
-          </MessageContentContainer>
-          {renderDate()}
-          {renderAuthor()}
-        </Container>
-      </Swipeable>
+      <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
+        {/* <ReplyingMessage /> */}
+        <MessageContentContainer
+          isRight={isRight}
+          sended={sended}
+          onLongPress={handleOpenMsgOptions}
+          delayLongPress={250}
+        >
+          <Alert
+            title="⚠ Cuidado, pode ser perigoso"
+            content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
+            cancelButtonText="Não"
+            okButtonText="Acessar"
+            cancelButtonAction={closeLink}
+            okButtonAction={openLink}
+            visible={showLinkAlert}
+          />
+          <MessageOptions
+            close={handleCloseMsgOptions}
+            visible={msgOptions}
+            message={message}
+            participant_role={
+              participant ? participant.role : ParticipantRoles.PARTICIPANT
+            }
+            options={[
+              // {
+              //   iconName: "corner-up-right",
+              //   content: "Responder",
+              //   action: () => onReplyMessage(message.id, message),
+              //   onlyOwner: false,
+              //   authorizedRoles: ["ALL" as ParticipantRoles],
+              // },
+              {
+                iconName: "copy",
+                content: "Copiar",
+                action: handleCopyMessage,
+                onlyOwner: false,
+                authorizedRoles: ["ALL" as ParticipantRoles],
+              },
+              {
+                iconName: "trash-2",
+                content: "Excluir",
+                action: deleteMessage,
+                color: colors.red,
+                onlyOwner: true,
+                authorizedRoles: rolesForDeleteMessage,
+              },
+            ]}
+          />
+          <MessageMark message={message} onPressLink={alertLink} user={user} />
+          {message.voice_message && (
+            <AudioPlayer audio={message.voice_message} />
+          )}
+          {renderFiles()}
+        </MessageContentContainer>
+        {renderDate()}
+        {renderAuthor()}
+      </Container>
     </>
   );
 };
 
-export default memo(Message, (prev, next) => {
-  return prev.message.id !== next.message.id;
-});
+export default memo(Message);

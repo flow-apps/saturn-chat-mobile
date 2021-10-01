@@ -51,6 +51,8 @@ export interface MessageData {
   group: GroupData;
   voice_message?: AudioData;
   files?: FileData[];
+  sended?: boolean;
+  localReference?: string;
 }
 
 export interface FileData {
