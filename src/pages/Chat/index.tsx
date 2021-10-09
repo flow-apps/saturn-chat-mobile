@@ -452,9 +452,12 @@ const Chat: React.FC = () => {
   }
 
   const handleMessageSubmit = useCallback(async () => {
-    if (files.length <= 0 && message.length <= 0) return;
+    if (files.length === 0 && message.length === 0) return;
 
     const localReference = uuid.v4() as string;
+    setMessage("");
+    handleTypingTimeout();
+
     setOldMessages((old) => [
       {
         id: localReference,
@@ -476,17 +479,12 @@ const Chat: React.FC = () => {
       ...old,
     ]);
 
-    setMessage("");
-    setFiles([]);
-    handleTypingTimeout();
-
-    if (files.length <= 0) {
+    if (files.length === 0) {
       const trace = perf().newTrace("send_message_without_file");
 
       await trace.start();
       socket?.emit("new_user_message", { message, localReference });
       await trace.stop();
-      return;
     }
 
     if (files.length > 0) {
@@ -505,6 +503,7 @@ const Chat: React.FC = () => {
           });
         }
       });
+      setFiles([]);
 
       filesData.append("message", message);
 
@@ -536,7 +535,7 @@ const Chat: React.FC = () => {
 
     setSendingFile(false);
     setSendedFileProgress(0);
-  }, [message]);
+  }, [message, files]);
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
@@ -717,14 +716,14 @@ const Chat: React.FC = () => {
             </OptionsContainer>
           </InputContainer>
 
-          {/* {showEmojiPicker && (
+          {showEmojiPicker && (
             <EmojiBoardContainer>
               <EmojiPicker
                 onClick={handleSelectEmoji}
                 visible={showEmojiPicker}
               />
             </EmojiBoardContainer>
-          )} */}
+          )}
         </FormContainer>
       </Container>
     </>

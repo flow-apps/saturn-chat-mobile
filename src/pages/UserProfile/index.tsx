@@ -93,9 +93,9 @@ const UserProfile: React.FC = () => {
                 align="center"
               />
             </BasicInfos>
-            {!_.isNull(user?.bio) && user?.bio.length ? (
+            {!_.isNull(userInfos?.bio) && userInfos?.bio.length ? (
               <BioContainer>
-                <BioContent>{user?.bio}</BioContent>
+                <BioContent>{userInfos?.bio}</BioContent>
               </BioContainer>
             ): <></>}
           </BasicInfosContainer>
