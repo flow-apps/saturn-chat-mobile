@@ -87,7 +87,7 @@ const OnBoarding: React.FC = () => {
           subtitle: (
             <BoardSubTitle>
               Aqui você encontrará uma enorme variedade de grupos (ou criar um
-              do seu próprio do jeito que quiser quiser).
+              do seu próprio jeito que quiser).
             </BoardSubTitle>
           ),
         },
@@ -102,7 +102,7 @@ const OnBoarding: React.FC = () => {
           title: <BoardTitle>Envie mensagens com facilidade!</BoardTitle>,
           subtitle: (
             <BoardSubTitle>
-              Como poucos cliques você já consegue enviar e receber mensagens
+              Com poucos cliques você já consegue enviar e receber mensagens
               com fotos, vídeos e até mensagens de voz.
             </BoardSubTitle>
           ),
