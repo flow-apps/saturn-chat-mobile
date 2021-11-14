@@ -28,12 +28,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import config from "../../../config";
 
 const InviteUsers: React.FC = () => {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { id } = route.params as { id: string }
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { id } = route.params as { id: string };
   const { colors } = useTheme();
 
-  const handleGoCreateNewInvite = () => navigation.navigate("NewInvites", { id })
+  const handleGoCreateNewInvite = () =>
+    navigation.navigate("NewInvites", { id });
 
   return (
     <>
@@ -44,16 +45,9 @@ const InviteUsers: React.FC = () => {
             <Feather name="user-plus" size={18} /> Convite do grupo
           </YourInviteTitle>
           <YourInviteSubtitle>
-            Você pode convidar usuários para o grupo usando este link:
+            Crie e gerencie todos os convites do grupo através do nosso
+            gerenciador de convites
           </YourInviteSubtitle>
-          <YourInviteLinkContainer>
-            <YourInviteLinkText numberOfLines={1} selectable>
-              {config.WEBSITE_URL}/invite/77g8gop
-            </YourInviteLinkText>
-            <YourInviteCopyButton>
-              <Feather name="clipboard" size={22} color={colors.secondary} />
-            </YourInviteCopyButton>
-          </YourInviteLinkContainer>
           <NewInviteContainer>
             <NewInviteButton onPress={handleGoCreateNewInvite}>
               <NewInviteButtonText>

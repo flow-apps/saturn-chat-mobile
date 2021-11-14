@@ -88,6 +88,9 @@ export const CreateInviteLinkOptionCardText = styled.Text`
   font-family: ${fonts.heading};
 `;
 
+export const AmountUsagesSlider = styled.Slider`
+`
+
 export const YourInvitesContainer = styled.View``;
 
 export const YourInvitesTitle = styled.Text`
@@ -131,3 +134,4 @@ export const InviteRemoveButton = styled.TouchableOpacity`
 `;
 
 export const InviteRemoveText = styled.Text``;
+

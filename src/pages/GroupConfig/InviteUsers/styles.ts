@@ -26,6 +26,7 @@ export const YourInviteSubtitle = styled.Text`
   font-size: 14px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
+  text-align: center;
   margin: 10px 0px;
 `;
 
@@ -51,7 +52,6 @@ export const YourInviteCopyButton = styled.TouchableOpacity``;
 export const NewInviteContainer = styled.View``
 
 export const NewInviteButton = styled.TouchableOpacity`
-  margin-top: 20px;
 `
 
 export const NewInviteButtonText = styled.Text`
