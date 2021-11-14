@@ -19,25 +19,30 @@ import {
 import { ParticipantsData } from "../../../../../@types/interfaces";
 import api from "../../../../services/api";
 import Loading from "../../../../components/Loading";
+import SimpleToast from "react-native-simple-toast";
 
 const PunishParticipant: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { colors } = useTheme();
-  const { type, id } = route.params as { [key: string]: any };
+  const { type, groupID, participantID } = route.params as {
+    [key: string]: any;
+  };
   const [notify, setNotify] = useState(false);
   const [participant, setParticipant] = useState<ParticipantsData>();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
-      setLoading(true)
-      const participantRes = await api.get(`/group/participant/${id}`);
+      setLoading(true);
+      const participantRes = await api.get(
+        `/group/participant/${groupID}?participant_id=${participantID}`
+      );
       if (participantRes.status === 200) {
         const part = participantRes.data.participant as ParticipantsData;
         setParticipant(part);
       }
-      setLoading(false)
+      setLoading(false);
     })();
   }, []);
 
@@ -49,7 +54,23 @@ const PunishParticipant: React.FC = () => {
     setNotify((old) => !old);
   };
 
-  if (loading) return <Loading />
+  const handlePunish = async () => {
+    await api
+      .get(
+        `/group/participant/${type}/${participant?.id}?group_id=${participant?.group.id}`
+      )
+      .then((res) => {
+        if (res.status === 204) {
+          SimpleToast.show("Usuário punido com sucesso!");
+          navigation.navigate("Chat", { id: participant?.group.id });
+        }
+      })
+      .catch(() => {
+        SimpleToast.show("Erro ao punir usuário. Tente novamente.");
+      });
+  };
+
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -75,7 +96,7 @@ const PunishParticipant: React.FC = () => {
             </PunishNotifyInput>
           </PunishNotifyContainer>
           <ButtonsContainer>
-            <ButtonAction>
+            <ButtonAction onPress={handlePunish}>
               <ButtonText>
                 Sim, {type === "kick" ? "expulsar" : "banir"} agora!
               </ButtonText>

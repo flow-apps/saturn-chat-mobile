@@ -41,8 +41,9 @@ export const PlayerControlsContainer = styled.View`
   align-items: center;
   margin-bottom: 20px;
   max-width: ${Dimensions.get("screen").width}px;
-  padding: 0 5px;
+  padding: 5px;
   z-index: 10;
+  background-color: #00000033;
 `
 
 export const PlayerControls = styled.View`

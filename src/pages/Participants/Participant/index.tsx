@@ -53,7 +53,7 @@ const Participant: React.FC = () => {
   };
 
   const handleGoPunishParticipant = async (type: string) => {
-    navigation.navigate("PunishParticipant", { type, id: participant.group.id });
+    navigation.navigate("PunishParticipant", { type, groupID: participant.group.id, participantID: participant.id });
   };
 
   const handleGoUserProfile = () => {
