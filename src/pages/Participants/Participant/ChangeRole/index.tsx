@@ -22,13 +22,22 @@ import roles from "./roles";
 import Button from "../../../../components/Button";
 import { useRoute } from "@react-navigation/core";
 import { ParticipantsData } from "../../../../../@types/interfaces";
+import api from "../../../../services/api";
+import SimpleToast from "react-native-simple-toast";
+import { useNavigation } from "@react-navigation/native";
 
-type Roles = "participant" | "moderator" | "admin";
+type Roles = "participant" | "mod" | "admin";
 
 const ChangeRole: React.FC = () => {
-  const { participant, id } = useRoute().params as { participant: ParticipantsData, id: string }
+  const navigation = useNavigation();
+  const { participant, id } = useRoute().params as {
+    participant: ParticipantsData;
+    id: string;
+  };
   const { colors } = useTheme();
-  const [role, setRole] = useState<Roles>(participant.role.toLocaleLowerCase() as Roles);
+  const [role, setRole] = useState<Roles>(
+    participant.role.toLocaleLowerCase() as Roles
+  );  
   const { name, description, permissions } = roles[role];
   const {
     create_invites,
@@ -44,30 +53,48 @@ const ChangeRole: React.FC = () => {
       name: "Participante",
       radioValue: "participant",
       color: colors.black,
-      icon: "user"
+      icon: "user",
     },
     {
       name: "Moderador",
-      radioValue: "moderator",
+      radioValue: "mod",
       color: colors.primary,
-      icon: "shield"
+      icon: "shield",
     },
     {
       name: "Gerente",
       radioValue: "manager",
       color: colors.green,
-      icon: "command"
+      icon: "command",
     },
     {
       name: "Administrador",
       radioValue: "admin",
       color: colors.red,
-      icon: "zap"
-    }
+      icon: "zap",
+    },
   ];
 
   const handleChangeRole = (selectedRole: any) => {
     setRole(selectedRole);
+  };
+
+  const handleSetRole = async () => {    
+    await api
+      .post(
+        `/group/participant/role/set/${
+          participant.id
+        }?role=${role.toUpperCase()}&group_id=${participant.group.id}`
+      )
+      .then((res) => {
+        if (res.status === 204) {
+          SimpleToast.show("Cargo do usuário alterado com sucesso");
+          navigation.navigate("Chat", { id: participant.group.id });
+        }
+      })
+      .catch(res => {        
+        SimpleToast.show("Erro ao alterar cargo. Tente novamente.");
+      });
   };
 
   return (
@@ -127,7 +154,7 @@ const ChangeRole: React.FC = () => {
             </RolePermission>
           </RolePermissionsContainer>
         </RoleInfoContainer>
-        <Button title="Salvar cargo" />
+        <Button onPress={handleSetRole} title="Salvar cargo" />
       </Container>
     </>
   );

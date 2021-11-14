@@ -24,17 +24,19 @@ const Participant: React.FC = () => {
     [key: string]: ParticipantsData;
   };
   const navigation = useNavigation();
-  const [myRole, setMyRole] = useState("" as ParticipantRoles)
+  const [myRole, setMyRole] = useState("" as ParticipantRoles);
 
   useEffect(() => {
     (async () => {
-      const participantRes = await api.get(`/group/participant/${participant.group.id}`);
+      const participantRes = await api.get(
+        `/group/participant/${participant.group.id}`
+      );
       if (participantRes.status === 200) {
-        const part = participantRes.data.participant as ParticipantsData   
+        const part = participantRes.data.participant as ParticipantsData;
         setMyRole(part.role.toUpperCase() as ParticipantRoles);
       }
-    })()
-  }, [])
+    })();
+  }, []);
 
   const authorizedForPunish = [
     ParticipantRoles.ADMIN,
@@ -53,12 +55,16 @@ const Participant: React.FC = () => {
   };
 
   const handleGoPunishParticipant = async (type: string) => {
-    navigation.navigate("PunishParticipant", { type, groupID: participant.group.id, participantID: participant.id });
+    navigation.navigate("PunishParticipant", {
+      type,
+      groupID: participant.group.id,
+      participantID: participant.id,
+    });
   };
 
   const handleGoUserProfile = () => {
     navigation.navigate("UserProfile", { id: participant.user.id });
-  };  
+  };
 
   return (
     <>

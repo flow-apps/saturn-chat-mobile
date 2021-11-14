@@ -11,7 +11,7 @@ export default {
       delete_group: false
     },
   },
-  moderator: {
+  mod: {
     name: "Moderador",
     description: "Os moderadores são os que cuidam da segurança do grupo.",
     permissions: {
