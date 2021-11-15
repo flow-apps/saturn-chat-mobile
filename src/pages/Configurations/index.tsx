@@ -97,7 +97,7 @@ const Configurations: React.FC = () => {
               </ConfigContainer>
               <ConfigContainer>
                 <ConfigTitle>
-                  <Feather name="moon" size={16} /> Modo Escuro
+                  <Feather name={currentThemeName === "dark" ? "moon" : "sun"} size={16} /> Modo Escuro
                 </ConfigTitle>
                 <Switcher
                   currentValue={currentThemeName === "dark"}

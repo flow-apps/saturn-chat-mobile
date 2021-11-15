@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import {
-  Keyboard,
   ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -18,7 +17,7 @@ import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
 
 import { ProgressBar } from "react-native-paper";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
@@ -39,7 +38,6 @@ import * as MimeTypes from "react-native-mime-types";
 
 import FormData from "form-data";
 import Alert from "../../components/Alert";
-import EmojiPicker from "../../components/Chat/EmojiPicker";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Message from "../../components/Chat/Message";
@@ -47,10 +45,7 @@ import api from "../../services/api";
 import {
   AudioButton,
   AudioContainer,
-  BannerWrapper,
   Container,
-  EmojiBoardContainer,
-  EmojiButton,
   FileSendedProgressContainer,
   FileSendedText,
   FormContainer,
@@ -112,9 +107,6 @@ const Chat: React.FC = () => {
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [sendingFile, setSendingFile] = useState(false);
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
-
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
   const [message, setMessage] = useState<string>("");
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
@@ -177,9 +169,6 @@ const Chat: React.FC = () => {
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
       }
-
-      Keyboard.addListener("keyboardDidShow", () => setShowEmojiPicker(false));
-
       setLoading(false);
     })();
   }, []);
@@ -437,20 +426,6 @@ const Chat: React.FC = () => {
     navigation.navigate("PurchasePremium");
   };
 
-  const handleShowEmojiPicker = useCallback(() => {
-    if (!showEmojiPicker) {
-      setShowEmojiPicker(true);
-      return Keyboard.dismiss();
-    }
-
-    setShowEmojiPicker(false);
-    if (messageInputRef.current) messageInputRef.current.focus();
-  }, [showEmojiPicker]);
-
-  function handleSelectEmoji(emoji: string) {
-    setMessage((old) => old + emoji);
-  }
-
   const handleMessageSubmit = useCallback(async () => {
     if (files.length === 0 && message.length === 0) return;
 
@@ -667,17 +642,6 @@ const Chat: React.FC = () => {
           </ReplyingMessageContainer> */}
 
           <InputContainer>
-            <EmojiButton onPress={handleShowEmojiPicker}>
-              {!showEmojiPicker ? (
-                <Feather name="smile" size={24} color={colors.secondary} />
-              ) : (
-                <MaterialIcons
-                  name="keyboard"
-                  size={24}
-                  color={colors.secondary}
-                />
-              )}
-            </EmojiButton>
             <MessageInput
               ref={messageInputRef}
               as={TextInput}
@@ -715,15 +679,6 @@ const Chat: React.FC = () => {
               )}
             </OptionsContainer>
           </InputContainer>
-
-          {showEmojiPicker && (
-            <EmojiBoardContainer>
-              <EmojiPicker
-                onClick={handleSelectEmoji}
-                visible={showEmojiPicker}
-              />
-            </EmojiBoardContainer>
-          )}
         </FormContainer>
       </Container>
     </>

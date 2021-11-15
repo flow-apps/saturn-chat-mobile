@@ -17,6 +17,7 @@ import { useRoute } from "@react-navigation/native";
 import { ParticipantsData } from "../../../../@types/interfaces";
 import { ParticipantRoles } from "../../../../@types/enums";
 import api from "../../../services/api";
+import Loading from "../../../components/Loading";
 
 const Participant: React.FC = () => {
   const { colors } = useTheme();
@@ -25,9 +26,11 @@ const Participant: React.FC = () => {
   };
   const navigation = useNavigation();
   const [myRole, setMyRole] = useState("" as ParticipantRoles);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     (async () => {
+      setLoading(true)
       const participantRes = await api.get(
         `/group/participant/${participant.group.id}`
       );
@@ -35,6 +38,7 @@ const Participant: React.FC = () => {
         const part = participantRes.data.participant as ParticipantsData;
         setMyRole(part.role.toUpperCase() as ParticipantRoles);
       }
+      setLoading(false)
     })();
   }, []);
 
@@ -65,7 +69,9 @@ const Participant: React.FC = () => {
   const handleGoUserProfile = () => {
     navigation.navigate("UserProfile", { id: participant.user.id });
   };
-
+ 
+  if (loading) return <Loading />
+  
   return (
     <>
       <Header title={participant.user.name} backButton />

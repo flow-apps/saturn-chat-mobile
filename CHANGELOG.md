@@ -2,6 +2,13 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.12.0
+
+- Remove emoji picker
+- Change role working
+- Kick user working
+- Change icon on switch theme
+
 ## 0.0.11.0
 
 - Add indicator for sending/sended message

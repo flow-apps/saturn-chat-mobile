@@ -132,7 +132,6 @@ export const OptionsContainer = styled.View`
   align-items: center;
 `;
 
-export const EmojiButton = styled.TouchableOpacity``;
 
 export const OptionsButton = styled.TouchableOpacity`
   margin-right: 10px;
@@ -153,15 +152,7 @@ export const MessageInput = styled.TextInput.attrs({
   color: ${(props) => props.theme.colors.black};
 `;
 
-export const EmojiBoardContainer = styled.View`
-  margin-bottom: 10px;
-`;
-
 export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.Pressable`
 `;
-
-export const BannerWrapper = styled.View`
-  margin: 5px 0;
-`
