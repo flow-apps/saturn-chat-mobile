@@ -134,14 +134,14 @@ const NotificationsProvider: React.FC = ({ children }) => {
     return newToken;
   }, [expoToken]);
 
-  const toggleEnabledNotifications = useCallback(async () => {
+  const toggleEnabledNotifications = async () => {
     if (!signed || !expoToken.length) return
     setEnabled(old => !old)    
 
     await api
       .patch(`/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`)
 
-  }, [expoToken])
+  }
 
   useEffect(() => {
     (async () => {
