@@ -33,7 +33,6 @@ class FileService {
     if (file.type === "success") {
       const fileSize = Math.trunc(file.size / 1000 / 1000);
       const usageSize = this.filesSizeUsed + fileSize;
-      console.log(usageSize);
       const type = MimeTypes.lookup(file.name).split("/")[0] as string;
       if (fileSize > this.sizeLimit || usageSize > this.sizeLimit) {
         return {

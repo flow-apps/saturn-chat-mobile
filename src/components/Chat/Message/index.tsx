@@ -202,9 +202,7 @@ const Message = ({
             close={handleCloseMsgOptions}
             visible={msgOptions}
             message={message}
-            participant_role={
-              participant ? participant.role : ParticipantRoles.PARTICIPANT
-            }
+            participant_role={participant.role}
             options={[
               // {
               //   iconName: "corner-up-right",

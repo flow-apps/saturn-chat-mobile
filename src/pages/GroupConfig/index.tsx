@@ -81,7 +81,6 @@ const GroupConfig: React.FC = () => {
     const res = await api.delete(`/group/${id}`);
 
     if (res.status === 204) {
-      console.log("OK!");
       navigation.navigate("Groups");
     }
   };
@@ -91,7 +90,6 @@ const GroupConfig: React.FC = () => {
     const res = await api.delete(`/group/participant/exit/${id}`);
 
     if (res.status === 204) {
-      console.log("OK!");
       navigation.navigate("Groups");
     }
   };

@@ -24,8 +24,6 @@ import {
 import { useEffect } from "react";
 import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
-import PdfThumb from "react-native-pdf-thumbnail"
-import config from "../../../config";
 
 interface IFileProps {
   name: string;

@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useLayoutEffect,
   useEffect,
   useMemo,
   useRef,
@@ -12,7 +13,6 @@ import {
   TextInput,
 } from "react-native";
 
-import EmojiJS from "emoji-js";
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
 
@@ -79,8 +79,6 @@ import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { MotiView, useAnimationState } from "moti";
-
-const emoji = new EmojiJS();
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -163,12 +161,20 @@ const Chat: React.FC = () => {
       });
 
       const groupRes = await api.get(`/group/${id}`);
-      const participantRes = await api.get(`/group/participant/${id}`);
+      if (groupRes.status === 200) 
+        setGroup(groupRes.data);
 
-      if (groupRes.status === 200) setGroup(groupRes.data);
-      if (participantRes.status === 200) {
-        setParticipant(participantRes.data.participant);
-      }
+      setLoading(false);
+    })();
+  }, []);
+
+  useLayoutEffect(() => {
+    (async () => {
+      setLoading(true);
+      const participantRes = await api.get(`/group/participant/${id}`);
+      if (participantRes.status === 200) 
+        setParticipant(participantRes.data.participant)
+
       setLoading(false);
     })();
   }, []);
@@ -403,8 +409,7 @@ const Chat: React.FC = () => {
 
   const handleSetMessage = useCallback(
     (message: string) => {
-      const emojifiedMessage = emoji.replace_colons(message);
-      setMessage(emojifiedMessage);
+      setMessage(message);
     },
     [message]
   );
