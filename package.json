@@ -22,7 +22,7 @@
     "@react-navigation/bottom-tabs": "^5.11.10",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.4",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "caniuse-lite": "^1.0.30001280",
     "date-fns": "^2.22.1",
     "date-fns-timezone": "^0.1.4",
