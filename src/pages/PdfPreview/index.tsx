@@ -34,6 +34,7 @@ const PdfPreview = () => {
           source={{ uri: url, cache: true }}
           style={{ flex: 1 }}
           activityIndicator={LoadingIndicator}
+          minScale={0.8}
           maxScale={10}
           enableAnnotationRendering
           enableAntialiasing

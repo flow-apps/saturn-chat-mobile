@@ -155,8 +155,8 @@ const NotificationsProvider: React.FC = ({ children }) => {
           notificationToken: newToken,
           platform: Platform.OS,
         })
-        .then(res => {          
-          setEnabled(res.data.send_notifications)
+        .then(res => {   
+          setEnabled(res.data.send_notification)
         })
       }
     })();
