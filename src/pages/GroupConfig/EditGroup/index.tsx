@@ -125,16 +125,11 @@ const EditGroup: React.FC = () => {
   };
 
   const handleCheckFields = () => {
-    if (!verifyBetweenValues(name.length, 0, 100) && name === group?.name)
+    if (!verifyBetweenValues(name.trim().length, 1, 100, true))
       return setIsSendable(false);
-
-    if (
-      !verifyBetweenValues(description.length, 0, 500) &&
-      description === group?.description
-    )
+    else if (!verifyBetweenValues(description.trim().length, 0, 500))
       return setIsSendable(false);
-
-    return setIsSendable(true);
+    else return setIsSendable(true);
   };
 
   useEffect(() => {
@@ -158,7 +153,7 @@ const EditGroup: React.FC = () => {
 
   return (
     <>
-      <Header title="Editar grupo"  />
+      <Header title="Editar grupo" />
       <Container>
         <FormContainer>
           <AvatarContainer>
