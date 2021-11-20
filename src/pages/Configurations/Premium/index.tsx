@@ -66,12 +66,12 @@ const Premium: React.FC = () => {
           <SubtitleWrapper>
             <Subtitle>
               Aproveite ao máximo todos os recursos disponíveis como envio de
-              arquívos maiores, criar grupos ilimitados, remover todos os
+              arquivos maiores, criar mais grupos, remover todos os
               anúncios, e mais!
             </Subtitle>
           </SubtitleWrapper>
           <BuyWrapper>
-            <BuyBonusText>Assine e ganhe 1 mês grátis!</BuyBonusText>
+            <BuyBonusText>Assine agora e ganhe 1 mês grátis!</BuyBonusText>
             <BuyButton onPress={handleGoChoosePlan}>
               <BuyButtonText>
                 <Feather name="star" size={18} /> Obter a partir de R$ 39

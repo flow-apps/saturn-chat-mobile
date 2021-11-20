@@ -180,16 +180,16 @@ const NewGroup: React.FC = () => {
             Você atingiu o limite de {userConfigs.amountGroups} grupos!
           </ReachedLimitTitle>
           <ReachedLimitDescription>
-            Esse limite é estipulado para que todos possam ter suas comunidades
-            no Saturn Chat (caso queiram) e também para evitar problemas chatos
+            Esse limite é estipulado para que todos possam criar suas comunidades
+            no Saturn Chat e também para evitar problemas chatos
             como spam.
           </ReachedLimitDescription>
           {!premium && (
             <ReachedLimitStarContainer>
               <ReachedLimitStarDescription>
                 Você também pode se tornar uma Estrela e criar até{" "}
-                {allConfigs.premium_max_groups} grupos com até{" "}
-                {allConfigs.premium_max_participants} participantes.
+                {allConfigs.premium_max_groups} grupos com{" "}
+                {allConfigs.premium_max_participants} participantes em cada grupo.
               </ReachedLimitStarDescription>
               <Button
                 title="Tornar-se Estrela"
