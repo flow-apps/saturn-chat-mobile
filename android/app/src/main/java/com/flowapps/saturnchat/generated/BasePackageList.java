@@ -16,8 +16,6 @@ public class BasePackageList {
         new expo.modules.documentpicker.DocumentPickerPackage(),
         new expo.modules.errorrecovery.ErrorRecoveryPackage(),
         new expo.modules.filesystem.FileSystemPackage(),
-        new expo.modules.medialibrary.MediaLibraryPackage(),
-        new expo.modules.notifications.NotificationsPackage(),
         new expo.modules.firebase.analytics.FirebaseAnalyticsPackage(),
         new expo.modules.firebase.core.FirebaseCorePackage(),
         new expo.modules.font.FontLoaderPackage(),
@@ -27,8 +25,8 @@ public class BasePackageList {
         new expo.modules.keepawake.KeepAwakePackage(),
         new expo.modules.lineargradient.LinearGradientPackage(),
         new expo.modules.localization.LocalizationPackage(),
+        new expo.modules.notifications.NotificationsPackage(),
         new expo.modules.permissions.PermissionsPackage(),
-        new expo.modules.sharing.SharingPackage(),
         new expo.modules.updates.UpdatesPackage()
     );
   }

@@ -17,7 +17,7 @@
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATE_URL" android:value="https://exp.host/@pedro-henriquebraga/SaturnChat" />
     <meta-data android:name="expo.modules.updates.EXPO_RELEASE_CHANNEL" android:value="default" />
-
+    <meta-data android:name="expo.modules.notifications.default_notification_icon" android:resource="@drawable/ic_stat_notification_icon" />
   <activity
     android:name=".MainActivity" android:label="@string/app_name" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen" android:screenOrientation="unspecified">
       <intent-filter>
