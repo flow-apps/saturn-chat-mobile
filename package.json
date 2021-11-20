@@ -52,6 +52,7 @@
     "markdown-it": "^12.0.6",
     "markdown-it-linkscheme": "^1.0.2",
     "moti": "^0.12.3",
+    "polished": "^4.1.3",
     "punycode": "^2.1.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",

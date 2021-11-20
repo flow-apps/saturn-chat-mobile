@@ -80,7 +80,7 @@ const GroupInfos: React.FC = () => {
 
   return (
     <>
-      <Header title={group.name}  />
+      <Header title={group.name} />
       <Container>
         <GroupContainer>
           <BasicInfosContainer>
@@ -109,7 +109,10 @@ const GroupInfos: React.FC = () => {
                   onPress={handleJoinGroup}
                 >
                   <JoinGroupButtonText participating={isParticipating}>
-                    <Feather name="user-plus" size={16} />{" "}
+                    <Feather
+                      name={isParticipating ? "user-check" : "user-plus"}
+                      size={16}
+                    />{" "}
                     {isParticipating ? "Participando" : "Participar"}
                   </JoinGroupButtonText>
                 </JoinGroupButton>
@@ -117,7 +120,7 @@ const GroupInfos: React.FC = () => {
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>
                   <ParticipantsNumber>
-                    {group?.participantsAmount}
+                    {String(group?.participantsAmount).padStart(2, "0")}
                   </ParticipantsNumber>
                   <ParticipantsTitle>Participantes</ParticipantsTitle>
                 </ParticipantsContainer>

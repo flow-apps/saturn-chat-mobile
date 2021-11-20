@@ -1,12 +1,12 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
 import FastImage from 'react-native-fast-image'
-
+import { lighten } from "polished"
 
 export const Container = styled.View`
   min-width: 100%;
   padding: 8px;
-  background-color: ${(props) => props.theme.colors.shape};
+  background-color: ${(props) => lighten(0.1, props.theme.colors.shape)};
   border-radius: 10px;
   elevation: 3;
   margin: 10px 0px;
