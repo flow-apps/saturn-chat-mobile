@@ -139,7 +139,7 @@ const EditProfile: React.FC = () => {
 
   return (
     <>
-      <Header title="Editar perfil" backButton />
+      <Header title="Editar perfil"  />
       <Container>
         <FormContainer>
           <AvatarContainer>

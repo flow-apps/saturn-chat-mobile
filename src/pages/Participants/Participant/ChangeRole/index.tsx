@@ -99,7 +99,7 @@ const ChangeRole: React.FC = () => {
 
   return (
     <>
-      <Header title="Alterar cargo" backButton />
+      <Header title="Alterar cargo"  />
       <Container>
         <ContentContainer>
           <ContentTitle>Cargos</ContentTitle>

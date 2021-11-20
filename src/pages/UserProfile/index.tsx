@@ -65,7 +65,7 @@ const UserProfile: React.FC = () => {
 
   return (
     <>
-      <Header title={userInfos?.name} backButton />
+      <Header title={userInfos?.name}  />
       <Container>
         <UserProfileContainer>
           <BasicInfosContainer>

@@ -62,7 +62,7 @@ const Configurations: React.FC = () => {
 
   return (
     <>
-      <Header title="Configurações" />
+      <Header title="Configurações" backButton={false} />
       <Container>
         <Alert
           visible={confirmSignOut}

@@ -44,7 +44,7 @@ const Premium: React.FC = () => {
 
   return (
     <>
-      <Header title="Faça parte da constelação!" backButton />
+      <Header title="Faça parte da constelação!"  />
       <Container>
         <ContentWrapper>
           <StarContainer>

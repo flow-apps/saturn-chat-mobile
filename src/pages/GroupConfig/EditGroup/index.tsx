@@ -158,7 +158,7 @@ const EditGroup: React.FC = () => {
 
   return (
     <>
-      <Header title="Editar grupo" backButton />
+      <Header title="Editar grupo"  />
       <Container>
         <FormContainer>
           <AvatarContainer>

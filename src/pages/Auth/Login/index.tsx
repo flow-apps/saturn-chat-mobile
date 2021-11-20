@@ -51,7 +51,7 @@ const Login: React.FC = () => {
 
   return (
     <>
-      <Header title="Faça o login" backButton />
+      <Header title="Faça o login"  />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <WelcomeContainer>

@@ -566,7 +566,7 @@ const Chat: React.FC = () => {
         okButtonAction={() => setAudioPermission(false)}
         visible={audioPermission}
       />
-      <Header title={group.name} onPressTitle={handleGoGroupInfos} backButton>
+      <Header title={group.name} onPressTitle={handleGoGroupInfos} >
         <HeaderButton onPress={handleGoGroupParticipants}>
           <Feather name="users" size={22} color="#fff" />
         </HeaderButton>

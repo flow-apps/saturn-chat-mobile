@@ -24,7 +24,7 @@ const ChoosePlan: React.FC = () => {
 
   return (
     <>
-      <Header title="Escolha seu plano" backButton />
+      <Header title="Escolha seu plano"  />
       <Container>
         <AnimationContainer>
           <Animation

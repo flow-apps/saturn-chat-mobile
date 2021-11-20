@@ -5,7 +5,7 @@ import { Container, Content, Title } from "./styles";
 const SwitchLanguage: React.FC = () => {
   return (
     <>
-      <Header title="Idiomas" backButton />
+      <Header title="Idiomas"  />
       <Container>
         <Title>Entenda como funciona os idiomas</Title>
         <Content>

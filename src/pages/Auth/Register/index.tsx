@@ -150,7 +150,7 @@ const Register: React.FC = () => {
 
   return (
     <>
-      <Header backButton title="Criar conta" />
+      <Header  title="Criar conta" />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView>

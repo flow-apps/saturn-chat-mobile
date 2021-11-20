@@ -155,7 +155,7 @@ const Participants: React.FC = () => {
 
   return (
     <>
-      <Header title={`Participantes (${participants.length})`} backButton />
+      <Header title={`Participantes (${participants.length})`}  />
       <Container>
         <ParticipantsContainer>
           <SectionContainer>

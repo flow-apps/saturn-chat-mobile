@@ -98,7 +98,7 @@ const GroupConfig: React.FC = () => {
 
   return (
     <>
-      <Header title="Opções do grupo" backButton />
+      <Header title="Opções do grupo"  />
       <Alert
         visible={showDeleteGroupAlert}
         title="⚠ Cuidado, isso é perigoso!"

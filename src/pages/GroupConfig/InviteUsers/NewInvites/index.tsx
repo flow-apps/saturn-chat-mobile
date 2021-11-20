@@ -97,7 +97,7 @@ const NewInvites: React.FC = () => {
 
   return (
     <>
-      <Header title="Criar convites" backButton />
+      <Header title="Criar convites"  />
       <Container>
         <CreateInviteLinkContainer>
           <CreateInviteLinkTitle>Gerar convite</CreateInviteLinkTitle>

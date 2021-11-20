@@ -205,7 +205,7 @@ const NewGroup: React.FC = () => {
 
   return (
     <>
-      <Header title="Novo grupo" />
+      <Header title="Novo grupo" backButton={false} />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View>

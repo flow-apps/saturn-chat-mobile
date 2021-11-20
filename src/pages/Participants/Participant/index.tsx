@@ -74,7 +74,7 @@ const Participant: React.FC = () => {
   
   return (
     <>
-      <Header title={participant.user.name} backButton />
+      <Header title={participant.user.name}  />
       <Container>
         <ParticipantOptionsContainer>
           <ParticipantOptionsTitle>

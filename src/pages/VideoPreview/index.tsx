@@ -75,7 +75,7 @@ const VideoPreview: React.FC = () => {
             type: "timing",
           }}
         >
-          <Header title={routeParams.name} backButton bgColor="#000">
+          <Header title={routeParams.name}  bgColor="#000">
             <HeaderButton onPress={downloadFile}>
               <Feather name="download" size={25} color="#fff" />
             </HeaderButton>

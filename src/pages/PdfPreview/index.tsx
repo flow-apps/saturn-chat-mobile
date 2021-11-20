@@ -24,7 +24,7 @@ const PdfPreview = () => {
 
   return (
     <>
-      <Header title={name} backButton>
+      <Header title={name} >
         <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />
         </HeaderButton>

@@ -80,7 +80,7 @@ const GroupInfos: React.FC = () => {
 
   return (
     <>
-      <Header title={group.name} backButton />
+      <Header title={group.name}  />
       <Container>
         <GroupContainer>
           <BasicInfosContainer>

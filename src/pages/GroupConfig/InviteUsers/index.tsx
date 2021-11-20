@@ -38,7 +38,7 @@ const InviteUsers: React.FC = () => {
 
   return (
     <>
-      <Header title="Convidar" backButton />
+      <Header title="Convidar"  />
       <Container>
         <YourInviteContainer>
           <YourInviteTitle>

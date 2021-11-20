@@ -21,7 +21,7 @@ interface HeaderProps {
 
 const Header = ({
   title,
-  backButton,
+  backButton = true,
   onPressTitle,
   bgColor,
   children,

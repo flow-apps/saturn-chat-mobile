@@ -108,7 +108,7 @@ const Search: React.FC = () => {
 
   return (
     <>
-      <Header title="Explorar" backButton />
+      <Header title="Explorar"  />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
           <SearchContainer>
