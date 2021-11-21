@@ -19,6 +19,7 @@ import {
   FileInfosContainer,
   FileName,
   FileOpenAction,
+  FilePreviewContainer,
   FileSize,
 } from "./styles";
 import { useEffect } from "react";
@@ -122,7 +123,9 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
     else if (type === "application" && mimeType === "application/pdf") {
       return (
         <FileButton onPress={handleGoPdfPreview}>
-          <MaterialCommunityIcons name="pdf-box" size={35} color={colors.secondary} />
+          <FilePreviewContainer>
+            <MaterialCommunityIcons name="pdf-box" size={35} color={colors.secondary} />
+          </FilePreviewContainer>
         </FileButton>
       );
     }
@@ -171,8 +174,8 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
       <FileContainer>
         <FileIconContainer>{renderIcon()}</FileIconContainer>
         <FileInfosContainer>
-          <FileName>{name}</FileName>
-          <FileSize>{convertBytesToMB(size)}MB</FileSize>
+          <FileName ellipsizeMode="middle">{name}</FileName>
+          <FileSize>{convertBytesToMB(size)}</FileSize>
         </FileInfosContainer>
         <FileOpenAction>{renderPreview()}</FileOpenAction>
       </FileContainer>

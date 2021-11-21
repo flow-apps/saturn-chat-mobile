@@ -53,6 +53,12 @@ export const FileButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
+export const FilePreviewContainer = styled.View`
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const FileImagePreview = styled(FastImage)`
   width: 50px;
   height: 50px;

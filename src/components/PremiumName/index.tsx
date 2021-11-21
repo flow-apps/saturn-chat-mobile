@@ -26,7 +26,7 @@ const PremiumName = ({
   hasPremium
 }: PremiumNameProps) => {
   const { colors } = useTheme();
-  const [premium, isPremium] = useState(true)
+  const [premium, setPremium] = useState(false)
   const [showEmblemDetails, setShowEmblemDetails] = useState(false)
 
   const handleEmblemDetails = () => {
