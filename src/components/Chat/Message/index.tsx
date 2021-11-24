@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useState, useMemo } from "react";
 
 import isSameMinute from "date-fns/isSameMinute";
 import parseISO from "date-fns/parseISO";
@@ -36,9 +36,9 @@ import MessageMark from "../../Markdown/MessageMark";
 import SimpleToast from "react-native-simple-toast";
 import { LinkUtils } from "../../../utils/link";
 import _ from "lodash";
+import { useAuth } from "../../../contexts/auth";
 
 interface MessageProps {
-  user: UserData;
   participant: ParticipantsData;
   message: MessageData;
   lastMessage: MessageData;
@@ -50,7 +50,6 @@ interface MessageProps {
 const Message = ({
   message,
   lastMessage,
-  user,
   participant,
   index,
   socket,
@@ -59,21 +58,27 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
+  const { user } = useAuth()
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation();
-  const isRight = message.author.id === user.id;
-  const sended = _.isUndefined(message?.sended) ? true : message.sended;
+  const isRight = useMemo(() => {
+    return message.author.id === user?.id;
+  }, []);
 
-  const handleGoUserProfile = (userID: string) => {
-    navigation.navigate("UserProfile", { id: userID });
+  const sended = useMemo(() => {
+    return _.isUndefined(message?.sended) ? true : message.sended;
+  }, []);
+
+  const handleGoParticipant = () => {
+    navigation.navigate("Participant", { participant });
   };
 
   const renderAuthor = useCallback(() => {
     if (index === 0 || lastMessage.author.id !== message.author.id) {
       return (
         <MessageAuthorContainer
-          onPress={() => handleGoUserProfile(message.author.id)}
+          onPress={handleGoParticipant}
         >
           {message.author.avatar ? (
             <MessageAvatar
@@ -228,7 +233,7 @@ const Message = ({
               },
             ]}
           />
-          <MessageMark message={message} onPressLink={alertLink} user={user} />
+          <MessageMark message={message} onPressLink={alertLink} user={user as UserData} />
           {message.voice_message && (
             <AudioPlayer audio={message.voice_message} />
           )}

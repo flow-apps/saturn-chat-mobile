@@ -1,23 +1,16 @@
 import React, { useMemo } from 'react';
 import { UserData } from '../../../../@types/interfaces';
-import { useAuth } from '../../../contexts/auth';
 import { Container, TypingContainer, TypingLeftSide, TypingRightSide, TypingAnimation, TypingUsersText, TypingUsersContainer } from './styles';
 
 type TypingProps = {
   typingUsers: UserData[]
 }
 
-const Typing = ({ typingUsers }: TypingProps) => {
-
-  const { user } = useAuth()
-  const validUsers = useMemo(() => {
-    return typingUsers.filter(TUser => TUser.id !== user?.id)
-  }, [typingUsers])
-
+const Typing = ({ typingUsers }: TypingProps) => {  
   
-  if (validUsers.length <= 0) return <></>
-  
-  const userNames = [...new Set(validUsers.map(User => User.name))]
+  const userNames = useMemo(() => typingUsers.map(User => User.name), [typingUsers])
+
+  if (userNames.length <= 0) return <></>
 
   return (
     <Container>
@@ -32,9 +25,9 @@ const Typing = ({ typingUsers }: TypingProps) => {
         <TypingRightSide>
           <TypingUsersContainer>
             <TypingUsersText numberOfLines={1}>
-              {validUsers.length < 5 ? userNames.join(", ") : "Vários usuários"}
+              {userNames.length < 5 ? userNames.join(", ") : "Vários usuários"}
                 {" "}
-              {validUsers.length <= 1 && validUsers.length < 5 ? "está " : "estão "} 
+              {userNames.length <= 1 && userNames.length < 5 ? "está " : "estão "} 
                 digitando
             </TypingUsersText>
           </TypingUsersContainer>

@@ -24,6 +24,7 @@ import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import {
+  FileData,
   GroupData,
   MessageData,
   ParticipantsData,
@@ -136,17 +137,6 @@ const Chat: React.FC = () => {
     },
   });
 
-  const toggleAnimationTypingState = useAnimationState({
-    typing: {
-      opacity: 1,
-      height: 40,
-    },
-    stopTyping: {
-      opacity: 0,
-      height: 0,
-    },
-  });
-
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -161,8 +151,7 @@ const Chat: React.FC = () => {
       });
 
       const groupRes = await api.get(`/group/${id}`);
-      if (groupRes.status === 200) 
-        setGroup(groupRes.data);
+      if (groupRes.status === 200) setGroup(groupRes.data);
 
       setLoading(false);
     })();
@@ -172,8 +161,8 @@ const Chat: React.FC = () => {
     (async () => {
       setLoading(true);
       const participantRes = await api.get(`/group/participant/${id}`);
-      if (participantRes.status === 200) 
-        setParticipant(participantRes.data.participant)
+      if (participantRes.status === 200)
+        setParticipant(participantRes.data.participant);
 
       setLoading(false);
     })();
@@ -202,12 +191,14 @@ const Chat: React.FC = () => {
       socket.emit("set_read_message", msg.id);
     });
 
-    socket.on("new_user_typing", (user: UserData) => {
-      setTypingUsers((old) => [...old, user]);
+    socket.on("new_user_typing", (newUser: UserData) => {
+      setTypingUsers((old) => [...old, newUser]);
     });
 
-    socket.on("deleted_user_typing", (userID) => {
-      const filteredUsers = typingUsers.filter((tu) => tu.id !== userID);
+    socket.on("deleted_user_typing", (removedUserID: string) => {
+      const filteredUsers = typingUsers.filter(
+        (user) => user.id !== removedUserID
+      );
       setTypingUsers(filteredUsers);
     });
 
@@ -226,7 +217,6 @@ const Chat: React.FC = () => {
   }, [socket]);
 
   const handleTypingTimeout = () => {
-    toggleAnimationTypingState.transitionTo("stopTyping");
     setIsTyping(false);
     socket?.emit("remove_user_typing", { typing: false, userID: user?.id });
   };
@@ -234,16 +224,15 @@ const Chat: React.FC = () => {
   const handleTyping = () => {
     if (!isTyping) {
       setIsTyping(true);
-      toggleAnimationTypingState.transitionTo("typing");
 
       socket?.emit("add_user_typing", { typing: true });
-      const timeout = setTimeout(handleTypingTimeout, 5000);
+      const timeout = setTimeout(handleTypingTimeout, 3000);
 
       setTypingTimeout(timeout);
       return;
     }
     clearTimeout(typingTimeout);
-    const timeout = setTimeout(handleTypingTimeout, 5000);
+    const timeout = setTimeout(handleTypingTimeout, 3000);
     setTypingTimeout(timeout);
   };
 
@@ -268,10 +257,10 @@ const Chat: React.FC = () => {
   };
 
   const stopRecordAudio = async () => {
-    try {
-      toggleAnimationRecordingAudioState.transitionTo("stopped");
-      if (!recordingAudio) return;
+    toggleAnimationRecordingAudioState.transitionTo("stopped");
+    if (!recordingAudio) return;
 
+    try {
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
@@ -359,7 +348,7 @@ const Chat: React.FC = () => {
         (f) =>
           f.file.type !== "cancel" &&
           f.file.name === file.file.name &&
-          f.file.lastModified === f.file.lastModified
+          f.file.uri === f.file.uri
       );
 
       if (isSelected) return setIsSelectedFile(true);
@@ -444,14 +433,17 @@ const Chat: React.FC = () => {
         author: user as UserData,
         group,
         message,
-        files: files.map((file) => ({
-          id: file.file.type === "success" ? file.file.name : "",
-          original_name: file.file.type === "success" ? file.file.name : "",
-          name: file.file.type === "success" ? file.file.name : "",
-          size: file.file.type === "success" ? file.file.file?.size || 0 : 0,
-          type: file.file.type === "success" ? file.type : "",
-          url: file.file.type === "success" ? file.file.uri : "",
-        })),
+        files: files.map((file) => {
+          if (file.file.type !== "success") return {} as FileData;
+          return {
+            id: file.file.name,
+            original_name: file.file.name,
+            name: file.file.name,
+            size: file.file.file?.size || 0,
+            type: file.type,
+            url: file.file.uri,
+          };
+        }),
         sended: false,
         localReference,
         created_at: new Date().toISOString(),
@@ -527,8 +519,7 @@ const Chat: React.FC = () => {
           message={item}
           socket={socket as Socket}
           index={index}
-          user={user as unknown as UserData}
-          participant={participant as any}
+          participant={participant as ParticipantsData}
           lastMessage={lastMessage}
           onReplyMessage={() => {}}
         />
@@ -566,7 +557,7 @@ const Chat: React.FC = () => {
         okButtonAction={() => setAudioPermission(false)}
         visible={audioPermission}
       />
-      <Header title={group.name} onPressTitle={handleGoGroupInfos} >
+      <Header title={group.name} onPressTitle={handleGoGroupInfos}>
         <HeaderButton onPress={handleGoGroupParticipants}>
           <Feather name="users" size={22} color="#fff" />
         </HeaderButton>
@@ -575,9 +566,7 @@ const Chat: React.FC = () => {
         </HeaderButton>
       </Header>
       <Container>
-        <MotiView state={toggleAnimationTypingState}>
-          <Typing typingUsers={typingUsers} />
-        </MotiView>
+        <Typing typingUsers={typingUsers} />
         <MessageContainer>
           <Messages
             data={oldMessages}
@@ -586,9 +575,9 @@ const Chat: React.FC = () => {
             keyExtractor={getItemID}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
-            windowSize={30}
+            windowSize={19}
             scrollEventThrottle={41}
-            updateCellsBatchingPeriod={100}
+            updateCellsBatchingPeriod={200}
             renderItem={memoizedRenderMessage}
             removeClippedSubviews
           />
