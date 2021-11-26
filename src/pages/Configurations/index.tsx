@@ -81,7 +81,7 @@ const Configurations: React.FC = () => {
                 <ConfigTitle 
                   color={colors.secondary}
                 >
-                  <Feather name="star" size={16} /> Seja uma Estrela
+                  <Feather name="star" size={16} /> Seja uma Star
                 </ConfigTitle>
               </ConfigContainer>
               <ConfigContainer onPress={handleGoEditProfile}>

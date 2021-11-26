@@ -132,7 +132,7 @@ const OnBoarding: React.FC = () => {
               autoPlay
             />
           ),
-          title: <BoardTitle>Seja uma estrela!</BoardTitle>,
+          title: <BoardTitle>Seja uma Star!</BoardTitle>,
           subtitle: (
             <BoardSubTitle>
               Quando estiver pronto, vá ao menu de configurações e obtenha o

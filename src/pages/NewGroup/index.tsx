@@ -187,12 +187,12 @@ const NewGroup: React.FC = () => {
           {!premium && (
             <ReachedLimitStarContainer>
               <ReachedLimitStarDescription>
-                Você também pode se tornar uma Estrela e criar até{" "}
+                Você também pode se tornar uma Star e criar até{" "}
                 {allConfigs.premium_max_groups} grupos com{" "}
                 {allConfigs.premium_max_participants} participantes em cada grupo.
               </ReachedLimitStarDescription>
               <Button
-                title="Tornar-se Estrela"
+                title="Tornar-se Star"
                 bgColor={colors.secondary}
                 onPress={handleGoPremium}
               />

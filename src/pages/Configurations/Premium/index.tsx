@@ -54,7 +54,7 @@ const Premium: React.FC = () => {
               autoPlay
             />
             <StarTitle>
-              <Feather name="star" size={22} /> Seja uma Estrela!
+              <Feather name="star" size={22} /> Seja uma Star!
             </StarTitle>
           </StarContainer>
           <TitleWrapper>
