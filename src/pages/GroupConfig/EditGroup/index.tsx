@@ -191,6 +191,7 @@ const EditGroup: React.FC = () => {
               placeholder="Tags"
               value={tags}
               onChangeText={setTags}
+              onTextInput={handleCheckFields}
             />
           </FieldContainer>
           <FieldContainer>
