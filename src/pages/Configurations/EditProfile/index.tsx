@@ -88,7 +88,8 @@ const EditProfile: React.FC = () => {
             "Content-Type": `multipart/form-data`,
           },
         })
-        .then(() => {
+        .then(async (res) => {
+          await updateUser(res.data)
           setNewAvatar(photo.uri);
           SimpleToast.show("Avatar atualizado");
         });

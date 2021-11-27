@@ -43,7 +43,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       if (storageUser && storageToken) {
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
-        websocket.query.token = `Bearer ${storageToken}`
+        websocket.query.token = `Bearer ${storageToken}`        
         setUser(JSON.parse(String(storageUser)));
         setToken(`Bearer ${storageToken}`);
       }

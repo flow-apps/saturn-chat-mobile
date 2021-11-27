@@ -11,8 +11,7 @@ export const Container = styled.View`
 export const Messages = styled.FlatList.attrs({
   maxToRenderPerBatch: 20,
   initialNumToRender: 20,
-})`
-` as unknown as typeof FlatList;
+})`` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`
   flex: 1;
@@ -20,7 +19,7 @@ export const MessageContainer = styled.View`
 `;
 
 export const FileSendedProgressContainer = styled.View`
-  background-color: ${props => props.theme.colors.shape};
+  background-color: ${(props) => props.theme.colors.shape};
   padding: 10px;
   align-items: center;
   justify-content: center;
@@ -30,9 +29,9 @@ export const FileSendedProgressContainer = styled.View`
 export const FileSendedText = styled.Text`
   font-family: ${fonts.heading};
   font-size: 16px;
-  color: ${props => props.theme.colors.secondary};
+  color: ${(props) => props.theme.colors.secondary};
   margin-bottom: 10px;
-`
+`;
 
 export const RecordingAudioContainer = styled(FilesContainer)`
   height: 40px;
@@ -64,15 +63,13 @@ export const ReplyingMessageContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: ${props => props.theme.colors.shape};
+  background-color: ${(props) => props.theme.colors.shape};
   padding: 10px;
   border-radius: 10px;
   margin-top: 5px;
-`
+`;
 
-export const ReplyingMessageContentContainer = styled.View`
-
-`
+export const ReplyingMessageContentContainer = styled.View``;
 
 export const ReplyingMessageRemoveContainer = styled.View`
   min-height: 50px;
@@ -80,38 +77,38 @@ export const ReplyingMessageRemoveContainer = styled.View`
   margin-left: auto;
   align-items: center;
   justify-content: center;
-`
+`;
 
-export const ReplyingMessageRemoveButton = styled.TouchableOpacity``
+export const ReplyingMessageRemoveButton = styled.TouchableOpacity``;
 
-export const ReplyingMessageTitleWrapper = styled.View``
+export const ReplyingMessageTitleWrapper = styled.View``;
 
 export const ReplyingMessageTitle = styled.Text`
   font-family: ${fonts.heading};
   font-size: 12px;
-  color: ${props => props.theme.colors.primary};
-`
+  color: ${(props) => props.theme.colors.primary};
+`;
 
 export const ReplyingMessageAuthorNameWrapper = styled.View`
   margin-top: 3px;
-`
+`;
 
 export const ReplyingMessageAuthorName = styled.Text`
   font-family: ${fonts["text-bold"]};
   font-size: 12px;
-  color: ${props => props.theme.colors.secondary};
+  color: ${(props) => props.theme.colors.secondary};
   margin: 0px 0px 5px 0px;
-`
+`;
 
 export const ReplyingMessageWrapper = styled.View`
   width: 95%;
-`
+`;
 
 export const ReplyingMessage = styled.Text`
   font-family: ${fonts.text};
   font-size: 12px;
-  color: ${props => props.theme.colors.black}
-`
+  color: ${(props) => props.theme.colors.black};
+`;
 
 export const FormContainer = styled.View`
   padding: 0 12px;
@@ -132,18 +129,14 @@ export const OptionsContainer = styled.View`
   align-items: center;
 `;
 
-
 export const OptionsButton = styled.TouchableOpacity`
   margin-right: 10px;
 `;
 
-export const SendButton = styled.TouchableOpacity`
-`;
+export const SendButton = styled.TouchableOpacity``;
 
 export const MessageInput = styled.TextInput.attrs({
   multiline: true,
-  maxLength: 500,
-  
 })`
   flex: 1;
   font-family: ${fonts.text};
@@ -154,5 +147,4 @@ export const MessageInput = styled.TextInput.attrs({
 
 export const AudioContainer = styled.View``;
 
-export const AudioButton = styled.Pressable`
-`;
+export const AudioButton = styled.Pressable``;

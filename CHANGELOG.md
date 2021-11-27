@@ -2,6 +2,14 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.12.1
+
+- Fix styles for light mode
+- Add new remote config
+- Add new premium vantage
+- Fix edit group
+- Add warn on reach max message length 
+
 ## 0.0.12.0
 
 - Remove emoji picker

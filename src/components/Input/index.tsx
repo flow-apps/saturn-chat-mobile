@@ -17,7 +17,7 @@ const Input = ({ label, ...rest }: InputProps) => {
     >
       {label && <Label>{label}</Label>}
       <MainInput
-        placeholderTextColor={colors.dark_gray + "88"}
+        placeholderTextColor={colors.dark_heading + "88"}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         focused={focused}

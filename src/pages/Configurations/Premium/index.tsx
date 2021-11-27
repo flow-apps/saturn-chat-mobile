@@ -44,7 +44,7 @@ const Premium: React.FC = () => {
 
   return (
     <>
-      <Header title="Faça parte da constelação!"  />
+      <Header title="Faça parte da constelação!" />
       <Container>
         <ContentWrapper>
           <StarContainer>
@@ -66,8 +66,8 @@ const Premium: React.FC = () => {
           <SubtitleWrapper>
             <Subtitle>
               Aproveite ao máximo todos os recursos disponíveis como envio de
-              arquivos maiores, criar mais grupos, remover todos os
-              anúncios, e mais!
+              arquivos maiores, criar mais grupos, remover todos os anúncios, e
+              mais!
             </Subtitle>
           </SubtitleWrapper>
           <BuyWrapper>
@@ -147,6 +147,23 @@ const Premium: React.FC = () => {
                 <VantageContent>
                   Ganhe um selo exclusivo ao lado do seu nome para sair
                   ostentando!
+                </VantageContent>
+              </VantageContainer>
+              <VantageContainer>
+                <VantageIconContainer>
+                  <VantageIcon>
+                    <MaterialCommunityIcons
+                      name="cursor-text"
+                      size={28}
+                      color="#FF0055"
+                    />
+                  </VantageIcon>
+                </VantageIconContainer>
+                <VantageContent>
+                  Gosta de textões? Então aumente suas mensagens de{" "}
+                  {allConfigs.default_max_message_length} caracteres para
+                  maravilhosos {allConfigs.premium_max_message_length}{" "}
+                  caracteres!
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>

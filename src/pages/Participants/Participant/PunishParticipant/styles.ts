@@ -17,7 +17,7 @@ export const PunishContentContainer = styled.View`
 export const PunishTitle = styled.Text`
   font-size: 22px;
   font-family: ${fonts["text-bold"]};
-  color: ${(props) => props.theme.colors.dark_gray};
+  color: ${(props) => props.theme.colors.dark_heading};
   text-align: center;
 `;
 
@@ -33,7 +33,7 @@ export const PunishDescription = styled.Text`
   text-align: center;
   font-family: ${fonts.text};
   font-size: 16px;
-  color: ${(props) => props.theme.colors.light_gray};
+  color: ${(props) => props.theme.colors.light_heading};
 `;
 
 export const PunishNotifyContainer = styled.View`

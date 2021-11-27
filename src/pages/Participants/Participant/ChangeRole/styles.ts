@@ -20,7 +20,7 @@ export const ContentTitle = styled.Text`
 export const ContentDescription = styled.Text`
   font-size: 14px;
   font-family: ${fonts.text};
-  color: ${props => props.theme.colors.light_gray};
+  color: ${props => props.theme.colors.light_heading};
   margin-top: 10px;
 `
 
@@ -53,7 +53,7 @@ export const RoleTitle = styled.Text`
 export const RoleDescription = styled.Text`
   font-size: 16px;
   font-family: ${fonts.text};
-  color: ${props => props.theme.colors.dark_gray};
+  color: ${props => props.theme.colors.dark_heading};
 `;
 
 export const RolePermissionsContainer = styled.View`

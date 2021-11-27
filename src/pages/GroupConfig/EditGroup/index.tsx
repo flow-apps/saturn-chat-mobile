@@ -41,6 +41,7 @@ const EditGroup: React.FC = () => {
   const { id } = route.params as any;
 
   const handleIsPublic = (value: boolean) => {
+    handleCheckFields()
     setIsPublicGroup(value);
   };
 

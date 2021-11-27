@@ -401,6 +401,10 @@ const Chat: React.FC = () => {
 
   const handleSetMessage = useCallback(
     (newMessage: string) => {
+      if (newMessage.length >= userConfigs.messageLength) {
+        return SimpleToast.show("Limite de 500 caracteres atingido!")
+      }
+
       setMessage(newMessage);
     },
     [message]
@@ -653,6 +657,7 @@ const Chat: React.FC = () => {
               onChangeText={handleSetMessage}
               onTextInput={handleTyping}
               defaultValue={message}
+              maxLength={userConfigs?.messageLength}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>
