@@ -182,7 +182,7 @@ const Message = ({
   }, [message.files]);
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
-  const handleOpenMsgOptions = () => setMsgOptions(true);
+  const handleOpenMsgOptions = () => setMsgOptions(true);  
 
   return (
     <>
@@ -246,4 +246,8 @@ const Message = ({
   );
 };
 
-export default memo(Message);
+export default memo(Message, (prev, next) => {
+  return prev.message.id === next.message.id && 
+    prev.message.message === next.message.message &&
+    prev.index === next.index
+});

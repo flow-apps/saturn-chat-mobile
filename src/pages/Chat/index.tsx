@@ -100,13 +100,13 @@ const Chat: React.FC = () => {
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
 
+  const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [sendingFile, setSendingFile] = useState(false);
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
-  const [message, setMessage] = useState<string>("");
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -397,8 +397,8 @@ const Chat: React.FC = () => {
   };
 
   const handleSetMessage = useCallback(
-    (message: string) => {
-      setMessage(message);
+    (newMessage: string) => {
+      setMessage(newMessage);
     },
     [message]
   );
@@ -532,6 +532,10 @@ const Chat: React.FC = () => {
   const renderFooter = () =>
     fetching && !fetchedAll ? <LoadingIndicator /> : <></>;
 
+  const disableLargeFile = () => setLargeFile(false);
+  const disableIsSelectedFile = () => setIsSelectedFile(false);
+  const disableAudioPermission = () => setAudioPermission(false);
+
   if (loading || !socket) return <Loading />;
 
   return (
@@ -539,7 +543,7 @@ const Chat: React.FC = () => {
       <Alert
         title="😱 Que coisa pesada!"
         content={`Eu não consigo carregar algo tão pesado, tente algo de até ${userConfigs.fileUpload}MB!`}
-        okButtonAction={() => setLargeFile(false)}
+        okButtonAction={disableLargeFile}
         extraButtonAction={handleGoStar}
         extraButtonText="Obter plano Star"
         extraButton
@@ -548,13 +552,13 @@ const Chat: React.FC = () => {
       <Alert
         title="🤔 Já vi isso antes"
         content="Você já escolheu este arquivo para ser enviado!"
-        okButtonAction={() => setIsSelectedFile(false)}
+        okButtonAction={disableIsSelectedFile}
         visible={isSelectedFile}
       />
       <Alert
         title="🙂 Por favor"
         content="Eu preciso de permissão para usar seu microfone, assim eu poderei gravar áudios"
-        okButtonAction={() => setAudioPermission(false)}
+        okButtonAction={disableAudioPermission}
         visible={audioPermission}
       />
       <Header title={group.name} onPressTitle={handleGoGroupInfos}>
@@ -645,7 +649,7 @@ const Chat: React.FC = () => {
               }
               onChangeText={handleSetMessage}
               onTextInput={handleTyping}
-              value={message}
+              defaultValue={message}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>
