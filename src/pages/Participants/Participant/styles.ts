@@ -31,7 +31,7 @@ export const OptionNameWrapper = styled.View``
 export const OptionInputWrapper =  styled.View``
 
 export const OptionName = styled.Text<{ color?: string }>`
-  color: ${props => props.color || props.theme.colors.light_gray};
+  color: ${props => props.color || props.theme.colors.black};
   font-family: ${fonts.text};
   font-size: 16px;
 `

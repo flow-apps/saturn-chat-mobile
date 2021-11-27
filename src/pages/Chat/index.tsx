@@ -80,6 +80,7 @@ import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { MotiView, useAnimationState } from "moti";
+import SimpleToast from "react-native-simple-toast";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -266,6 +267,8 @@ const Chat: React.FC = () => {
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
           setRecordingAudio(undefined);
           setAudioDuration(0);
+
+          SimpleToast.show("Finalizando gravação")
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
@@ -574,7 +577,7 @@ const Chat: React.FC = () => {
         <MessageContainer>
           <Messages
             data={oldMessages}
-            extraData={oldMessages}
+            extraData={oldMessages.length}
             style={{ scaleY: -1 }}
             keyExtractor={getItemID}
             onScroll={handleFetchMoreMessages}

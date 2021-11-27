@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -7,7 +7,6 @@ import { convertBytesToMB } from "../../../utils/convertSize";
 import Alert from "../../Alert";
 import FastImage from "react-native-fast-image";
 import * as MimeTypes from "react-native-mime-types"
-import * as FileSystem from "expo-file-system"
 
 import {
   Container,
@@ -36,11 +35,10 @@ interface IFileProps {
 const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
-  const [pdfThumb, setPdfThumb] = useState<string>()
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation();
-  const mimeType = MimeTypes.lookup(name);
+  const mimeType = useMemo(() => MimeTypes.lookup(name), [])
 
   useEffect(() => {
     (async () => {
@@ -183,4 +181,6 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   );
 };
 
-export default React.memo(FilePreview);
+export default React.memo(FilePreview, (prev, next) => {
+  return prev.url === next.url && prev.name === next.name
+});
