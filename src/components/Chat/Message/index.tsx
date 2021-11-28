@@ -16,6 +16,7 @@ import {
 
 import * as Localize from "expo-localization";
 import * as Clipboard from "expo-clipboard";
+import { Swipeable } from "react-native-gesture-handler";
 
 import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
@@ -37,6 +38,7 @@ import SimpleToast from "react-native-simple-toast";
 import { LinkUtils } from "../../../utils/link";
 import _ from "lodash";
 import { useAuth } from "../../../contexts/auth";
+import ReplyingMessage from "../ReplyingMessage";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -44,7 +46,7 @@ interface MessageProps {
   lastMessage: MessageData;
   index: number;
   socket: Socket;
-  onReplyMessage: (messageID: string, message: MessageData) => void;
+  onReplyMessage: (message: MessageData) => void;
 }
 
 const Message = ({
@@ -58,7 +60,7 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
-  const { user } = useAuth()
+  const { user } = useAuth();
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation();
@@ -77,9 +79,7 @@ const Message = ({
   const renderAuthor = useCallback(() => {
     if (index === 0 || lastMessage.author.id !== message.author.id) {
       return (
-        <MessageAuthorContainer
-          onPress={handleGoParticipant}
-        >
+        <MessageAuthorContainer onPress={handleGoParticipant}>
           {message.author.avatar ? (
             <MessageAvatar
               source={{
@@ -182,72 +182,83 @@ const Message = ({
   }, [message.files]);
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
-  const handleOpenMsgOptions = () => setMsgOptions(true);  
+  const handleOpenMsgOptions = () => setMsgOptions(true);
 
   return (
     <>
-      <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-        {/* <ReplyingMessage /> */}
-        <MessageContentContainer
-          isRight={isRight}
-          sended={sended}
-          onLongPress={handleOpenMsgOptions}
-          delayLongPress={250}
-        >
-          <Alert
-            title="⚠ Cuidado, pode ser perigoso"
-            content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
-            cancelButtonText="Não"
-            okButtonText="Acessar"
-            cancelButtonAction={closeLink}
-            okButtonAction={openLink}
-            visible={showLinkAlert}
-          />
-          <MessageOptions
-            close={handleCloseMsgOptions}
-            visible={msgOptions}
-            message={message}
-            participant_role={participant.role}
-            options={[
-              // {
-              //   iconName: "corner-up-right",
-              //   content: "Responder",
-              //   action: () => onReplyMessage(message.id, message),
-              //   onlyOwner: false,
-              //   authorizedRoles: ["ALL" as ParticipantRoles],
-              // },
-              {
-                iconName: "copy",
-                content: "Copiar",
-                action: handleCopyMessage,
-                onlyOwner: false,
-                authorizedRoles: ["ALL" as ParticipantRoles],
-              },
-              {
-                iconName: "trash-2",
-                content: "Excluir",
-                action: deleteMessage,
-                color: colors.red,
-                onlyOwner: true,
-                authorizedRoles: rolesForDeleteMessage,
-              },
-            ]}
-          />
-          <MessageMark message={message} onPressLink={alertLink} user={user as UserData} />
-          {message.voice_message && (
-            <AudioPlayer audio={message.voice_message} />
-          )}
-          {renderFiles()}
-        </MessageContentContainer>
-        {renderDate()}
-        {renderAuthor()}
-      </Container>
+      <Alert
+        title="⚠ Cuidado, pode ser perigoso"
+        content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
+        cancelButtonText="Não"
+        okButtonText="Acessar"
+        cancelButtonAction={closeLink}
+        okButtonAction={openLink}
+        visible={showLinkAlert}
+      />
+      <Swipeable
+        overshootRight={isRight}
+        overshootLeft={!isRight}
+        onSwipeableWillClose={() => onReplyMessage(message)}
+      >
+        <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
+          <ReplyingMessage />
+          <MessageContentContainer
+            isRight={isRight}
+            sended={sended}
+            onLongPress={handleOpenMsgOptions}
+            delayLongPress={250}
+          >
+            <MessageOptions
+              close={handleCloseMsgOptions}
+              visible={msgOptions}
+              message={message}
+              participant_role={participant.role}
+              options={[
+                {
+                  iconName: "corner-up-right",
+                  content: "Responder",
+                  action: () => onReplyMessage(message),
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "copy",
+                  content: "Copiar",
+                  action: handleCopyMessage,
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "trash-2",
+                  content: "Excluir",
+                  action: deleteMessage,
+                  color: colors.red,
+                  onlyOwner: true,
+                  authorizedRoles: rolesForDeleteMessage,
+                },
+              ]}
+            />
+            <MessageMark
+              message={message}
+              onPressLink={alertLink}
+              user={user as UserData}
+            />
+            {message.voice_message && (
+              <AudioPlayer audio={message.voice_message} />
+            )}
+            {renderFiles()}
+          </MessageContentContainer>
+          {renderDate()}
+          {renderAuthor()}
+        </Container>
+      </Swipeable>
     </>
   );
 };
 
 export default memo(Message, (prev, next) => {
-  return prev.message.id === next.message.id && 
-    prev.message.message === next.message.message &&
-    prev.index === next.index
+  return (
+    prev.message.id === next.message.id &&
+    prev.message.message === next.message.message
+  );
 });

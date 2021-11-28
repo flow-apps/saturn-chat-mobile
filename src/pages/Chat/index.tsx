@@ -56,16 +56,6 @@ import {
   Messages,
   OptionsButton,
   OptionsContainer,
-  ReplyingMessage,
-  ReplyingMessageAuthorName,
-  ReplyingMessageAuthorNameWrapper,
-  ReplyingMessageContainer,
-  ReplyingMessageContentContainer,
-  ReplyingMessageRemoveButton,
-  ReplyingMessageRemoveContainer,
-  ReplyingMessageTitle,
-  ReplyingMessageTitleWrapper,
-  ReplyingMessageWrapper,
   SendButton,
 } from "./styles";
 import Typing from "../../components/Chat/Typing";
@@ -81,6 +71,7 @@ import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { MotiView, useAnimationState } from "moti";
 import SimpleToast from "react-native-simple-toast";
+import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -112,6 +103,8 @@ const Chat: React.FC = () => {
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number>();
+
+  const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
   const [audioPermission, setAudioPermission] = useState(false);
   const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
@@ -430,6 +423,14 @@ const Chat: React.FC = () => {
     navigation.navigate("PurchasePremium");
   };
 
+  const handleReplyMessage = async (message: MessageData) => {
+    setReplyingMessage(message);
+  };
+
+  const handleRemoveReplyingMessage = async () => {
+    setReplyingMessage(undefined);
+  };
+
   const handleMessageSubmit = useCallback(async () => {
     if (files.length === 0 && message.length === 0) return;
 
@@ -532,7 +533,7 @@ const Chat: React.FC = () => {
           index={index}
           participant={participant as ParticipantsData}
           lastMessage={lastMessage}
-          onReplyMessage={() => {}}
+          onReplyMessage={handleReplyMessage}
         />
       );
     },
@@ -603,9 +604,11 @@ const Chat: React.FC = () => {
               <RecordingAudio audioDuration={audioDuration} />
             </MotiView>
           )}
+
           {files.length > 0 && !sendingFile && (
             <SelectedFiles files={files} onFileRemove={removeFile} />
           )}
+
           {sendingFile && (
             <FileSendedProgressContainer>
               <FileSendedText>
@@ -620,35 +623,12 @@ const Chat: React.FC = () => {
             </FileSendedProgressContainer>
           )}
 
-          {/* <ReplyingMessageContainer>
-            <ReplyingMessageContentContainer>
-              <ReplyingMessageTitleWrapper>
-                <ReplyingMessageTitle>
-                  <Feather name="corner-up-right" /> Você está respondendo:
-                </ReplyingMessageTitle>
-              </ReplyingMessageTitleWrapper>
-              <ReplyingMessageAuthorNameWrapper>
-                <ReplyingMessageAuthorName>
-                  Pedro Henrique
-                </ReplyingMessageAuthorName>
-              </ReplyingMessageAuthorNameWrapper>
-              <ReplyingMessageWrapper>
-                <ReplyingMessage
-                  numberOfLines={1}
-                >
-                  Olá, este é o teste de como as pessoas vão ver as mensagens
-                  que estão respondendo enquanto digitam. Este teste também
-                  serve para ver o tamanho máximo que isso ocupa na tela, para
-                  não atrapalhar a visualização da mensagem
-                </ReplyingMessage>
-              </ReplyingMessageWrapper>
-            </ReplyingMessageContentContainer>
-            <ReplyingMessageRemoveContainer>
-              <ReplyingMessageRemoveButton>
-                <Feather name="x" size={25} color={colors.black} />
-              </ReplyingMessageRemoveButton>
-            </ReplyingMessageRemoveContainer>
-          </ReplyingMessageContainer> */}
+          {replyingMessage && (
+            <CurrentReplyingMessage
+              message={replyingMessage}
+              onRemoveReplying={handleRemoveReplyingMessage}
+            />
+          )}
 
           <InputContainer>
             <MessageInput
