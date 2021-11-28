@@ -16,8 +16,7 @@ import {
 const ReplyingMessage: React.FC = () => {
   const [readAll, setReadAll] = useState(false);
 
-  const text =
-    "Olá, você está respondendo minha mensagem. Isso é muito útil quando pessoas diferentes estão conversando assuntos diferentes";
+  const text = "Olá";
 
   const handleReadMore = () => {
     setReadAll((old) => !old);

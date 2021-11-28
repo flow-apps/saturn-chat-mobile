@@ -199,6 +199,9 @@ const Message = ({
         overshootRight={isRight}
         overshootLeft={!isRight}
         onSwipeableWillClose={() => onReplyMessage(message)}
+        shouldCancelWhenOutside={true}
+        useNativeAnimations={true}
+        friction={4}
       >
         <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
           <ReplyingMessage />

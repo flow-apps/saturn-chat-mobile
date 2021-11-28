@@ -5,8 +5,7 @@ export const Container = styled.View`
   border-left-width: 2px;
   border-color: ${props => props.theme.colors.light_primary};
   padding: 12px 5px 12px 20px;
-  min-width: 30%;
-  max-width: 85%;
+  width: 85%;
   background-color: ${props => props.theme.colors.shape + "88"};
   margin-bottom: 10px;
   border-top-right-radius: 5px;
