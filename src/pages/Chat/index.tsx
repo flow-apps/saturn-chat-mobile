@@ -118,7 +118,9 @@ const Chat: React.FC = () => {
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
-  const [participant, setParticipant] = useState<ParticipantsData>();
+  const [participant, setParticipant] = useState<ParticipantsData>(
+    {} as ParticipantsData
+  );
   const [socket, setSocket] = useState<Socket>(getWebsocket());
 
   const [page, setPage] = useState(0);
@@ -268,7 +270,7 @@ const Chat: React.FC = () => {
           setRecordingAudio(undefined);
           setAudioDuration(0);
 
-          SimpleToast.show("Finalizando gravação")
+          SimpleToast.show("Finalizando gravação");
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
@@ -287,6 +289,7 @@ const Chat: React.FC = () => {
               author: user as UserData,
               group,
               message,
+              participant,
               voice_message: {
                 duration,
                 size: Number(audioInfos.size),
@@ -324,7 +327,7 @@ const Chat: React.FC = () => {
 
   const fetchOldMessages = async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=40`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=13`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -402,7 +405,7 @@ const Chat: React.FC = () => {
   const handleSetMessage = useCallback(
     (newMessage: string) => {
       if (newMessage.length >= userConfigs.messageLength) {
-        return SimpleToast.show("Limite de 500 caracteres atingido!")
+        return SimpleToast.show("Limite de 500 caracteres atingido!");
       }
 
       setMessage(newMessage);
@@ -440,6 +443,7 @@ const Chat: React.FC = () => {
         author: user as UserData,
         group,
         message,
+        participant,
         files: files.map((file) => {
           if (file.file.type !== "success") return {} as FileData;
           return {

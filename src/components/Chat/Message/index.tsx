@@ -71,7 +71,7 @@ const Message = ({
   }, []);
 
   const handleGoParticipant = () => {
-    navigation.navigate("Participant", { participant });
+    navigation.navigate("Participant", { participant: message.participant });
   };
 
   const renderAuthor = useCallback(() => {

@@ -48,6 +48,7 @@ export interface MessageData {
   message: string;
   created_at: string;
   author: UserData;
+  participant: ParticipantsData;
   group: GroupData;
   voice_message?: AudioData;
   files?: FileData[];
