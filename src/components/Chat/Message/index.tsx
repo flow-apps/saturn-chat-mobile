@@ -21,7 +21,7 @@ import { Swipeable } from "react-native-gesture-handler";
 import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
 import FilePreview from "../FilePreview";
-import MessageOptions from "../../MessageOptions";
+import MessageOptions, { IOptions } from "../../MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
@@ -43,7 +43,7 @@ import ReplyingMessage from "../ReplyingMessage";
 interface MessageProps {
   participant: ParticipantsData;
   message: MessageData;
-  lastMessage: MessageData;
+  lastMessage: MessageData | null;
   index: number;
   socket: Socket;
   onReplyMessage: (message: MessageData) => void;
@@ -72,12 +72,40 @@ const Message = ({
     return _.isUndefined(message?.sended) ? true : message.sended;
   }, []);
 
+  const messageOptions = useMemo<IOptions[]>(() => {
+    return [
+      {
+        iconName: "corner-up-right",
+        content: "Responder",
+        action: () => onReplyMessage(message),
+        onlyOwner: false,
+        authorizedRoles: ["ALL" as ParticipantRoles],
+      },
+      {
+        iconName: "copy",
+        content: "Copiar",
+        action: handleCopyMessage,
+        onlyOwner: false,
+        authorizedRoles: ["ALL" as ParticipantRoles],
+      },
+      {
+        iconName: "trash-2",
+        content: "Excluir",
+        action: deleteMessage,
+        color: colors.red,
+        onlyOwner: true,
+        authorizedRoles: rolesForDeleteMessage,
+      },
+    ];
+  }, []);
+
   const handleGoParticipant = () => {
     navigation.navigate("Participant", { participant: message.participant });
   };
 
   const renderAuthor = useCallback(() => {
-    if (index === 0 || lastMessage.author.id !== message.author.id) {
+    if (!lastMessage || lastMessage.author.id !== message.author.id) {
+
       return (
         <MessageAuthorContainer onPress={handleGoParticipant}>
           {message.author.avatar ? (
@@ -101,10 +129,10 @@ const Message = ({
         </MessageAuthorContainer>
       );
     }
-  }, [message.author, lastMessage.author]);
+  }, [message, lastMessage])
 
   const renderDate = useCallback(() => {
-    if (index === 0 || lastMessage.author.id !== message.author.id) {
+    if (!lastMessage || lastMessage.author.id !== message.author.id) {
       return (
         <MessageDateContainer>
           <MessageDate>{formatHour(message.created_at)}</MessageDate>
@@ -127,7 +155,7 @@ const Message = ({
         return <></>;
       }
     }
-  }, [message.created_at, lastMessage.created_at]);
+  }, []);
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
@@ -204,7 +232,7 @@ const Message = ({
         friction={4}
       >
         <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-          <ReplyingMessage />
+          {/* <ReplyingMessage /> */}
           <MessageContentContainer
             isRight={isRight}
             sended={sended}
@@ -216,30 +244,7 @@ const Message = ({
               visible={msgOptions}
               message={message}
               participant_role={participant.role}
-              options={[
-                {
-                  iconName: "corner-up-right",
-                  content: "Responder",
-                  action: () => onReplyMessage(message),
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                },
-                {
-                  iconName: "copy",
-                  content: "Copiar",
-                  action: handleCopyMessage,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                },
-                {
-                  iconName: "trash-2",
-                  content: "Excluir",
-                  action: deleteMessage,
-                  color: colors.red,
-                  onlyOwner: true,
-                  authorizedRoles: rolesForDeleteMessage,
-                },
-              ]}
+              options={messageOptions}
             />
             <MessageMark
               message={message}
@@ -262,6 +267,7 @@ const Message = ({
 export default memo(Message, (prev, next) => {
   return (
     prev.message.id === next.message.id &&
-    prev.message.message === next.message.message
+    prev.message.message === next.message.message &&
+    prev.lastMessage?.id === next.lastMessage?.id
   );
 });

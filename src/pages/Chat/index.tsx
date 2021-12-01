@@ -467,7 +467,10 @@ const Chat: React.FC = () => {
       const trace = perf().newTrace("send_message_without_file");
 
       await trace.start();
-      socket?.emit("new_user_message", { message, localReference });
+      socket?.emit("new_user_message", {
+        message,
+        localReference,
+      });
       await trace.stop();
     }
 
@@ -521,24 +524,23 @@ const Chat: React.FC = () => {
     setSendedFileProgress(0);
   }, [message, files]);
 
-  const renderMessage = useCallback(
-    ({ item, index }: ListRenderItem<MessageData> | any) => {
-      const lastMessage =
-        index !== 0 ? oldMessages[index - 1] : ({} as MessageData);
+  const renderMessage = ({
+    item,
+    index,
+  }: ListRenderItem<MessageData> | any) => {
+    const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
-      return (
-        <Message
-          message={item}
-          socket={socket as Socket}
-          index={index}
-          participant={participant as ParticipantsData}
-          lastMessage={lastMessage}
-          onReplyMessage={handleReplyMessage}
-        />
-      );
-    },
-    [oldMessages.length]
-  );
+    return (
+      <Message
+        message={item}
+        socket={socket as Socket}
+        index={index}
+        participant={participant as ParticipantsData}
+        lastMessage={lastMessage}
+        onReplyMessage={handleReplyMessage}
+      />
+    );
+  };
   const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
   const getItemID = (item: MessageData) => item.id;
   const renderFooter = () =>
@@ -623,12 +625,12 @@ const Chat: React.FC = () => {
             </FileSendedProgressContainer>
           )}
 
-          {replyingMessage && (
+          {/* {replyingMessage && (
             <CurrentReplyingMessage
               message={replyingMessage}
               onRemoveReplying={handleRemoveReplyingMessage}
             />
-          )}
+          )} */}
 
           <InputContainer>
             <MessageInput

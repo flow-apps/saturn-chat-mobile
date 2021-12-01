@@ -103,3 +103,4 @@ const MessageOptions = ({
 };
 
 export default MessageOptions;
+export type { IOptions }
