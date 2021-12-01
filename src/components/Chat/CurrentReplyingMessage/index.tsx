@@ -33,7 +33,8 @@ const CurrentReplyingMessage = ({
     if (message.voice_message) {
       return (
         <ReplyingMessage textBreakStrategy="balanced" numberOfLines={2}>
-          🎤 Mensagem de voz ({millisToTime(message.voice_message.duration)})
+          <Feather name="mic" size={13} /> Mensagem de voz (
+          {millisToTime(message.voice_message.duration)})
         </ReplyingMessage>
       );
     }
@@ -41,8 +42,8 @@ const CurrentReplyingMessage = ({
     if (message.files?.length) {
       return (
         <ReplyingMessage textBreakStrategy="balanced" numberOfLines={2}>
-          (📂{"  "}
-          {message.files.length} arquivos){" "}
+          (<Feather name="file-minus" size={13} /> {message.files.length}{" "}
+          {message.files.length === 1 ? "arquivo" : "arquivos"}){" "}
           {message.message ? message.message : ""}
         </ReplyingMessage>
       );
@@ -76,7 +77,7 @@ const CurrentReplyingMessage = ({
       </ReplyingMessageContentContainer>
       <ReplyingMessageRemoveContainer>
         <ReplyingMessageRemoveButton onPress={onRemoveReplying}>
-          <Feather name="x" size={25} color={colors.black} />
+          <Feather name="x-circle" size={25} color={colors.red} />
         </ReplyingMessageRemoveButton>
       </ReplyingMessageRemoveContainer>
     </ReplyingMessageContainer>
