@@ -11,11 +11,12 @@ import { useAuth } from "./auth";
 import { getWebsocket } from "../services/websocket";
 import { navigate } from "../routes/rootNavigation";
 import { usePersistedState } from "../hooks/usePersistedState";
+import { MessageData } from "../../@types/interfaces";
 
 interface NotificationsContextProps {
   expoToken: string;
   enabled: boolean;
-  toggleEnabledNotifications: () => void
+  toggleEnabledNotifications: () => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextProps>(
@@ -33,7 +34,7 @@ Notifications.setNotificationHandler({
 
 const NotificationsProvider: React.FC = ({ children }) => {
   const [expoToken, setExpoToken] = useState("");
-  const [enabled, setEnabled] = useState(true)
+  const [enabled, setEnabled] = useState(true);
   const [storedToken, setStoredToken] = usePersistedState(
     "@SaturnChat:NotificationToken",
     ""
@@ -60,7 +61,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
       if (!granted) {
         return Alert.alert(
           "Poxa vida",
-          "Preciso desta permissão para notificações de novas mensagens"
+          "Preciso desta permissão para notificações de novas mensagens. Você poderá desativa-lás nas configurações quando quiser."
         );
       }
     }
@@ -107,7 +108,9 @@ const NotificationsProvider: React.FC = ({ children }) => {
     Notifications.addNotificationResponseReceivedListener(async (res) => {
       if (!signed) return;
       const socket = getWebsocket();
-      const groupID = res.notification.request.content.data.group_id;
+      const notificationData = res.notification.request.content
+        .data as any as MessageData;
+      const groupID = notificationData.group.id;
 
       if (res.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
         return navigate("Chat", { id: groupID });
@@ -135,13 +138,13 @@ const NotificationsProvider: React.FC = ({ children }) => {
   }, [expoToken]);
 
   const toggleEnabledNotifications = async () => {
-    if (!signed || !expoToken.length) return
-    setEnabled(old => !old)    
+    if (!signed || !expoToken.length) return;
+    setEnabled((old) => !old);
 
-    await api
-      .patch(`/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`)
-
-  }
+    await api.patch(
+      `/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`
+    );
+  };
 
   useEffect(() => {
     (async () => {
@@ -151,13 +154,14 @@ const NotificationsProvider: React.FC = ({ children }) => {
         setExpoToken(newToken);
         setStoredToken(newToken);
 
-        await api.post("/users/notify/register", {
-          notificationToken: newToken,
-          platform: Platform.OS,
-        })
-        .then(res => {   
-          setEnabled(res.data.send_notification)
-        })
+        await api
+          .post("/users/notify/register", {
+            notificationToken: newToken,
+            platform: Platform.OS,
+          })
+          .then((res) => {
+            setEnabled(res.data.send_notification);
+          });
       }
     })();
   }, []);
@@ -167,7 +171,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
       value={{
         expoToken,
         toggleEnabledNotifications,
-        enabled
+        enabled,
       }}
     >
       {children}

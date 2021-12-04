@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { useTheme } from "styled-components";
 import CheckBox from "../../../../components/Checkbox";
@@ -16,7 +16,6 @@ import {
   ButtonText,
   ButtonsContainer,
 } from "./styles";
-import { ParticipantsData } from "../../../../../@types/interfaces";
 import api from "../../../../services/api";
 import Loading from "../../../../components/Loading";
 import SimpleToast from "react-native-simple-toast";
@@ -25,26 +24,11 @@ const PunishParticipant: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { colors } = useTheme();
-  const { type, groupID, participantID } = route.params as {
+  const { type, participant } = route.params as {
     [key: string]: any;
   };
   const [notify, setNotify] = useState(false);
-  const [participant, setParticipant] = useState<ParticipantsData>();
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const participantRes = await api.get(
-        `/group/participant/${groupID}?participant_id=${participantID}`
-      );
-      if (participantRes.status === 200) {
-        const part = participantRes.data.participant as ParticipantsData;
-        setParticipant(part);
-      }
-      setLoading(false);
-    })();
-  }, []);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -55,6 +39,7 @@ const PunishParticipant: React.FC = () => {
   };
 
   const handlePunish = async () => {
+    setLoading(true)
     await api
       .get(
         `/group/participant/${type}/${participant?.id}?group_id=${participant?.group.id}`
@@ -68,6 +53,8 @@ const PunishParticipant: React.FC = () => {
       .catch(() => {
         SimpleToast.show("Erro ao punir usuário. Tente novamente.");
       });
+
+    setLoading(false)
   };
 
   if (loading) return <Loading />;
@@ -80,13 +67,13 @@ const PunishParticipant: React.FC = () => {
           <PunishAnimationWrapper>
             <PunishAnimation
               source={require("../../../../assets/alert.json")}
-              autoPlay
               loop={false}
+              autoPlay
             />
           </PunishAnimationWrapper>
           <PunishDescription>
             Você está prestes a {type === "kick" ? "expulsar" : "banir"} o
-            participante "{participant?.user.name}" do grupo "Game Santos". Você
+            participante "{participant?.user.name}" do grupo "{participant?.group.name}". Você
             tem certeza da sua escolha?
           </PunishDescription>
           <PunishNotifyContainer>

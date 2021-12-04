@@ -72,40 +72,12 @@ const Message = ({
     return _.isUndefined(message?.sended) ? true : message.sended;
   }, []);
 
-  const messageOptions = useMemo<IOptions[]>(() => {
-    return [
-      {
-        iconName: "corner-up-right",
-        content: "Responder",
-        action: () => onReplyMessage(message),
-        onlyOwner: false,
-        authorizedRoles: ["ALL" as ParticipantRoles],
-      },
-      {
-        iconName: "copy",
-        content: "Copiar",
-        action: handleCopyMessage,
-        onlyOwner: false,
-        authorizedRoles: ["ALL" as ParticipantRoles],
-      },
-      {
-        iconName: "trash-2",
-        content: "Excluir",
-        action: deleteMessage,
-        color: colors.red,
-        onlyOwner: true,
-        authorizedRoles: rolesForDeleteMessage,
-      },
-    ];
-  }, []);
-
   const handleGoParticipant = () => {
     navigation.navigate("Participant", { participant: message.participant });
   };
 
   const renderAuthor = useCallback(() => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
-
       return (
         <MessageAuthorContainer onPress={handleGoParticipant}>
           {message.author.avatar ? (
@@ -129,7 +101,7 @@ const Message = ({
         </MessageAuthorContainer>
       );
     }
-  }, [message, lastMessage])
+  }, [message, lastMessage]);
 
   const renderDate = useCallback(() => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
@@ -244,7 +216,30 @@ const Message = ({
               visible={msgOptions}
               message={message}
               participant_role={participant.role}
-              options={messageOptions}
+              options={[
+                {
+                  iconName: "corner-up-right",
+                  content: "Responder",
+                  action: () => onReplyMessage(message),
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "copy",
+                  content: "Copiar",
+                  action: handleCopyMessage,
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "trash-2",
+                  content: "Excluir",
+                  action: deleteMessage,
+                  color: colors.red,
+                  onlyOwner: true,
+                  authorizedRoles: rolesForDeleteMessage,
+                },
+              ]}
             />
             <MessageMark
               message={message}

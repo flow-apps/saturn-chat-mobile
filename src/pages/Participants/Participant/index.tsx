@@ -63,6 +63,7 @@ const Participant: React.FC = () => {
       type,
       groupID: participant.group.id,
       participantID: participant.id,
+      participant
     });
   };
 
