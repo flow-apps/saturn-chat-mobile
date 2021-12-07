@@ -61,7 +61,7 @@ const Invite: React.FC = () => {
 
   if (loading) return <Loading />;
 
-  if (!invite) {
+  if (!invite && !loading) {
     return (
       <>
         <StatusBar translucent />
@@ -91,7 +91,7 @@ const Invite: React.FC = () => {
 
   const handleJoin = async () => {
     await api
-      .get(`/inv/join/${invite.id}`)
+      .get(`/inv/join/${invite?.id}`)
       .then((res) => {
         if (res.status === 200) {
           const data = res.data as ParticipantData;

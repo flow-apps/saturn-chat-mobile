@@ -8,9 +8,10 @@ type TypingProps = {
 
 const Typing = ({ typingUsers }: TypingProps) => {  
   
-  const userNames = useMemo(() => typingUsers.map(User => User.name), [typingUsers])
+  if (typingUsers.length <= 0) return <></>
 
-  if (userNames.length <= 0) return <></>
+  const names = useMemo(() => typingUsers.map(User => User.name), [typingUsers])
+  const joinedNames = useMemo(() => names.join(", "), [names])
 
   return (
     <Container>
@@ -25,9 +26,9 @@ const Typing = ({ typingUsers }: TypingProps) => {
         <TypingRightSide>
           <TypingUsersContainer>
             <TypingUsersText numberOfLines={1}>
-              {userNames.length < 5 ? userNames.join(", ") : "Vários usuários"}
+              {names.length < 5 ? joinedNames : "Vários usuários"}
                 {" "}
-              {userNames.length <= 1 && userNames.length < 5 ? "está " : "estão "} 
+              {names.length <= 1 && names.length < 5 ? "está " : "estão "} 
                 digitando
             </TypingUsersText>
           </TypingUsersContainer>

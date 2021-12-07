@@ -182,6 +182,7 @@ const Chat: React.FC = () => {
         )
       );
     });
+
     socket.on("new_user_message", (msg) => {
       setOldMessages((old) => [msg, ...old]);
       socket.emit("set_read_message", msg.id);
@@ -204,6 +205,12 @@ const Chat: React.FC = () => {
 
     socket.on("deleted_group", (groupID) => {
       if (route.name === "Chat") navigation.navigate("Groups");
+    });
+
+    socket.on("kicked_group", (data) => {
+      if (user?.id === data.user_id && route.name === "Chat") {
+        navigation.navigate("Groups");
+      }
     });
 
     navigation.addListener("blur", () => {

@@ -36,7 +36,7 @@ const Routes = () => {
       fallback={<Loading />}
       onReady={() => routeNameRef.current = navigationRef.current?.getCurrentRoute()?.name}
       onStateChange={async () => {
-        const previousRouteName = navigationRef.current;
+        const previousRouteName = navigationRef.current as any as string | undefined
         const currentRouteName = navigationRef.current?.getCurrentRoute()?.name
 
         if (previousRouteName !== currentRouteName) {
