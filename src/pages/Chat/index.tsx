@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useAppState } from "@react-native-community/hooks";
 import {
   ListRenderItem,
   NativeScrollEvent,
@@ -122,6 +123,8 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
+  const appState = useAppState();
+
   const toggleAnimationRecordingAudioState = useAnimationState({
     recording: {
       opacity: 1,
@@ -132,6 +135,28 @@ const Chat: React.FC = () => {
       translationY: 20,
     },
   });
+
+  navigation.addListener("blur", () => {
+    if (!socket) return;
+    socket.emit("leave_chat");
+    socket.offAny();
+  });
+
+  useEffect(() => {
+    if (appState === "background" || appState === "inactive") {
+      if (!socket) return;
+      socket.emit("leave_chat");
+      socket.offAny();
+    } else if (appState === "active") {
+      if (!socket) return;
+      const connectedSocket = socket || getWebsocket();
+
+      connectedSocket.emit("connect_in_chat", id);
+      connectedSocket.on("connect", () => {
+        setSocket(connectedSocket);
+      });
+    }
+  }, [appState]);
 
   useEffect(() => {
     (async () => {
@@ -211,11 +236,6 @@ const Chat: React.FC = () => {
       if (user?.id === data.user_id && route.name === "Chat") {
         navigation.navigate("Groups");
       }
-    });
-
-    navigation.addListener("blur", () => {
-      socket.emit("leave_chat");
-      socket.offAny();
     });
   }, [socket]);
 
