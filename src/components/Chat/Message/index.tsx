@@ -81,7 +81,7 @@ const Message = ({
       return (
         <MessageAuthorContainer
           onPress={handleGoParticipant}
-          disabled={participant.state !== ParticipantStates.JOINED}
+          disabled={message.participant.state !== ParticipantStates.JOINED}
         >
           {message.author.avatar ? (
             <MessageAvatar
