@@ -17,6 +17,7 @@ export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-top: 5px;
+  opacity: ${props => props.disabled ? 0.5 : 1};
 `;
 
 export const MessageAvatar = styled(FastImage)`

@@ -5,3 +5,10 @@ export enum ParticipantRoles {
   MANAGER = "MANAGER",
   OWNER = "OWNER"
 }
+
+export enum ParticipantStates {
+  JOINED = "JOINED",
+  EXITED = "EXITED",
+  BANNED = "BANNED",
+  KICKED = "KICKED"
+}

@@ -31,7 +31,7 @@ import {
   MessageDateContainer,
 } from "./styles";
 import PremiumName from "../../PremiumName";
-import { ParticipantRoles } from "../../../../@types/enums";
+import { ParticipantRoles, ParticipantStates } from "../../../../@types/enums";
 import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
 import MessageMark from "../../Markdown/MessageMark";
 import SimpleToast from "react-native-simple-toast";
@@ -79,7 +79,10 @@ const Message = ({
   const renderAuthor = useCallback(() => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
       return (
-        <MessageAuthorContainer onPress={handleGoParticipant}>
+        <MessageAuthorContainer
+          onPress={handleGoParticipant}
+          disabled={participant.state !== ParticipantStates.JOINED}
+        >
           {message.author.avatar ? (
             <MessageAvatar
               source={{
