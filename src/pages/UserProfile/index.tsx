@@ -15,6 +15,7 @@ import {
   Groups,
   BioContainer,
   BioContent,
+  AvatarContainer,
 } from "./styles";
 import { useTheme } from "styled-components";
 import Group from "../../components/Group";
@@ -29,7 +30,7 @@ import { View } from "react-native";
 import PremiumName from "../../components/PremiumName";
 import { useAds } from "../../contexts/ads";
 
-import _ from "lodash"
+import _ from "lodash";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -61,29 +62,42 @@ const UserProfile: React.FC = () => {
     navigation.navigate("GroupInfos", { id: groupID });
   };
 
+  const handleGoAvatar = () => {
+    navigation.navigate("ImagePreview", {
+      name: userInfos.avatar.name,
+      url: userInfos.avatar.url
+    });
+  };
+
   if (loading) return <Loading />;
 
   return (
     <>
-      <Header title={userInfos?.name}  />
+      <Header title={userInfos?.name} />
       <Container>
         <UserProfileContainer>
           <BasicInfosContainer>
             <ImagesContainer>
               <Banner />
-              {userInfos.avatar ? (
-                <Avatar
-                  source={{
-                    uri: userInfos?.avatar.url,
-                    cache: "immutable",
-                    priority: "high",
-                  }}
-                />
-              ) : (
-                <Avatar
-                  source={require("../../assets/avatar-placeholder.png")}
-                />
-              )}
+              <AvatarContainer
+                onPress={handleGoAvatar}
+                disabled={!userInfos.avatar}
+                activeOpacity={0.7}
+              >
+                {userInfos.avatar ? (
+                  <Avatar
+                    source={{
+                      uri: userInfos?.avatar.url,
+                      cache: "immutable",
+                      priority: "high",
+                    }}
+                  />
+                ) : (
+                  <Avatar
+                    source={require("../../assets/avatar-placeholder.png")}
+                  />
+                )}
+              </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>
               <PremiumName
@@ -97,7 +111,9 @@ const UserProfile: React.FC = () => {
               <BioContainer>
                 <BioContent>{userInfos?.bio}</BioContent>
               </BioContainer>
-            ): <></>}
+            ) : (
+              <></>
+            )}
           </BasicInfosContainer>
           <GroupsContainer>
             <GroupsTitle>

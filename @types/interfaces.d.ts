@@ -9,6 +9,7 @@ export interface UserData {
   participating: ParticipantsData[];
   created_at: string;
   avatar: {
+    name: string;
     url: string;
   };
 }
@@ -20,6 +21,7 @@ export interface GroupData {
   privacy: "PUBLIC" | "PRIVATE";
   tags: string[];
   group_avatar: {
+    name: string;
     url: string;
   };
   owner: UserData;

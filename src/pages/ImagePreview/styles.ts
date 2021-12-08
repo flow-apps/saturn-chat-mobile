@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { Animated } from "react-native";
 
 export const Container = styled.View`
   flex: 1;
@@ -7,13 +6,14 @@ export const Container = styled.View`
   z-index: -5;
 `;
 
-export const ImageContainer = styled(Animated.View)`
+export const ImageContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
 `;
 
-export const Image = styled(Animated.Image)`
+export const Image = styled.Image`
   width: 100%;
   height: 100%;
 `;
+

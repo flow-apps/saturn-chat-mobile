@@ -24,6 +24,8 @@ export const Banner = styled.View`
   width: 100%;
 `;
 
+export const AvatarContainer = styled.TouchableOpacity``;
+
 export const Avatar = styled(FastImage)`
   width: 180px;
   height: 180px;

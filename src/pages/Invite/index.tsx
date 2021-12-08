@@ -68,7 +68,7 @@ const Invite: React.FC = () => {
         <Container
           colors={["#0061ff", "#0059ff"]}
           start={{ x: 0, y: 0 }}
-          end={{ x: 0.5, y: 0.5 }}
+          end={{ x: 0.2, y: 0.8 }}
         >
           <InviteContainer>
             <InviteAnimationContainer>

@@ -9,6 +9,7 @@ import api from "../../services/api";
 import {
   AdBannerWrapper,
   Avatar,
+  AvatarContainer,
   Banner,
   BasicInfos,
   BasicInfosContainer,
@@ -76,6 +77,14 @@ const GroupInfos: React.FC = () => {
       return navigation.navigate("Chat", { id });
     }
   }
+
+  const handleGoAvatar = () => {
+    navigation.navigate("ImagePreview", {
+      name: group?.group_avatar.name,
+      url: group?.group_avatar.url,
+    });
+  };
+
   if (loading || !group) return <Loading />;
 
   return (
@@ -86,19 +95,25 @@ const GroupInfos: React.FC = () => {
           <BasicInfosContainer>
             <ImagesContainer>
               <Banner />
-              {group.group_avatar ? (
-                <Avatar
-                  source={{
-                    uri: group.group_avatar.url,
-                    cache: "immutable",
-                    priority: "high",
-                  }}
-                />
-              ) : (
-                <Avatar
-                  source={require("../../assets/avatar-placeholder.png")}
-                />
-              )}
+              <AvatarContainer
+                onPress={handleGoAvatar}
+                disabled={!group.group_avatar}
+                activeOpacity={0.7}
+              >
+                {group.group_avatar ? (
+                  <Avatar
+                    source={{
+                      uri: group.group_avatar.url,
+                      cache: "immutable",
+                      priority: "high",
+                    }}
+                  />
+                ) : (
+                  <Avatar
+                    source={require("../../assets/avatar-placeholder.png")}
+                  />
+                )}
+              </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>
               <GroupName>{group.name}</GroupName>
