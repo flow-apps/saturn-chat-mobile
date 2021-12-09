@@ -24,14 +24,16 @@ export const Banner = styled.View`
   width: 100%;
 `;
 
-export const AvatarContainer = styled.TouchableOpacity``
+export const AvatarContainer = styled.TouchableOpacity`
+  position: relative;
+  top: -90px;
+  z-index: 5;
+`
 
 export const Avatar = styled(FastImage)`
   width: 180px;
   height: 180px;
   border-radius: 90px;
-  position: relative;
-  top: -90px;
 `;
 
 export const BasicInfos = styled.View`
