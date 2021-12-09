@@ -1,5 +1,5 @@
 import { Audio } from "expo-av";
-import { Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import Toast from "react-native-simple-toast";
 import * as FileSystem from "expo-file-system";
 
@@ -32,8 +32,7 @@ class RecordService {
 
       if (!permission.granted) {
         const { granted } = await Audio.requestPermissionsAsync();
-
-        if (!granted) return;
+        return;
       }
 
       if (!this.recording || this.recording._isDoneRecording) 

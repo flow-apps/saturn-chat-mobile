@@ -26,8 +26,13 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
 
-  const navigation = useNavigation();
   const { colors } = useTheme();
+  const navigation = useNavigation();
+
+
+  useEffect(() => {
+    loadAudio()
+  }, [])
 
   const loadAudio = useCallback(async () => {
     if (sound) return;
@@ -36,11 +41,12 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
       allowsRecordingIOS: false,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
-      shouldDuckAndroid: false,
+      shouldDuckAndroid: true,
       staysActiveInBackground: false,
     });
 
     const newSound = await Audio.Sound.createAsync({ uri: audio.url });
+
 
     if (newSound.status.isLoaded) {
       setSound(newSound.sound);
@@ -48,6 +54,7 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
         if (!status.isLoaded) return;
 
         if (status.didJustFinish) {
+          await newSound.sound?.pauseAsync()
           return await handleFinish();
         } else {
           setCurrentPosition(status.positionMillis);
@@ -59,13 +66,13 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
     navigation.addListener("blur", async () => {
       if (newSound.sound._loaded) {
         await newSound.sound.pauseAsync();
+        await newSound.sound.unloadAsync();
       }
     });
   }, []);
 
   async function handleFinish() {
-    await sound?.unloadAsync();
-    setSound(undefined)
+    // setSound(undefined)
     setIsPlaying(false);
     onChangePosition(0);
   }
