@@ -12,11 +12,14 @@ import {
   ReadMoreButton,
   ReadMoreText,
 } from "./styles";
+import { MessageData } from "../../../../@types/interfaces";
 
-const ReplyingMessage: React.FC = () => {
+interface ReplyingMessageProps {
+  replying_message: MessageData;
+}
+
+const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
   const [readAll, setReadAll] = useState(false);
-
-  const text = "Olá";
 
   const handleReadMore = () => {
     setReadAll((old) => !old);
@@ -31,13 +34,13 @@ const ReplyingMessage: React.FC = () => {
       </ReplyingTitleContainer>
       <ReplyingMessageWrapper>
         <ReplyingMessageAuthorWrapper>
-          <ReplyingMessageAuthorName>Pedro Henrique</ReplyingMessageAuthorName>
+          <ReplyingMessageAuthorName>{replying_message.author.name}</ReplyingMessageAuthorName>
         </ReplyingMessageAuthorWrapper>
         <ReplyingMessageContentContainer>
           <ReplyingMessageContent numberOfLines={readAll ? undefined : 2}>
-            {text}
+            {replying_message.message}
           </ReplyingMessageContent>
-          {text.length > 72 && (
+          {replying_message.message.length > 72 && (
             <ReadMoreButton onPress={handleReadMore}>
               <ReadMoreText>
                 {readAll ? "[Ler menos]" : "[Ler mais]"}

@@ -279,7 +279,7 @@ const Chat: React.FC = () => {
     }
   };
 
-  const stopRecordAudio = async () => {
+  const stopRecordAudioAndSubmit = async () => {
     toggleAnimationRecordingAudioState.transitionTo("stopped");
     if (!recordingAudio) return;
 
@@ -318,6 +318,7 @@ const Chat: React.FC = () => {
               files: [],
               sended: false,
               localReference,
+              replying_message: replyingMessage,
               created_at: new Date().toISOString(),
             },
             ...old,
@@ -485,6 +486,7 @@ const Chat: React.FC = () => {
         }),
         sended: false,
         localReference,
+        replying_message: replyingMessage,
         created_at: new Date().toISOString(),
       },
       ...old,
@@ -652,12 +654,12 @@ const Chat: React.FC = () => {
             </FileSendedProgressContainer>
           )}
 
-          {/* {replyingMessage && (
+          {replyingMessage && (
             <CurrentReplyingMessage
               message={replyingMessage}
               onRemoveReplying={handleRemoveReplyingMessage}
             />
-          )} */}
+          )}
 
           <InputContainer>
             <MessageInput
@@ -690,7 +692,7 @@ const Chat: React.FC = () => {
                 <AudioContainer>
                   <AudioButton
                     onPressIn={recordAudio}
-                    onPressOut={stopRecordAudio}
+                    onPressOut={stopRecordAudioAndSubmit}
                   >
                     <Feather name="mic" size={30} color={colors.secondary} />
                   </AudioButton>
