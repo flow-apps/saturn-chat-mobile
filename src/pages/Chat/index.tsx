@@ -105,7 +105,7 @@ const Chat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number>();
 
-  const [replyingMessage, setReplyingMessage] = useState<MessageData>();
+  const [replyingMessage, setReplyingMessage] = useState<MessageData >();
 
   const [audioPermission, setAudioPermission] = useState(false);
   const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
@@ -340,6 +340,7 @@ const Chat: React.FC = () => {
             message,
             localReference,
           });
+          setReplyingMessage(undefined);
         },
       });
     } catch (error: any) {
@@ -524,7 +525,7 @@ const Chat: React.FC = () => {
       setFiles([]);
 
       filesData.append("message", message);
-      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id)
+      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
 
       await trace.start();
       api
@@ -554,6 +555,7 @@ const Chat: React.FC = () => {
 
     setSendingFile(false);
     setSendedFileProgress(0);
+    setReplyingMessage(undefined);
   }, [message, files]);
 
   const renderMessage = ({
