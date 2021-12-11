@@ -318,7 +318,7 @@ const Chat: React.FC = () => {
               files: [],
               sended: false,
               localReference,
-              replying_message: replyingMessage,
+              reply_to: replyingMessage,
               created_at: new Date().toISOString(),
             },
             ...old,
@@ -336,6 +336,7 @@ const Chat: React.FC = () => {
 
           socket?.emit("new_voice_message", {
             audio: sendedAudio.data,
+            reply_to_id: replyingMessage?.id,
             message,
             localReference,
           });
@@ -486,7 +487,7 @@ const Chat: React.FC = () => {
         }),
         sended: false,
         localReference,
-        replying_message: replyingMessage,
+        reply_to: replyingMessage,
         created_at: new Date().toISOString(),
       },
       ...old,
@@ -498,6 +499,7 @@ const Chat: React.FC = () => {
       await trace.start();
       socket?.emit("new_user_message", {
         message,
+        reply_to_id: replyingMessage?.id,
         localReference,
       });
       await trace.stop();
@@ -522,6 +524,7 @@ const Chat: React.FC = () => {
       setFiles([]);
 
       filesData.append("message", message);
+      filesData.append("reply_to_id", replyingMessage?.id)
 
       await trace.start();
       api

@@ -53,7 +53,7 @@ export interface MessageData {
   author: UserData;
   participant: ParticipantsData;
   group: GroupData;
-  replying_message?: MessageData;
+  reply_to?: MessageData;
   voice_message?: AudioData;
   files?: FileData[];
   sended?: boolean;

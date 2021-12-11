@@ -207,8 +207,8 @@ const Message = ({
         friction={4}
       >
         <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-          {message.replying_message && (
-            <ReplyingMessage replying_message={message.replying_message} />
+          {message.reply_to && (
+            <ReplyingMessage replying_message={message.reply_to} />
           )}
           <MessageContentContainer
             isRight={isRight}
