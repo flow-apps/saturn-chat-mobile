@@ -2,6 +2,10 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.13.0
+
+- Add reply message
+
 ## 0.0.12.1
 
 - Fix styles for light mode
