@@ -524,7 +524,7 @@ const Chat: React.FC = () => {
       setFiles([]);
 
       filesData.append("message", message);
-      filesData.append("reply_to_id", replyingMessage?.id)
+      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id)
 
       await trace.start();
       api

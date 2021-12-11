@@ -7,7 +7,7 @@ export const Container = styled.View`
   padding: 12px 5px 12px 20px;
   width: 85%;
   background-color: ${props => props.theme.colors.shape + "88"};
-  margin-bottom: 10px;
+  margin: 10px 0px 7px 0px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   elevation: 0.5;

@@ -13,6 +13,7 @@ import {
   ReadMoreText,
 } from "./styles";
 import { MessageData } from "../../../../@types/interfaces";
+import { millisToTime } from "../../../utils/format";
 
 interface ReplyingMessageProps {
   replying_message: MessageData;
@@ -25,6 +26,41 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
     setReadAll((old) => !old);
   };
 
+  const getMessageContent = () => {
+    const { files, message, voice_message } = replying_message;
+
+    if (files?.length) {
+      if (message) {
+        return (
+          <ReplyingMessageContent>
+            <Feather name="file" /> ({files.length} arquivos) {message}
+          </ReplyingMessageContent>
+        );
+      } else {
+        return (
+          <ReplyingMessageContent>
+            <Feather name="file" /> {files.length} arquivos
+          </ReplyingMessageContent>
+        );
+      }
+    }
+
+    if (voice_message) {
+      return (
+        <ReplyingMessageContent>
+          <Feather name="mic" /> Mensagem de voz (
+          {millisToTime(voice_message.duration)})
+        </ReplyingMessageContent>
+      );
+    }
+
+    return (
+      <ReplyingMessageContent numberOfLines={readAll ? undefined : 2}>
+        {message}
+      </ReplyingMessageContent>
+    );
+  };
+
   return (
     <Container>
       <ReplyingTitleContainer>
@@ -34,12 +70,12 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
       </ReplyingTitleContainer>
       <ReplyingMessageWrapper>
         <ReplyingMessageAuthorWrapper>
-          <ReplyingMessageAuthorName>{replying_message.author.name}</ReplyingMessageAuthorName>
+          <ReplyingMessageAuthorName>
+            {replying_message.author.name}
+          </ReplyingMessageAuthorName>
         </ReplyingMessageAuthorWrapper>
         <ReplyingMessageContentContainer>
-          <ReplyingMessageContent numberOfLines={readAll ? undefined : 2}>
-            {replying_message.message}
-          </ReplyingMessageContent>
+          {getMessageContent()}
           {replying_message.message.length > 72 && (
             <ReadMoreButton onPress={handleReadMore}>
               <ReadMoreText>
