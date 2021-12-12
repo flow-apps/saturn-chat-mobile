@@ -34,6 +34,7 @@ import {
   ParticipantsTitle,
 } from "./styles";
 import { useFirebase } from "../../contexts/firebase";
+import SimpleToast from "react-native-simple-toast";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -62,20 +63,23 @@ const GroupInfos: React.FC = () => {
   useEffect(() => {
     api
       .get(`/group/participant/${id}`)
-      .then(() => setIsParticipating(true))
+      .then((res) => {
+        setIsParticipating(res.data.participant.state === "JOINED");
+      })
       .catch(() => setIsParticipating(false));
   }, []);
 
   async function handleJoinGroup() {
-    const response = await api.get(`/group/participants/new/${group?.id}`);
-
-    if (response.status === 200) {
-      setIsParticipating(true);
-      await analytics.logEvent("join_group", {
-        group_id: id,
-      });
-      return navigation.navigate("Chat", { id });
-    }
+    await api
+      .get(`/group/participants/new/${group?.id}`)
+      .then(async () => {
+        setIsParticipating(true);
+        await analytics.logEvent("join_group", {
+          group_id: id,
+        });
+        return navigation.navigate("Chat", { id });
+      })
+      .catch(() => SimpleToast.show("Erro ao entrar no grupo!"));
   }
 
   const handleGoAvatar = () => {
