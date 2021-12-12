@@ -43,7 +43,7 @@ const Register: React.FC = () => {
 
   const [emailError, setEmailError] = useState(false);
   const [passError, setPassError] = useState(false);
-  const [passConfirmError, setPassConfirmError] = useState(false);
+  const [passConfirmError, setPassConfirmError] = useState(true);
 
   const { colors } = useTheme();
   const { signUp, loading, registerError } = useAuth();
@@ -230,7 +230,7 @@ const Register: React.FC = () => {
                     onChangeText={handleSetPassConfirm}
                     secureTextEntry
                   />
-                  {passConfirmError && (
+                  {passConfirmError && password.length > 0 && (
                     <FieldError>As senhas não combinam</FieldError>
                   )}
                 </FormField>

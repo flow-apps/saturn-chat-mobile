@@ -148,8 +148,8 @@ const Chat: React.FC = () => {
       socket.emit("leave_chat");
       socket.offAny();
     } else if (appState === "active") {
-      if (!socket) return;
-      const connectedSocket = socket || getWebsocket();
+      if (socket && socket.connected) return;
+      const connectedSocket = getWebsocket();
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {

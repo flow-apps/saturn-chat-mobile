@@ -126,9 +126,13 @@ const EditGroup: React.FC = () => {
   };
 
   const handleCheckFields = () => {
-    if (!verifyBetweenValues(name.trim().length, 1, 100, true))
+
+    const nameValue = name.trim().length
+    const descValue = description.trim().length
+
+    if (!(nameValue >= 1) || !(nameValue <= 100))
       return setIsSendable(false);
-    else if (!verifyBetweenValues(description.trim().length, 0, 500))
+    else if (!(descValue >= 0) || !(descValue <= 500))
       return setIsSendable(false);
     else return setIsSendable(true);
   };

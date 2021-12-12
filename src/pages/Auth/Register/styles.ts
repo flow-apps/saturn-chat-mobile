@@ -30,8 +30,8 @@ export const SelectAvatarContainer = styled.View`
 `;
 
 export const SelectAvatarButton = styled.TouchableOpacity`
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border-radius: ${200 / 2}px;
   border: 2px dashed ${(props) => props.theme.colors.dark_gray};
   align-items: center;
@@ -39,9 +39,9 @@ export const SelectAvatarButton = styled.TouchableOpacity`
 `;
 
 export const Avatar = styled.Image`
-  width: 150px;
-  height: 150px;
-  border-radius: 75px;
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
 `;
 
 export const SelectAvatarTitle = styled.Text`
