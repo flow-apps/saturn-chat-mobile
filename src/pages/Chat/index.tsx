@@ -148,8 +148,8 @@ const Chat: React.FC = () => {
       socket.emit("leave_chat");
       socket.offAny();
     } else if (appState === "active") {
-      if (socket && socket.connected) return;
-      const connectedSocket = getWebsocket();
+      if (!socket) return;
+      const connectedSocket = socket || getWebsocket();
 
       connectedSocket.emit("connect_in_chat", id);
       connectedSocket.on("connect", () => {
@@ -214,6 +214,9 @@ const Chat: React.FC = () => {
     });
 
     socket.on("new_user_typing", (newUser: UserData) => {
+
+      if (newUser.id === user?.id) return 
+
       setTypingUsers((old) => [...old, newUser]);
     });
 
