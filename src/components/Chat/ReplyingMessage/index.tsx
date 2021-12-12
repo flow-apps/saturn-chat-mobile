@@ -32,7 +32,7 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
     if (files?.length) {
       if (message) {
         return (
-          <ReplyingMessageContent>
+          <ReplyingMessageContent numberOfLines={readAll ? undefined : 2}>
             <Feather name="file" /> ({files.length} arquivos) {message}
           </ReplyingMessageContent>
         );
