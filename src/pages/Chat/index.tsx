@@ -105,7 +105,7 @@ const Chat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number>();
 
-  const [replyingMessage, setReplyingMessage] = useState<MessageData >();
+  const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
   const [audioPermission, setAudioPermission] = useState(false);
   const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
@@ -143,19 +143,23 @@ const Chat: React.FC = () => {
   });
 
   useEffect(() => {
-    if (appState === "background" || appState === "inactive") {
-      if (!socket) return;
-      socket.emit("leave_chat");
-      socket.offAny();
-    } else if (appState === "active") {
-      if (!socket) return;
-      const connectedSocket = socket || getWebsocket();
+    (async () => {
+      if (appState === "background" || appState === "inactive") {
+        if (!socket) return;
+        socket.emit("leave_chat");
+        socket.offAny();
+        socket.disconnect();
+      } else if (appState === "active") {
+        if (socket && socket.connected) return;
+        const connectedSocket = getWebsocket();
 
-      connectedSocket.emit("connect_in_chat", id);
-      connectedSocket.on("connect", () => {
-        setSocket(connectedSocket);
-      });
-    }
+        connectedSocket.emit("connect_in_chat", id);
+        connectedSocket.on("connect", () => {
+          setSocket(connectedSocket);
+        });
+        connectSockets()
+      }
+    })();
   }, [appState]);
 
   useEffect(() => {
@@ -214,8 +218,7 @@ const Chat: React.FC = () => {
     });
 
     socket.on("new_user_typing", (newUser: UserData) => {
-
-      if (newUser.id === user?.id) return 
+      if (newUser.id === user?.id) return;
 
       setTypingUsers((old) => [...old, newUser]);
     });
