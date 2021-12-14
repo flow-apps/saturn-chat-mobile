@@ -201,10 +201,13 @@ const Message = ({
       <Swipeable
         overshootRight={isRight}
         overshootLeft={!isRight}
-        onSwipeableWillClose={() => onReplyMessage(message)}
+        overshootFriction={5}
         shouldCancelWhenOutside={true}
         useNativeAnimations={true}
-        friction={4}
+        enableTrackpadTwoFingerGesture={false}
+        enabled={message.sended || true}
+        onSwipeableWillClose={() => onReplyMessage(message)}
+        friction={5}
       >
         <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
           {message.reply_to && (
