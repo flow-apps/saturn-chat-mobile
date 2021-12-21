@@ -8,10 +8,8 @@ import { useCallback } from "react";
 import { Alert, Platform } from "react-native";
 import { useTheme } from "styled-components";
 import { useAuth } from "./auth";
-import { getWebsocket } from "../services/websocket";
-import { navigate } from "../routes/rootNavigation";
 import { usePersistedState } from "../hooks/usePersistedState";
-import { MessageData } from "../../@types/interfaces";
+import { configureNotifications } from "../configs/notifications";
 
 interface NotificationsContextProps {
   expoToken: string;
@@ -23,14 +21,14 @@ const NotificationsContext = createContext<NotificationsContextProps>(
   {} as NotificationsContextProps
 );
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldShowAlert: true,
-    shouldSetBadge: true,
-    priority: Notifications.AndroidNotificationPriority.HIGH,
-  }),
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldPlaySound: true,
+//     shouldShowAlert: true,
+//     shouldSetBadge: true,
+//     priority: Notifications.AndroidNotificationPriority.HIGH,
+//   }),
+// });
 
 const NotificationsProvider: React.FC = ({ children }) => {
   const [expoToken, setExpoToken] = useState("");
@@ -72,67 +70,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
       })
     ).data;
 
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        lightColor: colors.primary,
-        groupId: "default",
-      });
-
-      await Notifications.setNotificationChannelAsync("messages", {
-        name: "messages",
-        enableVibrate: true,
-        enableLights: true,
-        importance: Notifications.AndroidImportance.MAX,
-        lightColor: colors.primary,
-        groupId: "messages",
-      });
-    }
-
-    await Notifications.setNotificationCategoryAsync("message", [
-      {
-        identifier: "markAsRead",
-        buttonTitle: "Marcar como lido",
-      },
-      {
-        identifier: "replyMessage",
-        buttonTitle: "Responder",
-        textInput: {
-          placeholder: "Sua mensagem...",
-          submitButtonTitle: "enviar",
-        },
-      },
-    ]);
-
-    Notifications.addNotificationResponseReceivedListener(async (res) => {
-      if (!signed) return;
-      const socket = getWebsocket();
-      const notificationData = res.notification.request.content
-        .data as any as MessageData;
-      const groupID = notificationData.group.id;
-
-      if (res.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
-        return navigate("Chat", { id: groupID });
-      }
-
-      socket.emit("connect_in_chat", groupID);
-
-      if (res.actionIdentifier === "replyMessage") {
-        const msg = res.userText;
-        const notification = res.notification.request.identifier;
-
-        socket?.emit("new_user_message", { message: msg });
-        await Notifications.dismissNotificationAsync(notification);
-      } else if (res.actionIdentifier === "markAsRead") {
-        const messageID = res.notification.request.content.data.id as string;
-
-        await Notifications.dismissNotificationAsync(
-          res.notification.request.identifier
-        );
-        socket?.emit("set_read_message", messageID);
-      }
-    });
+    await configureNotifications({ signed })
 
     return newToken;
   }, [expoToken]);
