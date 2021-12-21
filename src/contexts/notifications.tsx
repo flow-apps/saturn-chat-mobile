@@ -6,9 +6,7 @@ import secrets from "../secrets.json";
 
 import { useCallback } from "react";
 import { Alert, Platform } from "react-native";
-import { useTheme } from "styled-components";
 import { useAuth } from "./auth";
-import { usePersistedState } from "../hooks/usePersistedState";
 import { configureNotifications } from "../configs/notifications";
 
 interface NotificationsContextProps {
@@ -21,25 +19,11 @@ const NotificationsContext = createContext<NotificationsContextProps>(
   {} as NotificationsContextProps
 );
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldPlaySound: true,
-//     shouldShowAlert: true,
-//     shouldSetBadge: true,
-//     priority: Notifications.AndroidNotificationPriority.HIGH,
-//   }),
-// });
-
 const NotificationsProvider: React.FC = ({ children }) => {
   const [expoToken, setExpoToken] = useState("");
   const [enabled, setEnabled] = useState(true);
-  const [storedToken, setStoredToken] = usePersistedState(
-    "@SaturnChat:NotificationToken",
-    ""
-  );
 
   const { signed } = useAuth();
-  const { colors } = useTheme();
 
   const registerForPushNotifications = useCallback(async () => {
     let newToken: string;
@@ -70,7 +54,7 @@ const NotificationsProvider: React.FC = ({ children }) => {
       })
     ).data;
 
-    await configureNotifications({ signed })
+    await configureNotifications({ signed });
 
     return newToken;
   }, [expoToken]);
@@ -84,25 +68,26 @@ const NotificationsProvider: React.FC = ({ children }) => {
     );
   };
 
+  const pushNewToken = useCallback(async () => {
+    const newToken = await registerForPushNotifications();
+
+    if ((newToken && newToken !== expoToken) && signed) {      
+      setExpoToken(newToken);
+
+      await api
+        .post("/users/notify/register", {
+          notificationToken: newToken,
+          platform: Platform.OS,
+        })
+        .then((res) => {
+          setEnabled(res.data.send_notification);
+        });
+    }
+  }, [signed, expoToken]);
+
   useEffect(() => {
-    (async () => {
-      const newToken = await registerForPushNotifications();
-
-      if (newToken) {
-        setExpoToken(newToken);
-        setStoredToken(newToken);
-
-        await api
-          .post("/users/notify/register", {
-            notificationToken: newToken,
-            platform: Platform.OS,
-          })
-          .then((res) => {
-            setEnabled(res.data.send_notification);
-          });
-      }
-    })();
-  }, []);
+    pushNewToken()
+  }, [signed]);
 
   return (
     <NotificationsContext.Provider

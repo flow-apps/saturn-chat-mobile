@@ -11,32 +11,24 @@ import {
   BoardTitle,
 } from "./styles";
 
-import AppLoading from "expo-app-loading";
 import { usePersistedState } from "../../../hooks/usePersistedState";
 
 const OnBoarding: React.FC = () => {
-  const [loading, setLoading] = useState(true);
   const [hasBoarded, setHasBoarded] = usePersistedState<boolean>(
     "@SaturnChat:hasBoarded",
     false
   );
-
-  const navigation = useNavigation();
   const { colors } = useTheme();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      if (hasBoarded) {
-        navigation.navigate("Home");
-      }
-      setLoading(false);
-    })();
-  }, []);
+    if (hasBoarded) {
+      navigation.navigate("Home");
+    }
+  }, [hasBoarded]);
 
   const handleComplete = async () => {
     setHasBoarded(true);
-
     navigation.navigate("Home");
   };
 
@@ -55,8 +47,6 @@ const OnBoarding: React.FC = () => {
       </ActionButton>
     );
   };
-
-  if (loading) return <AppLoading />;
 
   return (
     <Boarding
@@ -102,8 +92,8 @@ const OnBoarding: React.FC = () => {
           title: <BoardTitle>Envie mensagens com facilidade!</BoardTitle>,
           subtitle: (
             <BoardSubTitle>
-              Com poucos cliques você já consegue enviar e receber mensagens
-              com fotos, vídeos e até mensagens de voz.
+              Com poucos cliques você já consegue enviar e receber mensagens com
+              fotos, vídeos e até mensagens de voz.
             </BoardSubTitle>
           ),
         },
