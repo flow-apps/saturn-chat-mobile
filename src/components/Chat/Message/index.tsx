@@ -60,6 +60,8 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
+  const [deleted, setDeleted] = useState(false)
+
   const { user } = useAuth();
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
@@ -69,7 +71,7 @@ const Message = ({
   }, []);
 
   const sended = useMemo(() => {
-    return _.isUndefined(message?.sended) ? true : message.sended;
+    return _.isUndefined(message?.sended) ? true : deleted || message.sended;
   }, []);
 
   const handleGoParticipant = () => {
@@ -143,6 +145,7 @@ const Message = ({
 
   const deleteMessage = useCallback(() => {
     socket.emit("delete_user_message", message.id);
+    setDeleted(true)
   }, [message.id]);
 
   const alertLink = useCallback((url: string) => {
@@ -255,7 +258,7 @@ const Message = ({
               user={user as UserData}
             />
             {message.voice_message && (
-              <AudioPlayer audio={message.voice_message} />
+              <AudioPlayer audio={message.voice_message} deleted={deleted} />
             )}
             {renderFiles()}
           </MessageContentContainer>

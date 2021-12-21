@@ -19,9 +19,10 @@ import { AudioData } from "../../../../@types/interfaces";
 
 interface IAudioPlayer {
   audio: AudioData;
+  deleted: Boolean;
 }
 
-const AudioPlayer = ({ audio }: IAudioPlayer) => {
+const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -29,10 +30,18 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
+  useEffect(() => {
+    loadAudio();
+  }, []);
 
   useEffect(() => {
-    loadAudio()
-  }, [])
+    (async () => {
+      if (sound) {
+        if (isPlaying) await sound.pauseAsync();
+        await sound.unloadAsync();
+      }
+    })();
+  }, [deleted]);
 
   const loadAudio = useCallback(async () => {
     if (sound) return;
@@ -47,21 +56,19 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
 
     const newSound = await Audio.Sound.createAsync({ uri: audio.url });
 
-
     if (newSound.status.isLoaded) {
       setSound(newSound.sound);
       newSound.sound.setOnPlaybackStatusUpdate(async (status) => {
         if (!status.isLoaded) return;
 
         if (status.didJustFinish) {
-          await newSound.sound?.pauseAsync()
+          await newSound.sound?.pauseAsync();
           return await handleFinish();
         } else {
           setCurrentPosition(status.positionMillis);
         }
       });
     }
-
 
     navigation.addListener("blur", async () => {
       if (newSound.sound._loaded) {
@@ -72,7 +79,6 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   }, []);
 
   async function handleFinish() {
-    // setSound(undefined)
     setIsPlaying(false);
     onChangePosition(0);
   }
@@ -143,5 +149,5 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
 };
 
 export default React.memo(AudioPlayer, (prev, next) => {
-  return prev.audio.url !== next.audio.url;
+  return prev.audio.url !== next.audio.url && prev.deleted !== next.deleted;
 });
