@@ -420,10 +420,9 @@ const Chat: React.FC = () => {
     if (fetchedAll) return;
 
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const paddingToBottom = 5;
     const listHeight = layoutMeasurement.height + contentOffset.y;
 
-    if (listHeight >= contentSize.height - paddingToBottom) {
+    if (listHeight >= contentSize.height) {
       if (!fetching) {
         setPage((old) => old + 1);
         await fetchOldMessages();
@@ -629,14 +628,13 @@ const Chat: React.FC = () => {
           <Messages
             data={oldMessages}
             extraData={oldMessages.length}
-            style={{ scaleY: -1 }}
             keyExtractor={getItemID}
+            renderItem={memoizedRenderMessage}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
-            windowSize={19}
-            scrollEventThrottle={41}
             updateCellsBatchingPeriod={200}
-            renderItem={memoizedRenderMessage}
+            windowSize={25}
+            style={{ scaleY: -1 }}
             removeClippedSubviews
           />
         </MessageContainer>
