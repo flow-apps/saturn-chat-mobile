@@ -38,7 +38,7 @@ export const MessageContentContainer = styled.Pressable<IMessageProps>`
   background-color: ${(props) =>
     !props.isRight ? props.theme.colors.shape : props.theme.colors.primary};
   opacity: ${props => props.sended ? 1 : 0.5};
-  padding: 12px;
+  padding: 10px;
   border-radius: 10px;
   min-width: 30%;
   max-width: 85%;
@@ -48,6 +48,7 @@ export const MessageContent = styled.Text<IMessageProps>`
   font-size: 14px;
   font-family: ${fonts.text};
   color: ${(props) => (props.isRight ? "#fff" : props.theme.colors.black)};
+  margin: 5px 0px;
 `;
 
 export const MessageOptionsContainer = styled.View`

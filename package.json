@@ -12,6 +12,7 @@
     "@expo-google-fonts/fira-code": "^0.1.0",
     "@expo-google-fonts/poppins": "^0.1.0",
     "@expo-google-fonts/roboto": "^0.1.0",
+    "@expo-google-fonts/roboto-mono": "^0.2.0",
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/hooks": "^2.8.1",
     "@react-native-community/masked-view": "0.1.10",

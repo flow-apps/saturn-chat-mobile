@@ -6,7 +6,7 @@ import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
 import Alert from "../../Alert";
 import FastImage from "react-native-fast-image";
-import * as MimeTypes from "react-native-mime-types"
+import * as MimeTypes from "react-native-mime-types";
 
 import {
   Container,
@@ -24,6 +24,7 @@ import {
 import { useEffect } from "react";
 import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
+import AudioPreview from "./AudioPreview";
 
 interface IFileProps {
   name: string;
@@ -38,7 +39,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation();
-  const mimeType = useMemo(() => MimeTypes.lookup(name), [])
+  const mimeType = useMemo(() => MimeTypes.lookup(name), []);
 
   useEffect(() => {
     (async () => {
@@ -50,9 +51,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
             priority: "high",
           },
         ]);
-      }
-
-      else if (type === "video") {
+      } else if (type === "video") {
         const thumb = await createThumbnail({
           url,
           format: "jpeg",
@@ -96,7 +95,6 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
   };
 
   const renderPreview = () => {
-
     if (type === "image") {
       return (
         <FileButton onPress={handleGoImagePreview}>
@@ -116,18 +114,20 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
           />
         </FileButton>
       );
-
-    }
-    else if (type === "application" && mimeType === "application/pdf") {
+    } else if (type === "application" && mimeType === "application/pdf") {
       return (
         <FileButton onPress={handleGoPdfPreview}>
           <FilePreviewContainer>
-            <MaterialCommunityIcons name="pdf-box" size={35} color={colors.secondary} />
+            <MaterialCommunityIcons
+              name="pdf-box"
+              size={35}
+              color={colors.secondary}
+            />
           </FilePreviewContainer>
         </FileButton>
       );
     }
-    
+
     return (
       <FileButton onPress={handleDownloadFile}>
         <Feather name="download" size={30} color={colors.secondary} />
@@ -146,7 +146,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
     return navigation.navigate("VideoPreview", {
       name,
       url,
-      poster: videoThumb
+      poster: videoThumb,
     });
   };
 
@@ -157,30 +157,32 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
     });
   };
 
-
   return (
-    <Container>
-      <Alert
-        title="❗ Muito cuidado"
-        content={`Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Arquivo: ${name}`}
-        visible={downloadWarning}
-        cancelButtonText="Não baixar"
-        okButtonText="Baixar"
-        okButtonAction={downloadFile}
-        cancelButtonAction={() => setDownloadWarning(false)}
-      />
-      <FileContainer>
-        <FileIconContainer>{renderIcon()}</FileIconContainer>
-        <FileInfosContainer>
-          <FileName ellipsizeMode="middle">{name}</FileName>
-          <FileSize>{convertBytesToMB(size)}</FileSize>
-        </FileInfosContainer>
-        <FileOpenAction>{renderPreview()}</FileOpenAction>
-      </FileContainer>
-    </Container>
+    <>
+      <Container>
+        <Alert
+          title="❗ Muito cuidado"
+          content={`Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Arquivo: ${name}`}
+          visible={downloadWarning}
+          cancelButtonText="Não baixar"
+          okButtonText="Baixar"
+          okButtonAction={downloadFile}
+          cancelButtonAction={() => setDownloadWarning(false)}
+        />
+        <FileContainer>
+          <FileIconContainer>{renderIcon()}</FileIconContainer>
+          <FileInfosContainer>
+            <FileName ellipsizeMode="middle">{name}</FileName>
+            <FileSize>{convertBytesToMB(size)}</FileSize>
+          </FileInfosContainer>
+          <FileOpenAction>{renderPreview()}</FileOpenAction>
+        </FileContainer>
+      </Container>
+        {type === "audio" && <AudioPreview />}
+    </>
   );
 };
 
 export default React.memo(FilePreview, (prev, next) => {
-  return prev.url === next.url && prev.name === next.name
+  return prev.url === next.url && prev.name === next.name;
 });

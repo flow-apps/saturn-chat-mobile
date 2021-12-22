@@ -44,7 +44,8 @@ export const AudioDurationContainer = styled.View`
 `;
 
 export const AudioDuration = styled.Text`
-  font-family: ${fonts.code};
-  font-size: 16px;
+  font-family: ${fonts["mono-regular"]};
+  margin-bottom: 5px;
+  font-size: 14px;
   color: ${(props) => props.theme.colors.black};
 `;

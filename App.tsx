@@ -14,6 +14,12 @@ import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 
 import {
+  RobotoMono_400Regular,
+  RobotoMono_600SemiBold,
+  RobotoMono_700Bold
+} from "@expo-google-fonts/roboto-mono"
+
+import {
   Poppins_400Regular,
   Poppins_600SemiBold,
   Poppins_300Light_Italic,
@@ -27,6 +33,9 @@ export default function App() {
     Poppins_600SemiBold,
     Roboto_500Medium,
     Roboto_900Black,
+    RobotoMono_400Regular,
+    RobotoMono_600SemiBold,
+    RobotoMono_700Bold,
     FiraCode_500Medium,
   });
 
