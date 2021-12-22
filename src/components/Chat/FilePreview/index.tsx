@@ -178,7 +178,9 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
           <FileOpenAction>{renderPreview()}</FileOpenAction>
         </FileContainer>
       </Container>
-        {type === "audio" && <AudioPreview />}
+      {type === "audio" && (
+        <AudioPreview audio={{ name, url }} />
+      )}
     </>
   );
 };
