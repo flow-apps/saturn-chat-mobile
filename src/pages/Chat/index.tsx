@@ -147,17 +147,9 @@ const Chat: React.FC = () => {
       if (appState === "background" || appState === "inactive") {
         if (!socket) return;
         socket.emit("leave_chat");
-        socket.offAny();
-        socket.disconnect();
       } else if (appState === "active") {
-        if (socket && socket.connected) return;
-        const connectedSocket = getWebsocket();
-
-        connectedSocket.emit("connect_in_chat", id);
-        connectedSocket.on("connect", () => {
-          setSocket(connectedSocket);
-        });
-        connectSockets()
+        if (!socket) return;
+        socket.emit("connect_in_chat", id);
       }
     })();
   }, [appState]);
@@ -168,12 +160,10 @@ const Chat: React.FC = () => {
       const isReady = await Interstitial.getIsReadyAsync();
       if (isReady) await Interstitial.showAdAsync();
 
-      const connectedSocket = socket || getWebsocket();
-
-      connectedSocket.emit("connect_in_chat", id);
-      connectedSocket.on("connect", () => {
-        setSocket(connectedSocket);
-      });
+      // socket.emit("connect_in_chat", id);
+      // connectedSocket.on("connect", () => {
+      //   setSocket(connectedSocket);
+      // });
 
       const groupRes = await api.get(`/group/${id}`);
       if (groupRes.status === 200) setGroup(groupRes.data);
@@ -635,7 +625,6 @@ const Chat: React.FC = () => {
             updateCellsBatchingPeriod={200}
             windowSize={25}
             style={{ scaleY: -1 }}
-            removeClippedSubviews
           />
         </MessageContainer>
         <FormContainer>
@@ -691,7 +680,7 @@ const Chat: React.FC = () => {
                 <SendButton>
                   <Feather
                     name="send"
-                    size={30}
+                    size={26}
                     color={colors.primary}
                     onPress={handleMessageSubmit}
                     style={{ transform: [{ rotate: "45deg" }] }}
@@ -703,7 +692,7 @@ const Chat: React.FC = () => {
                     onPressIn={recordAudio}
                     onPressOut={stopRecordAudioAndSubmit}
                   >
-                    <Feather name="mic" size={30} color={colors.secondary} />
+                    <Feather name="mic" size={26} color={colors.secondary} />
                   </AudioButton>
                 </AudioContainer>
               )}

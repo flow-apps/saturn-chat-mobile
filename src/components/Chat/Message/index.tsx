@@ -71,7 +71,7 @@ const Message = ({
   }, []);
 
   const sended = useMemo(() => {
-    return _.isUndefined(message?.sended) ? true : deleted || message.sended;
+    return _.isUndefined(message?.sended) ? true : message.sended;
   }, []);
 
   const handleGoParticipant = () => {
@@ -181,11 +181,12 @@ const Message = ({
             url={file.url}
             size={file.size}
             type={file.type}
+            deleted={deleted}
           />
         );
       });
     }
-  }, [message.files]);
+  }, []);
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
@@ -274,6 +275,7 @@ export default memo(Message, (prev, next) => {
   return (
     prev.message.id === next.message.id &&
     prev.message.message === next.message.message &&
-    prev.lastMessage?.id === next.lastMessage?.id
+    prev.lastMessage?.id === next.lastMessage?.id &&
+    prev.socket === next.socket
   );
 });

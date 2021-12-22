@@ -23,6 +23,6 @@ export const RecordingAudioText = styled.Text`
 
 export const RecordingAudioDuration = styled.Text`
   color: ${(props) => props.theme.colors.secondary};
-  font-size: 18px;
+  font-size: 14px;
   font-family: ${fonts["mono-regular"]};
 `;

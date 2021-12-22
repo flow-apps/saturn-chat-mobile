@@ -29,6 +29,7 @@ export const AudioController = styled.TouchableOpacity`
 
 export const SeekBarContainer = styled.View`
   flex: 1;
+  margin-left: -2px;
 `;
 
 export const SeekBar = styled.Slider`

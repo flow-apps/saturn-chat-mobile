@@ -26,14 +26,15 @@ import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
 import AudioPreview from "./AudioPreview";
 
-interface IFileProps {
+interface IFilePreviewProps {
   name: string;
   url: string;
   size: number;
   type: string;
+  deleted: boolean;
 }
 
-const FilePreview = ({ name, size, url, type }: IFileProps) => {
+const FilePreview = ({ name, size, url, type, deleted }: IFilePreviewProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
   const { colors } = useTheme();
@@ -87,7 +88,7 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
         return <Feather name="video" size={40} color={colors.black} />;
 
       case "audio":
-        return <Feather name="speaker" size={40} color={colors.black} />;
+        return <Feather name="disc" size={40} color={colors.black} />;
 
       default:
         return <Feather name="file" size={40} color={colors.black} />;
@@ -179,12 +180,12 @@ const FilePreview = ({ name, size, url, type }: IFileProps) => {
         </FileContainer>
       </Container>
       {type === "audio" && (
-        <AudioPreview audio={{ name, url }} />
+        <AudioPreview deleted={deleted} audio={{ name, url }} />
       )}
     </>
   );
 };
 
 export default React.memo(FilePreview, (prev, next) => {
-  return prev.url === next.url && prev.name === next.name;
+  return prev.url === next.url && prev.deleted === next.deleted;
 });

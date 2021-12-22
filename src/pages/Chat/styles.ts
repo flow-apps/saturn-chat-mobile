@@ -43,7 +43,7 @@ export const InputContainer = styled.View`
   align-items: center;
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
   padding: 12px;
-  border-radius: 15px;
+  border-radius: 30px;
   margin: 10px 0 20px 0;
 `;
 

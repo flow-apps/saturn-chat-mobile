@@ -24,7 +24,9 @@ export const AudioPreviewControllersWrapper = styled.View`
   justify-content: center;
 `
 
-export const AudioPreviewButton = styled.TouchableOpacity``;
+export const AudioPreviewButton = styled.TouchableOpacity`
+  margin-right: -5px;
+`;
 
 export const AudioPreviewSeekContainer = styled.View`
   flex: 1;
@@ -37,6 +39,7 @@ export const AudioPreviewSeek = styled.Slider`
 
 export const AudioPreviewDuration = styled.Text`
   font-family: ${fonts["mono-regular"]};
+  font-size: 12px;
   color: ${({ theme }) => theme.colors.black}
   margin-right: 5px;
 `;

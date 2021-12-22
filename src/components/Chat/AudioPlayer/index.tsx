@@ -11,7 +11,7 @@ import {
   AudioDurationContainer,
   AudioDuration,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../../utils/format";
 import { useNavigation } from "@react-navigation/native";
@@ -37,7 +37,10 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
   useEffect(() => {
     (async () => {
       if (sound) {
-        if (isPlaying) await sound.pauseAsync();
+        if (isPlaying) {
+          await sound.pauseAsync();
+          setIsPlaying(false)
+        }
         await sound.unloadAsync();
       }
     })();
@@ -74,6 +77,7 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
       if (newSound.sound._loaded) {
         await newSound.sound.pauseAsync();
         await newSound.sound.unloadAsync();
+        setIsPlaying(false)
       }
     });
   }, []);
@@ -110,9 +114,9 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
         <AudioControllerContainer>
           <AudioController onPress={handlePlayPauseAudio}>
             {isPlaying ? (
-              <Feather name={"pause-circle"} size={30} color={colors.black} />
+              <MaterialIcons name="pause" size={30} color={colors.black} />
             ) : (
-              <Feather name={"play-circle"} size={30} color={colors.black} />
+              <MaterialIcons name="play-arrow" size={30} color={colors.black} />
             )}
           </AudioController>
           <SeekBarContainer>

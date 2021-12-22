@@ -17,13 +17,14 @@ import { millisToTime } from "../../../../utils/format";
 import { MotiView } from "moti";
 
 interface AudioPreviewProps {
+  deleted: boolean;
   audio: {
     name: string;
     url: string;
   };
 }
 
-const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
+const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -39,11 +40,14 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
   useEffect(() => {
     (async () => {
       if (sound) {
-        if (isPlaying) await sound.pauseAsync();
+        if (isPlaying) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        }
         await sound.unloadAsync();
       }
     })();
-  }, []);
+  }, [deleted]);
 
   const loadAudio = useCallback(async () => {
     if (sound) return;
@@ -78,6 +82,7 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
       if (newSound.sound._loaded) {
         await newSound.sound.pauseAsync();
         await newSound.sound.unloadAsync();
+        setIsPlaying(false);
       }
     });
   }, []);
@@ -112,11 +117,11 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
     <MotiView
       from={{
         opacity: 0.3,
-        marginTop: -50
+        marginTop: -50,
       }}
       animate={{
         opacity: 1,
-        marginTop: 0
+        marginTop: 0,
       }}
       transition={{
         type: "timing",
@@ -159,5 +164,5 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
 };
 
 export default React.memo(AudioPreview, (prev, next) => {
-  return prev.audio.url !== next.audio.url;
+  return prev.audio.url === next.audio.url && prev.deleted === next.deleted;
 });

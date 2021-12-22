@@ -2,6 +2,17 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.14.0
+
+- Add audio previewer
+  - Change icon for audio file preview
+  - Add audio player in file preview
+  - Add memo in audio player
+- Fix file usage calc
+- Fix many socket connections
+- Improve more style in recording audio component
+- Change chat input style
+
 ## 0.0.13.0
 
 - Add reply message
