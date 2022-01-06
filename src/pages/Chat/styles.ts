@@ -41,6 +41,7 @@ export const InputContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background: ${(props) => props.theme.colors.shape};
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
   padding: 12px;
   border-radius: 30px;
