@@ -663,7 +663,7 @@ const Chat: React.FC = () => {
             <MessageInput
               ref={messageInputRef}
               as={TextInput}
-              placeholderTextColor={colors.light_gray}
+              placeholderTextColor={colors.dark_heading}
               placeholder={
                 recordingAudio ? "Gravando audio..." : "Sua mensagem..."
               }

@@ -1,5 +1,6 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
+import _ from "lodash";
 import { MotiView } from "moti";
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
@@ -14,6 +15,7 @@ import api from "../../services/api";
 import {
   Container,
   GroupButton,
+  GroupHasMessage,
   GroupImage,
   GroupsContainer,
   GroupsList,
@@ -61,7 +63,21 @@ const Home: React.FC = () => {
     const groups = await api.get("/groups/list");
 
     if (groups.status === 200) {
-      setGroups(groups.data);
+      const groupsData = groups.data as GroupData[];
+      const sortedGroups = groupsData.sort((a, b) => {
+        const aAmount = Number(a?.unreadMessagesAmount);
+        const bAmount = Number(b?.unreadMessagesAmount);
+
+        if (aAmount > bAmount) {
+          return -1;
+        } else if (aAmount < bAmount) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
+      setGroups(sortedGroups);
       setGroupsCount(groups.data.length);
     }
     setLoading(false);
@@ -93,15 +109,15 @@ const Home: React.FC = () => {
       <QuickAccessGroupsContainer
         from={{
           opacity: 0.5,
-          translateY: 100
+          translateY: 100,
         }}
         animate={{
           opacity: 1,
-          translateY: 0
+          translateY: 0,
         }}
         transition={{
           type: "timing",
-          duration: 800
+          duration: 800,
         }}
       >
         <QuickAccessTitle>Acesso rápido</QuickAccessTitle>
@@ -111,10 +127,10 @@ const Home: React.FC = () => {
             ListHeaderComponent={() => (
               <MotiView
                 from={{
-                  rotate: "90deg"
+                  rotate: "90deg",
                 }}
                 animate={{
-                  rotate: "0deg"
+                  rotate: "0deg",
                 }}
                 transition={{
                   type: "timing",
@@ -149,6 +165,9 @@ const Home: React.FC = () => {
                   <GroupImage
                     source={require("../../assets/avatar-placeholder.png")}
                   />
+                )}
+                {Number(item?.unreadMessagesAmount) > 0 && (
+                  <GroupHasMessage />
                 )}
               </GroupButton>
             )}

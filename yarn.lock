@@ -8425,6 +8425,11 @@ react-native-simple-toast@^1.1.3:
   resolved "https://registry.yarnpkg.com/react-native-simple-toast/-/react-native-simple-toast-1.1.3.tgz#4d0835891fe5c9342341fc4a88ed01ebb1a34bd5"
   integrity sha512-bkZy25axqlU4L6IoTysSl5KOQA7qdxzivbXz/L/yAw9g9fENxjzYvUUtv5wWtgq7mzOe5HiJ7GCQrOl3MhIevQ==
 
+react-native-system-navigation-bar@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-system-navigation-bar/-/react-native-system-navigation-bar-1.0.2.tgz#c930eeb8f56429e8843e4c4f3ac23bbd57745b55"
+  integrity sha512-qaqJlQLksBF1Q+OJB0gMeAql8iXHGpeG/VNcGTRFt7W4M0iY35au5GHSntbpxm/7/OagfVf4WU3ppGEK7MvbZg==
+
 react-native-unimodules@~0.14.5:
   version "0.14.6"
   resolved "https://registry.yarnpkg.com/react-native-unimodules/-/react-native-unimodules-0.14.6.tgz#5460a34d44e880909cb63d9bb4c4d77ff158bf0a"

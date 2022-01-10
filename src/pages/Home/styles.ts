@@ -1,9 +1,9 @@
 import { Animated, Dimensions } from "react-native";
-import FastImage from 'react-native-fast-image'
-import LottieView from "lottie-react-native"
+import FastImage from "react-native-fast-image";
+import LottieView from "lottie-react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import { MotiView } from "moti"
+import { MotiView } from "moti";
 
 export const Container = styled.View`
   flex: 1;
@@ -41,7 +41,19 @@ export const NewGroupButton = styled.TouchableOpacity`
 `;
 
 export const GroupButton = styled.TouchableOpacity`
+  position: relative;
   margin-right: 15px;
+`;
+
+export const GroupHasMessage = styled.View`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background: ${({ theme }) => theme.colors.secondary};
+  border: 2px solid ${({ theme }) => theme.colors.light_secondary};
+  border-radius: 10px;
 `;
 
 export const GroupImage = styled(FastImage)`
@@ -89,28 +101,28 @@ export const GroupsListEmptyContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-`
+`;
 
 export const GroupsListEmptyAnimation = styled(LottieView)`
   width: 250px;
   height: 250px;
   margin-bottom: 10px;
-`
+`;
 
 export const GroupsListEmptyTitle = styled.Text`
   font-size: 18px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.black};
-`
+`;
 
 export const GroupsListEmptySubTitle = styled.Text`
   font-size: 16px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
   text-align: center;
-`
+`;
 
 export const GroupsListEmptyLink = styled(GroupsListEmptySubTitle)`
-  color: ${props => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.primary};
   font-family: ${fonts.heading};
-`
+`;
