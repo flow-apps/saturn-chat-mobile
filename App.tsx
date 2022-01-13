@@ -1,4 +1,4 @@
-import 'react-native-reanimated'
+import "react-native-reanimated";
 import React from "react";
 import Routes from "./src/routes";
 import AppLoading from "expo-app-loading";
@@ -8,6 +8,7 @@ import { ThemeControllerProvider } from "./src/contexts/theme";
 import { AppearanceProvider } from "react-native-appearance";
 import { NotificationsProvider } from "./src/contexts/notifications";
 import { AdsProvider } from "./src/contexts/ads";
+import { AudioPlayerProvider } from "./src/contexts/audioPlayer"
 import { FirebaseProvider } from "./src/contexts/firebase";
 import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs";
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
@@ -16,8 +17,8 @@ import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 import {
   RobotoMono_400Regular,
   RobotoMono_600SemiBold,
-  RobotoMono_700Bold
-} from "@expo-google-fonts/roboto-mono"
+  RobotoMono_700Bold,
+} from "@expo-google-fonts/roboto-mono";
 
 import {
   Poppins_400Regular,
@@ -50,7 +51,9 @@ export default function App() {
               <NotificationsProvider>
                 <AdsProvider>
                   <RemoteConfigsProvider>
-                    <Routes />
+                    <AudioPlayerProvider>
+                      <Routes />
+                    </AudioPlayerProvider>
                   </RemoteConfigsProvider>
                 </AdsProvider>
               </NotificationsProvider>
