@@ -16,6 +16,7 @@ import { useTheme } from "styled-components";
 import { millisToTime } from "../../../utils/format";
 import { useNavigation } from "@react-navigation/native";
 import { AudioData } from "../../../../@types/interfaces";
+import { useAudioPlayer } from "../../../contexts/audioPlayer";
 
 interface IAudioPlayer {
   audio: AudioData;
@@ -23,64 +24,56 @@ interface IAudioPlayer {
 }
 
 const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
-  const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
+  const { loadAudio, playAndPauseAudio, currentAudioName } = useAudioPlayer();
 
   const { colors } = useTheme();
   const navigation = useNavigation();
 
   useEffect(() => {
-    loadAudio();
+    loadAudio({ name: audio.name, url: audio.url });
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      if (sound) {
-        if (isPlaying) {
-          await sound.pauseAsync();
-          setIsPlaying(false)
-        }
-        await sound.unloadAsync();
-      }
-    })();
-  }, [deleted]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (sound) {
+  //       if (isPlaying) {
+  //         await sound.pauseAsync();
+  //         setIsPlaying(false);
+  //       }
+  //       await sound.unloadAsync();
+  //     }
+  //   })();
+  // }, [deleted]);
 
-  const loadAudio = useCallback(async () => {
-    if (sound) return;
+  // const loadAudio = useCallback(async () => {
+  //   if (sound) return;
 
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
-      shouldDuckAndroid: true,
-      staysActiveInBackground: false,
-    });
+  //   const newSound = await Audio.Sound.createAsync({ uri: audio.url });
 
-    const newSound = await Audio.Sound.createAsync({ uri: audio.url });
+  //   if (newSound.status.isLoaded) {
+  //     setSound(newSound.sound);
+  //     newSound.sound.setOnPlaybackStatusUpdate(async (status) => {
+  //       if (!status.isLoaded) return;
 
-    if (newSound.status.isLoaded) {
-      setSound(newSound.sound);
-      newSound.sound.setOnPlaybackStatusUpdate(async (status) => {
-        if (!status.isLoaded) return;
+  //       if (status.didJustFinish) {
+  //         await newSound.sound?.pauseAsync();
+  //         return await handleFinish();
+  //       } else {
+  //         setCurrentPosition(status.positionMillis);
+  //       }
+  //     });
+  //   }
 
-        if (status.didJustFinish) {
-          await newSound.sound?.pauseAsync();
-          return await handleFinish();
-        } else {
-          setCurrentPosition(status.positionMillis);
-        }
-      });
-    }
-
-    navigation.addListener("blur", async () => {
-      if (newSound.sound._loaded) {
-        await newSound.sound.pauseAsync();
-        await newSound.sound.unloadAsync();
-        setIsPlaying(false)
-      }
-    });
-  }, []);
+  //   navigation.addListener("blur", async () => {
+  //     if (newSound.sound._loaded) {
+  //       await newSound.sound.pauseAsync();
+  //       await newSound.sound.unloadAsync();
+  //       setIsPlaying(false)
+  //     }
+  //   });
+  // }, []);
 
   async function handleFinish() {
     setIsPlaying(false);
@@ -88,32 +81,20 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
   }
 
   const handlePlayPauseAudio = async () => {
-    if (!sound) {
-      await loadAudio();
-    }
-
-    if (sound) {
-      if (isPlaying) {
-        await sound?.pauseAsync();
-      } else {
-        await sound?.playFromPositionAsync(currentPosition);
-      }
-
-      setIsPlaying(!isPlaying);
-    }
+    await playAndPauseAudio(audio.name, currentPosition);
   };
 
   const onChangePosition = async (value: number) => {
     setCurrentPosition(value);
-    await sound?.setPositionAsync(value);
+    // await sound?.setPositionAsync(value);
   };
 
   return (
-    <Container loading={sound?._loading}>
+    <Container>
       <AudioContainerWrapper>
         <AudioControllerContainer>
           <AudioController onPress={handlePlayPauseAudio}>
-            {isPlaying ? (
+            {currentAudioName === audio.name ? (
               <MaterialIcons name="pause" size={30} color={colors.black} />
             ) : (
               <MaterialIcons name="play-arrow" size={30} color={colors.black} />
@@ -131,20 +112,11 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
             />
           </SeekBarContainer>
           <AudioDurationContainer>
-            {sound && sound?._loading ? (
-              <LottieView
-                style={{ width: 20, transform: [{ scale: 1.3 }] }}
-                source={require("../../../assets/loading.json")}
-                autoPlay
-                loop
-              />
-            ) : (
-              <AudioDuration>
-                {isPlaying
-                  ? millisToTime(currentPosition)
-                  : millisToTime(audio.duration)}
-              </AudioDuration>
-            )}
+            <AudioDuration>
+              {currentAudioName === audio.name
+                ? millisToTime(currentPosition)
+                : millisToTime(audio.duration)}
+            </AudioDuration>
           </AudioDurationContainer>
         </AudioControllerContainer>
       </AudioContainerWrapper>

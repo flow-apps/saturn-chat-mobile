@@ -41,6 +41,7 @@ export interface ParticipantsData {
 }
 
 export interface AudioData {
+  name: string;
   url: string;
   size: number;
   duration: number;
