@@ -73,6 +73,7 @@ import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { MotiView, useAnimationState } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
+import { useAudioPlayer } from "../../contexts/audioPlayer";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -123,6 +124,7 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
+  const { unloadAllAudios } = useAudioPlayer()
   const appState = useAppState();
 
   const toggleAnimationRecordingAudioState = useAnimationState({
@@ -136,7 +138,9 @@ const Chat: React.FC = () => {
     },
   });
 
-  navigation.addListener("blur", () => {
+  navigation.addListener("blur", async () => {
+    await unloadAllAudios();
+
     if (!socket) return;
     socket.emit("leave_chat");
     socket.offAny();
@@ -307,6 +311,7 @@ const Chat: React.FC = () => {
               message,
               participant,
               voice_message: {
+                name: `attachment_audio_${localReference}${extension}`,
                 duration,
                 size: Number(audioInfos.size),
                 url: audioInfos.uri,

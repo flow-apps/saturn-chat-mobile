@@ -10,7 +10,8 @@
     "module": "ESNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "typeRoots": ["./@types", "./node_modules/@types"]
   },
   "include": ["src"],
   "exclude": ["node_modules"],

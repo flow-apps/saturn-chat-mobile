@@ -2,6 +2,17 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.15.0
+
+- Add Audio Player Context
+  - Integrate to Voice Message Player
+  - Add Play/Pause feature
+  - Add Load/Unload audios
+  - Add change current audio position feature
+  - Pause an audio when another is requested for play
+- Unload all audios on left chat
+
+
 ## 0.0.14.0
 
 - Add audio previewer
