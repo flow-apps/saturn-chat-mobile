@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Audio } from "expo-av";
+import React, { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   AudioPreviewButton,
@@ -12,9 +11,10 @@ import {
   Container,
 } from "./styles";
 import { useTheme } from "styled-components";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { millisToTime } from "../../../../utils/format";
 import { MotiView } from "moti";
+import { useAudioPlayer } from "../../../../contexts/audioPlayer";
 
 interface AudioPreviewProps {
   deleted: boolean;
@@ -25,92 +25,46 @@ interface AudioPreviewProps {
 }
 
 const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
-  const [sound, setSound] = useState<Audio.Sound>();
-  const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
+  const {
+    loadAudio,
+    playAndPauseAudio,
+    changeAudioPosition,
+    currentAudioName,
+  } = useAudioPlayer();
 
   const { colors } = useTheme();
-  const navigation = useNavigation();
 
-  useEffect(() => {
-    loadAudio();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (sound) {
-        if (isPlaying) {
-          await sound.pauseAsync();
-          setIsPlaying(false);
-        }
-        await sound.unloadAsync();
-      }
-    })();
-  }, [deleted]);
-
-  const loadAudio = useCallback(async () => {
-    if (sound) return;
-
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
-      shouldDuckAndroid: true,
-      staysActiveInBackground: false,
-    });
-
-    const newSound = await Audio.Sound.createAsync({ uri: audio.url });
-
-    if (newSound.status.isLoaded) {
-      setSound(newSound.sound);
-      newSound.sound.setOnPlaybackStatusUpdate(async (status) => {
+  useFocusEffect(() => {
+    loadAudio({
+      name: audio.name,
+      url: audio.url,
+      onStatusUpdate: async (status) => {
         if (!status.isLoaded) return;
 
-        setDuration(Number(status?.durationMillis));
-
-        if (status.didJustFinish) {
-          await newSound.sound?.pauseAsync();
-          return await handleFinish();
-        } else {
-          setCurrentPosition(status.positionMillis);
+        if (duration === 0) {
+          setDuration(Number(status?.durationMillis))
         }
-      });
-    }
 
-    navigation.addListener("blur", async () => {
-      if (newSound.sound._loaded) {
-        await newSound.sound.pauseAsync();
-        await newSound.sound.unloadAsync();
-        setIsPlaying(false);
-      }
+        if (status.isPlaying) {
+          setCurrentPosition(status?.positionMillis);
+        }
+        
+      },
+      onFinishAudio: async () => {
+        setCurrentPosition(0);        
+      },
     });
-  }, []);
-
-  async function handleFinish() {
-    setIsPlaying(false);
-    onChangePosition(0);
-  }
+  });
 
   const handlePlayPauseAudio = async () => {
-    if (!sound) {
-      await loadAudio();
-    }
-
-    if (sound) {
-      if (isPlaying) {
-        await sound?.pauseAsync();
-      } else {
-        await sound?.playFromPositionAsync(currentPosition);
-      }
-
-      setIsPlaying(!isPlaying);
-    }
+    await playAndPauseAudio(audio.name, currentPosition);
   };
 
   const onChangePosition = async (value: number) => {
+    await changeAudioPosition(audio.name, value);
     setCurrentPosition(value);
-    await sound?.setPositionAsync(value);
   };
 
   return (
@@ -133,7 +87,7 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
           <AudioPreviewControllersWrapper>
             <AudioPreviewButton onPress={handlePlayPauseAudio}>
               <MaterialIcons
-                name={isPlaying ? "pause" : "play-arrow"}
+                name={currentAudioName === audio.name ? "pause" : "play-arrow"}
                 size={28}
                 color={colors.black}
               />
@@ -151,7 +105,7 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
             </AudioPreviewSeekContainer>
             <AudioPreviewDurationContainer>
               <AudioPreviewDuration>
-                {isPlaying
+                {currentAudioName === audio.name
                   ? millisToTime(currentPosition)
                   : millisToTime(duration)}
               </AudioPreviewDuration>
@@ -164,5 +118,5 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
 };
 
 export default React.memo(AudioPreview, (prev, next) => {
-  return prev.audio.url === next.audio.url && prev.deleted === next.deleted;
+  return prev.audio.url !== next.audio.url
 });

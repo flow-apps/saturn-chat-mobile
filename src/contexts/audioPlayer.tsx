@@ -59,13 +59,13 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
     audio.sound.setOnPlaybackStatusUpdate(async (status) => {
       if (!status.isLoaded) return;
 
-      if (status.didJustFinish) {        
+      if (status.didJustFinish) {
         await onFinishAudio();
-        await changeAudioPosition(name, 0)
-        await pauseAudio(name)
+        await changeAudioPosition(name, 0);
+        await pauseAudio(name);
 
-        setCurrentAudioName("")
-        setCurrentSound(null)
+        setCurrentAudioName("");
+        setCurrentSound(null);
 
         return;
       }
@@ -86,21 +86,26 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
   };
 
   const unloadAllAudios = async () => {
-    Promise.all(sounds.map(async s => {
-      if (!s) return;
-  
-      if (s.isPlaying) {
-        await s.controller.pauseAsync();
-      }
-  
-      if (s.name === currentAudioName) {
-        setCurrentAudioName("");
-        setCurrentSound(null);
-      }
-  
-      s.controller._clearSubscriptions()
-      await s.controller.unloadAsync();
-    }))
+    Promise.all(
+      sounds.map(async (s) => {
+        if (!s) return;
+        if (s.name === currentAudioName) {
+          setCurrentAudioName("");
+          setCurrentSound(null);
+        }
+
+        const status = await s.controller.getStatusAsync();
+        if (!status.isLoaded) return;
+
+        s.controller._clearSubscriptions();
+
+        if (s.isPlaying) {
+          await s.controller.pauseAsync();
+        }
+
+        await s.controller.unloadAsync();
+      })
+    );
 
     setSounds([]);
   };
@@ -126,11 +131,11 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
 
     setCurrentAudioName(sound.name);
     setCurrentSound(sound);
-    await sound?.controller.playFromPositionAsync(position)
+    await sound?.controller.playFromPositionAsync(position);
     sound.isPlaying = true;
 
     setSounds([...soundsForSave, sound]);
-  }
+  };
 
   const pauseAudio = async (name: string) => {
     const sound = sounds.filter((s) => s.name === name).shift();
@@ -140,17 +145,17 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
 
     setCurrentAudioName("");
     setCurrentSound(null);
-    await sound?.controller.pauseAsync()
+    await sound?.controller.pauseAsync();
     sound.isPlaying = false;
 
     setSounds([...soundsForSave, sound]);
-  }
+  };
 
   const playAndPauseAudio = async (name: string, position = 0) => {
     if (currentAudioName === name) {
-      await pauseAudio(name)
+      await pauseAudio(name);
     } else {
-      await playAudio(name, position)
+      await playAudio(name, position);
     }
   };
 

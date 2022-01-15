@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.15.1
+
+- Integrate Audio Player Context to Audio Previewer
+- Improve unload audios feature
+
 ## 0.0.15.0
 
 - Add Audio Player Context
@@ -11,7 +16,6 @@ NOTE: The versions here not represents the release versions, check the App Store
   - Add change current audio position feature
   - Pause an audio when another is requested for play
 - Unload all audios on left chat
-
 
 ## 0.0.14.0
 
@@ -34,7 +38,7 @@ NOTE: The versions here not represents the release versions, check the App Store
 - Add new remote config
 - Add new premium vantage
 - Fix edit group
-- Add warn on reach max message length 
+- Add warn on reach max message length
 
 ## 0.0.12.0
 
