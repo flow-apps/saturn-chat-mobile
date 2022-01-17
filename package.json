@@ -51,7 +51,7 @@
     "hermes-engine": "0.5.2-rc1",
     "lodash": "^4.17.21",
     "lottie-react-native": "4.0.2",
-    "markdown-it": "^12.0.6",
+    "markdown-it": "^12.3.2",
     "markdown-it-linkscheme": "^1.0.2",
     "moti": "^0.12.3",
     "polished": "^4.1.3",
