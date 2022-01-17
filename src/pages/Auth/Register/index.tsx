@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Button from "../../../components/Button";
 import Header from "../../../components/Header";
@@ -49,9 +49,8 @@ const Register: React.FC = () => {
   const { signUp, loading, registerError } = useAuth();
   const { analytics } = useFirebase();
 
-  const passwordValidation =
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
-  const emailValidation = /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g;
+  const passwordValidation = useMemo(() => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g, []);
+  const emailValidation = useMemo(() => /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g, [])
 
   function handleSetName(value: string) {
     setName(value);

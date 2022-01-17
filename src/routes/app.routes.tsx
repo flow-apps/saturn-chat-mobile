@@ -21,6 +21,7 @@ import ChangeRole from "../pages/Participants/Participant/ChangeRole";
 import PunishParticipant from "../pages/Participants/Participant/PunishParticipant";
 import VideoPreview from "../pages/VideoPreview";
 import PdfPreview from "../pages/PdfPreview";
+import SwitchPassword from "../pages/Configurations/SwitchPassword";
 
 const StackRoutes = createStackNavigator();
 
@@ -32,6 +33,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="ChoosePlan" component={ChoosePlan} />
       <StackRoutes.Screen name="EditProfile" component={EditProfile} />
       <StackRoutes.Screen name="SwitchLanguage" component={SwitchLanguage} />
+      <StackRoutes.Screen name="SwitchPassword" component={SwitchPassword} />
       <StackRoutes.Screen name="Chat" component={Chat} />
       <StackRoutes.Screen name="Participants" component={Participants} />
       <StackRoutes.Screen name="Participant" component={Participant} />

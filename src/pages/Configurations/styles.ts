@@ -15,7 +15,8 @@ export const SectionContainer = styled.View``;
 export const SectionTitle = styled.Text`
   font-family: ${fonts.heading};
   font-size: 18px;
-  color: ${(props) => props.theme.colors.light_heading};
+  color: ${(props) => props.theme.colors.dark_heading};
+  margin: 5px 0px;
 `;
 
 export const ConfigsContainer = styled.View`
