@@ -28,13 +28,14 @@ import AudioPreview from "./AudioPreview";
 
 interface IFilePreviewProps {
   name: string;
+  original_name: string;
   url: string;
   size: number;
   type: string;
   deleted: boolean;
 }
 
-const FilePreview = ({ name, size, url, type, deleted }: IFilePreviewProps) => {
+const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePreviewProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
   const { colors } = useTheme();
@@ -43,7 +44,7 @@ const FilePreview = ({ name, size, url, type, deleted }: IFilePreviewProps) => {
   const mimeType = useMemo(() => MimeTypes.lookup(name), []);
 
   useEffect(() => {
-    (async () => {
+    (async () => {      
       if (type === "image") {
         FastImage.preload([
           {
@@ -138,14 +139,14 @@ const FilePreview = ({ name, size, url, type, deleted }: IFilePreviewProps) => {
 
   const handleGoImagePreview = () => {
     return navigation.navigate("ImagePreview", {
-      name,
+      name: original_name,
       url,
     });
   };
 
   const handleGoVideoPreview = () => {
     return navigation.navigate("VideoPreview", {
-      name,
+      name: original_name,
       url,
       poster: videoThumb,
     });
@@ -153,7 +154,7 @@ const FilePreview = ({ name, size, url, type, deleted }: IFilePreviewProps) => {
 
   const handleGoPdfPreview = () => {
     return navigation.navigate("PdfPreview", {
-      name,
+      name: original_name,
       url,
     });
   };
@@ -173,7 +174,7 @@ const FilePreview = ({ name, size, url, type, deleted }: IFilePreviewProps) => {
         <FileContainer>
           <FileIconContainer>{renderIcon()}</FileIconContainer>
           <FileInfosContainer>
-            <FileName ellipsizeMode="middle">{name}</FileName>
+            <FileName ellipsizeMode="middle">{original_name}</FileName>
             <FileSize>{convertBytesToMB(size)}</FileSize>
           </FileInfosContainer>
           <FileOpenAction>{renderPreview()}</FileOpenAction>

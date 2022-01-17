@@ -39,6 +39,7 @@ import { LinkUtils } from "../../../utils/link";
 import _ from "lodash";
 import { useAuth } from "../../../contexts/auth";
 import ReplyingMessage from "../ReplyingMessage";
+import { useAudioPlayer } from "../../../contexts/audioPlayer";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -60,10 +61,11 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
-  const [deleted, setDeleted] = useState(false)
+  const [deleted, setDeleted] = useState(false);
 
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { unloadAudio } = useAudioPlayer();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation();
   const isRight = useMemo(() => {
@@ -143,10 +145,24 @@ const Message = ({
     return format(tzDate, "dd/MM/yy, HH:mm");
   }, []);
 
-  const deleteMessage = useCallback(() => {
+  const deleteMessage = async () => {
+    if (message.files) {
+      await Promise.all(
+        message.files.map(async (f) => {
+          if (f.type === "audio") {
+            await unloadAudio(f.name);
+          }
+        })
+      );
+    }
+
+    if (message.voice_message) {
+      await unloadAudio(message.voice_message.name)
+    }
+
     socket.emit("delete_user_message", message.id);
-    setDeleted(true)
-  }, [message.id]);
+    setDeleted(true);
+  }
 
   const alertLink = useCallback((url: string) => {
     setLinkUrl(url);
@@ -177,7 +193,8 @@ const Message = ({
         return (
           <FilePreview
             key={file.id}
-            name={file.original_name}
+            name={file.name}
+            original_name={file.original_name}
             url={file.url}
             size={file.size}
             type={file.type}

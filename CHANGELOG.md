@@ -2,6 +2,10 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.15.2
+
+- Stop audios on delete message
+
 ## 0.0.15.1
 
 - Integrate Audio Player Context to Audio Previewer

@@ -3,6 +3,7 @@ import { Audio, AVPlaybackStatus } from "expo-av";
 
 interface AudioPlayerContextProps {
   loadAudio: (data: LoadAudioData) => Promise<void>;
+  unloadAudio: (name: string) => Promise<void>;
   unloadAllAudios: () => Promise<void>;
   playAndPauseAudio: (name: string, position?: number) => Promise<void>;
   changeAudioPosition: (name: string, position: number) => Promise<void>;
@@ -85,29 +86,36 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
     ]);
   };
 
+  const unloadAudio = async (name: string) => {
+    const sound = sounds.filter((s) => s.name === name).shift();
+    const soundsForSave = sounds.filter((s) => s.name !== name);
+
+    if (!sound) return;
+    setSounds(soundsForSave);
+
+    if (sound.name === currentAudioName) {
+      setCurrentAudioName("");
+      setCurrentSound(null);
+    }
+
+    const status = await sound.controller.getStatusAsync();
+    if (!status.isLoaded) return;
+
+    sound.controller._clearSubscriptions();
+
+    if (sound.isPlaying) {
+      await sound.controller.pauseAsync();
+    }
+
+    await sound.controller.unloadAsync();
+  };
+
   const unloadAllAudios = async () => {
     Promise.all(
       sounds.map(async (s) => {
-        if (!s) return;
-        if (s.name === currentAudioName) {
-          setCurrentAudioName("");
-          setCurrentSound(null);
-        }
-
-        const status = await s.controller.getStatusAsync();
-        if (!status.isLoaded) return;
-
-        s.controller._clearSubscriptions();
-
-        if (s.isPlaying) {
-          await s.controller.pauseAsync();
-        }
-
-        await s.controller.unloadAsync();
+        await unloadAudio(s.name);
       })
     );
-
-    setSounds([]);
   };
 
   const playAudio = async (name: string, position = 0) => {
@@ -171,6 +179,7 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
     <AudioPlayerContext.Provider
       value={{
         loadAudio,
+        unloadAudio,
         unloadAllAudios,
         playAndPauseAudio,
         changeAudioPosition,

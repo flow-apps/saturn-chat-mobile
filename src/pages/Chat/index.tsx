@@ -80,6 +80,20 @@ interface File {
   type: string;
 }
 
+interface DeleteMessageResult {
+  id: string;
+  type: "message" | "audio";
+  voice_message?: {
+    id: string;
+    name: string;
+  };
+  files?: {
+    id: string;
+    name: string;
+    type: string;
+  }[];
+}
+
 const recordService = new RecordService();
 
 const Chat: React.FC = () => {
@@ -124,7 +138,7 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
-  const { unloadAllAudios } = useAudioPlayer()
+  const { unloadAllAudios, unloadAudio } = useAudioPlayer();
   const appState = useAppState();
 
   const toggleAnimationRecordingAudioState = useAnimationState({
@@ -224,8 +238,24 @@ const Chat: React.FC = () => {
       setTypingUsers(filteredUsers);
     });
 
-    socket.on("delete_user_message", (msgID) => {
-      setOldMessages((old) => old.filter((msg) => msg.id !== msgID));
+    socket.on("delete_user_message", async (result: DeleteMessageResult) => {
+      if (result.voice_message) {
+        await unloadAudio(result.voice_message.name);
+      }
+
+      if (result.files) {
+        await Promise.all(
+          result.files.map(async (f) => {
+            console.log(f.name);
+            
+            if (f.type === "audio") {
+              await unloadAudio(f.name);
+            }
+          })
+        );
+      }
+
+      setOldMessages((old) => old.filter((msg) => msg.id !== result.id));
     });
 
     socket.on("deleted_group", (groupID) => {
