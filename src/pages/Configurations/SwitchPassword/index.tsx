@@ -1,7 +1,11 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useMemo, useState } from "react";
+import SimpleToast from "react-native-simple-toast";
 import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
+import Loading from "../../../components/Loading";
+import api from "../../../services/api";
 import {
   Container,
   FieldError,
@@ -15,11 +19,14 @@ const SwitchPassword: React.FC = () => {
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g;
 
+  const [loading, setLoading] = useState(false);
   const [currentPass, setCurrentPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirmNewPass, setConfirmNewPass] = useState("");
   const [passError, setPassError] = useState(true);
   const [confirmPassError, setConfirmPassError] = useState(true);
+
+  const navigation = useNavigation();
 
   const handleSetNewPassword = (value: string) => {
     setNewPass(value);
@@ -27,6 +34,11 @@ const SwitchPassword: React.FC = () => {
     if (!passwordValidation.test(value)) {
       setPassError(true);
     } else {
+      if (value !== confirmNewPass) 
+        setConfirmPassError(true);
+      else 
+        setConfirmPassError(false);
+        
       setPassError(false);
     }
   };
@@ -40,6 +52,29 @@ const SwitchPassword: React.FC = () => {
       setConfirmPassError(false);
     }
   };
+
+  const handleChangePass = async () => {
+    setLoading(true);
+    await api
+      .patch("/auth/password/switch", {
+        currentPass,
+        newPass,
+      })
+      .then((res) => {
+        if (res.status === 204) {
+          SimpleToast.show("Senha alterada com sucesso!");
+          navigation.goBack();
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 403)
+          SimpleToast.show("Senha atual incorreta!");
+        else SimpleToast.show("Erro ao alterar senha!");
+        setLoading(false);
+      });
+  };
+
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -88,6 +123,7 @@ const SwitchPassword: React.FC = () => {
           <Button
             title="Alterar senha"
             enabled={!passError && !confirmPassError && !!currentPass}
+            onPress={handleChangePass}
           />
         </FormContainer>
       </Container>

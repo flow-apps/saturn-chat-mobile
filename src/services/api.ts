@@ -54,7 +54,10 @@ api.interceptors.response.use(
       httpMetric.putAttribute("message", error.response.data.message);
       await httpMetric.stop();
     } finally {
-      SimpleToast.show(`Request failed (${error.response.status})`);
+      SimpleToast.show(
+        `Request failed (${error.response.status})`,
+        SimpleToast.SHORT
+      );
       return Promise.reject(error);
     }
   }
