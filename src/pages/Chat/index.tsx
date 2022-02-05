@@ -138,7 +138,8 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
-  const { unloadAllAudios, unloadAudio } = useAudioPlayer();
+  const { unloadAllAudios, unloadAudio, currentAudioName, playAndPauseAudio } =
+    useAudioPlayer();
   const appState = useAppState();
 
   const toggleAnimationRecordingAudioState = useAnimationState({
@@ -246,8 +247,6 @@ const Chat: React.FC = () => {
       if (result.files) {
         await Promise.all(
           result.files.map(async (f) => {
-            console.log(f.name);
-            
             if (f.type === "audio") {
               await unloadAudio(f.name);
             }
@@ -293,6 +292,8 @@ const Chat: React.FC = () => {
     if (recordingAudio) return;
 
     try {
+      if (currentAudioName) await playAndPauseAudio(currentAudioName);
+
       const record = await recordService.start({
         onDurationUpdate(duration) {
           setAudioDuration(duration);
