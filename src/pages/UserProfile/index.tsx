@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AdBanner from "../../components/Ads/Banner";
-import { Feather } from "@expo/vector-icons";
+import Group from "../../components/Group";
 import Header from "../../components/Header";
+import PremiumName from "../../components/PremiumName";
+import Loading from "../../components/Loading";
+import api from "../../services/api";
+import { Feather } from "@expo/vector-icons";
+import { useAds } from "../../contexts/ads";
+import { useTheme } from "styled-components";
+import { useAuth } from "../../contexts/auth";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { UserData } from "../../../@types/interfaces";
+import { View } from "react-native";
 import {
   Avatar,
   Banner,
@@ -16,24 +26,19 @@ import {
   BioContainer,
   BioContent,
   AvatarContainer,
+  FriendButton,
+  FriendButtonText,
+  AddFriendContainer,
 } from "./styles";
-import { useTheme } from "styled-components";
-import Group from "../../components/Group";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { useAuth } from "../../contexts/auth";
-import { useEffect } from "react";
-import { useState } from "react";
-import Loading from "../../components/Loading";
-import { UserData } from "../../../@types/interfaces";
-import api from "../../services/api";
-import { View } from "react-native";
-import PremiumName from "../../components/PremiumName";
-import { useAds } from "../../contexts/ads";
 
 import _ from "lodash";
+import { FriendsStates } from "../../../@types/enums";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [friendsState, setFriendsState] = useState<FriendsStates>(
+    FriendsStates.FRIENDS
+  );
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
 
   const { colors } = useTheme();
@@ -65,9 +70,33 @@ const UserProfile: React.FC = () => {
   const handleGoAvatar = () => {
     navigation.navigate("ImagePreview", {
       name: userInfos.avatar.name,
-      url: userInfos.avatar.url
+      url: userInfos.avatar.url,
     });
   };
+
+  const handleRequestFriend = async () => {};
+
+  const friendIconSelector = () => {
+    switch (friendsState) {
+      case FriendsStates.REQUESTED:
+        return <Feather name="user" size={16} />;
+      case FriendsStates.FRIENDS:
+        return <Feather name="user-check" size={16} />;
+      default:
+        return <Feather name="user-plus" size={16} />;
+    }
+  };
+
+  const friendButtonTextSelector = () => {
+    switch (friendsState) {
+      case FriendsStates.FRIENDS:
+        return "Amigos"
+      case FriendsStates.REQUESTED:
+        return "Solicitação enviada"
+      default:
+        return "Adicionar aos amigos"
+    }
+  }
 
   if (loading) return <Loading />;
 
@@ -114,6 +143,17 @@ const UserProfile: React.FC = () => {
             ) : (
               <></>
             )}
+            <AddFriendContainer>
+              <FriendButton
+                state={friendsState}
+                onPress={handleRequestFriend}
+              >
+                <FriendButtonText>
+                  {friendIconSelector()}{" "}
+                  {friendButtonTextSelector()}
+                </FriendButtonText>
+              </FriendButton>
+            </AddFriendContainer>
           </BasicInfosContainer>
           <GroupsContainer>
             <GroupsTitle>

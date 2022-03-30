@@ -51,7 +51,7 @@ export const GroupName = styled.Text`
 
 export const JoinGroupContainer = styled.View`
   align-items: center;
-  margin-bottom: 10px;
+  margin: 10px 0px;
 `;
 
 export const JoinGroupButton = styled.TouchableOpacity<{

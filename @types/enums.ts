@@ -12,3 +12,8 @@ export enum ParticipantStates {
   BANNED = "BANNED",
   KICKED = "KICKED"
 }
+
+export enum FriendsStates {
+  REQUESTED = "REQUESTED",
+  FRIENDS = "FRIENDS"
+}
