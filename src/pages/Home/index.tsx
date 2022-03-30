@@ -1,8 +1,8 @@
+import React, { useCallback, useState } from "react";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import _ from "lodash";
 import { MotiView } from "moti";
-import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
 import { GroupData, UserData } from "../../../@types/interfaces";
@@ -12,6 +12,7 @@ import Header from "../../components/Header";
 import { HeaderButton } from "../../components/Header/styles";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
+import { FAB } from "react-native-paper";
 import {
   Container,
   GroupButton,
@@ -92,6 +93,7 @@ const Home: React.FC = () => {
   }, []);
 
   const handleGoNewGroup = () => navigation.navigate("NewGroup");
+  const handleGoFriends = () => navigation.navigate("Friends")
 
   if (loading) return <Loading />;
   return (
@@ -100,6 +102,9 @@ const Home: React.FC = () => {
         <>
           <HeaderButton onPress={handleGoSearch}>
             <Feather name="search" size={22} color="#fff" />
+          </HeaderButton>
+          <HeaderButton onPress={() => {}}>
+            <Feather name="mail" size={22} color="#fff" />
           </HeaderButton>
           <HeaderButton onPress={handleGoUserProfile}>
             <Feather name="user" size={22} color="#fff" />
@@ -166,9 +171,7 @@ const Home: React.FC = () => {
                     source={require("../../assets/avatar-placeholder.png")}
                   />
                 )}
-                {Number(item?.unreadMessagesAmount) > 0 && (
-                  <GroupHasMessage />
-                )}
+                {Number(item?.unreadMessagesAmount) > 0 && <GroupHasMessage />}
               </GroupButton>
             )}
           />
@@ -203,7 +206,6 @@ const Home: React.FC = () => {
                 <GroupsSubtitle>
                   Você está em {groupsCount} grupos
                 </GroupsSubtitle>
-                <Banner />
               </TitleWrapper>
             )}
             endFillColor={colors.shape}
@@ -224,6 +226,19 @@ const Home: React.FC = () => {
             }}
           />
         </GroupsList>
+        <FAB
+          icon="message"
+          color="#FFF"
+          style={{
+            position: "absolute",
+            backgroundColor: colors.secondary,
+            margin: 16,
+            right: 10,
+            bottom: 10,
+            transform: [{ scale: 1.05 }]
+          }}
+          onPress={handleGoFriends}
+        />
       </GroupsContainer>
     </Container>
   );

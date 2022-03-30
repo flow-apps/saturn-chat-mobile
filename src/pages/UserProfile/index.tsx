@@ -36,16 +36,14 @@ import { FriendsStates } from "../../../@types/enums";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [friendsState, setFriendsState] = useState<FriendsStates>(
-    FriendsStates.FRIENDS
-  );
+  const [friendsState, setFriendsState] = useState<FriendsStates>();
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
 
+  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation();
-  const { Interstitial } = useAds();
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
@@ -90,13 +88,13 @@ const UserProfile: React.FC = () => {
   const friendButtonTextSelector = () => {
     switch (friendsState) {
       case FriendsStates.FRIENDS:
-        return "Amigos"
+        return "Amigos";
       case FriendsStates.REQUESTED:
-        return "Solicitação enviada"
+        return "Solicitação enviada";
       default:
-        return "Adicionar aos amigos"
+        return "Adicionar aos amigos";
     }
-  }
+  };
 
   if (loading) return <Loading />;
 
@@ -144,13 +142,9 @@ const UserProfile: React.FC = () => {
               <></>
             )}
             <AddFriendContainer>
-              <FriendButton
-                state={friendsState}
-                onPress={handleRequestFriend}
-              >
+              <FriendButton state={friendsState} onPress={handleRequestFriend}>
                 <FriendButtonText>
-                  {friendIconSelector()}{" "}
-                  {friendButtonTextSelector()}
+                  {friendIconSelector()} {friendButtonTextSelector()}
                 </FriendButtonText>
               </FriendButton>
             </AddFriendContainer>
