@@ -5,12 +5,13 @@ import Header from "../../components/Header";
 import PremiumName from "../../components/PremiumName";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
-import { Feather } from "@expo/vector-icons";
 import { useAds } from "../../contexts/ads";
 import { useTheme } from "styled-components";
 import { useAuth } from "../../contexts/auth";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { UserData } from "../../../@types/interfaces";
+import { Feather } from "@expo/vector-icons";
+import { FriendData, UserData } from "../../../@types/interfaces";
+import { FriendsStates } from "../../../@types/enums";
 import { View } from "react-native";
 import {
   Avatar,
@@ -26,18 +27,19 @@ import {
   BioContainer,
   BioContent,
   AvatarContainer,
-  FriendButton,
-  FriendButtonText,
   AddFriendContainer,
 } from "./styles";
 
 import _ from "lodash";
-import { FriendsStates } from "../../../@types/enums";
+import FriendActionButtons from "../../components/UserProfile/FriendActionButtons";
+import AddFriendButton from "../../components/UserProfile/AddFriendButton";
+import Alert from "../../components/Alert";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [friendsState, setFriendsState] = useState<FriendsStates>();
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
+  const [friendInfos, setFriendInfos] = useState<FriendData>();
 
   const { Interstitial } = useAds();
   const { colors } = useTheme();
@@ -56,6 +58,11 @@ const UserProfile: React.FC = () => {
 
       if (res.status === 200) {
         setUserInfos(res.data);
+
+        if (res.data.friend) {
+          setFriendInfos(res.data.friend);
+          setFriendsState(res.data.friend.state);
+        }
       }
       setLoading(false);
     })();
@@ -72,28 +79,20 @@ const UserProfile: React.FC = () => {
     });
   };
 
-  const handleRequestFriend = async () => {};
+  const handleRequestFriend = async () => {
+    const res = await api.post(
+      `/friends?action=send_request&friend_id=${userInfos.id}`
+    );
 
-  const friendIconSelector = () => {
-    switch (friendsState) {
-      case FriendsStates.REQUESTED:
-        return <Feather name="user" size={16} />;
-      case FriendsStates.FRIENDS:
-        return <Feather name="user-check" size={16} />;
-      default:
-        return <Feather name="user-plus" size={16} />;
+    if (res.status === 200) {
+      setFriendsState(res.data.state);
     }
   };
 
-  const friendButtonTextSelector = () => {
-    switch (friendsState) {
-      case FriendsStates.FRIENDS:
-        return "Amigos";
-      case FriendsStates.REQUESTED:
-        return "Solicitação enviada";
-      default:
-        return "Adicionar aos amigos";
-    }
+  const handleAcceptOrRejectFriend = async (action: "ACCEPT" | "REJECT") => {
+    const res = await api.put(
+      `/friends?action=response_request&state=${action}&friend_id=${friendInfos?.id}`
+    );
   };
 
   if (loading) return <Loading />;
@@ -134,19 +133,23 @@ const UserProfile: React.FC = () => {
                 align="center"
               />
             </BasicInfos>
-            {!_.isNull(userInfos?.bio) && userInfos?.bio.length ? (
+            {!_.isNull(userInfos?.bio) && userInfos?.bio.length && (
               <BioContainer>
                 <BioContent>{userInfos?.bio}</BioContent>
               </BioContainer>
-            ) : (
-              <></>
             )}
             <AddFriendContainer>
-              <FriendButton state={friendsState} onPress={handleRequestFriend}>
-                <FriendButtonText>
-                  {friendIconSelector()} {friendButtonTextSelector()}
-                </FriendButtonText>
-              </FriendButton>
+              {friendInfos?.requested_by.id !== user?.id ? (
+                <AddFriendButton
+                  friendsState={friendsState}
+                  handleActionFriend={handleRequestFriend}
+                />
+              ) : (
+                <FriendActionButtons
+                  name={friendInfos?.requested_by.name}
+                  action={handleAcceptOrRejectFriend}
+                />
+              )}
             </AddFriendContainer>
           </BasicInfosContainer>
           <GroupsContainer>
@@ -160,7 +163,7 @@ const UserProfile: React.FC = () => {
                 return (
                   participant.group.privacy !== "PRIVATE" && (
                     <View key={index * 1.5}>
-                      {index % 5 === 0 && <AdBanner />}
+                      {!!index && index % 5 === 0 && <AdBanner />}
                       <Group
                         key={participant.id}
                         name={participant.group.name}

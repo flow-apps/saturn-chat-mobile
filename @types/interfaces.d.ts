@@ -1,4 +1,4 @@
-import { ParticipantRoles, ParticipantStates } from "./enums"
+import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums"
 
 export interface UserData {
   id: string;
@@ -12,6 +12,14 @@ export interface UserData {
     name: string;
     url: string;
   };
+}
+
+export interface FriendData {
+  id: string;
+  requested_by: UserData;
+  received_by: UserData;
+  state: FriendsStates;
+  created_at: string;
 }
 
 export interface GroupData {

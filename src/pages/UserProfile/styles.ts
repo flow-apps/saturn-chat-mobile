@@ -65,34 +65,6 @@ export const AddFriendContainer = styled.View`
   margin: 10px 0px;
 `;
 
-export const FriendButton = styled.TouchableOpacity<{ state?: FriendsStates }>`
-  padding: 10px 15px;
-  border: 2px solid
-    ${(props) => {
-      if (!props.state) {
-        return props.theme.colors.primary;
-      } else if (props.state === FriendsStates.REQUESTED) {
-        return props.theme.colors.secondary;
-      } else {
-        return "transparent";
-      }
-    }};
-  border-radius: 30px;
-  background-color: ${(props) => {
-    if (!props.state || props.state === FriendsStates.REQUESTED) {
-      return "transparent";
-    } else {
-      return props.theme.colors.primary;
-    }
-  }}; ;
-`;
-
-export const FriendButtonText = styled.Text<{ state?: FriendsStates }>`
-  font-size: 16px;
-  font-family: ${fonts.text};
-  color: ${(props) => props.theme.colors.black};
-`;
-
 export const GroupsContainer = styled.View`
   margin: 20px 0;
   padding: 0 15px;

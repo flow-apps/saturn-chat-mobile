@@ -1,19 +1,20 @@
 export enum ParticipantRoles {
-  PARTICIPANT = "PARTICIPANT",
-  MODERATOR = "MODERATOR",
+  OWNER = "OWNER",
   ADMIN = "ADMIN",
   MANAGER = "MANAGER",
-  OWNER = "OWNER"
+  MODERATOR = "MODERATOR",
+  PARTICIPANT = "PARTICIPANT",
 }
 
 export enum ParticipantStates {
   JOINED = "JOINED",
   EXITED = "EXITED",
   BANNED = "BANNED",
-  KICKED = "KICKED"
+  KICKED = "KICKED",
 }
 
 export enum FriendsStates {
+  NONE = "NONE",
   REQUESTED = "REQUESTED",
-  FRIENDS = "FRIENDS"
+  FRIENDS = "FRIENDS",
 }
