@@ -79,6 +79,28 @@ const UserProfile: React.FC = () => {
     });
   };
 
+  const renderFriendButton = () => {
+    if (userInfos.id === user?.id) {
+      return <></>;
+    }
+
+    if (friendsState === FriendsStates.REQUESTED) {
+      return (
+        <FriendActionButtons
+          name={friendInfos?.requested_by.name}
+          action={handleAcceptOrRejectFriend}
+        />
+      );
+    }
+
+    return (
+      <AddFriendButton
+        friendsState={friendsState}
+        handleActionFriend={handleRequestFriend}
+      />
+    );
+  };
+
   const handleRequestFriend = async () => {
     const res = await api.post(
       `/friends?action=send_request&friend_id=${userInfos.id}`
@@ -138,19 +160,7 @@ const UserProfile: React.FC = () => {
                 <BioContent>{userInfos?.bio}</BioContent>
               </BioContainer>
             )}
-            <AddFriendContainer>
-              {friendInfos?.requested_by.id !== user?.id ? (
-                <AddFriendButton
-                  friendsState={friendsState}
-                  handleActionFriend={handleRequestFriend}
-                />
-              ) : (
-                <FriendActionButtons
-                  name={friendInfos?.requested_by.name}
-                  action={handleAcceptOrRejectFriend}
-                />
-              )}
-            </AddFriendContainer>
+            <AddFriendContainer>{renderFriendButton()}</AddFriendContainer>
           </BasicInfosContainer>
           <GroupsContainer>
             <GroupsTitle>
