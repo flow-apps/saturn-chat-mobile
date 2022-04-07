@@ -7,7 +7,7 @@ import Home from "../../pages/Home";
 import NewGroup from "../../pages/NewGroup";
 import fonts from "../../styles/fonts";
 
-const tabRoutes = createBottomTabNavigator()
+const tabRoutes = createBottomTabNavigator();
 
 const HomeRoutes = () => {
   const { colors } = useTheme();
@@ -21,16 +21,21 @@ const HomeRoutes = () => {
         activeBackgroundColor: "#00000000",
         labelPosition: "below-icon",
         keyboardHidesTabBar: true,
+        iconStyle: {
+          transform: [{ scale: 0.9 }],
+          marginBottom: 5
+        },
         labelStyle: {
-          fontSize: 12,
-          fontFamily: fonts.heading,
+          fontSize: 11,
+          fontFamily: fonts["text-bold"],
         },
         style: {
           padding: 15,
-          height: 56,
           elevation: 10,
+          height: 70,
           zIndex: 90,
           backgroundColor: `${colors.shape}`,
+          paddingBottom: 5,
         },
       }}
     >
@@ -41,8 +46,8 @@ const HomeRoutes = () => {
           title: "Grupos",
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons
-              name="chat-bubble-outline"
-                size={size - 4}
+              name="chat-bubble"
+              size={size}
               color={color}
             />
           ),
@@ -55,7 +60,7 @@ const HomeRoutes = () => {
         options={{
           title: "Configurações",
           tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="cog" size={size - 4} color={color} />
+            <FontAwesome name="cog" size={size} color={color} />
           ),
         }}
       />
@@ -66,7 +71,7 @@ const HomeRoutes = () => {
         options={{
           title: "Novo Grupo",
           tabBarIcon: ({ color, size }) => (
-              <Feather name="plus" size={size - 3} color={color} />
+            <FontAwesome name="plus-circle" size={size} color={color} />
           ),
           unmountOnBlur: true,
         }}

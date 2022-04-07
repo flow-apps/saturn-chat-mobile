@@ -16,7 +16,7 @@ interface HeaderProps {
   onPressTitle?: () => unknown;
   backButton?: boolean;
   bgColor?: string;
-  children?: JSX.Element[] | JSX.Element;
+  children?: JSX.Element | JSX.Element[];
 }
 
 const Header = ({

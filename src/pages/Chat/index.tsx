@@ -100,7 +100,11 @@ const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
   const route = useRoute();
-  const { id } = route.params as { id: string };
+  const { id, name, friendId } = route.params as {
+    id: string;
+    name?: string;
+    friendId: string;
+  };
 
   const { Interstitial } = useAds();
   const { analytics } = useFirebase();
@@ -479,6 +483,10 @@ const Chat: React.FC = () => {
     navigation.navigate("GroupInfos", { id });
   }, [id]);
 
+  const handleGoFriendInfos = useCallback(() => {
+    navigation.navigate("UserProfile", { id: friendId });
+  }, [id]);
+
   const handleGoStar = () => {
     analytics.logEvent("IncreaseUpload");
     navigation.navigate("PurchasePremium");
@@ -640,10 +648,19 @@ const Chat: React.FC = () => {
         okButtonAction={disableAudioPermission}
         visible={audioPermission}
       />
-      <Header title={group.name} onPressTitle={handleGoGroupInfos}>
-        <HeaderButton onPress={handleGoGroupParticipants}>
-          <Feather name="users" size={22} color="#fff" />
-        </HeaderButton>
+      <Header
+        title={name || group.name}
+        onPressTitle={
+          group.type === "GROUP" ? handleGoGroupInfos : handleGoFriendInfos
+        }
+      >
+        {group.type === "GROUP" ? (
+          <HeaderButton onPress={handleGoGroupParticipants}>
+            <Feather name="users" size={22} color="#fff" />
+          </HeaderButton>
+        ) : (
+          <></>
+        )}
         <HeaderButton onPress={handleGoGroupConfig}>
           <Feather name="more-vertical" size={22} color="#fff" />
         </HeaderButton>

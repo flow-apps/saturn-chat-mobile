@@ -82,9 +82,12 @@ const UserProfile: React.FC = () => {
   const renderFriendButton = () => {
     if (userInfos.id === user?.id) {
       return <></>;
-    }
+    }    
 
-    if (friendsState === FriendsStates.REQUESTED) {
+    if (
+      friendsState === FriendsStates.REQUESTED &&
+      friendInfos?.received_by.id === user?.id
+    ) {
       return (
         <FriendActionButtons
           name={friendInfos?.requested_by.name}
@@ -102,9 +105,7 @@ const UserProfile: React.FC = () => {
   };
 
   const handleRequestFriend = async () => {
-    const res = await api.post(
-      `/friends?action=send_request&friend_id=${userInfos.id}`
-    );
+    const res = await api.post(`/friends/request?friend_id=${userInfos.id}`);
 
     if (res.status === 200) {
       setFriendsState(res.data.state);
@@ -113,8 +114,12 @@ const UserProfile: React.FC = () => {
 
   const handleAcceptOrRejectFriend = async (action: "ACCEPT" | "REJECT") => {
     const res = await api.put(
-      `/friends?action=response_request&state=${action}&friend_id=${friendInfos?.id}`
+      `/friends/response?state=${action}&friend_id=${friendInfos?.id}`
     );
+
+    if (res.status === 200) {
+      setFriendsState(res.data.state);
+    }
   };
 
   if (loading) return <Loading />;

@@ -18,9 +18,13 @@ import api from "../../services/api";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
 import Alert from "../../components/Alert";
-import { rolesForDeleteGroup, rolesForEditGroup, rolesForInvite } from "../../utils/authorizedRoles";
+import {
+  rolesForDeleteGroup,
+  rolesForEditGroup,
+  rolesForInvite,
+} from "../../utils/authorizedRoles";
 
-import _ from "lodash"
+import _ from "lodash";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -38,7 +42,7 @@ const GroupConfig: React.FC = () => {
   const { id } = route.params as { id: string };
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       setLoading(true);
       const groupRes = await api.get(`/group/${id}`);
       const participantRes = await api.get(`/group/participant/${id}`);
@@ -52,8 +56,7 @@ const GroupConfig: React.FC = () => {
       }
 
       setLoading(false);
-    })()
-    
+    })();
   }, [id]);
 
   const handleSetNotifications = () => {
@@ -98,7 +101,7 @@ const GroupConfig: React.FC = () => {
 
   return (
     <>
-      <Header title="Opções do grupo"  />
+      <Header title={`Opções do ${group.type === "GROUP" ? "grupo" : "chat"}`} />
       <Alert
         visible={showDeleteGroupAlert}
         title="⚠ Cuidado, isso é perigoso!"
@@ -118,33 +121,37 @@ const GroupConfig: React.FC = () => {
       />
       <Container>
         <OptionsContainer>
-          <SectionTitle>Gerais</SectionTitle>
-          <OptionContainer onPress={handleGoParticipants}>
-            <OptionText color={colors.secondary}>
-              <Feather name="users" size={25} /> Participantes
-            </OptionText>
-          </OptionContainer>
-          <OptionContainer
-            hidden={!rolesForInvite.includes(participant.role)}
-            onPress={handleGoInviteUsers}
-          >
-            <OptionText color={colors.primary}>
-              <Feather name="user-plus" size={25} /> Convidar usuários
-            </OptionText>
-          </OptionContainer>
-          <OptionContainer
-            hidden={!rolesForEditGroup.includes(participant.role)}
-            onPress={handleGoEditGroup}
-          >
-            <OptionText>
-              <Feather name="edit-3" size={25} /> Editar grupo
-            </OptionText>
-          </OptionContainer>
-          <OptionContainer onPress={handleGoGroupInfos}>
-            <OptionText>
-              <Feather name="file" size={25} /> Ver detalhes
-            </OptionText>
-          </OptionContainer>
+          {group.type === "GROUP" && (
+            <>
+              <SectionTitle>Gerais</SectionTitle>
+              <OptionContainer onPress={handleGoParticipants}>
+                <OptionText color={colors.secondary}>
+                  <Feather name="users" size={25} /> Participantes
+                </OptionText>
+              </OptionContainer>
+              <OptionContainer
+                hidden={!rolesForInvite.includes(participant.role)}
+                onPress={handleGoInviteUsers}
+              >
+                <OptionText color={colors.primary}>
+                  <Feather name="user-plus" size={25} /> Convidar usuários
+                </OptionText>
+              </OptionContainer>
+              <OptionContainer
+                hidden={!rolesForEditGroup.includes(participant.role)}
+                onPress={handleGoEditGroup}
+              >
+                <OptionText>
+                  <Feather name="edit-3" size={25} /> Editar grupo
+                </OptionText>
+              </OptionContainer>
+              <OptionContainer onPress={handleGoGroupInfos}>
+                <OptionText>
+                  <Feather name="file" size={25} /> Ver detalhes
+                </OptionText>
+              </OptionContainer>
+            </>
+          )}
           {/* <OptionContainer>
             <OptionText>
               <Feather name="bell" size={25} /> Notificações

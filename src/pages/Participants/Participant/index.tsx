@@ -26,11 +26,11 @@ const Participant: React.FC = () => {
   };
   const navigation = useNavigation();
   const [myRole, setMyRole] = useState("" as ParticipantRoles);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
-      setLoading(true)
+      setLoading(true);
       const participantRes = await api.get(
         `/group/participant/${participant.group.id}`
       );
@@ -38,7 +38,7 @@ const Participant: React.FC = () => {
         const part = participantRes.data.participant as ParticipantsData;
         setMyRole(part.role.toUpperCase() as ParticipantRoles);
       }
-      setLoading(false)
+      setLoading(false);
     })();
   }, []);
 
@@ -63,19 +63,19 @@ const Participant: React.FC = () => {
       type,
       groupID: participant.group.id,
       participantID: participant.id,
-      participant
+      participant,
     });
   };
 
   const handleGoUserProfile = () => {
     navigation.navigate("UserProfile", { id: participant.user.id });
   };
- 
-  if (loading) return <Loading />
-  
+
+  if (loading) return <Loading />;
+
   return (
     <>
-      <Header title={participant.user.name}  />
+      <Header title={participant.user.name} />
       <Container>
         <ParticipantOptionsContainer>
           <ParticipantOptionsTitle>
@@ -90,6 +90,7 @@ const Participant: React.FC = () => {
               </OptionNameWrapper>
             </ParticipantOptionContainer>
             {authorizedForManageRoles.includes(myRole) &&
+              participant.group.type === "GROUP" &&
               participant.role !== ParticipantRoles.OWNER && (
                 <ParticipantOptionContainer onPress={handleGoChangeRole}>
                   <OptionNameWrapper>
@@ -100,6 +101,7 @@ const Participant: React.FC = () => {
                 </ParticipantOptionContainer>
               )}
             {authorizedForPunish.includes(myRole) &&
+              participant.group.type === "GROUP" &&
               participant.role !== ParticipantRoles.OWNER && (
                 <>
                   <ParticipantOptionContainer

@@ -16,6 +16,7 @@ export interface UserData {
 
 export interface FriendData {
   id: string;
+  chat: GroupData;
   requested_by: UserData;
   received_by: UserData;
   state: FriendsStates;
@@ -27,6 +28,7 @@ export interface GroupData {
   name: string;
   description: string;
   privacy: "PUBLIC" | "PRIVATE";
+  type: "GROUP" | "DIRECT"
   tags: string[];
   group_avatar: {
     name: string;
