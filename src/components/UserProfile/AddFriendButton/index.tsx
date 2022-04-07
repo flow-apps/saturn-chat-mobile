@@ -35,7 +35,11 @@ const AddFriendButton: React.FC<AddFriendButtonProps> = ({
   };
 
   return (
-    <FriendButton state={friendsState} onPress={handleActionFriend}>
+    <FriendButton
+      state={friendsState}
+      onPress={handleActionFriend}
+      disabled={friendsState === FriendsStates.FRIENDS}
+    >
       <FriendButtonText>
         {friendIconSelector()} {friendButtonTextSelector()}
       </FriendButtonText>
