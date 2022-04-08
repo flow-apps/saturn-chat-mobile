@@ -14,11 +14,15 @@ import { FriendData, UserData } from "../../../@types/interfaces";
 import { FriendsStates } from "../../../@types/enums";
 import { View } from "react-native";
 import {
+  Container,
   Avatar,
   Banner,
   BasicInfos,
   BasicInfosContainer,
-  Container,
+  FriendsContainer,
+  FriendsInfosContainer,
+  FriendsNumber,
+  FriendsTitle,
   ImagesContainer,
   UserProfileContainer,
   GroupsContainer,
@@ -34,6 +38,7 @@ import _ from "lodash";
 import FriendActionButtons from "../../components/UserProfile/FriendActionButtons";
 import AddFriendButton from "../../components/UserProfile/AddFriendButton";
 import Alert from "../../components/Alert";
+import HorizontalLine from "../../components/HorizontalLine";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -82,7 +87,7 @@ const UserProfile: React.FC = () => {
   const renderFriendButton = () => {
     if (userInfos.id === user?.id) {
       return <></>;
-    }    
+    }
 
     if (
       friendsState === FriendsStates.REQUESTED &&
@@ -165,6 +170,16 @@ const UserProfile: React.FC = () => {
                 <BioContent>{userInfos?.bio}</BioContent>
               </BioContainer>
             )}
+            {userInfos?.id === user?.id && (
+              <FriendsInfosContainer>
+                <FriendsContainer>
+                  <FriendsNumber>
+                    {String(userInfos?.friendsAmount).padStart(2, "0")}
+                  </FriendsNumber>
+                  <FriendsTitle>Amigos</FriendsTitle>
+                </FriendsContainer>
+              </FriendsInfosContainer>
+            )}
             <AddFriendContainer>{renderFriendButton()}</AddFriendContainer>
           </BasicInfosContainer>
           <GroupsContainer>
@@ -173,7 +188,7 @@ const UserProfile: React.FC = () => {
               Participando
             </GroupsTitle>
             <Groups>
-              {userInfos?.participating.map((participant, index) => {
+              {userInfos?.participating?.map((participant, index) => {
                 const avatar = participant.group.group_avatar;
                 return (
                   participant.group.privacy !== "PRIVATE" && (

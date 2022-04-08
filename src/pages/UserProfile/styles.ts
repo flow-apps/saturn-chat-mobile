@@ -1,7 +1,7 @@
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import { FriendsStates } from "../../../@types/enums";
 import fonts from "../../styles/fonts";
+import { darken } from "polished"
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -13,6 +13,29 @@ export const UserProfileContainer = styled.View`
 `;
 
 export const BasicInfosContainer = styled.View``;
+
+export const FriendsContainer = styled.TouchableOpacity``;
+
+export const FriendsInfosContainer = styled.View`
+  margin-top: 10px;
+  background-color: ${props => darken(0.085, props.theme.colors.shape)};
+  padding: 10px;
+`;
+
+export const FriendsNumber = styled.Text`
+  font-size: 20px;
+  font-family: ${fonts.heading};
+  color: ${(props) => props.theme.colors.secondary};
+  text-align: center;
+`;
+
+export const FriendsTitle = styled.Text`
+  font-size: 16px;
+  font-family: ${fonts.text};
+  text-align: center;
+  margin-top: -5px;
+  color: ${(props) => props.theme.colors.black};
+`;
 
 export const ImagesContainer = styled.View`
   width: 100%;
@@ -57,7 +80,8 @@ export const BioContent = styled.Text`
   text-align: center;
   color: ${(props) => props.theme.colors.light_heading};
   font-family: ${fonts.quote};
-  margin-top: 20px;
+  margin: 15px 0px;
+  margin-bottom: 5px;
 `;
 
 export const AddFriendContainer = styled.View`
@@ -66,7 +90,6 @@ export const AddFriendContainer = styled.View`
 `;
 
 export const GroupsContainer = styled.View`
-  margin: 20px 0;
   padding: 0 15px;
 `;
 

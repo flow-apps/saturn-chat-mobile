@@ -6,7 +6,8 @@ export interface UserData {
   bio: string;
   email: string;
   groups: GroupData[];
-  participating: ParticipantsData[];
+  friendsAmount?: number;
+  participating?: ParticipantsData[];
   created_at: string;
   avatar: {
     name: string;

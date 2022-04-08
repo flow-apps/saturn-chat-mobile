@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 import FastImage from 'react-native-fast-image'
+import { darken } from "polished";
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -38,7 +39,6 @@ export const Avatar = styled(FastImage)`
 
 export const BasicInfos = styled.View`
   margin-top: -80px;
-  padding: 10px;
 `;
 
 export const GroupName = styled.Text`
@@ -74,7 +74,9 @@ export const JoinGroupButtonText = styled.Text<{ participating?: boolean }>`
     props.participating ? "#fff" : props.theme.colors.black};
 `;
 
-export const GroupTagsContainer = styled.View``;
+export const GroupTagsContainer = styled.View`
+  padding: 10px;
+`;
 
 export const GroupTagsTitle = styled.Text`
   font-size: 18px;
@@ -122,13 +124,18 @@ export const GroupDesc = styled.Text`
 `;
 
 export const ParticipantsInfosContainer = styled.View`
-  padding: 15px 10px;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  margin-bottom: 20px;
 `;
 
-export const ParticipantsContainer = styled.View``;
+export const ParticipantsContainer = styled.View`
+  width: 100%;
+  background-color: ${props => darken(0.085, props.theme.colors.shape)};
+  padding: 10px;
+  margin-top: 10px;
+`;
 
 export const ParticipantsNumber = styled.Text`
   font-size: 20px;
