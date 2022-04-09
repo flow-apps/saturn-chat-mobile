@@ -1,5 +1,6 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import _ from "lodash";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { FriendData } from "../../../@types/interfaces";
 import Header from "../../components/Header";
@@ -27,30 +28,32 @@ interface OpenChatProps {
 }
 
 const Friends: React.FC = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [friends, setFriends] = useState<FriendData[]>([]);
 
   const { user } = useAuth();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const res = await api.get("/friends");
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        setLoading(true);
+        const res = await api.get("/friends");
 
-      if (res.status === 200) {
-        setFriends(res.data);
-      }
+        if (res.status === 200) {
+          setFriends(res.data);
+        }
 
-      setLoading(false);
-    })();
-  }, []);
+        setLoading(false);
+      })();
+    }, [])
+  );
 
   const handleOpenChat = ({ id, name, friendId }: OpenChatProps) => {
     navigation.navigate("Chat", { id, name, friendId });
   };
 
-  if (loading) return <Loading />
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -100,11 +103,16 @@ const Friends: React.FC = () => {
                   />
                   <FriendName>{friendName}</FriendName>
                 </FriendLeftContainer>
-                {/* <UnreadMessages>
-                  <UnreadMessagesText>
-                    {0 > 99 ? "99+" : `${index}`}
-                  </UnreadMessagesText>
-                </UnreadMessages> */}
+                {_.isNumber(item?.unreadMessagesAmount) &&
+                  item?.unreadMessagesAmount > 0 && (
+                    <UnreadMessages>
+                      <UnreadMessagesText>
+                        {item.unreadMessagesAmount > 99
+                          ? "99+"
+                          : `${item.unreadMessagesAmount}`}
+                      </UnreadMessagesText>
+                    </UnreadMessages>
+                  )}
               </FriendContainer>
             );
           }}

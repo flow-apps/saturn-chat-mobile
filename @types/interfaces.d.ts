@@ -1,4 +1,4 @@
-import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums"
+import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums";
 
 export interface UserData {
   id: string;
@@ -18,6 +18,7 @@ export interface UserData {
 export interface FriendData {
   id: string;
   chat: GroupData;
+  unreadMessagesAmount?: number;
   requested_by: UserData;
   received_by: UserData;
   state: FriendsStates;
@@ -29,7 +30,7 @@ export interface GroupData {
   name: string;
   description: string;
   privacy: "PUBLIC" | "PRIVATE";
-  type: "GROUP" | "DIRECT"
+  type: "GROUP" | "DIRECT";
   tags: string[];
   group_avatar: {
     name: string;
@@ -45,8 +46,8 @@ export interface ParticipantsData {
   id: string;
   user: UserData;
   group: GroupData;
-  status: "ONLINE" | "OFFLINE"
-  role: ParticipantRoles
+  status: "ONLINE" | "OFFLINE";
+  role: ParticipantRoles;
   state: ParticipantStates;
   participating_since: string;
 }
@@ -82,15 +83,15 @@ export interface FileData {
 }
 
 export interface InviteData {
-  id: string
-  group_id: string
+  id: string;
+  group_id: string;
   group: GroupData;
-  invite_code: string
-  is_permanent: boolean
-  is_unlimited_usage: boolean
-  max_usage_amount: number
-  usage_amount: number
-  expire_in: string
-  expire_timezone: string
-  created_at: string
+  invite_code: string;
+  is_permanent: boolean;
+  is_unlimited_usage: boolean;
+  max_usage_amount: number;
+  usage_amount: number;
+  expire_in: string;
+  expire_timezone: string;
+  created_at: string;
 }
