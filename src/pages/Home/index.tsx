@@ -88,6 +88,8 @@ const Home: React.FC = () => {
 
   const handleGoUserProfile = () => navigation.navigate("UserProfile");
 
+  const handleGoInvitesManager = () => navigation.navigate("InvitesManager");
+
   const handleGoChat = useCallback(async (id: string) => {
     navigation.navigate("Chat", { id });
   }, []);
@@ -103,7 +105,7 @@ const Home: React.FC = () => {
           <HeaderButton onPress={handleGoSearch}>
             <Feather name="search" size={22} color="#fff" />
           </HeaderButton>
-          <HeaderButton onPress={() => {}}>
+          <HeaderButton onPress={handleGoInvitesManager}>
             <Feather name="mail" size={22} color="#fff" />
           </HeaderButton>
           <HeaderButton onPress={handleGoUserProfile}>

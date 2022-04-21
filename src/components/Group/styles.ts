@@ -4,7 +4,6 @@ import fonts from "../../styles/fonts";
 
 export const Container = styled.TouchableOpacity`
   width: 100%;
-  padding: 10px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;

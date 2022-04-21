@@ -71,7 +71,7 @@ const Friends: React.FC = () => {
               </PresentationSubtitle>
             </PresentationContainer>
           )}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             const friendName =
               item.received_by.id === user?.id
                 ? item.requested_by.name
