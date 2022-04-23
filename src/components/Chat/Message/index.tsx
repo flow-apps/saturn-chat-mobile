@@ -110,7 +110,7 @@ const Message = ({
     }
   }, [message, lastMessage]);
 
-  const renderDate = useCallback(() => {
+  const renderDate = () => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
       return (
         <MessageDateContainer>
@@ -134,7 +134,7 @@ const Message = ({
         return <></>;
       }
     }
-  }, []);
+  }
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
