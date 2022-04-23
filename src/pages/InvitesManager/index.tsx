@@ -16,6 +16,8 @@ import {
   FriendRequestName,
   FriendRequestAvatar,
   FriendRequestActionButton,
+  EmptyListContainer,
+  EmptyListTitle,
 } from "./styles";
 import { useTheme } from "styled-components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -87,6 +89,13 @@ const InvitesManager: React.FC = () => {
                 recebeu.
               </PresentationSubtitle>
             </PresentationContainer>
+          )}
+          ListEmptyComponent={() => (
+            <EmptyListContainer>
+              <EmptyListTitle>
+                Não há convites nem solicitações de amizade. Volte mais tarde.
+              </EmptyListTitle>
+            </EmptyListContainer>
           )}
           renderItem={({ item }) => {
             return (

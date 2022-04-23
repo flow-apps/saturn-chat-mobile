@@ -8,7 +8,8 @@ export const Container = styled.View`
   padding: 15px;
 `;
 
-export const PresentationContainer = styled.View``;
+export const PresentationContainer = styled.View`
+`;
 
 export const PresentationTitle = styled.Text`
   font-size: 22px;
@@ -58,4 +59,16 @@ export const FriendRequestActionButton = styled.TouchableOpacity`
   background-color: ${(props) => props.theme.colors.shape};
   padding: 5px;
   border-radius: 20px;
+`;
+
+export const EmptyListContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: 50% 0px;
+`;
+
+export const EmptyListTitle = styled.Text`
+  text-align: center;
+  color: ${(props) => props.theme.colors.black};
+  font-family: ${fonts.text};
 `;

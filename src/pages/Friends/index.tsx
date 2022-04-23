@@ -10,6 +10,8 @@ import api from "../../services/api";
 
 import {
   Container,
+  EmptyListContainer,
+  EmptyListTitle,
   FriendAvatar,
   FriendContainer,
   FriendLeftContainer,
@@ -70,6 +72,13 @@ const Friends: React.FC = () => {
                 pessoas da sua lista de amigos.
               </PresentationSubtitle>
             </PresentationContainer>
+          )}
+          ListEmptyComponent={() => (
+            <EmptyListContainer>
+              <EmptyListTitle>
+                Você não possui nenhum amigo. Adicione novos amigos.
+              </EmptyListTitle>
+            </EmptyListContainer>
           )}
           renderItem={({ item }) => {
             const friendName =

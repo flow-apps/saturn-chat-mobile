@@ -65,3 +65,16 @@ export const UnreadMessagesText = styled.Text`
   color: #fff;
   font-family: ${fonts.heading};
 `;
+
+
+export const EmptyListContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: 50% 0px;
+`;
+
+export const EmptyListTitle = styled.Text`
+  text-align: center;
+  color: ${(props) => props.theme.colors.black};
+  font-family: ${fonts.text};
+`;
