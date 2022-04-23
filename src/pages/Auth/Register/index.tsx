@@ -49,12 +49,8 @@ const Register: React.FC = () => {
   const { signUp, loading, registerError } = useAuth();
   const { analytics } = useFirebase();
 
-  const passwordValidation = useMemo(() => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g, []);
+  const passwordValidation = useMemo(() => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, []);
   const emailValidation = useMemo(() => /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g, [])
-
-  function handleSetName(value: string) {
-    setName(value);
-  }
 
   function handleSetEmail(value: string) {
     setEmail(value);
@@ -68,6 +64,12 @@ const Register: React.FC = () => {
 
   function handleSetPassword(value: string) {
     setPassword(value);
+
+    if (passwordConfirm !== value) {
+      setPassConfirmError(true);
+    } else {
+      setPassConfirmError(false);
+    }    
 
     if (!passwordValidation.test(value)) {
       setPassError(true);
@@ -149,7 +151,7 @@ const Register: React.FC = () => {
 
   return (
     <>
-      <Header  title="Criar conta" />
+      <Header title="Criar conta" />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView>
@@ -185,7 +187,7 @@ const Register: React.FC = () => {
                   <Input
                     autoCapitalize="words"
                     placeholder="Ex.: Pedro Henrique"
-                    onChangeText={handleSetName}
+                    onChangeText={setName}
                     value={name}
                   />
                 </FormField>
@@ -204,7 +206,6 @@ const Register: React.FC = () => {
                 <FormField>
                   <Label>Digite uma senha</Label>
                   <Input
-                    passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
                     onChangeText={handleSetPassword}
                     value={password}
                     secureTextEntry
@@ -235,7 +236,7 @@ const Register: React.FC = () => {
                 </FormField>
               </InputsContainer>
               <Button
-                enabled={!emailError && !passError && !passConfirmError}
+                enabled={!emailError && !passError && !passConfirmError && !!name}
                 title="Criar conta"
                 onPress={handleSubmit}
               />
