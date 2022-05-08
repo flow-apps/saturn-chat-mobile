@@ -1,12 +1,24 @@
 # 🪐 Saturn Chat
 
-## 🤔 O que é o Saturn Chat?
+![PhotoEditor_20220508_161707](https://user-images.githubusercontent.com/62728884/167312603-b868aede-3521-4f4d-be55-d4a8993484ed.png)
 
-O *Saturn Chat* é um app voltado para conversas em grupo, sempre preservando a privacidade, a simplicidade e agilidade.
+## ❓ O que é o Saturn Chat?
 
-O Saturn Chat está sendo totalmente desenvolvido por um único programador, o [@pedrohenriquebraga](https://github.com/pedrohenriquebraga).
+O *Saturn Chat* é um app voltado para conversas em grupo, sempre preservando a privacidade, a simplicidade e agilidade. O Saturn Chat está sendo totalmente desenvolvido por um único programador, o [@pedrohenriquebraga](https://github.com/pedrohenriquebraga).
 
-## 📱 E o que sería o Saturn Chat Mobile?
+## 🤔 Por quê?
+
+Hoje está sendo muito discutido a privacidade dos usuários na internet, então o Saturn Chat foi criado para dar mais transparência e liberdade aos usuários de verem onde e como seus dados estão sendo usados, através de um sistema Open-Source.  
+
+## 🌐 Quais features o Saturn Chat possui?
+
+- Criação de grupos
+- Mensagens diretas (DM) com amigos *Beta*
+- Compartilhamento de arquivos
+- Player de áudio e vídeo
+- Sistema de cargos nos grupos
+
+## 📱 E o que sería o repositório Saturn Chat Mobile?
 
 Esse é o repositório da versão Mobile do app, onde fica todo o código referente ao aplicativo.
 
