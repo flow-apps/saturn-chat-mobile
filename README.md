@@ -13,7 +13,7 @@ Hoje está sendo muito discutido a privacidade dos usuários na internet, então
 ## 🌐 Quais features o Saturn Chat possui?
 
 - Criação de grupos
-- Mensagens diretas (DM) com amigos *Beta*
+- Mensagens diretas (DM) com amigos <sup>*Beta*</sup>
 - Compartilhamento de arquivos
 - Player de áudio e vídeo
 - Sistema de cargos nos grupos
