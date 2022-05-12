@@ -37,6 +37,7 @@ export const AlertModal = styled.View`
 export const AlertButtonsContainer = styled.View`
   flex-direction: row-reverse;
   justify-content: flex-end;
+  margin-top: 10px;
 `;
 
 export const AlertOkButton = styled.TouchableOpacity`

@@ -43,6 +43,7 @@ export const NewGroupButton = styled.TouchableOpacity`
 export const GroupButton = styled.TouchableOpacity`
   position: relative;
   margin-right: 15px;
+
 `;
 
 export const GroupHasMessage = styled.View`

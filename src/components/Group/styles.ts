@@ -7,6 +7,7 @@ export const Container = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 15px;
 `;
 
 export const GroupInfos = styled.View`

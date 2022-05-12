@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AdBanner from "../../components/Ads/Banner";
 import Group from "../../components/Group";
 import Header from "../../components/Header";
@@ -8,7 +8,11 @@ import api from "../../services/api";
 import { useAds } from "../../contexts/ads";
 import { useTheme } from "styled-components";
 import { useAuth } from "../../contexts/auth";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { FriendData, UserData } from "../../../@types/interfaces";
 import { FriendsStates } from "../../../@types/enums";
@@ -54,24 +58,30 @@ const UserProfile: React.FC = () => {
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const isReady = await Interstitial.getIsReadyAsync();
-      if (isReady) await Interstitial.showAdAsync();
-      const res = await api.get(`/users?user_id=${id}`);
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        setLoading(true);
+        const isReady = await Interstitial.getIsReadyAsync();
+        if (isReady) await Interstitial.showAdAsync();
+        const res = await api.get(`/users?user_id=${id}`);
 
-      if (res.status === 200) {
-        setUserInfos(res.data);
+        if (res.status === 200) {
+          setUserInfos(res.data);
 
-        if (res.data.friend) {
-          setFriendInfos(res.data.friend);
-          setFriendsState(res.data.friend.state);
+          if (res.data.friend) {
+            setFriendInfos(res.data.friend);
+            setFriendsState(res.data.friend.state);
+          }
         }
-      }
-      setLoading(false);
-    })();
-  }, []);
+        setLoading(false);
+      })();
+    }, [])
+  );
+
+  const openFriendsManager = () => {
+    navigation.navigate("FriendsManager");
+  };
 
   const handleGoGroupInfos = (groupID: string) => {
     navigation.navigate("GroupInfos", { id: groupID });
@@ -172,7 +182,7 @@ const UserProfile: React.FC = () => {
             )}
             {userInfos?.id === user?.id && (
               <FriendsInfosContainer>
-                <FriendsContainer>
+                <FriendsContainer onPress={openFriendsManager}>
                   <FriendsNumber>
                     {String(userInfos?.friendsAmount).padStart(2, "0")}
                   </FriendsNumber>

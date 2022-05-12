@@ -24,6 +24,7 @@ import PdfPreview from "../pages/PdfPreview";
 import SwitchPassword from "../pages/Configurations/SwitchPassword";
 import Friends from "../pages/Friends";
 import InvitesManager from "../pages/InvitesManager";
+import FriendsManager from "../pages/FriendsManager";
 
 const StackRoutes = createStackNavigator();
 
@@ -32,6 +33,7 @@ const AppRoutes = () => {
     <StackRoutes.Navigator headerMode="none">
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="Friends" component={Friends} />
+      <StackRoutes.Screen name="FriendsManager" component={FriendsManager} />
       <StackRoutes.Screen name="InvitesManager" component={InvitesManager} />
       <StackRoutes.Screen name="PurchasePremium" component={Premium} />
       <StackRoutes.Screen name="ChoosePlan" component={ChoosePlan} />
