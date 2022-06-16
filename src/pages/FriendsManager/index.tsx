@@ -55,18 +55,33 @@ const FriendsManager: React.FC = () => {
     setUnfriend(null);
   };
 
+  const removeFriend = async () => {
+    setShowUnfriendAlert(false);
+    
+    if (unfriend) {
+      setLoading(true);
+      const res = await api.delete(`/friends/remove/${unfriend.id}`);
+
+      if (res.status === 200) {
+        setFriends(old => old.filter((friend) => friend.id !== unfriend.id));
+        setUnfriend(null);
+      }
+      setLoading(false);
+    }
+  };
+
   if (loading) return <Loading />;
 
   return (
     <>
       <Alert
-        title="⚠️ Deseja desfazer a amizade?"
-        content={`Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão mantidas.`}
-        okButtonText="Desfazer amizade"
-        okButtonAction={() => {}}
-        cancelButtonText="Cancelar"
-        cancelButtonAction={closeUnfriendAlert}
         visible={showUnfriendAlert}
+        title="⚠️ Deseja desfazer a amizade?"
+        content={`Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.`}
+        okButtonText="Desfazer amizade"
+        cancelButtonText="Cancelar"
+        okButtonAction={removeFriend}
+        cancelButtonAction={closeUnfriendAlert}
       />
       <Container>
         <Header title="Gerenciar amigos" />
