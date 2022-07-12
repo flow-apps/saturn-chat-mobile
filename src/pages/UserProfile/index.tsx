@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import AdBanner from "../../components/Ads/Banner";
 import Group from "../../components/Group";
 import Header from "../../components/Header";
@@ -41,8 +41,6 @@ import {
 import _ from "lodash";
 import FriendActionButtons from "../../components/UserProfile/FriendActionButtons";
 import AddFriendButton from "../../components/UserProfile/AddFriendButton";
-import Alert from "../../components/Alert";
-import HorizontalLine from "../../components/HorizontalLine";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
