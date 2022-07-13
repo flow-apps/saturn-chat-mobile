@@ -5,7 +5,6 @@ import AppLoading from "expo-app-loading";
 
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
-import { AppearanceProvider } from "react-native-appearance";
 import { NotificationsProvider } from "./src/contexts/notifications";
 import { AdsProvider } from "./src/contexts/ads";
 import { AudioPlayerProvider } from "./src/contexts/audioPlayer"
@@ -45,7 +44,6 @@ export default function App() {
   return (
     <>
       <ThemeControllerProvider>
-        <AppearanceProvider>
           <FirebaseProvider>
             <AuthProvider>
               <NotificationsProvider>
@@ -59,7 +57,6 @@ export default function App() {
               </NotificationsProvider>
             </AuthProvider>
           </FirebaseProvider>
-        </AppearanceProvider>
       </ThemeControllerProvider>
     </>
   );
