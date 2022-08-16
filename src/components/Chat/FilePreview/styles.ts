@@ -37,7 +37,7 @@ export const FileName = styled.Text.attrs({
 `;
 
 export const FileSize = styled.Text`
-  font-size: 16px;
+  font-size: 12px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.primary};
 `;

@@ -79,22 +79,22 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
   const renderIcon = () => {
     switch (type) {
       case "image":
-        return <Feather name="image" size={40} color={colors.black} />;
+        return <Feather name="image" size={35} color={colors.black} />;
 
       case "text":
-        return <Feather name="file-text" size={40} color={colors.black} />;
+        return <Feather name="file-text" size={35} color={colors.black} />;
 
       case "application":
-        return <Feather name="file-minus" size={40} color={colors.black} />;
+        return <Feather name="file-minus" size={35} color={colors.black} />;
 
       case "video":
-        return <Feather name="video" size={40} color={colors.black} />;
+        return <Feather name="video" size={35} color={colors.black} />;
 
       case "audio":
-        return <Feather name="disc" size={40} color={colors.black} />;
+        return <Feather name="disc" size={35} color={colors.black} />;
 
       default:
-        return <Feather name="file" size={40} color={colors.black} />;
+        return <Feather name="file" size={35} color={colors.black} />;
     }
   };
 
