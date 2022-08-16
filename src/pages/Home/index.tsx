@@ -96,7 +96,6 @@ const Home: React.FC = () => {
   }, []);
 
   const handleGoNewGroup = () => navigation.navigate("NewGroup");
-  const handleGoFriends = () => navigation.navigate("Friends")
 
   if (loading) return <Loading />;
   return (
@@ -229,19 +228,6 @@ const Home: React.FC = () => {
             }}
           />
         </GroupsList>
-        <FAB
-          icon="message"
-          color="#FFF"
-          style={{
-            position: "absolute",
-            backgroundColor: colors.secondary,
-            margin: 16,
-            right: 10,
-            bottom: 10,
-            transform: [{ scale: 1.05 }]
-          }}
-          onPress={handleGoFriends}
-        />
       </GroupsContainer>
     </Container>
   );

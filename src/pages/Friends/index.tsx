@@ -1,4 +1,5 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
@@ -34,7 +35,7 @@ const Friends: React.FC = () => {
   const [friends, setFriends] = useState<FriendData[]>([]);
 
   const { user } = useAuth();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   useFocusEffect(
     useCallback(() => {
@@ -59,7 +60,7 @@ const Friends: React.FC = () => {
 
   return (
     <>
-      <Header title="Amigos" />
+      <Header title="Amigos" backButton={false} />
       <Container>
         <FlatList
           data={friends}
