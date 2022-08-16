@@ -16,7 +16,7 @@ const ThemeControllerContext = createContext<ThemeControllerContext>(
   {} as ThemeControllerContext
 );
 
-const ThemeControllerProvider: React.FC = ({ children }) => {
+const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const defaultTheme = useColorScheme();
   const [theme, setTheme] = usePersistedState<DefaultTheme>(
     "@SaturnChat:theme",

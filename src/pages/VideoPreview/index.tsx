@@ -10,13 +10,14 @@ import {
   PlayerIcon,
   PlayerSeek,
   PlayerSeekContainer,
-  VideoPlayer,
   VideoPlayerWrapper,
   BufferingContainer,
 } from "./styles";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "styled-components";
-import Video, { OnLoadData } from "react-native-video";
+import { ResizeMode, AVPlaybackStatus, Video } from "expo-av"
+// import Video, { OnLoadData } from "react-native-video";
 import { millisToTime } from "../../utils/format";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { StatusBar } from "react-native";
@@ -29,11 +30,12 @@ const VideoPreview: React.FC = () => {
   const [muted, setMuted] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [buffering, setBuffering] = useState(true);
+  const [buffering, setBuffering] = useState(false);
   const [hiddenAll, setHiddenAll] = useState(false);
+  const [status, setStatus] = useState<AVPlaybackStatus>()
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
-  const videoRef = useRef<Video>();
+  const videoRef = useRef<Video>(null);
   const route = useRoute();
   const routeParams = route.params as {
     name: string;
@@ -41,15 +43,39 @@ const VideoPreview: React.FC = () => {
     poster: string;
   };
 
-  const handleSetData = (data: OnLoadData) => {
-    setDuration(data.duration);
-    setCurrentPosition(data.currentPosition);
-    setBuffering(false);
+  const handleSetInitialData = (data: AVPlaybackStatus) => {
+    if (!data.isLoaded) return;
+
+    setStatus(data);
+    setDuration(data.durationMillis);
+    setCurrentPosition(data.positionMillis);
+    // setBuffering(data.isBuffering);
+  }
+
+  const handleUpdateStatus = (newStatus: AVPlaybackStatus) => {
+    if (!newStatus.isLoaded) return;
+
+    setStatus(newStatus);
+    // setBuffering(newStatus.isBuffering);
+    setCurrentPosition(newStatus.positionMillis);
   };
 
-  const handleSeek = (value: number) => {
+  const handlePlayPause = async () => {
+    if (!status.isLoaded) return;
+
+    if (status.isPlaying) {
+      await videoRef.current.pauseAsync();
+    }
+    else {
+      await videoRef.current.playAsync();
+    }
+
+    setPlay(old => !old);
+  }
+
+  const handleSeek = async (value: number) => {
+    await videoRef.current.setPositionAsync(value)
     setCurrentPosition(value);
-    videoRef.current?.seek(value);
   };
 
   const handleHiddenAll = () => {
@@ -91,28 +117,24 @@ const VideoPreview: React.FC = () => {
               <LoadingIndicator />
             </BufferingContainer>
           )}
-          <VideoPlayer
-            ref={videoRef as any}
-            source={{ uri: routeParams.url }}
-            poster={routeParams.poster}
-            paused={!play}
-            muted={muted}
-            onLoad={handleSetData}
-            resizeMode="contain"
-            fullscreenOrientation="landscape"
-            fullscreen={hiddenAll}
-            onProgress={(data) => setCurrentPosition(data.currentTime)}
-            onBuffer={(data) => setBuffering(data.isBuffering)}
-            onLoadStart={() => setBuffering(true)}
-            currentTime={currentPosition}
+          <Video
+            ref={videoRef}
+            style={{ width: "100%", height: "100%" }}
+            shouldPlay={play}
+            isLooping={true}
+            isMuted={muted}
             volume={1}
-            onVideoBuffer={() => setBuffering((old) => !old)}
-            repeat
+            source={{ uri: routeParams.url }}
+            posterSource={{ uri: routeParams.poster }}
+            resizeMode={ResizeMode.CONTAIN}
+            onLoad={handleSetInitialData}
+            onPlaybackStatusUpdate={handleUpdateStatus}
+            progressUpdateIntervalMillis={1000}
           />
         </VideoPlayerWrapper>
         {!hiddenAll && (
           <PlayerControlsContainer>
-            <PlayerButton onPress={() => setPlay((old) => !old)}>
+            <PlayerButton onPress={handlePlayPause}>
               <PlayerIcon>
                 <MaterialCommunityIcons
                   name={play ? "pause" : "play"}
@@ -124,21 +146,21 @@ const VideoPreview: React.FC = () => {
             <PlayerSeekContainer>
               <PlayerPositionContainer>
                 <PlayerPosition>
-                  {millisToTime(currentPosition * 1000)}
+                  {millisToTime(currentPosition)}
                 </PlayerPosition>
               </PlayerPositionContainer>
               <PlayerSeek
                 minimumValue={0}
                 maximumValue={duration}
                 value={currentPosition}
-                step={1}
+                step={1000}
                 thumbTintColor={colors.secondary}
                 minimumTrackTintColor={colors.primary}
                 maximumTrackTintColor={colors.dark_gray}
                 onSlidingComplete={handleSeek}
               />
               <PlayerPositionContainer>
-                <PlayerPosition>{millisToTime(duration * 1000)}</PlayerPosition>
+                <PlayerPosition>{millisToTime(duration)}</PlayerPosition>
               </PlayerPositionContainer>
             </PlayerSeekContainer>
             <PlayerButton onPress={() => setMuted((old) => !old)}>

@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Audio, AVPlaybackStatus } from "expo-av";
+import {
+  Audio,
+  AVPlaybackStatus,
+  InterruptionModeAndroid,
+  InterruptionModeIOS,
+} from "expo-av";
 
 interface AudioPlayerContextProps {
   loadAudio: (data: LoadAudioData) => Promise<void>;
@@ -30,7 +35,9 @@ const AudioPlayerContext = createContext<AudioPlayerContextProps>(
   {} as AudioPlayerContextProps
 );
 
-const AudioPlayerProvider: React.FC = ({ children }) => {
+const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [sounds, setSounds] = useState<SoundData[]>([]);
   const [currentAudioName, setCurrentAudioName] = useState("");
   const [currentSound, setCurrentSound] = useState<SoundData | null>(null);
@@ -40,9 +47,10 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
       shouldDuckAndroid: true,
       allowsRecordingIOS: true,
       staysActiveInBackground: false,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DUCK_OTHERS,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
+      interruptionModeIOS: InterruptionModeIOS.DuckOthers,
+      interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
     });
+
   }, []);
 
   const loadAudio = async ({
@@ -57,6 +65,7 @@ const AudioPlayerProvider: React.FC = ({ children }) => {
 
     const audio = await Audio.Sound.createAsync({ uri: url, name });
 
+    await audio.sound.setProgressUpdateIntervalAsync(1000)
     audio.sound.setOnPlaybackStatusUpdate(async (status) => {
       if (!status.isLoaded) return;
 

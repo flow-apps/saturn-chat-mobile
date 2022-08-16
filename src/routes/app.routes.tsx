@@ -30,7 +30,7 @@ const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
   return (
-    <StackRoutes.Navigator headerMode="none">
+    <StackRoutes.Navigator screenOptions={{ headerShown: false }}>
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="Friends" component={Friends} />
       <StackRoutes.Screen name="FriendsManager" component={FriendsManager} />

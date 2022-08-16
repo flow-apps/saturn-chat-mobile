@@ -13,7 +13,7 @@ import {
 } from "./styles";
 
 const Home: React.FC = () => {
-  const navigator = useNavigation();
+  const navigator = useNavigation<StackNavigationProp<any>>();
 
   async function registerNavigate() {
     navigator.navigate("Register");

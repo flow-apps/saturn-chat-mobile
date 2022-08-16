@@ -1,6 +1,8 @@
 import styled from "styled-components/native";
 import fonts from "../../../../styles/fonts";
 
+import Slider from "@react-native-community/slider"
+
 interface CreateInviteOptionProps {
   disabled?: boolean;
 }
@@ -88,7 +90,7 @@ export const CreateInviteLinkOptionCardText = styled.Text`
   font-family: ${fonts.heading};
 `;
 
-export const AmountUsagesSlider = styled.Slider`
+export const AmountUsagesSlider = styled(Slider)`
 `
 
 export const YourInvitesContainer = styled.View``;

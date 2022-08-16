@@ -21,7 +21,7 @@ import Loading from "../../../../components/Loading";
 import SimpleToast from "react-native-simple-toast";
 
 const PunishParticipant: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { colors } = useTheme();
   const { type, participant } = route.params as {

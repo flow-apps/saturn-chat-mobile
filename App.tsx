@@ -1,11 +1,10 @@
 import "react-native-reanimated";
 import React from "react";
 import Routes from "./src/routes";
-import AppLoading from "expo-app-loading";
+import { preventAutoHideAsync, hideAsync } from "expo-splash-screen"
 
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
-import { AppearanceProvider } from "react-native-appearance";
 import { NotificationsProvider } from "./src/contexts/notifications";
 import { AdsProvider } from "./src/contexts/ads";
 import { AudioPlayerProvider } from "./src/contexts/audioPlayer"
@@ -40,12 +39,16 @@ export default function App() {
     FiraCode_500Medium,
   });
 
-  if (!fontLoaded) return <AppLoading />;
+  if (!fontLoaded) {
+    preventAutoHideAsync()
+    return <></>
+  }
+
+  hideAsync()
 
   return (
     <>
       <ThemeControllerProvider>
-        <AppearanceProvider>
           <FirebaseProvider>
             <AuthProvider>
               <NotificationsProvider>
@@ -59,7 +62,6 @@ export default function App() {
               </NotificationsProvider>
             </AuthProvider>
           </FirebaseProvider>
-        </AppearanceProvider>
       </ThemeControllerProvider>
     </>
   );

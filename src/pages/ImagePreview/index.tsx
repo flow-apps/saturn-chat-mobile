@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import ImageZoom from "react-native-image-pan-zoom";
 import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { HeaderButton } from "../../components/Header/styles";
 import { useCallback } from "react";
 import { LinkUtils } from "../../utils/link";

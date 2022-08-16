@@ -1,6 +1,10 @@
 import React, { useState, useCallback } from "react";
 import AdBanner from "../../components/Ads/Banner";
+<<<<<<< HEAD
 import Group from "../../components/Group";
+=======
+import Feather from "@expo/vector-icons/Feather";
+>>>>>>> main
 import Header from "../../components/Header";
 import PremiumName from "../../components/PremiumName";
 import Loading from "../../components/Loading";
@@ -52,7 +56,12 @@ const UserProfile: React.FC = () => {
   const { colors } = useTheme();
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
+<<<<<<< HEAD
   const navigation = useNavigation();
+=======
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const { Interstitial } = useAds();
+>>>>>>> main
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 

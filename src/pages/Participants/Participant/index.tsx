@@ -10,7 +10,7 @@ import {
   ParticipantOptionsContainer,
   ParticipantOptionsTitle,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { useRoute } from "@react-navigation/native";
@@ -24,7 +24,7 @@ const Participant: React.FC = () => {
   const { participant } = useRoute().params as {
     [key: string]: ParticipantsData;
   };
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const [myRole, setMyRole] = useState("" as ParticipantRoles);
   const [loading, setLoading] = useState(false);
 

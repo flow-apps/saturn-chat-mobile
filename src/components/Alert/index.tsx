@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useState } from "react";
-import { StatusBar } from "expo-status-bar";
 
 import {
   Container,

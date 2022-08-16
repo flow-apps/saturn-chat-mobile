@@ -27,7 +27,7 @@ interface UserConfigs {
 
 const RemoteConfigsContext = createContext({} as RemoteConfigContextProps)
 
-const RemoteConfigsProvider: React.FC = ({ children }) => {
+const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const [allConfigs, setAllConfigs] = useState<Configs>({} as Configs)
   const [userConfigs, setUserConfigs] = useState<UserConfigs>({} as UserConfigs)

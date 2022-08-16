@@ -1,7 +1,10 @@
 import styled from "styled-components/native";
-import Video from "react-native-video";
+import { Video } from "expo-av"
+// import Video from "react-native-video";
 import fonts from "../../styles/fonts";
 import { Dimensions } from "react-native";
+
+import Slider from "@react-native-community/slider"
 
 export const Container = styled.View`
   position: relative;
@@ -16,7 +19,7 @@ export const VideoPlayerWrapper = styled.Pressable`
   position: relative;
   width: 100%;
   height: 100%;
-`
+`;
 
 export const VideoPlayer = styled(Video)`
   width: 100%;
@@ -65,7 +68,7 @@ export const PlayerSeekContainer = styled.View`
   flex: 1;
 `
 
-export const PlayerSeek = styled.Slider`
+export const PlayerSeek = styled(Slider)`
   flex: 1;
   margin-left: -5px;
 `

@@ -1,7 +1,5 @@
 import React, { useRef } from "react";
-import * as Linking from "expo-linking"
 import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
-import AppLoading from "expo-app-loading";
 import { useAuth } from "../contexts/auth";
 import AppRoutes from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
@@ -28,7 +26,10 @@ const Routes = () => {
   
   const routeNameRef = useRef<string>()
 
-  if (loadingData) return <AppLoading />;
+  if (loadingData) {
+    return <Loading />
+  }
+
 
   return (
     <NavigationContainer
@@ -40,7 +41,7 @@ const Routes = () => {
         const currentRouteName = navigationRef.current?.getCurrentRoute()?.name
 
         if (previousRouteName !== currentRouteName) {
-          await analytics.setCurrentScreen(currentRouteName, currentRouteName);
+          await analytics.logEvent('screen_view', { currentRouteName });
         }
 
         routeNameRef.current = currentRouteName;

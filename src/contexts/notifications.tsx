@@ -19,7 +19,7 @@ const NotificationsContext = createContext<NotificationsContextProps>(
   {} as NotificationsContextProps
 );
 
-const NotificationsProvider: React.FC = ({ children }) => {
+const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [expoToken, setExpoToken] = useState("");
   const [enabled, setEnabled] = useState(true);
 

@@ -7,11 +7,12 @@ import {
   RemoveBannerText,
 } from "./styles";
 import { Platform } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import config from "../../../config";
 import secrets from "../../../secrets.json";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useFirebase } from "../../../contexts/firebase";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -35,7 +36,7 @@ const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
   });
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const handleGoPremium = async () => {
     await analytics.logEvent("RemoveBannerAD", {
       requested_in: name

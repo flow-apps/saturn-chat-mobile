@@ -18,9 +18,10 @@ import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
 
 import { ProgressBar } from "react-native-paper";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
@@ -74,6 +75,7 @@ import { MotiView, useAnimationState } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 import { useAudioPlayer } from "../../contexts/audioPlayer";
+import { NavigateType } from "../../../@types/types";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -98,7 +100,7 @@ const recordService = new RecordService();
 
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInput>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id, name, friendId } = route.params as {
     id: string;
@@ -122,7 +124,7 @@ const Chat: React.FC = () => {
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<number>();
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout>();
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
@@ -180,8 +182,8 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const isReady = await Interstitial.getIsReadyAsync();
-      if (isReady) await Interstitial.showAdAsync();
+      // const isReady = await Interstitial.getIsReadyAsync();
+      // if (isReady) await Interstitial.showAdAsync();
 
       // socket.emit("connect_in_chat", id);
       // connectedSocket.on("connect", () => {
@@ -723,7 +725,7 @@ const Chat: React.FC = () => {
               onChangeText={handleSetMessage}
               onTextInput={handleTyping}
               defaultValue={message}
-              maxLength={userConfigs?.messageLength}
+              maxLength={userConfigs?.messageLength || 500}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>

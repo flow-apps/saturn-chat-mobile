@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import {
@@ -20,7 +21,7 @@ interface EmblemProps {
 }
 
 const EmblemModal= ({ visible, close, premium }: EmblemProps) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const handleGoPremium = () => {
     close()

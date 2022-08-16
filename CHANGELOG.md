@@ -2,12 +2,17 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
-## 0.0.16.0
+## 0.0.17.0
 
 - Add direct messages list
 - Improve chat for direct messages
 - Improve participant menu and group menu for direct messages
 - Fix friend button
+
+## 0.0.16.0
+
+- Upgrade Expo and React Native
+- Fix types of Typescript
 
 ## 0.0.15.2
 

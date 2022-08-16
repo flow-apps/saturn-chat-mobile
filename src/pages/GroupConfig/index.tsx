@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 
 import {
   Container,
@@ -37,7 +37,7 @@ const GroupConfig: React.FC = () => {
   const [showExitGroupAlert, setShowExitGroup] = useState(false);
 
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { colors } = useTheme();
   const { id } = route.params as { id: string };
 

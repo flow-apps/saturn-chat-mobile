@@ -18,10 +18,10 @@ import Button from "../../components/Button";
 import { useTheme } from "styled-components";
 import Alert from "../../components/Alert";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import * as Localize from "expo-localization";
 import Banner from "../../components/Ads/Banner";
-import { Linking } from "react-native";
 import config from "../../config";
 import { useNotifications } from "../../contexts/notifications";
 import { LinkUtils } from "../../utils/link";
@@ -29,7 +29,7 @@ import { LinkUtils } from "../../utils/link";
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { signOut } = useAuth();
   const { toggleTheme, currentThemeName } = useThemeController();
   const { toggleEnabledNotifications, enabled } = useNotifications();
