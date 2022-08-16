@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.16.0
+
+- Upgrade Expo and React Native
+- Fix types of Typescript
+
 ## 0.0.15.2
 
 - Stop audios on delete message
