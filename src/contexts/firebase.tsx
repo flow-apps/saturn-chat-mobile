@@ -14,7 +14,7 @@ const FirebaseContext = createContext<FirebaseContextProps>(
   {} as FirebaseContextProps
 );
 
-const FirebaseProvider: React.FC = ({ children }) => {
+const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [analytics, setAnalytics] = useState<typeof Analytics>(Analytics);
   const { user } = useAuth();
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Boarding from "react-native-onboarding-swiper";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useEffect } from "react";
 import { useTheme } from "styled-components";
 import {
@@ -19,7 +20,7 @@ const OnBoarding: React.FC = () => {
     false
   );
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   useEffect(() => {
     if (hasBoarded) {

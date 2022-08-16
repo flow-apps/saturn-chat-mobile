@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
+import Slider from "@react-native-community/slider"
 
 interface PlayerProps {
   loading?: boolean;
@@ -32,7 +33,7 @@ export const SeekBarContainer = styled.View`
   margin-left: -2px;
 `;
 
-export const SeekBar = styled.Slider`
+export const SeekBar = styled(Slider)`
   flex: 1;
 `;
 

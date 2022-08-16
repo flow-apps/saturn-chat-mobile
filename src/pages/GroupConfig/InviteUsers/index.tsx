@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../../../components/Header";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import {
   Container,
   FriendAvatar,
@@ -28,7 +28,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import config from "../../../config";
 
 const InviteUsers: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { colors } = useTheme();

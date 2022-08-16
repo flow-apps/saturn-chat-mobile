@@ -8,7 +8,7 @@ import Switcher from "../../../components/Switcher";
 import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
 import api from "../../../services/api";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { GroupData } from "../../../../@types/interfaces";
@@ -37,7 +37,7 @@ const EditGroup: React.FC = () => {
   const [isSendable, setIsSendable] = useState(false);
 
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { id } = route.params as any;
 
   const handleIsPublic = (value: boolean) => {

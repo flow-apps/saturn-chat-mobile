@@ -1,5 +1,6 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
+import { StackNavigationProp } from "@react-navigation/stack";
 import _ from "lodash";
 import { MotiView } from "moti";
 import React, { useCallback, useState } from "react";
@@ -47,7 +48,7 @@ const Home: React.FC = () => {
   const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   useFocusEffect(
     useCallback(() => {
       async function fetchGroups() {

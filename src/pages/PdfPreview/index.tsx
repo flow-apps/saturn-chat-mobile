@@ -7,7 +7,7 @@ import { useRoute } from "@react-navigation/core";
 import { Container } from "./styles";
 import { LinkUtils } from "../../utils/link";
 import { HeaderButton } from "../../components/Header/styles";
-import { Feather } from "@expo/vector-icons"
+import Feather from "@expo/vector-icons/Feather";
 
 const PdfPreview = () => {
   const route = useRoute();

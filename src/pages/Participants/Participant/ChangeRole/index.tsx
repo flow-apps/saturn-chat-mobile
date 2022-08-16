@@ -17,7 +17,7 @@ import {
   RolePermission,
 } from "./styles";
 
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import roles from "./roles";
 import Button from "../../../../components/Button";
 import { useRoute } from "@react-navigation/core";
@@ -25,11 +25,12 @@ import { ParticipantsData } from "../../../../../@types/interfaces";
 import api from "../../../../services/api";
 import SimpleToast from "react-native-simple-toast";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type Roles = "participant" | "mod" | "admin";
 
 const ChangeRole: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { participant, id } = useRoute().params as {
     participant: ParticipantsData;
     id: string;

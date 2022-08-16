@@ -1,19 +1,6 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "target": "ES6",
-    "allowJs": true,
-    "module": "ESNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react-native",
-    "typeRoots": ["./@types", "./node_modules/@types"]
+    "removeComments": true,
   },
-  "include": ["src"],
-  "exclude": ["node_modules"],
-  "files": ["src/styles/styled.d.ts", "./@types/custom.d.ts"]
+  "extends": "expo/tsconfig.base",
 }

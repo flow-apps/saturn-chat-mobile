@@ -6,6 +6,7 @@ import format from "date-fns/format";
 import { convertToTimeZone } from "date-fns-timezone";
 
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import {
@@ -48,6 +49,7 @@ interface MessageProps {
   index: number;
   socket: Socket;
   onReplyMessage: (message: MessageData) => void;
+  children?: React.ReactNode;
 }
 
 const Message = ({
@@ -67,7 +69,7 @@ const Message = ({
   const { colors } = useTheme();
   const { unloadAudio } = useAudioPlayer();
   const linkUtils = new LinkUtils();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
   }, []);

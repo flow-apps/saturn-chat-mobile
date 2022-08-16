@@ -32,7 +32,7 @@ import {
   ReachedLimitStarContainer,
   ReachedLimitStarDescription,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
@@ -48,6 +48,7 @@ import { verifyBetweenValues } from "../../utils";
 import { UserData } from "../../../@types/interfaces";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import _ from "lodash";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false);
@@ -66,7 +67,7 @@ const NewGroup: React.FC = () => {
   const { colors } = useTheme();
   const { userConfigs, allConfigs } = useRemoteConfigs();
   const premium = false;
-  const navigator = useNavigation();
+  const navigator = useNavigation<StackNavigationProp<any>>();
 
   useEffect(() => {
     (async () => {
@@ -114,7 +115,7 @@ const NewGroup: React.FC = () => {
       })
       .then(async (response) => {
         if (response.status === 200) {
-          navigator.navigate("Groups");
+          navigator.navigate("GroupsChat");
           trace.putMetric("group_id", response.data.id);
           await analytics.logEvent("created_group", {
             group_id: response.data.id,

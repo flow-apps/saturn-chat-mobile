@@ -6,10 +6,11 @@ import {
   HeaderButton,
   LeftContainer,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { StatusBar } from "expo-status-bar";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface HeaderProps {
   title: string;
@@ -27,7 +28,7 @@ const Header = ({
   children,
 }: HeaderProps) => {
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   function handleBack() {
     if (navigation.canGoBack()) {

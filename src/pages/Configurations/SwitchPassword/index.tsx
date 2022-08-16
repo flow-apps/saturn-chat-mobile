@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useMemo, useState } from "react";
 import SimpleToast from "react-native-simple-toast";
 import Button from "../../../components/Button";
@@ -26,7 +27,7 @@ const SwitchPassword: React.FC = () => {
   const [passError, setPassError] = useState(true);
   const [confirmPassError, setConfirmPassError] = useState(true);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const handleSetNewPassword = (value: string) => {
     setNewPass(value);

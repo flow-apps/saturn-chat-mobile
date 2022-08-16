@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import FormData from "form-data";
 import { Alert } from "react-native";
@@ -32,7 +33,7 @@ const EditProfile: React.FC = () => {
 
   const [isSendable, setIsSendable] = useState(false);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateUser } = useAuth();
 
   const handleSubmit = async () => {

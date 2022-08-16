@@ -9,7 +9,7 @@ const stack = createStackNavigator();
 
 const AuthRoutes = () => {
   return (
-    <stack.Navigator headerMode="none">
+    <stack.Navigator screenOptions={{ headerShown: false }}>
       <stack.Screen name="OnBoarding" component={OnBoarding} />
       <stack.Screen name="Home" component={Home} />
       <stack.Screen name="Register" component={Register} />

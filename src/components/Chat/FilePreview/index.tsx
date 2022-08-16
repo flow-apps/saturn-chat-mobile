@@ -1,7 +1,9 @@
 import React, { useCallback, useState, useMemo } from "react";
 
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
 import Alert from "../../Alert";
@@ -40,7 +42,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
   const [videoThumb, setVideoThumb] = useState<string>();
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const mimeType = useMemo(() => MimeTypes.lookup(name), []);
 
   useEffect(() => {
@@ -121,7 +123,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
         <FileButton onPress={handleGoPdfPreview}>
           <FilePreviewContainer>
             <MaterialCommunityIcons
-              name="pdf-box"
+              name="file-pdf-box"
               size={35}
               color={colors.secondary}
             />

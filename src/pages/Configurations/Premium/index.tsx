@@ -31,12 +31,13 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useRemoteConfigs } from "../../../contexts/remoteConfigs";
 
 import { connectAsync } from "expo-in-app-purchases";
 
 const Premium: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { colors } = useTheme();
   const { allConfigs } = useRemoteConfigs();
 

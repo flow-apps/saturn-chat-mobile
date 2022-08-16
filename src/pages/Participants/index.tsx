@@ -41,7 +41,7 @@ const Participants: React.FC = () => {
   const [loadedAll, setLoadedAll] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id } = route.params as { id: string };
   const { colors } = useTheme();

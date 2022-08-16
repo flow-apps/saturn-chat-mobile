@@ -1,7 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 import { FlatList } from "react-native";
-import { FilesContainer } from "../../components/Chat/SelectedFiles/styles";
 
 export const Container = styled.View`
   flex: 1;

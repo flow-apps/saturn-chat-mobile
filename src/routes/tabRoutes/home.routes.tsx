@@ -1,4 +1,6 @@
-import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { useTheme } from "styled-components";
@@ -36,7 +38,7 @@ const HomeRoutes = () => {
     >
       <tabRoutes.Screen
         component={Home}
-        name="Groups"
+        name="GroupsChat"
         options={{
           title: "Grupos",
           tabBarIcon: ({ color, size }) => (

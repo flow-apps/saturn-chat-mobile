@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FontAwesome } from "@expo/vector-icons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Container, EmblemContainer, Name, NameContainer } from "./styles";
 import { useTheme } from "styled-components";
 import fonts from "../../styles/fonts";

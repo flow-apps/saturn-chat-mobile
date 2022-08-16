@@ -1,7 +1,7 @@
 import "react-native-reanimated";
 import React from "react";
 import Routes from "./src/routes";
-import AppLoading from "expo-app-loading";
+import { preventAutoHideAsync, hideAsync } from "expo-splash-screen"
 
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
@@ -39,7 +39,12 @@ export default function App() {
     FiraCode_500Medium,
   });
 
-  if (!fontLoaded) return <AppLoading />;
+  if (!fontLoaded) {
+    preventAutoHideAsync()
+    return <></>
+  }
+
+  hideAsync()
 
   return (
     <>

@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react"
 import { Alert, Platform } from "react-native"
 import * as Ads from "expo-ads-admob"
-import Constants from "expo-constants"
 import secrets from "../secrets.json"
 import config from "../config"
 
@@ -12,7 +11,7 @@ interface ADSContextProps {
 
 const AdsContext = createContext<ADSContextProps>({} as ADSContextProps)
 
-const AdsProvider: React.FC = ({ children }) => {
+const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const [unitID, setUnitID] = useState("")
   const [Interstitial, setInterstitial] = useState<typeof Ads.AdMobInterstitial>
@@ -45,6 +44,7 @@ const AdsProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     (async () => {
+      const isReady = await Ads.AdMobInterstitial.getIsReadyAsync()
       const interstitial = Ads.AdMobInterstitial
       const adUnitTestID = config.ADS.TEST_ADS_IDS.INTERSTITIAL
       const adUnitProdID = Platform.select({
@@ -58,15 +58,15 @@ const AdsProvider: React.FC = ({ children }) => {
       }
       
       await interstitial.setAdUnitID(adUnitID)
+
+      if (isReady) return
+
       await interstitial.requestAdAsync()
 
       interstitial.addEventListener("interstitialDidClose", async () => {
         await interstitial.requestAdAsync()
       })
-      interstitial.addEventListener("interstitialWillLeaveApplication",
-      interstitial.dismissAdAsync
-    )
-
+  
       setInterstitial(interstitial)
     })()
   }, [])

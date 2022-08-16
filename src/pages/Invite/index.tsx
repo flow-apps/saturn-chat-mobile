@@ -33,7 +33,7 @@ const Invite: React.FC = () => {
   const { analytics } = useFirebase()
 
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const params = route.params as { inviteID: string };
   const inviteID = params.inviteID;
 

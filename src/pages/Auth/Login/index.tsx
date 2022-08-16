@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
 import { Keyboard } from "react-native";
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const navigator = useNavigation();
+  const navigator = useNavigation<StackNavigationProp<any>>();
 
   const { analytics } = useFirebase()
   const { signIn, loginError, loading } = useAuth();

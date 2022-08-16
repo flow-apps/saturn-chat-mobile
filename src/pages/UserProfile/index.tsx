@@ -1,6 +1,6 @@
 import React from "react";
 import AdBanner from "../../components/Ads/Banner";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import Header from "../../components/Header";
 import {
   Avatar,
@@ -39,7 +39,7 @@ const UserProfile: React.FC = () => {
   const { colors } = useTheme();
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { Interstitial } = useAds();
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;

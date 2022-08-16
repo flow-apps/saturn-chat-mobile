@@ -1,11 +1,8 @@
 import React, { useCallback, useState } from "react";
 import Header from "../../components/Header";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 
 import {
-  ButtonBarContainer,
-  ButtonBarTitle,
-  ButtonBar,
   ButtonSearch,
   Container,
   Input,
@@ -26,7 +23,6 @@ import {
 import { useTheme } from "styled-components";
 import {
   Keyboard,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
   FlatList,
 } from "react-native";
@@ -46,7 +42,7 @@ const Search: React.FC = () => {
 
   const { analytics } = useFirebase();
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const setQuerySearch = useCallback((text) => {
     setQuery(text);

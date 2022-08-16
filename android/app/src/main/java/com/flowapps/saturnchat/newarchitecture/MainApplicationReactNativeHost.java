@@ -1,4 +1,5 @@
 package com.flowapps.saturnchat.newarchitecture;
+
 import android.app.Application;
 import androidx.annotation.NonNull;
 import com.facebook.react.PackageList;
@@ -23,6 +24,7 @@ import com.flowapps.saturnchat.newarchitecture.components.MainComponentsRegistry
 import com.flowapps.saturnchat.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * A {@link ReactNativeHost} that helps you load everything needed for the New Architecture, both
  * TurboModule delegates and the Fabric Renderer.
@@ -34,10 +36,12 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
   public MainApplicationReactNativeHost(Application application) {
     super(application);
   }
+
   @Override
   public boolean getUseDeveloperSupport() {
     return BuildConfig.DEBUG;
   }
+
   @Override
   protected List<ReactPackage> getPackages() {
     List<ReactPackage> packages = new PackageList(this).getPackages();
@@ -49,10 +53,12 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
     // inside a ReactPackage.
     return packages;
   }
+
   @Override
   protected String getJSMainModuleName() {
     return "index";
   }
+
   @NonNull
   @Override
   protected ReactPackageTurboModuleManagerDelegate.Builder
@@ -61,6 +67,7 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
     // for the new architecture and to use TurboModules correctly.
     return new MainApplicationTurboModuleManagerDelegate.Builder();
   }
+
   @Override
   protected JSIModulePackage getJSIModulePackage() {
     return new JSIModulePackage() {
@@ -69,6 +76,7 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
           final ReactApplicationContext reactApplicationContext,
           final JavaScriptContextHolder jsContext) {
         final List<JSIModuleSpec> specs = new ArrayList<>();
+
         // Here we provide a new JSIModuleSpec that will be responsible of providing the
         // custom Fabric Components.
         specs.add(
@@ -77,18 +85,23 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
               public JSIModuleType getJSIModuleType() {
                 return JSIModuleType.UIManager;
               }
+
               @Override
               public JSIModuleProvider<UIManager> getJSIModuleProvider() {
                 final ComponentFactory componentFactory = new ComponentFactory();
                 CoreComponentsRegistry.register(componentFactory);
+
                 // Here we register a Components Registry.
                 // The one that is generated with the template contains no components
                 // and just provides you the one from React Native core.
                 MainComponentsRegistry.register(componentFactory);
+
                 final ReactInstanceManager reactInstanceManager = getReactInstanceManager();
+
                 ViewManagerRegistry viewManagerRegistry =
                     new ViewManagerRegistry(
                         reactInstanceManager.getOrCreateViewManagers(reactApplicationContext));
+
                 return new FabricJSIModuleProvider(
                     reactApplicationContext,
                     componentFactory,
