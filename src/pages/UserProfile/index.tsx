@@ -61,8 +61,8 @@ const UserProfile: React.FC = () => {
     useCallback(() => {
       (async () => {
         setLoading(true);
-        const isReady = await Interstitial.getIsReadyAsync();
-        if (isReady) await Interstitial.showAdAsync();
+        // const isReady = await Interstitial.getIsReadyAsync();
+        // if (isReady) await Interstitial.showAdAsync();
         const res = await api.get(`/users?user_id=${id}`);
 
         if (res.status === 200) {

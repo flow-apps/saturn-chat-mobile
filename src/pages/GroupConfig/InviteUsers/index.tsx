@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../components/Header";
 import Feather from "@expo/vector-icons/Feather";
 import {
@@ -26,19 +26,41 @@ import {
 import { useTheme } from "styled-components";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import config from "../../../config";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { FriendData } from "../../../../@types/interfaces";
+import Loading from "../../../components/Loading";
+import { useAuth } from "../../../contexts/auth";
+import api from "../../../services/api";
 
 const InviteUsers: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [friends, setFriends] = useState<FriendData[]>([]);
+  const { user } = useAuth();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id } = route.params as { id: string };
-  const { colors } = useTheme();
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const res = await api.get("/friends");
+
+      if (res.status === 200) {
+        setFriends(res.data);
+      }
+
+      setLoading(false);
+    })();
+  }, []);
 
   const handleGoCreateNewInvite = () =>
     navigation.navigate("NewInvites", { id });
 
+  if (loading) return <Loading />;
+
   return (
     <>
-      <Header title="Convidar"  />
+      <Header title="Convidar" />
       <Container>
         <YourInviteContainer>
           <YourInviteTitle>
@@ -58,31 +80,43 @@ const InviteUsers: React.FC = () => {
         </YourInviteContainer>
         <InviteFriendsContainer>
           <InviteFriendsTitle>
-            <Feather name="user-check" size={20} /> Em breve
+            <Feather name="user-check" size={20} /> Convide seus amigos
           </InviteFriendsTitle>
-          {/* <InviteFriendsSubtitle>
+          <InviteFriendsSubtitle>
             Eles precisarão aceitar o convite antes de entrar!
-          </InviteFriendsSubtitle> */}
+          </InviteFriendsSubtitle>
         </InviteFriendsContainer>
         <FriendsListContainer>
-          {/* <FriendContainer>
-            <FriendWrapper>
-              <FriendAvatar source={avatar} />
-              <FriendName>Pedro Henrique</FriendName>
-            </FriendWrapper>
-            <FriendInviteButton>
-              <FriendInviteButtonText>Convidar</FriendInviteButtonText>
-            </FriendInviteButton>
-          </FriendContainer>
-          <FriendContainer>
-            <FriendWrapper>
-              <FriendAvatar source={avatar} />
-              <FriendName>Pedro Henrique</FriendName>
-            </FriendWrapper>
-            <FriendInviteButton>
-              <FriendInviteButtonText>Convidar</FriendInviteButtonText>
-            </FriendInviteButton>
-          </FriendContainer> */}
+          {friends.map((friend, index) => {
+            const friendName =
+              friend.received_by.id === user?.id
+                ? friend.requested_by.name
+                : friend.received_by.name;
+
+            const friendId =
+              friend.received_by.id === user?.id
+                ? friend.requested_by.id
+                : friend.received_by.id;
+
+            return (
+              <FriendContainer>
+                <FriendWrapper>
+                  <FriendAvatar
+                    source={{
+                      uri:
+                        friend.received_by.id === user?.id
+                          ? friend.requested_by.avatar.url
+                          : friend.received_by.avatar.url,
+                    }}
+                  />
+                  <FriendName>{friendName}</FriendName>
+                </FriendWrapper>
+                <FriendInviteButton>
+                  <FriendInviteButtonText>Convidar</FriendInviteButtonText>
+                </FriendInviteButton>
+              </FriendContainer>
+            );
+          })}
         </FriendsListContainer>
       </Container>
     </>

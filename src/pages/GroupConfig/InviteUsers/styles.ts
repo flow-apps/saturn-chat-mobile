@@ -106,12 +106,12 @@ export const FriendName = styled.Text`
 
 export const FriendInviteButton = styled.TouchableOpacity`
   background-color: ${(props) => props.theme.colors.primary};
-  padding: 5px;
-  border-radius: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
 `;
 
 export const FriendInviteButtonText = styled.Text`
-  font-size: 16px;
-  font-family: ${fonts.heading};
+  font-size: 13px;
+  font-family: ${fonts["text-bold"]};
   color: #fff;
 `;
