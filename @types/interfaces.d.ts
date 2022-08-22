@@ -84,6 +84,9 @@ export interface FileData {
 
 export interface InviteData {
   id: string;
+  friend_id?: string;
+  sended_by?: UserData;
+  friend?: FriendData;
   group_id: string;
   group: GroupData;
   invite_code: string;

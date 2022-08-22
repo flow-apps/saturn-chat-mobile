@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
-import { FriendData } from "../../../@types/interfaces";
-import { Feather } from "@expo/vector-icons";
+import { FriendData, InviteData } from "../../../@types/interfaces";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
@@ -10,25 +9,25 @@ import {
   PresentationContainer,
   PresentationTitle,
   PresentationSubtitle,
-  FriendRequestContainer,
-  FriendRequestLeftContainer,
-  FriendRequestRightContainer,
-  FriendRequestName,
-  FriendRequestAvatar,
-  FriendRequestActionButton,
   EmptyListContainer,
   EmptyListTitle,
 } from "./styles";
-import { useTheme } from "styled-components";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import SimpleToast from "react-native-simple-toast";
+import FriendRequest from "../../components/InvitesManager/FriendRequest";
+import { StackNavigationProp } from "@react-navigation/stack";
+import _ from "lodash";
+import GroupInvite from "../../components/InvitesManager/GroupInvite";
+
+interface Request extends FriendData, InviteData {
+  type: "FRIEND_REQUEST" | "GROUP_INVITE";
+}
 
 const InvitesManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [friendRequests, setFriendRequests] = useState<FriendData[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
 
-  const navigation = useNavigation();
-  const { colors } = useTheme();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   useFocusEffect(
     useCallback(() => {
@@ -37,7 +36,10 @@ const InvitesManager: React.FC = () => {
         const res = await api.get("/friends/requests");
 
         if (res.status === 200) {
-          setFriendRequests(res.data);
+          const data = res.data;
+          const sorted = _.orderBy(data, ["created_at"], "desc");
+
+          setRequests(sorted);
         }
 
         setLoading(false);
@@ -64,11 +66,9 @@ const InvitesManager: React.FC = () => {
           : "Amigo rejeitado com sucesso!"
       );
 
-      const newFriendRequests = friendRequests.filter(
-        (friend) => friend.id !== friendId
-      );
+      const newRequests = requests.filter((friend) => friend.id !== friendId);
 
-      setFriendRequests(newFriendRequests);
+      setRequests(newRequests);
     }
   };
 
@@ -79,7 +79,7 @@ const InvitesManager: React.FC = () => {
       <Header title="Convites e solicitações" />
       <Container>
         <FlatList
-          data={friendRequests}
+          data={requests}
           keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={() => (
             <PresentationContainer>
@@ -98,35 +98,18 @@ const InvitesManager: React.FC = () => {
             </EmptyListContainer>
           )}
           renderItem={({ item }) => {
-            return (
-              <FriendRequestContainer
-                onPress={() => OpenUserProfile(item.requested_by.id)}
-              >
-                <FriendRequestLeftContainer>
-                  <FriendRequestAvatar
-                    source={{ uri: item.requested_by.avatar.url }}
-                  />
-                  <FriendRequestName>
-                    {item.requested_by.name}
-                  </FriendRequestName>
-                </FriendRequestLeftContainer>
-                <FriendRequestRightContainer>
-                  <FriendRequestActionButton
-                    onPress={() =>
-                      handleAcceptOrRejectFriend(item.id, "ACCEPT")
-                    }
-                  >
-                    <Feather name="check" size={24} color={colors.primary} />
-                  </FriendRequestActionButton>
-                  <FriendRequestActionButton
-                    onPress={() =>
-                      handleAcceptOrRejectFriend(item.id, "REJECT")
-                    }
-                  >
-                    <Feather name="x" size={24} color={colors.red} />
-                  </FriendRequestActionButton>
-                </FriendRequestRightContainer>
-              </FriendRequestContainer>
+            return item.type === "FRIEND_REQUEST" ? (
+              <FriendRequest
+                friend={item}
+                OpenUserProfile={OpenUserProfile}
+                handleAcceptOrRejectFriend={handleAcceptOrRejectFriend}
+              />
+            ) : (
+              <GroupInvite
+                invite={item}
+                OpenGroupProfile={() => {}}
+                handleAcceptOrRejectInvite={() => {}}
+              />
             );
           }}
         />
