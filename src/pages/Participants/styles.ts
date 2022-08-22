@@ -1,9 +1,8 @@
 import { FlatList } from "react-native-gesture-handler";
-import { ParticipantData } from "../Home";
-import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 import { ParticipantsData } from "../../../@types/interfaces";
+import CachedImage from "../../components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;
@@ -73,15 +72,13 @@ export const ParticipantStatus = styled.View<{ status: "ONLINE" | "OFFLINE" }>`
   background-color: ${(props) =>
     props.status === "ONLINE"
       ? props.theme.colors.green
-      : props.theme.colors.dark_gray
-  };
+      : props.theme.colors.dark_gray};
 
   border: 1.5px solid
     ${(props) =>
       props.status === "ONLINE"
         ? props.theme.colors.green + "99"
-        : props.theme.colors.dark_gray + "99"
-  };
+        : props.theme.colors.dark_gray + "99"};
   width: 12px;
   height: 12px;
   border-radius: 6px;
@@ -89,7 +86,7 @@ export const ParticipantStatus = styled.View<{ status: "ONLINE" | "OFFLINE" }>`
   right: 15px;
 `;
 
-export const ParticipantAvatar = styled(FastImage)`
+export const ParticipantAvatar = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;

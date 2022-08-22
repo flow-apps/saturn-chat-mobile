@@ -24,6 +24,7 @@ import {
   WelcomeContainer,
   WelcomeTitle,
 } from "./styles";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -75,6 +76,7 @@ const Login: React.FC = () => {
                   onChangeText={setEmail}
                   value={email}
                   keyboardType="email-address"
+                  autoCapitalize="none"
                 />
               </FieldContainer>
               <FieldContainer>
@@ -84,7 +86,8 @@ const Login: React.FC = () => {
                 <Input
                   onChangeText={setPassword}
                   value={password}
-                  passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
+                  passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
+                  autoCapitalize="none"
                   secureTextEntry
                 />
                 <ForgotPassword>

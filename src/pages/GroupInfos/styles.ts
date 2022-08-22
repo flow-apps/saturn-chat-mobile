@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import FastImage from 'react-native-fast-image'
 import { darken } from "polished";
+import CachedImage from "../../components/CachedImage";
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -31,7 +31,7 @@ export const AvatarContainer = styled.TouchableOpacity`
   z-index: 5;
 `
 
-export const Avatar = styled(FastImage)`
+export const Avatar = styled(CachedImage)`
   width: 180px;
   height: 180px;
   border-radius: 90px;

@@ -35,6 +35,7 @@ import {
 } from "./styles";
 import { useFirebase } from "../../contexts/firebase";
 import SimpleToast from "react-native-simple-toast";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -104,19 +105,7 @@ const GroupInfos: React.FC = () => {
                 disabled={!group.group_avatar}
                 activeOpacity={0.7}
               >
-                {group.group_avatar ? (
-                  <Avatar
-                    source={{
-                      uri: group.group_avatar.url,
-                      cache: "immutable",
-                      priority: "high",
-                    }}
-                  />
-                ) : (
-                  <Avatar
-                    source={require("../../assets/avatar-placeholder.png")}
-                  />
-                )}
+                <Avatar uri={group.group_avatar?.url} />
               </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>

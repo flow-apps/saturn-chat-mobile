@@ -8,6 +8,11 @@ import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import { useAuth } from "../../contexts/auth";
 import api from "../../services/api";
+import {
+  getFriendAvatar,
+  getFriendID,
+  getFriendName,
+} from "../../utils/friends";
 
 import {
   Container,
@@ -82,15 +87,8 @@ const Friends: React.FC = () => {
             </EmptyListContainer>
           )}
           renderItem={({ item }) => {
-            const friendName =
-              item.received_by.id === user?.id
-                ? item.requested_by.name
-                : item.received_by.name;
-
-            const friendId =
-              item.received_by.id === user?.id
-                ? item.requested_by.id
-                : item.received_by.id;
+            const friendName = getFriendName(user.id, item);
+            const friendId = getFriendID(user.id, item);
 
             return (
               <FriendContainer
@@ -103,14 +101,7 @@ const Friends: React.FC = () => {
                 }
               >
                 <FriendLeftContainer>
-                  <FriendAvatar
-                    source={{
-                      uri:
-                        item.received_by.id === user?.id
-                          ? item.requested_by.avatar.url
-                          : item.received_by.avatar.url,
-                    }}
-                  />
+                  <FriendAvatar uri={getFriendAvatar(user.id, item)} />
                   <FriendName>{friendName}</FriendName>
                 </FriendLeftContainer>
                 {_.isNumber(item?.unreadMessagesAmount) &&

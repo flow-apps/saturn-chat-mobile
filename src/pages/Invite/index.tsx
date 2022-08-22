@@ -24,13 +24,14 @@ import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";
 import { useAuth } from "../../contexts/auth";
 import { useFirebase } from "../../contexts/firebase";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const Invite: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [invite, setInvite] = useState<null | InviteData>(null);
   const [participating, setParticipating] = useState(false);
   const { user } = useAuth();
-  const { analytics } = useFirebase()
+  const { analytics } = useFirebase();
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -98,8 +99,8 @@ const Invite: React.FC = () => {
 
           analytics.logEvent("join_group", {
             method: "invite",
-            group_id: data.group_id
-          })
+            group_id: data.group_id,
+          });
           navigation.navigate("Chat", { id: data.group_id });
         }
       })
@@ -118,19 +119,7 @@ const Invite: React.FC = () => {
       >
         <InviteContainer>
           <InviteTitle>Você foi convidado(a) para o grupo:</InviteTitle>
-          {invite?.group.group_avatar ? (
-            <InviteAvatarImage
-              source={{
-                cache: "immutable",
-                priority: "high",
-                uri: invite.group.group_avatar.url,
-              }}
-            />
-          ) : (
-            <InviteAvatarImage
-              source={require("../../assets/avatar-placeholder.png")}
-            />
-          )}
+          <InviteAvatarImage uri={invite.group.group_avatar?.url} />
           <InviteGroupName>{invite?.group.name}</InviteGroupName>
           <AcceptInviteButton onPress={handleJoin} enabled={!participating}>
             <AcceptInviteText>

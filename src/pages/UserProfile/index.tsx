@@ -151,19 +151,7 @@ const UserProfile: React.FC = () => {
                 disabled={!userInfos.avatar}
                 activeOpacity={0.7}
               >
-                {userInfos.avatar ? (
-                  <Avatar
-                    source={{
-                      uri: userInfos?.avatar.url,
-                      cache: "immutable",
-                      priority: "high",
-                    }}
-                  />
-                ) : (
-                  <Avatar
-                    source={require("../../assets/avatar-placeholder.png")}
-                  />
-                )}
+                <Avatar uri={userInfos?.avatar.url} />
               </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>

@@ -89,19 +89,7 @@ const Message = ({
           onPress={handleGoParticipant}
           disabled={message.participant.state !== ParticipantStates.JOINED}
         >
-          {message.author.avatar ? (
-            <MessageAvatar
-              source={{
-                uri: message.author.avatar.url,
-                cache: "immutable",
-                priority: "high",
-              }}
-            />
-          ) : (
-            <MessageAvatar
-              source={require("../../../assets/avatar-placeholder.png")}
-            />
-          )}
+          <MessageAvatar uri={message.author.avatar.url} />
           <PremiumName
             name={message.author.name}
             nameSize={12}

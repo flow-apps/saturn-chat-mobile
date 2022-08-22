@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import _ from "lodash";
@@ -13,7 +13,6 @@ import Header from "../../components/Header";
 import { HeaderButton } from "../../components/Header/styles";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
-import { FAB } from "react-native-paper";
 import {
   Container,
   GroupButton,
@@ -160,19 +159,7 @@ const Home: React.FC = () => {
                 activeOpacity={0.5}
                 onPress={() => handleGoChat(item.id)}
               >
-                {item.group_avatar && item.group_avatar.url ? (
-                  <GroupImage
-                    source={{
-                      uri: item.group_avatar.url,
-                      priority: "high",
-                      cache: "immutable",
-                    }}
-                  />
-                ) : (
-                  <GroupImage
-                    source={require("../../assets/avatar-placeholder.png")}
-                  />
-                )}
+                <GroupImage uri={item.group_avatar?.url} />
                 {Number(item?.unreadMessagesAmount) > 0 && <GroupHasMessage />}
               </GroupButton>
             )}

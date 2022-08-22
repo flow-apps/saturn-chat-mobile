@@ -1,8 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import AnimatedLottieView from "lottie-react-native";
-import FastImage from "react-native-fast-image";
 import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+import CachedImage from "../../components/CachedImage";
 import fonts from "../../styles/fonts";
 
 export const Container = styled(LinearGradient)`
@@ -40,7 +40,7 @@ export const InviteInvalidReason = styled.Text`
   font-family: ${fonts.text};
 `;
 
-export const InviteAvatarImage = styled(FastImage)`
+export const InviteAvatarImage = styled(CachedImage)`
   width: 100px;
   height: 100px;
   margin: 0 auto;

@@ -46,7 +46,7 @@ const ImagePreview = () => {
             useNativeDriver={true}
           >
             <Image
-              source={{ uri: url }}
+              uri={url}
               width={dimensions.width}
               height={dimensions.height}
               resizeMode="center"

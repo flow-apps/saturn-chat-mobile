@@ -20,6 +20,7 @@ import api from "../../services/api";
 import Loading from "../../components/Loading";
 import { useTheme } from "styled-components";
 import Alert from "../../components/Alert";
+import { getFriendAvatar, getFriendName } from "../../utils/friends";
 
 const FriendsManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -57,13 +58,13 @@ const FriendsManager: React.FC = () => {
 
   const removeFriend = async () => {
     setShowUnfriendAlert(false);
-    
+
     if (unfriend) {
       setLoading(true);
       const res = await api.delete(`/friends/remove/${unfriend.id}`);
 
       if (res.status === 200) {
-        setFriends(old => old.filter((friend) => friend.id !== unfriend.id));
+        setFriends((old) => old.filter((friend) => friend.id !== unfriend.id));
         setUnfriend(null);
       }
       setLoading(false);
@@ -90,23 +91,13 @@ const FriendsManager: React.FC = () => {
             data={friends}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
-              const friendName =
-                item.received_by.id === user?.id
-                  ? item.requested_by.name
-                  : item.received_by.name;
+              const friendName = getFriendName(user.id, item);
 
               return (
                 <Friend>
                   <FriendInfos>
                     <FriendAvatarContainer>
-                      <FriendAvatar
-                        source={{
-                          uri:
-                            item.received_by.id === user?.id
-                              ? item.requested_by.avatar.url
-                              : item.received_by.avatar.url,
-                        }}
-                      />
+                      <FriendAvatar uri={getFriendAvatar(user.id, item)} />
                     </FriendAvatarContainer>
                     <FriendName>{friendName}</FriendName>
                   </FriendInfos>

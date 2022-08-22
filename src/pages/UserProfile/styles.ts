@@ -1,7 +1,7 @@
-import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import { darken } from "polished"
+import { darken } from "polished";
+import CachedImage from "../../components/CachedImage";
 
 export const Container = styled.ScrollView`
   flex: 1;
@@ -18,7 +18,7 @@ export const FriendsContainer = styled.TouchableOpacity``;
 
 export const FriendsInfosContainer = styled.View`
   margin-top: 10px;
-  background-color: ${props => darken(0.085, props.theme.colors.shape)};
+  background-color: ${(props) => darken(0.085, props.theme.colors.shape)};
   padding: 10px;
 `;
 
@@ -54,7 +54,7 @@ export const AvatarContainer = styled.TouchableOpacity`
   z-index: 5;
 `;
 
-export const Avatar = styled(FastImage)`
+export const Avatar = styled(CachedImage)`
   width: 180px;
   height: 180px;
   border-radius: 90px;

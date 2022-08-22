@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import CachedImage from "../../components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;
@@ -12,7 +13,7 @@ export const ImageContainer = styled.View`
   justify-content: center;
 `;
 
-export const Image = styled.Image`
+export const Image = styled(CachedImage)`
   width: 100%;
   height: 100%;
 `;

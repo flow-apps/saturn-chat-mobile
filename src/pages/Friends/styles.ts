@@ -1,5 +1,5 @@
-import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
+import CachedImage from "../../components/CachedImage";
 import fonts from "../../styles/fonts";
 
 export const Container = styled.View`
@@ -39,7 +39,7 @@ export const FriendLeftContainer = styled.View`
   flex: 1;
 `;
 
-export const FriendAvatar = styled(FastImage)`
+export const FriendAvatar = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;

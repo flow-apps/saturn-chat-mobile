@@ -1,6 +1,5 @@
 import styled from "styled-components/native";
 import { Video } from "expo-av"
-// import Video from "react-native-video";
 import fonts from "../../styles/fonts";
 import { Dimensions } from "react-native";
 

@@ -20,19 +20,7 @@ const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
     <>
       <Container as={TouchableOpacity} {...rest}>
         <GroupInfos>
-          {image ? (
-            <GroupImage
-              source={{ 
-                uri: image,
-                cache: "immutable",
-                priority: "high"
-              }}
-            />
-          ) : (
-            <GroupImage
-              source={require("../../assets/avatar-placeholder.png")}
-            />
-          )}
+          <GroupImage uri={image} />
           <GroupName numberOfLines={1}>{name}</GroupName>
         </GroupInfos>
         {unreadMessages > 0 && (

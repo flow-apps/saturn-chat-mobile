@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
-import FastImage from 'react-native-fast-image'
+import CachedImage from "../../CachedImage";
 
 interface IMessageProps {
   isRight?: boolean;
@@ -20,7 +20,7 @@ export const MessageAuthorContainer = styled.TouchableOpacity`
   opacity: ${props => props.disabled ? 0.5 : 1};
 `;
 
-export const MessageAvatar = styled(FastImage)`
+export const MessageAvatar = styled(CachedImage)`
   width: 22px;
   height: 22px;
   border-radius: 11px;

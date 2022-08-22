@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 import LottieView from "lottie-react-native";
 import { memo } from "react";
-import FastImage from "react-native-fast-image";
+import CachedImage from "../../components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;
@@ -114,7 +114,7 @@ export const GroupInfosContainer = styled.View`
   margin-left: 20px;
 `;
 
-export const GroupImage = styled(FastImage)`
+export const GroupImage = styled(CachedImage)`
   width: 120px;
   height: 120px;
   border-radius: 10px;

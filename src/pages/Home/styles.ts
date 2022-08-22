@@ -1,9 +1,9 @@
 import { Animated, Dimensions } from "react-native";
-import FastImage from "react-native-fast-image";
 import LottieView from "lottie-react-native";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
 import { MotiView } from "moti";
+import CachedImage from "../../components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;
@@ -57,7 +57,7 @@ export const GroupHasMessage = styled.View`
   border-radius: 10px;
 `;
 
-export const GroupImage = styled(FastImage)`
+export const GroupImage = styled(CachedImage)`
   width: 70px;
   height: 70px;
   border-radius: 35px;

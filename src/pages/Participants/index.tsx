@@ -33,6 +33,7 @@ import PremiumName from "../../components/PremiumName";
 import { ParticipantsData } from "../../../@types/interfaces";
 import _ from "lodash";
 import { useAuth } from "../../contexts/auth";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const Participants: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
@@ -113,19 +114,7 @@ const Participants: React.FC = () => {
         <ParticipantContainer onPress={() => handleGoParticipant(item)}>
           <Participant>
             <ParticipantAvatarContainer>
-              {item.user.avatar ? (
-                <ParticipantAvatar
-                  source={{
-                    uri: item.user.avatar.url,
-                    cache: "immutable",
-                    priority: "high",
-                  }}
-                />
-              ) : (
-                <ParticipantAvatar
-                  source={require("../../assets/avatar-placeholder.png")}
-                />
-              )}
+              <ParticipantAvatar uri={item.user.avatar?.url} />
               <ParticipantStatus
                 status={item.user.id === user?.id ? "ONLINE" : item.status}
               />

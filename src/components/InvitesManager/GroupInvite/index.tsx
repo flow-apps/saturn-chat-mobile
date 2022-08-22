@@ -34,17 +34,13 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
   return (
     <GroupInviteContainer onPress={() => OpenGroupProfile(invite.group_id)}>
       <GroupInviteLeftContainer>
-        <GroupInviteAvatar
-          uri={invite.group.group_avatar?.url}
-          width={45}
-          height={45}
-        />
+        <GroupInviteAvatar uri={invite.group.group_avatar?.url} />
         <GroupInviteInfosWrapper>
           <GroupInviteName numberOfLines={1} ellipsizeMode="middle">
             {invite.group.name}
           </GroupInviteName>
           <GroupInviteParticipantsAmount>
-            1000 participantes
+            5 participantes
           </GroupInviteParticipantsAmount>
         </GroupInviteInfosWrapper>
       </GroupInviteLeftContainer>
