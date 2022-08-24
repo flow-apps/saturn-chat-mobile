@@ -2,6 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.18.0
+
+- Invite friends to groups
+- Add cached image with placeholder in all screens
+- Improve style
+
 ## 0.0.17.0
 
 - Add direct messages list

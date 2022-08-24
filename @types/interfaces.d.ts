@@ -21,6 +21,8 @@ export interface FriendData {
   unreadMessagesAmount?: number;
   requested_by: UserData;
   received_by: UserData;
+  received_by_id: string;
+  requested_by_id: string;
   state: FriendsStates;
   created_at: string;
 }

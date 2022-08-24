@@ -33,7 +33,7 @@ const InvitesManager: React.FC = () => {
     useCallback(() => {
       (async () => {
         setLoading(true);
-        const res = await api.get("/friends/requests");
+        const res = await api.get("/invites/requests");
 
         if (res.status === 200) {
           const data = res.data;
@@ -72,6 +72,30 @@ const InvitesManager: React.FC = () => {
     }
   };
 
+  const handleAcceptOrRejectInvite = async (
+    inviteID: string,
+    action: "ACCEPT" | "REJECT"
+  ) => {
+    if (action === "ACCEPT") {
+      const res = await api.get(`/inv/join/${inviteID}`)
+
+      if (res.status === 200) {
+        SimpleToast.show("Convite aceito!")
+      }
+
+    } else {
+      const res = await api.delete(`/invites/${inviteID}`)
+
+      if (res.status === 204) {
+        SimpleToast.show("Convite recusado!")
+      }
+    }
+
+    const filteredRequests = requests.filter(request => request.id !== inviteID)
+    setRequests(filteredRequests)
+
+  };
+
   if (loading) return <Loading />;
 
   return (
@@ -108,7 +132,7 @@ const InvitesManager: React.FC = () => {
               <GroupInvite
                 invite={item}
                 OpenGroupProfile={() => {}}
-                handleAcceptOrRejectInvite={() => {}}
+                handleAcceptOrRejectInvite={handleAcceptOrRejectInvite}
               />
             );
           }}

@@ -8,6 +8,8 @@ import Header from "../../../components/Header";
 import Feather from "@expo/vector-icons/Feather";
 import {
   Container,
+  EmptyListContainer,
+  EmptyListTitle,
   FriendAvatar,
   FriendContainer,
   FriendInviteButton,
@@ -38,7 +40,12 @@ import api from "../../../services/api";
 
 import _ from "lodash";
 import SimpleToast from "react-native-simple-toast";
-import { getFriendAvatar, getFriendID, getFriendName } from "../../../utils/friends";
+import {
+  getFriendAvatar,
+  getFriendID,
+  getFriendName,
+} from "../../../utils/friends";
+import { FlatList } from "react-native";
 
 interface Friend extends FriendData {
   invited: boolean;
@@ -61,6 +68,8 @@ const InviteUsers: React.FC = () => {
         if (res.status === 200) {
           const data = res.data as Friend[];
           const sorted = _.sortBy(data, { invited: false });
+
+          console.log(data)
 
           setRequests(sorted);
         }
@@ -100,57 +109,73 @@ const InviteUsers: React.FC = () => {
     <>
       <Header title="Convidar" />
       <Container>
-        <YourInviteContainer>
-          <YourInviteTitle>
-            <Feather name="user-plus" size={18} /> Convite do grupo
-          </YourInviteTitle>
-          <YourInviteSubtitle>
-            Crie e gerencie todos os convites do grupo através do nosso
-            gerenciador de convites
-          </YourInviteSubtitle>
-          <NewInviteContainer>
-            <NewInviteButton onPress={handleGoCreateNewInvite}>
-              <NewInviteButtonText>
-                <Feather name="plus" size={16} /> Gerenciar convites
-              </NewInviteButtonText>
-            </NewInviteButton>
-          </NewInviteContainer>
-        </YourInviteContainer>
-        <InviteFriendsContainer>
-          <InviteFriendsTitle>
-            <Feather name="user-check" size={20} /> Convide seus amigos
-          </InviteFriendsTitle>
-          <InviteFriendsSubtitle>
-            Somente amigos que não estão no grupo aparecem aqui. Eles precisarão
-            aceitar o convite para entrar.
-          </InviteFriendsSubtitle>
-        </InviteFriendsContainer>
         <FriendsListContainer>
-          {requests.map((friend, index) => {
-            const friendName = getFriendName(user.id, friend);
-            const friendId = getFriendID(user.id, friend);
+          <FlatList
+            data={requests}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={() => (
+              <EmptyListContainer>
+                <EmptyListTitle>
+                  Não há amigos para convidar. Tente compartilhar um convite
+                  através de links.
+                </EmptyListTitle>
+              </EmptyListContainer>
+            )}
+            ListHeaderComponent={() => (
+              <>
+                <YourInviteContainer>
+                  <YourInviteTitle>
+                    <Feather name="user-plus" size={18} /> Convite do grupo
+                  </YourInviteTitle>
+                  <YourInviteSubtitle>
+                    Crie e gerencie todos os convites do grupo através do nosso
+                    gerenciador de convites
+                  </YourInviteSubtitle>
+                  <NewInviteContainer>
+                    <NewInviteButton onPress={handleGoCreateNewInvite}>
+                      <NewInviteButtonText>
+                        <Feather name="plus" size={16} /> Gerenciar convites
+                      </NewInviteButtonText>
+                    </NewInviteButton>
+                  </NewInviteContainer>
+                </YourInviteContainer>
+                <InviteFriendsContainer>
+                  <InviteFriendsTitle>
+                    <Feather name="user-check" size={20} /> Convide seus amigos
+                  </InviteFriendsTitle>
+                  <InviteFriendsSubtitle>
+                    Somente amigos que não estão no grupo aparecem aqui. Eles
+                    precisarão aceitar o convite para entrar.
+                  </InviteFriendsSubtitle>
+                </InviteFriendsContainer>
+              </>
+            )}
+            renderItem={({ item }) => {
+              const friendName = getFriendName(user.id, item);
+              const friendId = getFriendID(user.id, item);
 
-            return (
-              <FriendContainer key={index}>
-                <FriendWrapper>
-                  <FriendAvatar
-                    source={{
-                      uri: getFriendAvatar(user.id, friend),
-                    }}
-                  />
-                  <FriendName>{friendName}</FriendName>
-                </FriendWrapper>
-                <FriendInviteButton
-                  onPress={() => handleInviteFriend(friendId)}
-                  disabled={friend.invited}
-                >
-                  <FriendInviteButtonText>
-                    {friend.invited ? "Convidado" : "Convidar"}
-                  </FriendInviteButtonText>
-                </FriendInviteButton>
-              </FriendContainer>
-            );
-          })}
+              return (
+                <FriendContainer>
+                  <FriendWrapper>
+                    <FriendAvatar
+                      source={{
+                        uri: getFriendAvatar(user.id, item),
+                      }}
+                    />
+                    <FriendName>{friendName}</FriendName>
+                  </FriendWrapper>
+                  <FriendInviteButton
+                    onPress={() => handleInviteFriend(friendId)}
+                    disabled={item.invited}
+                  >
+                    <FriendInviteButtonText>
+                      {item.invited ? "Convidado" : "Convidar"}
+                    </FriendInviteButtonText>
+                  </FriendInviteButton>
+                </FriendContainer>
+              );
+            }}
+          />
         </FriendsListContainer>
       </Container>
     </>
