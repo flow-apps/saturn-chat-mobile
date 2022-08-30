@@ -8,6 +8,7 @@ import { useCallback } from "react";
 import { Alert, Platform } from "react-native";
 import { useAuth } from "./auth";
 import { configureNotifications } from "../configs/notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface NotificationsContextProps {
   expoToken: string;
@@ -73,6 +74,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     if ((newToken && newToken !== expoToken) && signed) {      
       setExpoToken(newToken);
+      await AsyncStorage.setItem("@SaturnChat:NotificationToken", JSON.parse(newToken))
 
       await api
         .post("/users/notify/register", {

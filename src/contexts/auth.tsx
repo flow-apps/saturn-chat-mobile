@@ -23,7 +23,9 @@ interface AuthContextData {
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState<UserData | null>(null);
   const [loadingData, setLoadingData] = useState(true);
@@ -43,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (storageUser && storageToken) {
         api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
-        websocket.query.token = `Bearer ${storageToken}`        
+        websocket.query.token = `Bearer ${storageToken}`;
         setUser(JSON.parse(String(storageUser)));
         setToken(`Bearer ${storageToken}`);
       }
@@ -57,13 +59,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (data.token) {
       await AsyncStorage.setItem("@SaturnChat:token", data.token, () => {
         api.defaults.headers["authorization"] = `Bearer ${data.token}`;
-        websocket.query.token = `Bearer ${data.token}`
+        websocket.query.token = `Bearer ${data.token}`;
         setToken(data.token);
       });
     }
-    await AsyncStorage.setItem("@SaturnChat:user", JSON.stringify(data.user), () => {
-      setUser(data.user);
-    });
+    await AsyncStorage.setItem(
+      "@SaturnChat:user",
+      JSON.stringify(data.user),
+      () => {
+        setUser(data.user);
+      }
+    );
   }
 
   async function signIn(email: string, password: string) {
@@ -99,14 +105,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   function signOut() {
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
-
         if (storedToken) {
-          await api.delete(`/users/notify/unregister/${storedToken}`)
+          await api.delete(`/users/notify/unregister/${storedToken}`);
           setStoredToken("");
         }
 
         api.defaults.headers["authorization"] = undefined;
-        websocket.query.token = ""
+        websocket.query.token = "";
         setToken("");
         setUser(null);
       }
