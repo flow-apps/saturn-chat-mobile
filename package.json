@@ -72,6 +72,7 @@
     "react-native-markdown-display": "^7.0.0-alpha.2",
     "react-native-mime-types": "^2.3.0",
     "react-native-onboarding-swiper": "^1.2.0",
+    "react-native-onesignal": "^4.4.1",
     "react-native-paper": "^4.9.1",
     "react-native-pdf": "https://github.com/wonday/react-native-pdf.git",
     "react-native-reanimated": "~2.8.0",
