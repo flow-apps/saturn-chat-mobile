@@ -29,8 +29,8 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
     .disable(["image", "heading", "table", "list", "link", "blockquote", "hr"])
     .use(require("markdown-it-linkscheme"));
 
-  const copyLink = useCallback((url: string) => {
-    Clipboard.setString(url);
+  const copyLink = useCallback(async (url: string) => {
+    await Clipboard.setStringAsync(url);
     SimpleToast.show("Link copiado", SimpleToast.SHORT);
   }, []);
 

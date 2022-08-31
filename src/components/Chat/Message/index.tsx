@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useState, useMemo } from "react";
 
+import secrets from "../../../secrets.json";
 import isSameMinute from "date-fns/isSameMinute";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
@@ -22,7 +23,7 @@ import { Swipeable } from "react-native-gesture-handler";
 import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
 import FilePreview from "../FilePreview";
-import MessageOptions, { IOptions } from "../../MessageOptions";
+import MessageOptions from "../../MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
@@ -41,6 +42,8 @@ import _ from "lodash";
 import { useAuth } from "../../../contexts/auth";
 import ReplyingMessage from "../ReplyingMessage";
 import { useAudioPlayer } from "../../../contexts/audioPlayer";
+
+import URLParser from "url-parse";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -124,7 +127,7 @@ const Message = ({
         return <></>;
       }
     }
-  }
+  };
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
@@ -147,22 +150,28 @@ const Message = ({
     }
 
     if (message.voice_message) {
-      await unloadAudio(message.voice_message.name)
+      await unloadAudio(message.voice_message.name);
     }
 
     socket.emit("delete_user_message", message.id);
     setDeleted(true);
-  }
+  };
 
-  const alertLink = useCallback((url: string) => {
-    setLinkUrl(url);
+  const alertLink = useCallback(async (link: string) => {
+    const { hostname } = new URLParser(link);
+    
+    if (secrets.SaturnChatDomains.includes(hostname)) {
+      return await openLink(link);
+    }
+    
+    setLinkUrl(link);    
     setShowLinkAlert(true);
-  }, []);
+  }, [message]);
 
-  const openLink = useCallback(async () => {
+  const openLink = useCallback(async (passedLink = "") => {
     setShowLinkAlert(false);
 
-    await linkUtils.openLink(linkUrl);
+    await linkUtils.openLink(passedLink || linkUrl);
 
     setLinkUrl("");
   }, [linkUrl]);
