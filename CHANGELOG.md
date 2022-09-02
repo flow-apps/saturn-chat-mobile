@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.0.19.0
+
+- Invites card in message
+- Open Saturn Chat links without warnings
+
 ## 0.0.18.0
 
 - Invite friends to groups
