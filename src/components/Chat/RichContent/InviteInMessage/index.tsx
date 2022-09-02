@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
+import SimpleToast from "react-native-simple-toast";
 import { InviteData } from "../../../../../@types/interfaces";
 import { useAuth } from "../../../../contexts/auth";
+import { useFirebase } from "../../../../contexts/firebase";
+import { ParticipantData } from "../../../../pages/Home";
 import api from "../../../../services/api";
 import LoadingIndicator from "../../../LoadingIndicator";
 
@@ -15,8 +18,6 @@ import {
   GroupDescription,
   GroupRightSideContainer,
   InviteTitle,
-  LottieAnimation,
-  LottieAnimationContainer,
 } from "./styles";
 
 interface InviteInMessageProps {
@@ -29,6 +30,7 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
   const [participating, setParticipating] = useState(false);
 
   const { user } = useAuth();
+  const { analytics } = useFirebase();
 
   useEffect(() => {
     (async () => {
@@ -50,6 +52,27 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
       setLoading(false);
     })();
   }, []);
+
+  const handleJoin = async () => {
+    await api
+      .get(`/inv/join/${inviteID}`)
+      .then((res) => {
+        if (res.status === 200) {
+          const data = res.data as ParticipantData;
+
+          analytics.logEvent("join_group", {
+            method: "invite",
+            group_id: data.group_id,
+          });
+
+          SimpleToast.show(`Você entrou no grupo '${data.group.name}'!`);
+          setParticipating(true)
+        }
+      })
+      .catch((err) => {
+        SimpleToast.show("Erro ao usar o convite");
+      });
+  };
 
   if (loading) {
     return (
@@ -90,7 +113,7 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             </GroupDescription>
           </GroupLeftSideContainer>
         </GroupContainer>
-        <AcceptInviteButton enabled={!participating}>
+        <AcceptInviteButton onPress={handleJoin} enabled={!participating}>
           <AcceptInviteText>
             {participating ? "Você já entrou!" : "Entrar no grupo"}
           </AcceptInviteText>
@@ -100,4 +123,4 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
   );
 };
 
-export default InviteInMessage;
+export default memo(InviteInMessage);

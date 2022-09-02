@@ -9,6 +9,7 @@ const token = AsyncStorage.getItem("@SaturnChat:token") || undefined;
 const api = axios.create({
   baseURL: config.API_URL,
   headers: {
+    // @ts-ignore
     authorization: token,
   },
 });
@@ -54,10 +55,12 @@ api.interceptors.response.use(
       httpMetric.putAttribute("message", error.response.data.message);
       await httpMetric.stop();
     } finally {
-      SimpleToast.show(
-        `Request failed (${error.response.status})`,
-        SimpleToast.SHORT
-      );
+      if (__DEV__) {
+        SimpleToast.show(
+          `Request failed (${error.response.status})`,
+          SimpleToast.SHORT
+        );
+      }
       return Promise.reject(error);
     }
   }
