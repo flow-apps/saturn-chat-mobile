@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState, useMemo } from "react";
+import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
 
 import secrets from "../../../secrets.json";
 import isSameMinute from "date-fns/isSameMinute";
@@ -44,6 +44,7 @@ import ReplyingMessage from "../ReplyingMessage";
 import { useAudioPlayer } from "../../../contexts/audioPlayer";
 
 import URLParser from "url-parse";
+import InviteInMessage from "../RichContent/InviteInMessage";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -53,6 +54,10 @@ interface MessageProps {
   socket: Socket;
   onReplyMessage: (message: MessageData) => void;
   children?: React.ReactNode;
+}
+
+interface InvitesData {
+  id: string;
 }
 
 const Message = ({
@@ -67,6 +72,8 @@ const Message = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [hasInvite, setHasInvite] = useState(false);
+  const [invitesData, setInvitesData] = useState<InvitesData[]>([]);
 
   const { user } = useAuth();
   const { colors } = useTheme();
@@ -79,6 +86,34 @@ const Message = ({
 
   const sended = useMemo(() => {
     return _.isUndefined(message?.sended) ? true : message.sended;
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const allLinks = linkUtils.getAllLinksFromText(message.message);
+
+      allLinks.map((link) => {
+        const { host, pathname } = new URLParser(link);
+        if (!secrets.SaturnChatDomains.includes(host))
+          return
+        if (!pathname) 
+          return;
+
+        const partsOfPath = pathname.split("/").filter(Boolean);
+
+        if (partsOfPath.includes("invite")) {
+          if (partsOfPath.length !== 2) 
+            return;
+
+          if (!hasInvite) {
+            setHasInvite(true);
+          }
+
+          const inviteID = partsOfPath.pop();
+          setInvitesData((old) => [...old, { id: inviteID }]);
+        }
+      });
+    })();
   }, []);
 
   const handleGoParticipant = () => {
@@ -157,24 +192,30 @@ const Message = ({
     setDeleted(true);
   };
 
-  const alertLink = useCallback(async (link: string) => {
-    const { hostname } = new URLParser(link);
-    
-    if (secrets.SaturnChatDomains.includes(hostname)) {
-      return await openLink(link);
-    }
-    
-    setLinkUrl(link);    
-    setShowLinkAlert(true);
-  }, [message]);
+  const alertLink = useCallback(
+    async (link: string) => {
+      const { hostname } = new URLParser(link);
 
-  const openLink = useCallback(async (passedLink = "") => {
-    setShowLinkAlert(false);
+      if (secrets.SaturnChatDomains.includes(hostname)) {
+        return await openLink(link);
+      }
 
-    await linkUtils.openLink(passedLink || linkUrl);
+      setLinkUrl(link);
+      setShowLinkAlert(true);
+    },
+    [message]
+  );
 
-    setLinkUrl("");
-  }, [linkUrl]);
+  const openLink = useCallback(
+    async (passedLink = "") => {
+      setShowLinkAlert(false);
+
+      await linkUtils.openLink(passedLink || linkUrl);
+
+      setLinkUrl("");
+    },
+    [linkUrl]
+  );
 
   const closeLink = useCallback(() => {
     setLinkUrl("");
@@ -203,6 +244,18 @@ const Message = ({
       });
     }
   }, []);
+
+  const renderInvites = useCallback(() => {
+    if (!hasInvite) return <></>;
+
+    return (
+      <>
+        {invitesData.map((invite) => (
+          <InviteInMessage key={invite.id} inviteID={invite.id} />
+        ))}
+      </>
+    );
+  }, [hasInvite, invitesData]);
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
@@ -278,6 +331,7 @@ const Message = ({
               <AudioPlayer audio={message.voice_message} deleted={deleted} />
             )}
             {renderFiles()}
+            {renderInvites()}
           </MessageContentContainer>
           {renderDate()}
           {renderAuthor()}

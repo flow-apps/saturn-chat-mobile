@@ -47,7 +47,7 @@ const Invite: React.FC = () => {
           if (res.status === 200) {
             setInvite(res.data.invite);
 
-            if (res.data.participant) {
+            if (res.data.participant.state === "JOINED") {
               setParticipating(true);
             } else {
               setParticipating(false);
@@ -76,6 +76,7 @@ const Invite: React.FC = () => {
               <InviteAnimation
                 source={require("../../assets/crying.json")}
                 autoPlay
+                autoSize
                 loop
               />
             </InviteAnimationContainer>

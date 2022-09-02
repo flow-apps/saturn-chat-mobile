@@ -2,9 +2,10 @@ import styled from "styled-components/native";
 import fonts from "../../../../styles/fonts";
 
 import Slider from "@react-native-community/slider";
+import { lighten } from "polished";
 
 export const Container = styled.View`
-  background-color: ${({ theme }) => theme.colors.shape};
+  background-color: ${({ theme }) => lighten(0.08, theme.colors.shape)};
   height: 40px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;

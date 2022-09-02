@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "../../../styles/fonts";
 import Slider from "@react-native-community/slider"
+import { lighten } from "polished";
 
 interface PlayerProps {
   loading?: boolean;
@@ -9,8 +10,7 @@ interface PlayerProps {
 export const Container = styled.View<PlayerProps>`
   min-width: 100%;
   padding: 8px 15px;
-  background-color: ${(props) => props.theme.colors.shape};
-  border: 1px solid ${(props) => props.theme.colors.secondary};
+  background-color: ${(props) => lighten(0.08, props.theme.colors.shape)};
   border-radius: 12px;
 `;
 
