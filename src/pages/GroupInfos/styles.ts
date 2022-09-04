@@ -1,9 +1,13 @@
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
-import { darken } from "polished";
+import { darken, lighten } from "polished";
 import CachedImage from "../../components/CachedImage";
 
-export const Container = styled.ScrollView`
+export const Container = styled.ScrollView.attrs({
+  contentContainerStyle: {
+    paddingBottom: 15
+  }
+})`
   flex: 1;
   background-color: ${(props) => props.theme.colors.background};
 `;
@@ -92,7 +96,7 @@ export const GroupTagsScroll = styled.ScrollView.attrs({
 
 export const GroupTagContainer = styled.View`
   margin-right: 10px;
-  background-color: ${(props) => props.theme.colors.shape};
+  background-color: ${(props) => lighten(0.08, props.theme.colors.shape)};
   padding: 12px;
   border-radius: 40px;
 `;

@@ -151,7 +151,7 @@ const UserProfile: React.FC = () => {
                 disabled={!userInfos.avatar}
                 activeOpacity={0.7}
               >
-                <Avatar uri={userInfos?.avatar.url} />
+                <Avatar uri={userInfos?.avatar?.url} />
               </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>
@@ -194,7 +194,7 @@ const UserProfile: React.FC = () => {
                       <Group
                         key={participant.id}
                         name={participant.group.name}
-                        image={avatar ? avatar.url : ""}
+                        image={avatar ? avatar?.url : ""}
                         onPress={() => handleGoGroupInfos(participant.group.id)}
                       />
                     </View>
