@@ -45,6 +45,7 @@ import { useAudioPlayer } from "../../../contexts/audioPlayer";
 
 import URLParser from "url-parse";
 import InviteInMessage from "../RichContent/InviteInMessage";
+import LinkPreview from "../RichContent/LinkPreview";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -86,7 +87,7 @@ const Message = ({
 
   const sended = useMemo(() => {
     return _.isUndefined(message?.sended) ? true : message.sended;
-  }, []);
+  }, [message.sended]);  
 
   useEffect(() => {
     (async () => {
@@ -222,10 +223,19 @@ const Message = ({
     return setShowLinkAlert(false);
   }, [linkUrl]);
 
-  const handleCopyMessage = useCallback(() => {
-    Clipboard.setString(message.message);
+  const handleCopyMessage = useCallback(async () => {
+    await Clipboard.setStringAsync(message.message);
     SimpleToast.show("Mensagem copiada");
   }, [message.message]);
+
+  const renderVoiceMessage = useCallback(() => {
+    if (!message.voice_message)
+      return <></>
+
+    return (
+      <AudioPlayer audio={message.voice_message} deleted={deleted} />
+    )
+  }, [message.voice_message, deleted])
 
   const renderFiles = useCallback(() => {
     if (message.files) {
@@ -243,19 +253,32 @@ const Message = ({
         );
       });
     }
-  }, []);
+  }, [message.files, deleted]);
 
   const renderInvites = useCallback(() => {
     if (!hasInvite) return <></>;
 
     return (
       <>
-        {invitesData.map((invite) => (
-          <InviteInMessage key={invite.id} inviteID={invite.id} />
+        {invitesData.map((invite, index) => (
+          <InviteInMessage key={index} inviteID={invite.id} />
         ))}
       </>
     );
   }, [hasInvite, invitesData]);
+
+  const renderLinks = useCallback(() => {
+    if (!message.links)
+      return <></>
+
+    return (
+      <>
+        {message.links.map((link, index) => (
+          <LinkPreview key={index} link={link} openLink={alertLink} />
+        ))}
+      </>
+    ) 
+  }, [message.links])
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
@@ -327,11 +350,10 @@ const Message = ({
               onPressLink={alertLink}
               user={user as UserData}
             />
-            {message.voice_message && (
-              <AudioPlayer audio={message.voice_message} deleted={deleted} />
-            )}
+            {renderVoiceMessage()}
             {renderFiles()}
             {renderInvites()}
+            {renderLinks()}
           </MessageContentContainer>
           {renderDate()}
           {renderAuthor()}

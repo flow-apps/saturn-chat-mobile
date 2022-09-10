@@ -388,7 +388,7 @@ const Chat: React.FC = () => {
 
   const fetchOldMessages = async () => {
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=13`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
 
     if (data.messages.length === 0) {
       setFetching(false);

@@ -64,6 +64,7 @@ export interface AudioData {
 export interface MessageData {
   id: string;
   message: string;
+  links?: LinkData[];
   created_at: string;
   author: UserData;
   participant: ParticipantsData;
@@ -99,4 +100,13 @@ export interface InviteData {
   expire_in: string;
   expire_timezone: string;
   created_at: string;
+}
+
+export interface LinkData {
+  link: string;
+  siteName: string;
+  title: string;
+  description: string;
+  favicon: string;
+  image: string;
 }
