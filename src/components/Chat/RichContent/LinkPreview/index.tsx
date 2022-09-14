@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { LinkData } from "../../../../../@types/interfaces";
 import {
   Container,
@@ -13,12 +13,21 @@ import {
   WebsiteTitleContainer,
 } from "./styles";
 
+import * as Clipboard from "expo-clipboard"
+import SimpleToast from "react-native-simple-toast";
+
 interface LinkPreviewProps {
   link: LinkData;
   openLink: (link: string) => void;
 }
 
-const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {    
+const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {   
+  
+  const copyLink = useCallback(async () => {
+    await Clipboard.setStringAsync(link.link)
+    SimpleToast.show("Link copiado")
+  }, [link])
+  
   return (
     <Container>
       {!!link.siteName && (
@@ -27,12 +36,12 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
         </WebsiteNameContainer>
       )}
       <WebsiteHeaderContainer>
+        <WebsiteTitleContainer onLongPress={copyLink} onPress={() => openLink(link.link)}>
         {!!link.favicon && (
           <WebsiteFaviconContainer>
-            <WebsiteFavicon uri={link.favicon} />
+            <WebsiteFavicon width={45} height={45} uri={link.favicon} />
           </WebsiteFaviconContainer>
         )}
-        <WebsiteTitleContainer onPress={() => openLink(link.link)}>
           <WebsiteTitle numberOfLines={2}>
             {link.title || link.link}
           </WebsiteTitle>
