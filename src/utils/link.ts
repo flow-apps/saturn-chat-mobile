@@ -12,6 +12,8 @@ class LinkUtils {
 
       await RNBrowser.open(url, {
         modalEnabled: true,
+        toolbarColor: "#0088FF",
+        secondaryToolbarColor: "#FF9D00",
       });
     } catch (error) {
       return await Linking.openURL(url);

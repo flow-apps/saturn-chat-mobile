@@ -60,3 +60,14 @@ export const WebsiteDescription = styled.Text`
   font-size: 12px;
   color: #fff;
 `;
+
+export const WebsiteImageContainer = styled.View`
+  margin-top: 10px;
+`;
+
+export const WebsiteImage = styled(CachedImage)`
+  width: 100%;
+  height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+`;

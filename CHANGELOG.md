@@ -2,39 +2,50 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
-## 0.0.19.0
+## 0.19.1
+
+- Add Link Preview in messages
+  - Add website name
+  - Add website title
+  - Add website icon/favicon
+  - Add website description
+  - Add website image
+- Copy links in your preview
+- Switch primary and secondary color in IAB (IN APP BROWSER)
+
+## 0.19.0
 
 - Invites card in message
 - Open Saturn Chat links without warnings
 
-## 0.0.18.0
+## 0.18.0
 
 - Invite friends to groups
 - Add cached image with placeholder in all screens
 - Improve style
 
-## 0.0.17.0
+## 0.17.0
 
 - Add direct messages list
 - Improve chat for direct messages
 - Improve participant menu and group menu for direct messages
 - Fix friend button
 
-## 0.0.16.0
+## 0.16.0
 
 - Upgrade Expo and React Native
 - Fix types of Typescript
 
-## 0.0.15.2
+## 0.15.2
 
 - Stop audios on delete message
 
-## 0.0.15.1
+## 0.15.1
 
 - Integrate Audio Player Context to Audio Previewer
 - Improve unload audios feature
 
-## 0.0.15.0
+## 0.15.0
 
 - Add Audio Player Context
   - Integrate to Voice Message Player
@@ -44,7 +55,7 @@ NOTE: The versions here not represents the release versions, check the App Store
   - Pause an audio when another is requested for play
 - Unload all audios on left chat
 
-## 0.0.14.0
+## 0.14.0
 
 - Add audio previewer
   - Change icon for audio file preview
@@ -55,11 +66,11 @@ NOTE: The versions here not represents the release versions, check the App Store
 - Improve more style in recording audio component
 - Change chat input style
 
-## 0.0.13.0
+## 0.13.0
 
 - Add reply message
 
-## 0.0.12.1
+## 0.12.1
 
 - Fix styles for light mode
 - Add new remote config
@@ -67,64 +78,64 @@ NOTE: The versions here not represents the release versions, check the App Store
 - Fix edit group
 - Add warn on reach max message length
 
-## 0.0.12.0
+## 0.12.0
 
 - Remove emoji picker
 - Change role working
 - Kick user working
 - Change icon on switch theme
 
-## 0.0.11.0
+## 0.11.0
 
 - Add indicator for sending/sended message
 
-## 0.0.10.0
+## 0.10.0
 
 - Add Video Previewer with thumbnail
 - Add PDF Previewer
 
-## 0.0.9.0
+## 0.9.0
 
 - Open link in app (IN APP BROWSER)
 
-## 0.0.8.0
+## 0.8.0
 
 - Add bio in user profile
 
-## 0.0.7.0
+## 0.7.0
 
 - Add roles and verification for role change and use resources
 - Improve more performance in chat
 
-## 0.0.6.0
+## 0.6.0
 
 - Online/offline system added
 - Removed all console.log's
 
-## 0.0.5.0
+## 0.5.0
 
 - Add toast for indicate request failed
 - Enable/disable notifications
 
-## 0.0.4.1
+## 0.4.1
 
 - Add animations in more components
 - Fix duplicates names in users typing
 - Remove ad from chat screen
 
-## 0.0.4.0
+## 0.4.0
 
 - Add Moti
 - Add animation in some components
 - Fix file selector
   - Fix total files size on remove a file
 
-## 0.0.3.2
+## 0.3.2
 
 - Add HTTP Metric in Axios requests
 - Add Analytics in invite screen
 
-## 0.0.3.1
+## 0.3.1
 
 - Add Firebase Crashlytics
 - Add Firebase Performance
@@ -132,16 +143,16 @@ NOTE: The versions here not represents the release versions, check the App Store
 - Add new website url
 - Add new Deep Linking for website
 
-## 0.0.3.0
+## 0.3.0
 
 - Add and configure React Native Firebase
 - Add more ads in many screens
 
-## 0.0.2.0
+## 0.2.0
 
 - Fix the websocket connection.
 
-## 0.0.1.0
+## 0.1.0
 
 - Add fields validation in many screens
 - Add disable option in buttons

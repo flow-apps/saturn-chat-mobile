@@ -7,6 +7,8 @@ import {
   WebsiteFavicon,
   WebsiteFaviconContainer,
   WebsiteHeaderContainer,
+  WebsiteImage,
+  WebsiteImageContainer,
   WebsiteName,
   WebsiteNameContainer,
   WebsiteTitle,
@@ -52,6 +54,13 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
           <WebsiteDescription numberOfLines={4}>{link.description}</WebsiteDescription>
         </WebsiteDescriptionContainer>
       )}
+      {
+        !!link.image && (
+          <WebsiteImageContainer>
+            <WebsiteImage uri={link.image} />
+          </WebsiteImageContainer>
+        )
+      }
     </Container>
   );
 };
