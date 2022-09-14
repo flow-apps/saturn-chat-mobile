@@ -123,4 +123,6 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
   );
 };
 
-export default memo(InviteInMessage);
+export default memo(InviteInMessage, (prev, next) => {
+  return prev.inviteID !== next.inviteID
+});

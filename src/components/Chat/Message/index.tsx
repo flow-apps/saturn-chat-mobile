@@ -228,14 +228,14 @@ const Message = ({
     SimpleToast.show("Mensagem copiada");
   }, [message.message]);
 
-  const renderVoiceMessage = useCallback(() => {
+  const renderVoiceMessage = () => {
     if (!message.voice_message)
       return <></>
 
     return (
       <AudioPlayer audio={message.voice_message} deleted={deleted} />
     )
-  }, [message.voice_message, deleted])
+  }
 
   const renderFiles = useCallback(() => {
     if (message.files) {

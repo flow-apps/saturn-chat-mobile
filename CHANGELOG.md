@@ -2,6 +2,13 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.19.2
+
+- Fix bugs
+- Add aspect ratio on image in Link Preview
+- Open Image Preview on click in image of the Link Preview
+- Add title in IN APP BROWSER
+
 ## 0.19.1
 
 - Add Link Preview in messages

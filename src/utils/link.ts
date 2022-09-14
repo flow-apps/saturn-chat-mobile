@@ -14,6 +14,7 @@ class LinkUtils {
         modalEnabled: true,
         toolbarColor: "#0088FF",
         secondaryToolbarColor: "#FF9D00",
+        showTitle: true
       });
     } catch (error) {
       return await Linking.openURL(url);

@@ -60,6 +60,8 @@ api.interceptors.response.use(
           `Request failed (${error.response.status})`,
           SimpleToast.SHORT
         );
+
+        console.warn(error.response.data.message)
       }
       return Promise.reject(error);
     }

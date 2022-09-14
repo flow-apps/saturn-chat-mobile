@@ -1,3 +1,4 @@
+import { useImageDimensions } from "@react-native-community/hooks";
 import { lighten } from "polished";
 import styled from "styled-components/native";
 import fonts from "../../../../styles/fonts";
@@ -58,16 +59,16 @@ export const WebsiteDescriptionContainer = styled.View`
 export const WebsiteDescription = styled.Text`
   font-family: ${fonts.text};
   font-size: 12px;
-  color: #fff;
+  color: ${(props) => props.theme.colors.black};
 `;
 
-export const WebsiteImageContainer = styled.View`
+export const WebsiteImageContainer = styled.TouchableOpacity`
   margin-top: 10px;
 `;
 
-export const WebsiteImage = styled(CachedImage)`
-  width: 100%;
-  height: 150px;
+export const WebsiteImage = styled(CachedImage)<{ aspectRatio?: number }>`
+  max-width: 100%;
+  aspect-ratio: ${(props) => props.aspectRatio};
   border-radius: 8px;
-  object-fit: cover;
+  margin: 0 auto;
 `;
