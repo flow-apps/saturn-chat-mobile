@@ -31,9 +31,8 @@ const PdfPreview = () => {
       </Header>
       <Container>
         <PDFViewer
-          source={{ uri: url, cache: true }}
+          source={{ uri: url }}
           style={{ flex: 1 }}
-          activityIndicator={LoadingIndicator}
           minScale={0.8}
           maxScale={10}
           enableAnnotationRendering

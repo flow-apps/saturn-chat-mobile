@@ -1,6 +1,13 @@
-import React, { useCallback, useRef } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 import { YTService } from "../../../services/yt";
+import Loading from "../../Loading";
 
 import { Container, VideoPlayerContainer } from "./styles";
 
@@ -9,10 +16,24 @@ interface ICurrentTimeData {
   currentTime: number;
 }
 
-const YouTubeVideoPlayer: React.FC = () => {
+export interface IYouTubeControllers {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  seekTo: (time: number) => void;
+}
+
+interface IYouTubeVideoPlayer {
+  videoId: string;
+  onUpdateTime: (time: number) => void;
+  autoplay?: boolean;
+}
+
+const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
+  IYouTubeControllers,
+  IYouTubeVideoPlayer
+> = ({ videoId, onUpdateTime, autoplay }, ref) => {
   const ytService = new YTService();
   const webViewRef = useRef<WebView>(null);
-
   const playVideo = useCallback(() => {
     webViewRef.current.injectJavaScript("play()");
   }, [webViewRef]);
@@ -32,26 +53,42 @@ const YouTubeVideoPlayer: React.FC = () => {
     (message: WebViewMessageEvent) => {
       const res: ICurrentTimeData = JSON.parse(message.nativeEvent.data);
 
-      console.log(res);
+      return onUpdateTime(res.currentTime);
     },
     []
   );
+
+  const onLoadEnd = () => {
+    if (autoplay) {
+      playVideo();
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    playVideo,
+    pauseVideo,
+    seekTo,
+  }));
 
   return (
     <Container>
       <VideoPlayerContainer>
         <WebView
           ref={webViewRef}
-          source={{ html: ytService.buildYouTubePlayerHTML("") }}
-          mediaPlaybackRequiresUserAction={false}
-          allowsFullscreenVideo={false}
-          scalesPageToFit={false}
           onMessage={onReceivedMessageWithTime}
+          onLoad={onLoadEnd}
+          source={{ html: ytService.buildYouTubePlayerHTML(videoId) }}
+          bounces={false}
+          scrollEnabled={false}
+          scalesPageToFit={false}
+          allowsFullscreenVideo={true}
+          mediaPlaybackRequiresUserAction={false}
           allowsInlineMediaPlayback
+          style={{ backgroundColor: "transparent" }}
         />
       </VideoPlayerContainer>
     </Container>
   );
 };
 
-export default YouTubeVideoPlayer;
+export default forwardRef(YouTubeVideoPlayer);

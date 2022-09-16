@@ -76,6 +76,7 @@ import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 import { useAudioPlayer } from "../../contexts/audioPlayer";
 import { NavigateType } from "../../../@types/types";
+import YouTubeIFrame from "../../components/Modals/YouTubeIFrame";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -629,6 +630,7 @@ const Chat: React.FC = () => {
 
   return (
     <>
+      <YouTubeIFrame />
       <Alert
         title="😱 Que coisa pesada!"
         content={`Eu não consigo carregar algo tão pesado, tente algo de até ${userConfigs.fileUpload}MB!`}

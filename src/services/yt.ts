@@ -1,3 +1,5 @@
+import { css } from "styled-components";
+
 class YTService {
   private buildYouTubePlayerControllersScript() {
     return `
@@ -27,20 +29,19 @@ class YTService {
     `;
   }
 
-  private buildYouTubeIFrame(videoID: string, width?: number) {
+  private buildYouTubeIFrame(videoID: string) {
     return `
       <div id="player"></div>
       <script>
         const tag = document.createElement("script");
-        const scriptTag = document.getElementsByTagName("script")[0];
         tag.src = "https://www.youtube.com/iframe_api";
+        const scriptTag = document.getElementsByTagName("script")[0];
         scriptTag.parentNode.insertBefore(tag, scriptTag);
 
         let player;
         function onYouTubeIframeAPIReady() {
           player = new YT.Player("player", {
-            height: "100%",
-            width: ${width || "100%"},
+            width: '100%',
             videoId: "${videoID}",
             playerVars: {
               "playsinline": 1,
@@ -59,38 +60,47 @@ class YTService {
   }
 
   private buildYouTubePlayerStyle() {
-    return `
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          border: none;
-          outline: none;
-        }
-        html {
-          overflow: hidden;
-          height: 100%;
-        }
-        body {
-          background: #000;
-          width: 100%;
-          height: 100%;
-        }
-      </style>
+    const style = css`
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        border: none;
+        outline: none;
+      }
+      html {
+        overflow-x: hidden;
+        overflow-y: hidden;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        width: 100%;
+        height: 100%;
+      }
+      #player {
+      }
     `;
+
+    return style
   }
 
-  buildYouTubePlayerHTML(videoID: string, width?: number) {
+  buildYouTubePlayerHTML(videoID: string) {
     return `
       <!DOCTYPE html>
       <html>
         <head>
-          ${this.buildYouTubePlayerStyle()}
+          <style>
+            ${this.buildYouTubePlayerStyle()}
+          </style>
           <meta name="viewport" content="initial-scale=1" />
           <title>Saturn Chat YouTube Player</title>
         </head>
-        <body>${this.buildYouTubeIFrame(videoID, width)}</body>
+        <body>${this.buildYouTubeIFrame(videoID)}</body>
       </html>
       `;
   }
