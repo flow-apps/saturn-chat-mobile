@@ -630,7 +630,6 @@ const Chat: React.FC = () => {
 
   return (
     <>
-      <YouTubeIFrame />
       <Alert
         title="😱 Que coisa pesada!"
         content={`Eu não consigo carregar algo tão pesado, tente algo de até ${userConfigs.fileUpload}MB!`}

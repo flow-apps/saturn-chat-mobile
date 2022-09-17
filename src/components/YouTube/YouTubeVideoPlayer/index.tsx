@@ -7,19 +7,20 @@ import React, {
 } from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 import { YTService } from "../../../services/yt";
-import Loading from "../../Loading";
 
 import { Container, VideoPlayerContainer } from "./styles";
 
 interface ICurrentTimeData {
-  type: "VIDEO_TIME_UPDATE";
-  currentTime: number;
+  type: "VIDEO_TIME_UPDATE" | "VIDEO_DURATION";
+  currentTime?: number;
+  duration?: number;
 }
 
 export interface IYouTubeControllers {
   playVideo: () => void;
   pauseVideo: () => void;
   seekTo: (time: number) => void;
+  duration: number;
 }
 
 interface IYouTubeVideoPlayer {
@@ -34,6 +35,9 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
 > = ({ videoId, onUpdateTime, autoplay }, ref) => {
   const ytService = new YTService();
   const webViewRef = useRef<WebView>(null);
+
+  const [duration, setDuration] = useState(0);
+
   const playVideo = useCallback(() => {
     webViewRef.current.injectJavaScript("play()");
   }, [webViewRef]);
@@ -53,9 +57,15 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
     (message: WebViewMessageEvent) => {
       const res: ICurrentTimeData = JSON.parse(message.nativeEvent.data);
 
-      return onUpdateTime(res.currentTime);
+      if (res.type === "VIDEO_TIME_UPDATE") {
+        return onUpdateTime(res.currentTime);
+      }
+
+      if (res.type === "VIDEO_DURATION") {
+        setDuration(res.duration);
+      }
     },
-    []
+    [onUpdateTime]
   );
 
   const onLoadEnd = () => {
@@ -68,6 +78,7 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
     playVideo,
     pauseVideo,
     seekTo,
+    duration,
   }));
 
   return (

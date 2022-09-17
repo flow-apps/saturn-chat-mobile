@@ -13,10 +13,19 @@ class YTService {
         player.seekTo(time, true)
       }
       function getDuration() {
-        return player.getDuration()
+        const duration = player.getDuration()
+        return duration
       }
       function getCurrentTime() {
         return player.getCurrentTime()
+      }
+
+      function onVideoReady(event) {        
+        const data = {
+          type: "VIDEO_DURATION",
+          duration: getDuration()
+        }
+        window.ReactNativeWebView.postMessage(JSON.stringify(data))
       }
 
       setInterval(() => {
@@ -43,6 +52,9 @@ class YTService {
           player = new YT.Player("player", {
             width: '100%',
             videoId: "${videoID}",
+            events: {
+              'onReady': onVideoReady
+            },
             playerVars: {
               "playsinline": 1,
               "modestbranding": 1,
@@ -86,7 +98,7 @@ class YTService {
       }
     `;
 
-    return style
+    return style;
   }
 
   buildYouTubePlayerHTML(videoID: string) {

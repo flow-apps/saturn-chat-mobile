@@ -1,21 +1,61 @@
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useCallback, useRef, useState } from "react";
+import {
+  Feather,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import React, {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useTheme } from "styled-components";
+import { millisToTime } from "../../../utils/format";
 import YouTubeVideoPlayer, {
   IYouTubeControllers,
-} from "../../Chat/YouTubeVideoPlayer";
+} from "../../YouTube/YouTubeVideoPlayer";
 import {
   Container,
   YouTubeModal,
   YouTubeModalHeader,
   YouTubeModalHeaderButton,
+  YouTubePlayerControls,
+  YouTubePlayerControlsContainer,
+  YouTubePlayerInfoContainer,
+  YouTubePlayerInfos,
+  YouTubePlayerInfosContainer,
+  YouTubePlayerInfoText,
+  YouTubePlayerPlayAndPauseButton,
+  YouTubePlayerPlayAndPauseContainer,
+  YouTubePlayerSeekBar,
+  YouTubePlayerSeekBarContainer,
 } from "./styles";
 
-const YouTubeIFrame: React.FC = () => {
+interface IYouTubeIFrame {
+  videoId: string;
+}
+
+export interface IYouTubeIFrameRef {
+  openYouTubeIFrameModal: () => void;
+}
+
+const YouTubeIFrame: React.ForwardRefRenderFunction<IYouTubeIFrameRef, IYouTubeIFrame> = (
+  { videoId },
+  ref
+) => {
   const [videoStatus, setVideoStatus] = useState<"PLAYING" | "PAUSED">(
     "PLAYING"
   );
-  const [modalVisible, setModalVisible] = useState(true);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
   const ytPlayerRef = useRef<IYouTubeControllers>(null);
+
+  const { colors } = useTheme();
 
   const playPauseVideo = useCallback(() => {
     if (videoStatus === "PLAYING") {
@@ -25,9 +65,29 @@ const YouTubeIFrame: React.FC = () => {
     }
 
     setVideoStatus((old) => (old === "PLAYING" ? "PAUSED" : "PLAYING"));
-  }, [ytPlayerRef]);
+  }, [ytPlayerRef, videoStatus]);
 
-  const onUpdateTime = useCallback((time: number) => {}, []);
+  const seekTo = useCallback((time: number) => {
+    ytPlayerRef.current.seekTo(time);
+  }, []);
+
+  const onUpdateTime = useCallback((time: number) => {
+    setCurrentTime(time);
+  }, []);
+
+  const openYouTubeIFrameModal = useCallback(() => {
+    setModalVisible(true);
+  }, [modalVisible]);
+
+  useEffect(() => {
+    if (ytPlayerRef.current) {
+      setVideoDuration(ytPlayerRef.current.duration);
+    }
+  }, [ytPlayerRef.current]);
+
+  useImperativeHandle(ref, () => ({
+    openYouTubeIFrameModal,
+  }));
 
   return (
     <Container
@@ -52,13 +112,54 @@ const YouTubeIFrame: React.FC = () => {
       <YouTubeModal>
         <YouTubeVideoPlayer
           ref={ytPlayerRef}
-          videoId="oGUg8YtEHwU"
+          videoId={videoId}
           onUpdateTime={onUpdateTime}
           autoplay
         />
+        <YouTubePlayerControlsContainer>
+          <YouTubePlayerControls>
+            <YouTubePlayerPlayAndPauseContainer>
+              <YouTubePlayerPlayAndPauseButton
+                activeOpacity={0.7}
+                onPress={playPauseVideo}
+              >
+                <MaterialCommunityIcons
+                  name={videoStatus === "PLAYING" ? "pause" : "play"}
+                  size={33}
+                  color="#fff"
+                />
+              </YouTubePlayerPlayAndPauseButton>
+            </YouTubePlayerPlayAndPauseContainer>
+            <YouTubePlayerInfosContainer>
+              <YouTubePlayerInfos>
+                <YouTubePlayerInfoContainer>
+                  <YouTubePlayerInfoText>
+                    {millisToTime(currentTime * 1000)}
+                  </YouTubePlayerInfoText>
+                </YouTubePlayerInfoContainer>
+                <YouTubePlayerInfoContainer>
+                  <YouTubePlayerInfoText>
+                    {millisToTime(videoDuration * 1000)}
+                  </YouTubePlayerInfoText>
+                </YouTubePlayerInfoContainer>
+              </YouTubePlayerInfos>
+            </YouTubePlayerInfosContainer>
+            <YouTubePlayerSeekBarContainer>
+              <YouTubePlayerSeekBar
+                value={currentTime}
+                minimumValue={0}
+                maximumValue={videoDuration}
+                thumbTintColor={colors.secondary}
+                minimumTrackTintColor={colors.secondary}
+                maximumTrackTintColor={colors.dark_gray}
+                onSlidingComplete={seekTo}
+              />
+            </YouTubePlayerSeekBarContainer>
+          </YouTubePlayerControls>
+        </YouTubePlayerControlsContainer>
       </YouTubeModal>
     </Container>
   );
 };
 
-export default YouTubeIFrame;
+export default forwardRef(YouTubeIFrame);
