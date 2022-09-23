@@ -106,11 +106,13 @@ class YTService {
       <!DOCTYPE html>
       <html>
         <head>
+          <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+          <meta name="referrer" content="no-referrer-when-downgrade" />
+          <meta name="viewport" content="initial-scale=1" />
+          <title>Saturn Chat YouTube Player</title>
           <style>
             ${this.buildYouTubePlayerStyle()}
           </style>
-          <meta name="viewport" content="initial-scale=1" />
-          <title>Saturn Chat YouTube Player</title>
         </head>
         <body>${this.buildYouTubeIFrame(videoID)}</body>
       </html>

@@ -1,41 +1,42 @@
 import styled from "styled-components/native";
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import Slider from "@react-native-community/slider";
 import fonts from "../../../styles/fonts";
+import { MotiView } from "moti";
+import { getStatusBarHeight } from "react-native-iphone-x-helper";
 
 export const Container = styled.Modal`
   position: relative;
+  flex: 1;
 `;
 
 export const YouTubeModal = styled.View`
   background-color: #000000;
   flex: 1;
-  align-items: center;
-  justify-content: center;
 `;
 
-export const YouTubeModalHeader = styled.View`
+export const YouTubeModalHeader = styled(MotiView)`
+  position: absolute;
   width: 100%;
   padding: 12px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background-color: ${(props) => props.theme.colors.primary};
-  padding-top: ${getStatusBarHeight() + 10}px;
+  background-color: transparent;
   z-index: 10;
+  top: ${getStatusBarHeight() + 5}px;
 `;
 
 export const YouTubeModalHeaderButton = styled.TouchableOpacity`
   margin: 0 5px;
 `;
 
-export const YouTubePlayerControlsContainer = styled.View`
+export const YouTubePlayerControlsContainer = styled.Pressable`
+  position: relative;
   flex: 1;
   width: 100%;
   height: 100%;
   top: 0;
   position: absolute;
-  background-color: #00000055;
   z-index: 5;
   padding: 20px 0;
 `;
@@ -43,7 +44,9 @@ export const YouTubePlayerControlsContainer = styled.View`
 export const YouTubePlayerControls = styled.View`
   flex: 1;
   width: 100%;
-  height: 50%;
+  height: 100%;
+  background-color: #00000055;
+  margin-bottom: 5px;
 `;
 
 export const YouTubePlayerPlayAndPauseContainer = styled.View`

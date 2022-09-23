@@ -1,4 +1,3 @@
-import { useImageDimensions } from "@react-native-community/hooks";
 import { lighten } from "polished";
 import styled from "styled-components/native";
 import fonts from "../../../../styles/fonts";
@@ -63,6 +62,7 @@ export const WebsiteDescription = styled.Text`
 `;
 
 export const WebsiteImageContainer = styled.TouchableOpacity`
+  position: relative;
   margin-top: 10px;
 `;
 
@@ -71,4 +71,24 @@ export const WebsiteImage = styled(CachedImage)<{ aspectRatio?: number }>`
   aspect-ratio: ${(props) => props.aspectRatio};
   border-radius: 8px;
   margin: 0 auto;
+`;
+
+export const VideoIndicatorContainer = styled.TouchableOpacity`
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  flex: 1;
+`;
+
+export const VideoIndicator = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000088;
+  padding: 12px;
+`;
+
+export const VideoIndicatorText = styled.Text`
+  font-family: ${fonts.text};
+  color: #fff;
 `;

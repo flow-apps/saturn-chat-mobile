@@ -2,6 +2,17 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.19.3
+
+- Add YouTube IFrame modal in link preview
+- Open YouTube Video in app
+  - Add video controls
+    - Play, pause and seek to
+    - Auto show/hide controls
+    - Animations
+  - Add button to open video in the link preview
+- Improve link preview performance
+
 ## 0.19.2
 
 - Fix bugs

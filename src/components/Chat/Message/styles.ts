@@ -10,7 +10,7 @@ export const Container = styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
   width: 100%;
   padding: 0 10px;
-  margin: 03px 0;
+  margin: 5px 3px 5px;
 `;
 
 export const MessageAuthorContainer = styled.TouchableOpacity`

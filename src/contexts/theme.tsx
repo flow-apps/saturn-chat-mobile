@@ -1,9 +1,14 @@
-import React, { useContext, useCallback, useEffect, createContext } from "react";
-import { useColorScheme } from "react-native";
+import React, {
+  useContext,
+  useCallback,
+  useEffect,
+  createContext,
+} from "react";
+import { StatusBar, useColorScheme } from "react-native";
 import { DefaultTheme } from "styled-components";
 import { ThemeProvider } from "styled-components/native";
 import { usePersistedState } from "../hooks/usePersistedState";
-import nav from "react-native-system-navigation-bar"
+import nav from "react-native-system-navigation-bar";
 import dark from "../styles/themes/dark";
 import light from "../styles/themes/light";
 
@@ -16,7 +21,9 @@ const ThemeControllerContext = createContext<ThemeControllerContext>(
   {} as ThemeControllerContext
 );
 
-const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const defaultTheme = useColorScheme();
   const [theme, setTheme] = usePersistedState<DefaultTheme>(
     "@SaturnChat:theme",
@@ -28,9 +35,10 @@ const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     (async () => {
-      await nav.setNavigationColor(theme.colors.shape, theme.title !== "light")
-    })()
-  }, [theme])
+      StatusBar.setBarStyle("light-content");
+      await nav.setNavigationColor(theme.colors.shape, theme.title !== "light");
+    })();
+  }, [theme]);
 
   return (
     <ThemeControllerContext.Provider

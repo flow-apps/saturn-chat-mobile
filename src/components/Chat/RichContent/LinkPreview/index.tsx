@@ -2,6 +2,9 @@ import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { LinkData } from "../../../../../@types/interfaces";
 import {
   Container,
+  VideoIndicator,
+  VideoIndicatorContainer,
+  VideoIndicatorText,
   WebsiteDescription,
   WebsiteDescriptionContainer,
   WebsiteFavicon,
@@ -24,6 +27,7 @@ import YouTubeIFrame, {
   IYouTubeIFrameRef,
 } from "../../../Modals/YouTubeIFrame";
 import URLParse from "url-parse";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface LinkPreviewProps {
   link: LinkData;
@@ -42,13 +46,13 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
     SimpleToast.show("Link copiado");
   }, [link]);
 
-  const handlePreview = () => {
+  const handlePreview = useCallback(() => {
     if (videoId) {
       return ytIFrameRef.current.openYouTubeIFrameModal();
     }
 
     navigation.navigate("ImagePreview", { name: link.link, url: link.image });
-  };
+  }, [videoId]);
 
   useEffect(() => {
     const YTUrls = ["youtube.com", "youtu.be"];
@@ -94,12 +98,32 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
             </WebsiteDescription>
           </WebsiteDescriptionContainer>
         )}
-        {!!link.image && (
+        {!!link.image && !error && (
           <WebsiteImageContainer onPress={handlePreview}>
             <WebsiteImage
-              aspectRatio={error ? undefined : dimensions.aspectRatio}
+              aspectRatio={dimensions.aspectRatio}
               uri={link.image}
             />
+            {!!videoId && (
+              <VideoIndicatorContainer
+                onPress={handlePreview}
+                activeOpacity={0.5}
+                style={{
+                  transform: [{ translateY: 40 }],
+                }}
+              >
+                <VideoIndicator>
+                  <MaterialCommunityIcons
+                    name="play-circle"
+                    size={30}
+                    color="#fff"
+                  />
+                  <VideoIndicatorText>
+                    Toque aqui para assistir
+                  </VideoIndicatorText>
+                </VideoIndicator>
+              </VideoIndicatorContainer>
+            )}
           </WebsiteImageContainer>
         )}
       </Container>
@@ -107,4 +131,8 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
   );
 };
 
-export default memo(LinkPreview);
+export default memo(LinkPreview, (prev, next) => {
+  return (
+    prev.link.link === next.link.link && prev.link.image === next.link.image
+  );
+});

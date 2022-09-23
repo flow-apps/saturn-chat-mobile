@@ -92,7 +92,7 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
           bounces={false}
           scrollEnabled={false}
           scalesPageToFit={false}
-          allowsFullscreenVideo={true}
+          allowsFullscreenVideo={false}
           mediaPlaybackRequiresUserAction={false}
           allowsInlineMediaPlayback
           style={{ backgroundColor: "transparent" }}
