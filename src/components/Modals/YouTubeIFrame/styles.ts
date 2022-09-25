@@ -23,7 +23,7 @@ export const YouTubeModalHeader = styled(MotiView)`
   justify-content: space-between;
   background-color: transparent;
   z-index: 10;
-  top: ${getStatusBarHeight() + 5}px;
+  top: ${getStatusBarHeight() - 10}px;
 `;
 
 export const YouTubeModalHeaderButton = styled.TouchableOpacity`

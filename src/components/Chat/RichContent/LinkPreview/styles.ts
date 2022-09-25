@@ -7,8 +7,7 @@ export const Container = styled.View`
   background-color: ${(props) => lighten(0.08, props.theme.colors.shape)};
   padding: 12px;
   border-radius: 12px;
-  width: 100%;
-  min-width: 300px;
+  width: 85%;
   margin-top: 5px;
 `;
 
@@ -62,7 +61,6 @@ export const WebsiteDescription = styled.Text`
 `;
 
 export const WebsiteImageContainer = styled.TouchableOpacity`
-  position: relative;
   margin-top: 10px;
 `;
 
@@ -77,15 +75,17 @@ export const VideoIndicatorContainer = styled.TouchableOpacity`
   position: absolute;
   z-index: 10;
   width: 100%;
-  flex: 1;
+  height: 100%;
 `;
 
 export const VideoIndicator = styled.View`
-  flex: 1;
+  width: 100%;
+  height: 100%;
   align-items: center;
   justify-content: center;
   background-color: #00000088;
   padding: 12px;
+  border-radius: 8px;
 `;
 
 export const VideoIndicatorText = styled.Text`

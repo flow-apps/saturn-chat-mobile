@@ -16,6 +16,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { MessageData } from "../../../../@types/interfaces";
 import { millisToTime } from "../../../utils/format";
+import { MotiView } from "moti";
 
 interface CurrentReplyingMessageProps {
   message: MessageData;
@@ -58,28 +59,36 @@ const CurrentReplyingMessage = ({
   };
 
   return (
-    <ReplyingMessageContainer>
-      <ReplyingMessageContentContainer>
-        <ReplyingMessageTitleWrapper>
-          <ReplyingMessageTitle>
-            <Feather name="corner-up-right" /> Você está respondendo:
-          </ReplyingMessageTitle>
-        </ReplyingMessageTitleWrapper>
-        <ReplyingMessageAuthorNameWrapper>
-          <ReplyingMessageAuthorName>
-            {message.author.name}
-          </ReplyingMessageAuthorName>
-        </ReplyingMessageAuthorNameWrapper>
-        <ReplyingMessageWrapper>
-          {renderMessageContent()}
-        </ReplyingMessageWrapper>
-      </ReplyingMessageContentContainer>
-      <ReplyingMessageRemoveContainer>
-        <ReplyingMessageRemoveButton onPress={onRemoveReplying}>
-          <Feather name="x-circle" size={25} color={colors.red} />
-        </ReplyingMessageRemoveButton>
-      </ReplyingMessageRemoveContainer>
-    </ReplyingMessageContainer>
+    <>
+      <MotiView
+        from={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: 100 }}
+        exit={{ opacity: 0 }}
+      >
+        <ReplyingMessageContainer>
+          <ReplyingMessageContentContainer>
+            <ReplyingMessageTitleWrapper>
+              <ReplyingMessageTitle>
+                <Feather name="corner-up-right" /> Você está respondendo:
+              </ReplyingMessageTitle>
+            </ReplyingMessageTitleWrapper>
+            <ReplyingMessageAuthorNameWrapper>
+              <ReplyingMessageAuthorName>
+                {message.author.name}
+              </ReplyingMessageAuthorName>
+            </ReplyingMessageAuthorNameWrapper>
+            <ReplyingMessageWrapper>
+              {renderMessageContent()}
+            </ReplyingMessageWrapper>
+          </ReplyingMessageContentContainer>
+          <ReplyingMessageRemoveContainer>
+            <ReplyingMessageRemoveButton onPress={onRemoveReplying}>
+              <Feather name="x-circle" size={25} color={colors.red} />
+            </ReplyingMessageRemoveButton>
+          </ReplyingMessageRemoveContainer>
+        </ReplyingMessageContainer>
+      </MotiView>
+    </>
   );
 };
 

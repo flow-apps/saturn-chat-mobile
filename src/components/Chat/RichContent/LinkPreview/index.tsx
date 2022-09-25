@@ -28,6 +28,7 @@ import YouTubeIFrame, {
 } from "../../../Modals/YouTubeIFrame";
 import URLParse from "url-parse";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MotiView } from "moti";
 
 interface LinkPreviewProps {
   link: LinkData;
@@ -69,7 +70,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
   return (
     <>
-      <YouTubeIFrame ref={ytIFrameRef} videoId={videoId} />
+      {!!videoId && <YouTubeIFrame ref={ytIFrameRef} videoId={videoId} />}
       <Container>
         {!!link.siteName && (
           <WebsiteNameContainer>
@@ -108,20 +109,25 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
               <VideoIndicatorContainer
                 onPress={handlePreview}
                 activeOpacity={0.5}
-                style={{
-                  transform: [{ translateY: 40 }],
-                }}
               >
-                <VideoIndicator>
-                  <MaterialCommunityIcons
-                    name="play-circle"
-                    size={30}
-                    color="#fff"
-                  />
-                  <VideoIndicatorText>
-                    Toque aqui para assistir
-                  </VideoIndicatorText>
-                </VideoIndicator>
+                <MotiView
+                  transition={{
+                    repeat: 3,
+                    type: "timing",
+                    duration: 1500
+                  }}
+                >
+                  <VideoIndicator>
+                    <MaterialCommunityIcons
+                      name="play-circle"
+                      size={35}
+                      color="#fff"
+                    />
+                    <VideoIndicatorText>
+                      Toque aqui para assistir
+                    </VideoIndicatorText>
+                  </VideoIndicator>
+                </MotiView>
               </VideoIndicatorContainer>
             )}
           </WebsiteImageContainer>
@@ -133,6 +139,6 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
 export default memo(LinkPreview, (prev, next) => {
   return (
-    prev.link.link === next.link.link && prev.link.image === next.link.image
+    prev.link.link === next.link.link || prev.link.image === next.link.image
   );
 });

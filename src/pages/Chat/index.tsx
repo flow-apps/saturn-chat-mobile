@@ -71,7 +71,7 @@ import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
-import { MotiView, useAnimationState } from "moti";
+import { AnimatePresence, MotiView, useAnimationState } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 import { useAudioPlayer } from "../../contexts/audioPlayer";
@@ -148,17 +148,6 @@ const Chat: React.FC = () => {
   const { unloadAllAudios, unloadAudio, currentAudioName, playAndPauseAudio } =
     useAudioPlayer();
   const appState = useAppState();
-
-  const toggleAnimationRecordingAudioState = useAnimationState({
-    recording: {
-      opacity: 1,
-      translationY: 0,
-    },
-    stopped: {
-      opacity: 0,
-      translationY: 20,
-    },
-  });
 
   navigation.addListener("blur", async () => {
     await unloadAllAudios();
@@ -310,7 +299,6 @@ const Chat: React.FC = () => {
       if (record) {
         setRecordingAudio(record.recording);
       }
-      toggleAnimationRecordingAudioState.transitionTo("recording");
     } catch (error: any) {
       setRecordingAudio(undefined);
       new Error(error);
@@ -318,7 +306,6 @@ const Chat: React.FC = () => {
   };
 
   const stopRecordAudioAndSubmit = async () => {
-    toggleAnimationRecordingAudioState.transitionTo("stopped");
     if (!recordingAudio) return;
 
     try {
@@ -607,14 +594,16 @@ const Chat: React.FC = () => {
     const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
     return (
-      <Message
-        message={item}
-        socket={socket as Socket}
-        index={index}
-        participant={participant as ParticipantsData}
-        lastMessage={lastMessage}
-        onReplyMessage={handleReplyMessage}
-      />
+      <>
+        <Message
+          message={item}
+          socket={socket as Socket}
+          index={index}
+          participant={participant as ParticipantsData}
+          lastMessage={lastMessage}
+          onReplyMessage={handleReplyMessage}
+        />
+      </>
     );
   };
   const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
@@ -684,11 +673,17 @@ const Chat: React.FC = () => {
           />
         </MessageContainer>
         <FormContainer>
-          {recordingAudio && (
-            <MotiView state={toggleAnimationRecordingAudioState}>
-              <RecordingAudio audioDuration={audioDuration} />
-            </MotiView>
-          )}
+          <AnimatePresence>
+            {recordingAudio && (
+              <MotiView 
+                from={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <RecordingAudio audioDuration={audioDuration} />
+              </MotiView>
+            )}
+          </AnimatePresence>
 
           {files.length > 0 && !sendingFile && (
             <SelectedFiles files={files} onFileRemove={removeFile} />
@@ -708,12 +703,14 @@ const Chat: React.FC = () => {
             </FileSendedProgressContainer>
           )}
 
-          {replyingMessage && (
-            <CurrentReplyingMessage
-              message={replyingMessage}
-              onRemoveReplying={handleRemoveReplyingMessage}
-            />
-          )}
+          <AnimatePresence>
+            {replyingMessage && (
+              <CurrentReplyingMessage
+                message={replyingMessage}
+                onRemoveReplying={handleRemoveReplyingMessage}
+              />
+            )}
+          </AnimatePresence>
 
           <InputContainer>
             <MessageInput

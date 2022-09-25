@@ -39,13 +39,12 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
         .get(`/invites/${inviteID}?user_id=${user?.id}`)
         .then((res) => {
           if (res.status === 200) {
-            setInvite(res.data.invite);
-
             if (res.data.participant.state === "JOINED") {
               setParticipating(true);
             } else {
               setParticipating(false);
             }
+            setInvite(res.data.invite);
           }
         })
         .catch(() => setInvite(null));
@@ -66,21 +65,13 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
           });
 
           SimpleToast.show(`Você entrou no grupo '${data.group.name}'!`);
-          setParticipating(true)
+          setParticipating(true);
         }
       })
       .catch((err) => {
         SimpleToast.show("Erro ao usar o convite");
       });
   };
-
-  if (loading) {
-    return (
-      <Container>
-        <LoadingIndicator />
-      </Container>
-    );
-  }
 
   if (!invite && !loading) {
     return (
@@ -92,6 +83,14 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             de usos!
           </GroupDescription>
         </GroupRightSideContainer>
+      </Container>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Container>
+        <LoadingIndicator />
       </Container>
     );
   }
@@ -124,5 +123,5 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
 };
 
 export default memo(InviteInMessage, (prev, next) => {
-  return prev.inviteID !== next.inviteID
+  return prev.inviteID === next.inviteID;
 });

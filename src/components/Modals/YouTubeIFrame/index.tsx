@@ -1,4 +1,5 @@
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useDeviceOrientation } from "@react-native-community/hooks";
 import { secondsToMilliseconds } from "date-fns";
 import { AnimatePresence, MotiView } from "moti";
 import React, {
@@ -41,7 +42,7 @@ export interface IYouTubeIFrameRef {
   openYouTubeIFrameModal: () => void;
 }
 
-const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(6)
+const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(6);
 
 const YouTubeIFrame: React.ForwardRefRenderFunction<
   IYouTubeIFrameRef,
@@ -81,8 +82,9 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
     setCurrentTime(time);
   }, []);
 
-  const openYouTubeIFrameModal = useCallback(() => {
+  const openYouTubeIFrameModal = useCallback(async () => {
     setModalVisible(true);
+    await SystemNavigationBar.stickyImmersive()
   }, [modalVisible]);
 
   const handleCloseModal = useCallback(async () => {
@@ -105,6 +107,7 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
     setHiddenControlsTimeout(timeout);
   }, [hiddenControls, hiddenControlsTimeout]);
 
+
   useEffect(() => {
     if (ytPlayerRef.current) {
       setVideoDuration(ytPlayerRef.current.duration);
@@ -119,7 +122,7 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
     <Container
       visible={modalVisible}
       onRequestClose={handleCloseModal}
-      supportedOrientations={["landscape", "portrait"]}
+      animationType="slide"
       statusBarTranslucent
     >
       {!hiddenControls && (

@@ -46,6 +46,7 @@ import { useAudioPlayer } from "../../../contexts/audioPlayer";
 import URLParser from "url-parse";
 import InviteInMessage from "../RichContent/InviteInMessage";
 import LinkPreview from "../RichContent/LinkPreview";
+import { MotiView } from "moti";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -87,7 +88,7 @@ const Message = ({
 
   const sended = useMemo(() => {
     return _.isUndefined(message?.sended) ? true : message.sended;
-  }, [message.sended]);  
+  }, [message.sended]);
 
   useEffect(() => {
     (async () => {
@@ -95,16 +96,13 @@ const Message = ({
 
       allLinks.map((link) => {
         const { host, pathname } = new URLParser(link);
-        if (!secrets.SaturnChatDomains.includes(host))
-          return
-        if (!pathname) 
-          return;
+        if (!secrets.SaturnChatDomains.includes(host)) return;
+        if (!pathname) return;
 
         const partsOfPath = pathname.split("/").filter(Boolean);
 
         if (partsOfPath.includes("invite")) {
-          if (partsOfPath.length !== 2) 
-            return;
+          if (partsOfPath.length !== 2) return;
 
           if (!hasInvite) {
             setHasInvite(true);
@@ -229,13 +227,10 @@ const Message = ({
   }, [message.message]);
 
   const renderVoiceMessage = () => {
-    if (!message.voice_message)
-      return <></>
+    if (!message.voice_message) return <></>;
 
-    return (
-      <AudioPlayer audio={message.voice_message} deleted={deleted} />
-    )
-  }
+    return <AudioPlayer audio={message.voice_message} deleted={deleted} />;
+  };
 
   const renderFiles = useCallback(() => {
     if (message.files) {
@@ -268,8 +263,7 @@ const Message = ({
   }, [hasInvite, invitesData]);
 
   const renderLinks = useCallback(() => {
-    if (!message.links)
-      return <></>
+    if (!message.links) return <></>;
 
     return (
       <>
@@ -277,8 +271,8 @@ const Message = ({
           <LinkPreview key={index} link={link} openLink={alertLink} />
         ))}
       </>
-    ) 
-  }, [message.links])
+    );
+  }, [message.links]);
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
@@ -305,59 +299,64 @@ const Message = ({
         onSwipeableWillClose={() => onReplyMessage(message)}
         friction={5}
       >
-        <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-          {message.reply_to && (
-            <ReplyingMessage replying_message={message.reply_to} />
-          )}
-          <MessageContentContainer
-            isRight={isRight}
-            sended={sended}
-            onLongPress={handleOpenMsgOptions}
-            delayLongPress={250}
-          >
-            <MessageOptions
-              close={handleCloseMsgOptions}
-              visible={msgOptions}
-              message={message}
-              participant_role={participant.role}
-              options={[
-                {
-                  iconName: "corner-up-right",
-                  content: "Responder",
-                  action: () => onReplyMessage(message),
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                },
-                {
-                  iconName: "copy",
-                  content: "Copiar",
-                  action: handleCopyMessage,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                },
-                {
-                  iconName: "trash-2",
-                  content: "Excluir",
-                  action: deleteMessage,
-                  color: colors.red,
-                  onlyOwner: true,
-                  authorizedRoles: rolesForDeleteMessage,
-                },
-              ]}
-            />
-            <MessageMark
-              message={message}
-              onPressLink={alertLink}
-              user={user as UserData}
-            />
-            {renderVoiceMessage()}
-            {renderFiles()}
+        <MotiView
+          from={{ opacity: 0, translateX: 100 }}
+          animate={{ opacity: 1, translateX: 0 }}
+        >
+          <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
+            {message.reply_to && (
+              <ReplyingMessage replying_message={message.reply_to} />
+            )}
+            <MessageContentContainer
+              isRight={isRight}
+              sended={sended}
+              onLongPress={handleOpenMsgOptions}
+              delayLongPress={250}
+            >
+              <MessageOptions
+                close={handleCloseMsgOptions}
+                visible={msgOptions}
+                message={message}
+                participant_role={participant.role}
+                options={[
+                  {
+                    iconName: "corner-up-right",
+                    content: "Responder",
+                    action: () => onReplyMessage(message),
+                    onlyOwner: false,
+                    authorizedRoles: ["ALL" as ParticipantRoles],
+                  },
+                  {
+                    iconName: "copy",
+                    content: "Copiar",
+                    action: handleCopyMessage,
+                    onlyOwner: false,
+                    authorizedRoles: ["ALL" as ParticipantRoles],
+                  },
+                  {
+                    iconName: "trash-2",
+                    content: "Excluir",
+                    action: deleteMessage,
+                    color: colors.red,
+                    onlyOwner: true,
+                    authorizedRoles: rolesForDeleteMessage,
+                  },
+                ]}
+              />
+              <MessageMark
+                message={message}
+                onPressLink={alertLink}
+                user={user as UserData}
+              />
+              {renderVoiceMessage()}
+              {renderFiles()}
+            </MessageContentContainer>
             {renderInvites()}
             {renderLinks()}
-          </MessageContentContainer>
-          {renderDate()}
-          {renderAuthor()}
-        </Container>
+            {renderDate()}
+            {renderAuthor()}
+          </Container>
+        </MotiView>
       </Swipeable>
     </>
   );
@@ -367,6 +366,7 @@ export default memo(Message, (prev, next) => {
   return (
     prev.message.id === next.message.id &&
     prev.message.message === next.message.message &&
+    prev.message.voice_message === next.message.voice_message && 
     prev.lastMessage?.id === next.lastMessage?.id &&
     prev.socket === next.socket
   );

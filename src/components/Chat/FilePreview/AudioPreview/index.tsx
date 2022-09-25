@@ -118,5 +118,5 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
 };
 
 export default React.memo(AudioPreview, (prev, next) => {
-  return prev.audio.url !== next.audio.url
+  return prev.audio.url === next.audio.url
 });

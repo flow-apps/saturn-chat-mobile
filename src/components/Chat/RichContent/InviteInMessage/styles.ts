@@ -9,8 +9,7 @@ export const Container = styled.View`
   background-color: ${(props) => lighten(0.08, props.theme.colors.shape)};
   padding: 12px;
   border-radius: 12px;
-  width: 100%;
-  min-width: 300px;
+  width: 85%;
   margin-top: 5px;
   min-height: 80px;
 `;

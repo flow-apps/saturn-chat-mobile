@@ -2,10 +2,15 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.19.4
+
+- Add fullscreen in YouTube Player
+- Improve style
+
 ## 0.19.3
 
 - Add YouTube IFrame modal in link preview
-- Open YouTube Video in app
+- Open YouTube Video Player in app
   - Add video controls
     - Play, pause and seek to
     - Auto show/hide controls
