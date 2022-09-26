@@ -9,6 +9,7 @@ import { Alert, Platform } from "react-native";
 import { useAuth } from "./auth";
 import { configureNotifications } from "../configs/notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { usePersistedState } from "../hooks/usePersistedState";
 
 interface NotificationsContextProps {
   expoToken: string;
@@ -20,7 +21,13 @@ const NotificationsContext = createContext<NotificationsContextProps>(
   {} as NotificationsContextProps
 );
 
-const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [, setNotificationToken] = usePersistedState<string>(
+    "@SaturnChat:NotificationToken",
+    ""
+  );
   const [expoToken, setExpoToken] = useState("");
   const [enabled, setEnabled] = useState(true);
 
@@ -67,14 +74,14 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     await api.patch(
       `/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`
     );
-  };
+  }
 
   const pushNewToken = useCallback(async () => {
     const newToken = await registerForPushNotifications();
 
-    if ((newToken && newToken !== expoToken) && signed) {      
+    if (newToken && newToken !== expoToken && signed) {
       setExpoToken(newToken);
-      await AsyncStorage.setItem("@SaturnChat:NotificationToken", JSON.parse(newToken))
+      setNotificationToken(newToken)
 
       await api
         .post("/users/notify/register", {
@@ -88,7 +95,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [signed, expoToken]);
 
   useEffect(() => {
-    pushNewToken()
+    pushNewToken();
   }, [signed]);
 
   return (
