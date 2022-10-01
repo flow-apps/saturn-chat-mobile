@@ -47,6 +47,7 @@ import URLParser from "url-parse";
 import InviteInMessage from "../RichContent/InviteInMessage";
 import LinkPreview from "../RichContent/LinkPreview";
 import { MotiView } from "moti";
+import { ArrayUtils } from "../../../utils/array";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -81,6 +82,7 @@ const Message = ({
   const { colors } = useTheme();
   const { unloadAudio } = useAudioPlayer();
   const linkUtils = new LinkUtils();
+  const arrayUtils = new ArrayUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
@@ -173,14 +175,14 @@ const Message = ({
   }, []);
 
   const deleteMessage = async () => {
-    if (message.files) {
-      await Promise.all(
-        message.files.map(async (f) => {
-          if (f.type === "audio") {
-            await unloadAudio(f.name);
-          }
-        })
-      );
+    const files = message.files;
+    if (files) {
+      const processedMessages = arrayUtils.iterator(files, async (f) => {
+        if (f.type === "audio") {
+          await unloadAudio(f.name);
+        }
+      });
+      await Promise.all(processedMessages);
     }
 
     if (message.voice_message) {
@@ -226,11 +228,11 @@ const Message = ({
     SimpleToast.show("Mensagem copiada");
   }, [message.message]);
 
-  const renderVoiceMessage = () => {
+  const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
 
     return <AudioPlayer audio={message.voice_message} deleted={deleted} />;
-  };
+  }, [message.voice_message]);
 
   const renderFiles = useCallback(() => {
     if (message.files) {
@@ -288,6 +290,7 @@ const Message = ({
         okButtonAction={openLink}
         visible={showLinkAlert}
       />
+      {/* @ts-ignore */}
       <Swipeable
         overshootRight={isRight}
         overshootLeft={!isRight}
@@ -300,8 +303,15 @@ const Message = ({
         friction={5}
       >
         <MotiView
-          from={{ opacity: 0, translateX: 100 }}
-          animate={{ opacity: 1, translateX: 0 }}
+          from={{
+            scale: sended ? 1 : 0.5,
+            translateX: sended ? 0 : !isRight ? -150 : 150,
+          }}
+          animate={{ scale: 1, translateX: 0 }}
+          transition={{
+            type: "timing",
+            duration: 400,
+          }}
         >
           <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
             {message.reply_to && (
@@ -366,7 +376,7 @@ export default memo(Message, (prev, next) => {
   return (
     prev.message.id === next.message.id &&
     prev.message.message === next.message.message &&
-    prev.message.voice_message === next.message.voice_message && 
+    prev.message.voice_message === next.message.voice_message &&
     prev.lastMessage?.id === next.lastMessage?.id &&
     prev.socket === next.socket
   );

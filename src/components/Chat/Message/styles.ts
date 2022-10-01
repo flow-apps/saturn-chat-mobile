@@ -29,7 +29,7 @@ export const MessageAvatar = styled(CachedImage)`
 
 export const MessageAuthorName = styled.Text`
   font-size: 12px;
-  font-family: ${fonts.heading};
+  font-family: ${fonts["text-bold"]};
   color: ${(props) => props.theme.colors.light_heading};
 `;
 
@@ -39,7 +39,7 @@ export const MessageContentContainer = styled.Pressable<IMessageProps>`
     !props.isRight ? props.theme.colors.shape : props.theme.colors.primary};
   opacity: ${props => props.sended ? 1 : 0.5};
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   min-width: 30%;
   max-width: 85%;
 `;
@@ -67,5 +67,5 @@ export const MessageDateContainer = styled.View`
 export const MessageDate = styled.Text`
   color: ${(props) => props.theme.colors.dark_heading};
   font-family: ${fonts.text};
-  font-size: 11px;
+  font-size: 10px;
 `;

@@ -71,12 +71,12 @@ import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
-import { AnimatePresence, MotiView, useAnimationState } from "moti";
+import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 import { useAudioPlayer } from "../../contexts/audioPlayer";
 import { NavigateType } from "../../../@types/types";
-import YouTubeIFrame from "../../components/Modals/YouTubeIFrame";
+import { ArrayUtils } from "../../utils/array";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -108,6 +108,7 @@ const Chat: React.FC = () => {
     name?: string;
     friendId: string;
   };
+  const arrayUtils = new ArrayUtils();
 
   const { Interstitial } = useAds();
   const { analytics } = useFirebase();
@@ -172,13 +173,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      // const isReady = await Interstitial.getIsReadyAsync();
-      // if (isReady) await Interstitial.showAdAsync();
-
-      // socket.emit("connect_in_chat", id);
-      // connectedSocket.on("connect", () => {
-      //   setSocket(connectedSocket);
-      // });
 
       const groupRes = await api.get(`/group/${id}`);
       if (groupRes.status === 200) setGroup(groupRes.data);
@@ -211,7 +205,7 @@ const Chat: React.FC = () => {
 
     socket.on("sended_user_message", ({ msg, localReference }) => {
       setOldMessages((old) =>
-        old.map((m) =>
+        arrayUtils.iterator(old, (m) =>
           m.localReference === localReference ? { ...msg, sended: true } : m
         )
       );
@@ -229,8 +223,9 @@ const Chat: React.FC = () => {
     });
 
     socket.on("deleted_user_typing", (removedUserID: string) => {
-      const filteredUsers = typingUsers.filter(
-        (user) => user.id !== removedUserID
+      const filteredUsers = arrayUtils.removeOne(
+        typingUsers,
+        (user) => user.id === removedUserID
       );
       setTypingUsers(filteredUsers);
     });
@@ -241,13 +236,19 @@ const Chat: React.FC = () => {
       }
 
       if (result.files) {
-        await Promise.all(
-          result.files.map(async (f) => {
+        const processedMessages = arrayUtils.iterator(
+          result.files,
+          async (f) => {
             if (f.type === "audio") {
               await unloadAudio(f.name);
             }
-          })
+          }
         );
+        await Promise.all(processedMessages);
+      }
+
+      if (replyingMessage?.id === result.id) {
+        setReplyingMessage(undefined);
       }
 
       setOldMessages((old) => old.filter((msg) => msg.id !== result.id));
@@ -309,13 +310,13 @@ const Chat: React.FC = () => {
     if (!recordingAudio) return;
 
     try {
+      setAudioDuration(0);
+      setRecordingAudio(undefined);
+
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          setRecordingAudio(undefined);
-          setAudioDuration(0);
-
-          SimpleToast.show("Finalizando gravação");
+          SimpleToast.show("Enviando mensagem de voz...");
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
@@ -398,19 +399,19 @@ const Chat: React.FC = () => {
     if (!fileRes.error) {
       if (fileRes.selectedFile?.file.type !== "success") return;
 
-      const file = fileRes.selectedFile;
-      const isSelected = files.find(
+      const newFile = fileRes.selectedFile;
+      const isSelected = arrayUtils.has(
+        files,
         (f) =>
-          f.file.type !== "cancel" &&
-          f.file.name === file.file.name &&
-          f.file.uri === f.file.uri
+          (f.file.type !== "cancel" && f.file.uri === newFile.file.uri) ||
+          f.file.name === newFile.file.name
       );
 
       if (isSelected) return setIsSelectedFile(true);
       if (fileRes.usageSize) setFilesSizeUsed(fileRes.usageSize);
 
       setFiles((oldFiles) => [
-        { file: file.file, type: file.type },
+        { file: newFile.file, type: newFile.type },
         ...oldFiles,
       ]);
 
@@ -424,7 +425,7 @@ const Chat: React.FC = () => {
   };
 
   const removeFile = (position: number) => {
-    const file = files.filter((f, index) => index === position).shift();
+    const file = arrayUtils.findFirst(files, (f, index) => index === position);
 
     if (file?.file.type !== "success") return;
 
@@ -540,7 +541,7 @@ const Chat: React.FC = () => {
       const filesData = new FormData();
       const trace = await perf().newTrace("send_message_with_files");
 
-      files.map((file) => {
+      arrayUtils.iterator(files, (file) => {
         if (file.file.type === "success") {
           const type = MimeTypes.lookup(file.file.name);
 
@@ -551,6 +552,7 @@ const Chat: React.FC = () => {
           });
         }
       });
+
       setFiles([]);
 
       filesData.append("message", message);
@@ -594,16 +596,14 @@ const Chat: React.FC = () => {
     const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
     return (
-      <>
-        <Message
-          message={item}
-          socket={socket as Socket}
-          index={index}
-          participant={participant as ParticipantsData}
-          lastMessage={lastMessage}
-          onReplyMessage={handleReplyMessage}
-        />
-      </>
+      <Message
+        message={item}
+        socket={socket as Socket}
+        index={index}
+        participant={participant as ParticipantsData}
+        lastMessage={lastMessage}
+        onReplyMessage={handleReplyMessage}
+      />
     );
   };
   const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
@@ -675,7 +675,7 @@ const Chat: React.FC = () => {
         <FormContainer>
           <AnimatePresence>
             {recordingAudio && (
-              <MotiView 
+              <MotiView
                 from={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

@@ -5,6 +5,7 @@ import {
   InterruptionModeAndroid,
   InterruptionModeIOS,
 } from "expo-av";
+import { ArrayUtils } from "../utils/array";
 
 interface AudioPlayerContextProps {
   loadAudio: (data: LoadAudioData) => Promise<void>;
@@ -42,6 +43,8 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentAudioName, setCurrentAudioName] = useState("");
   const [currentSound, setCurrentSound] = useState<SoundData | null>(null);
 
+  const arrayUtils = new ArrayUtils();
+
   useEffect(() => {
     Audio.setAudioModeAsync({
       shouldDuckAndroid: true,
@@ -50,7 +53,6 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       interruptionModeIOS: InterruptionModeIOS.DuckOthers,
       interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
     });
-
   }, []);
 
   const loadAudio = async ({
@@ -59,29 +61,32 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     onStatusUpdate,
     onFinishAudio,
   }: LoadAudioData) => {
-    const hasSound = sounds.some((sound) => sound.name === name);
+    const hasSound = arrayUtils.has(sounds, (sound) => sound.name === name);
 
     if (hasSound) return;
 
-    const audio = await Audio.Sound.createAsync({ uri: url, name });
+    const audio = await Audio.Sound.createAsync(
+      { uri: url, name },
+      {},
+      async (status) => {
+        if (!status.isLoaded) return;
 
-    await audio.sound.setProgressUpdateIntervalAsync(1000)
-    audio.sound.setOnPlaybackStatusUpdate(async (status) => {
-      if (!status.isLoaded) return;
+        if (status.didJustFinish) {
+          await onFinishAudio();
+          await changeAudioPosition(name, 0);
+          await pauseAudio(name);
 
-      if (status.didJustFinish) {
-        await onFinishAudio();
-        await changeAudioPosition(name, 0);
-        await pauseAudio(name);
+          setCurrentAudioName("");
+          setCurrentSound(null);
 
-        setCurrentAudioName("");
-        setCurrentSound(null);
+          return;
+        }
 
-        return;
+        return await onStatusUpdate(status);
       }
+    );
 
-      return await onStatusUpdate(status);
-    });
+    await audio.sound.setProgressUpdateIntervalAsync(800);
 
     setSounds((old) => [
       ...old,
@@ -112,38 +117,33 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
     sound.controller._clearSubscriptions();
 
-    if (sound.isPlaying) {
-      await sound.controller.pauseAsync();
-    }
-
+    await sound.controller.stopAsync();
     await sound.controller.unloadAsync();
   };
 
   const unloadAllAudios = async () => {
     Promise.all(
-      sounds.map(async (s) => {
+      arrayUtils.iterator(sounds, async (s) => {
         await unloadAudio(s.name);
       })
     );
   };
 
   const playAudio = async (name: string, position = 0) => {
-    let soundsForSave = sounds.filter((s) => s.name !== name);
-    const sound = sounds.filter((s) => s.name === name).shift();
+    const sound = arrayUtils.findFirst(sounds, (s) => s.name === name);
+    let soundsForSave = arrayUtils.removeOne(sounds, (s) => s.name === name);
 
     if (!sound) return;
 
-    if (currentAudioName !== sound.name) {
-      soundsForSave = await Promise.all(
-        soundsForSave.map(async (s) => {
-          if (s.isPlaying) {
-            await s.controller.pauseAsync();
-            s.isPlaying = false;
-          }
-
-          return s;
-        })
+    if (currentAudioName && currentAudioName !== sound.name) {
+      const playingSound = arrayUtils.findFirst(
+        soundsForSave,
+        (s) => s.name === currentAudioName
       );
+      if (playingSound.name) {
+        await pauseAudio(playingSound.name);
+        playingSound.isPlaying = false;
+      }
     }
 
     setCurrentAudioName(sound.name);
@@ -155,16 +155,16 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const pauseAudio = async (name: string) => {
-    const sound = sounds.filter((s) => s.name === name).shift();
-    const soundsForSave = sounds.filter((s) => s.name !== name);
+    const sound = arrayUtils.findFirst(sounds, (s) => s.name === name);
+    const soundsForSave = arrayUtils.removeOne(sounds, (s) => s.name === name);
 
-    if (!sound) return;
+    if (!sound || !sound.isPlaying || currentAudioName !== name) return;
 
-    setCurrentAudioName("");
-    setCurrentSound(null);
     await sound?.controller.pauseAsync();
     sound.isPlaying = false;
 
+    setCurrentAudioName("");
+    setCurrentSound(null);
     setSounds([...soundsForSave, sound]);
   };
 

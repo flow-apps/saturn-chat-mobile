@@ -57,10 +57,13 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
   useEffect(() => {
     const YTUrls = ["youtube.com", "youtu.be"];
-    const { host, pathname } = new URLParse(link.link);
+    const { host, pathname, query } = new URLParse(
+      link.link.replace("www.", ""),
+      true
+    );
 
     if (YTUrls.includes(host)) {
-      setVideoId(pathname.split("/").pop());
+      setVideoId(query.v || pathname.split("/").pop());
     }
   }, []);
 
@@ -114,7 +117,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
                   transition={{
                     repeat: 3,
                     type: "timing",
-                    duration: 1500
+                    duration: 1500,
                   }}
                 >
                   <VideoIndicator>

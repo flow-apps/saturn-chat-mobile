@@ -31,10 +31,12 @@ export const AudioController = styled.TouchableOpacity`
 export const SeekBarContainer = styled.View`
   flex: 1;
   margin-left: -2px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const SeekBar = styled(Slider)`
-  flex: 1;
+  width: 100%;
 `;
 
 export const AudioInfosContainer = styled.View``;
@@ -48,6 +50,6 @@ export const AudioDurationContainer = styled.View`
 export const AudioDuration = styled.Text`
   font-family: ${fonts["mono-regular"]};
   margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 12px;
   color: ${(props) => props.theme.colors.black};
 `;
