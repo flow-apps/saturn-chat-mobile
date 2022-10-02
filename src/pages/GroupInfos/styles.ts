@@ -108,7 +108,7 @@ export const GroupTagText = styled.Text`
 `;
 
 export const GroupDescContainer = styled.View`
-  background-color: ${(props) => props.theme.colors.shape};
+  background-color: ${(props) => darken(0.02, props.theme.colors.shape)};
   padding: 20px;
   border-radius: 10px;
   margin-top: 15px;

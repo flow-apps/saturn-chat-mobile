@@ -18,7 +18,6 @@ import {
 
 import * as Localize from "expo-localization";
 import * as Clipboard from "expo-clipboard";
-import { Swipeable } from "react-native-gesture-handler";
 
 import Alert from "../../Alert";
 import AudioPlayer from "../AudioPlayer";
@@ -290,84 +289,71 @@ const Message = ({
         okButtonAction={openLink}
         visible={showLinkAlert}
       />
-      {/* @ts-ignore */}
-      <Swipeable
-        overshootRight={isRight}
-        overshootLeft={!isRight}
-        overshootFriction={5}
-        shouldCancelWhenOutside={true}
-        useNativeAnimations={true}
-        enableTrackpadTwoFingerGesture={false}
-        enabled={message.sended || true}
-        onSwipeableWillClose={() => onReplyMessage(message)}
-        friction={5}
+      <MotiView
+        from={{
+          scale: sended ? 1 : 0.5,
+          translateX: sended ? 0 : !isRight ? -150 : 150,
+        }}
+        animate={{ scale: 1, translateX: 0 }}
+        transition={{
+          type: "timing",
+          duration: 400,
+        }}
       >
-        <MotiView
-          from={{
-            scale: sended ? 1 : 0.5,
-            translateX: sended ? 0 : !isRight ? -150 : 150,
-          }}
-          animate={{ scale: 1, translateX: 0 }}
-          transition={{
-            type: "timing",
-            duration: 400,
-          }}
-        >
-          <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
-            {message.reply_to && (
-              <ReplyingMessage replying_message={message.reply_to} />
-            )}
-            <MessageContentContainer
-              isRight={isRight}
-              sended={sended}
-              onLongPress={handleOpenMsgOptions}
-              delayLongPress={250}
-            >
-              <MessageOptions
-                close={handleCloseMsgOptions}
-                visible={msgOptions}
-                message={message}
-                participant_role={participant.role}
-                options={[
-                  {
-                    iconName: "corner-up-right",
-                    content: "Responder",
-                    action: () => onReplyMessage(message),
-                    onlyOwner: false,
-                    authorizedRoles: ["ALL" as ParticipantRoles],
-                  },
-                  {
-                    iconName: "copy",
-                    content: "Copiar",
-                    action: handleCopyMessage,
-                    onlyOwner: false,
-                    authorizedRoles: ["ALL" as ParticipantRoles],
-                  },
-                  {
-                    iconName: "trash-2",
-                    content: "Excluir",
-                    action: deleteMessage,
-                    color: colors.red,
-                    onlyOwner: true,
-                    authorizedRoles: rolesForDeleteMessage,
-                  },
-                ]}
-              />
-              <MessageMark
-                message={message}
-                onPressLink={alertLink}
-                user={user as UserData}
-              />
-              {renderVoiceMessage()}
-              {renderFiles()}
-            </MessageContentContainer>
-            {renderInvites()}
-            {renderLinks()}
-            {renderDate()}
-            {renderAuthor()}
-          </Container>
-        </MotiView>
-      </Swipeable>
+        <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
+          {message.reply_to && (
+            <ReplyingMessage replying_message={message.reply_to} />
+          )}
+          <MessageContentContainer
+            isRight={isRight}
+            sended={sended}
+            onLongPress={handleOpenMsgOptions}
+            delayLongPress={250}
+          >
+            <MessageOptions
+              close={handleCloseMsgOptions}
+              visible={msgOptions}
+              message={message}
+              participant_role={participant.role}
+              options={[
+                {
+                  iconName: "corner-up-right",
+                  content: "Responder",
+                  action: () => onReplyMessage(message),
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "copy",
+                  content: "Copiar",
+                  action: handleCopyMessage,
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                },
+                {
+                  iconName: "trash-2",
+                  content: "Excluir",
+                  action: deleteMessage,
+                  color: colors.red,
+                  onlyOwner: true,
+                  authorizedRoles: rolesForDeleteMessage,
+                },
+              ]}
+            />
+            <MessageMark
+              message={message}
+              onPressLink={alertLink}
+              user={user as UserData}
+            />
+            {renderVoiceMessage()}
+            {renderFiles()}
+          </MessageContentContainer>
+          {renderInvites()}
+          {renderLinks()}
+          {renderDate()}
+          {renderAuthor()}
+        </Container>
+      </MotiView>
     </>
   );
 };

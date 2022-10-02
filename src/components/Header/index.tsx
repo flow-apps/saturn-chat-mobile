@@ -5,6 +5,8 @@ import {
   RightContainer,
   HeaderButton,
   LeftContainer,
+  HeaderTitleContainer,
+  HeaderContainer,
 } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
@@ -38,22 +40,31 @@ const Header = ({
 
   return (
     <Container bgColor={bgColor}>
-      <StatusBar
-        backgroundColor={colors.primary}
-        translucent={bgColor === "transparent"}
-        style="light"
-      />
-      <RightContainer>
-        {backButton && (
-          <HeaderButton onPress={handleBack}>
-            <Feather name="arrow-left" size={25} color={"#fff"} />
-          </HeaderButton>
-        )}
-        <HeaderTitle numberOfLines={1} onPress={onPressTitle}>
-          {title}
-        </HeaderTitle>
-      </RightContainer>
-      <LeftContainer>{children}</LeftContainer>
+      <HeaderContainer>
+        <StatusBar
+          backgroundColor={colors.primary}
+          translucent={bgColor === "transparent"}
+          style="light"
+        />
+        <RightContainer>
+          {backButton && (
+            <HeaderButton onPress={handleBack}>
+              <Feather name="arrow-left" size={25} color={"#fff"} />
+            </HeaderButton>
+          )}
+          <HeaderTitleContainer>
+            <HeaderTitle
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              onPress={onPressTitle}
+              goBack={backButton}
+            >
+              {title}
+            </HeaderTitle>
+          </HeaderTitleContainer>
+        </RightContainer>
+        <LeftContainer>{children}</LeftContainer>
+      </HeaderContainer>
     </Container>
   );
 };

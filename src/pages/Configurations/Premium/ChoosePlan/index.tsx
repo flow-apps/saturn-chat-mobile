@@ -43,7 +43,7 @@ const ChoosePlan: React.FC = () => {
           </Description>
         </DescriptionWrapper>
         <PlansContainer>
-          <PlanContainer colors={[colors.shape, colors.background]}>
+          <PlanContainer>
             <PlanTitle>Mensal</PlanTitle>
             <PlanPriceContainer>
               <PlanPrice>R$ 39,99</PlanPrice>

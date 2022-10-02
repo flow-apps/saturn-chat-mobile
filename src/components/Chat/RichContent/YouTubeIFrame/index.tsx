@@ -13,10 +13,10 @@ import React, {
 import { StatusBar } from "react-native";
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import { useTheme } from "styled-components";
-import { millisToTime } from "../../../utils/format";
+import { millisToTime } from "../../../../utils/format";
 import YouTubeVideoPlayer, {
   IYouTubeControllers,
-} from "../../YouTube/YouTubeVideoPlayer";
+} from "../../../YouTube/YouTubeVideoPlayer";
 import {
   Container,
   YouTubeModal,
@@ -127,9 +127,15 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
     >
       {!hiddenControls && (
         <YouTubeModalHeader
-          from={{ opacity: 0, translateY: -50 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          exit={{ opacity: 0 }}
+        from={{
+          translateY: -50,
+        }}
+        animate={{
+          translateY: 0,
+        }}
+        exit={{
+          translateY: -50,
+        }}
           transition={{ type: "timing", duration: 300 }}
         >
           <YouTubeModalHeaderButton onPress={handleCloseModal}>

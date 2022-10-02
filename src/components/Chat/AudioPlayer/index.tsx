@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Container,
   AudioContainerWrapper,
@@ -32,7 +32,7 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
 
   const { colors } = useTheme();
 
-  useFocusEffect(() => {
+  useFocusEffect(useCallback(() => {
     loadAudio({
       name: audio.name,
       url: audio.url,
@@ -48,7 +48,7 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
         setCurrentPosition(0);        
       },
     });
-  });
+  }, []));
 
   const handlePlayPauseAudio = async () => {
     await playAndPauseAudio(audio.name, currentPosition);

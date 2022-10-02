@@ -1,5 +1,4 @@
-import React, { useState, useRef } from "react";
-import Header from "../../components/Header";
+import React, { useState, useRef, useEffect } from "react";
 import { useRoute } from "@react-navigation/core";
 import {
   Container,
@@ -11,31 +10,39 @@ import {
   PlayerSeek,
   PlayerSeekContainer,
   VideoPlayerWrapper,
-  BufferingContainer,
+  PlayerControls,
+  PlayerButtonContainer,
+  HeaderContainer,
+  Header,
+  HeaderButton,
+  HeaderTitle,
 } from "./styles";
-import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "styled-components";
-import { ResizeMode, AVPlaybackStatus, Video } from "expo-av"
-// import Video, { OnLoadData } from "react-native-video";
+import { ResizeMode, AVPlaybackStatus, Video } from "expo-av";
 import { millisToTime } from "../../utils/format";
-import LoadingIndicator from "../../components/LoadingIndicator";
-import { StatusBar } from "react-native";
 import { MotiView } from "@motify/components";
-import { HeaderButton } from "../../components/Header/styles";
 import { LinkUtils } from "../../utils/link";
+import { AnimatePresence } from "moti";
+import SystemNavigationBar from "react-native-system-navigation-bar";
+import { secondsToMilliseconds } from "date-fns";
+import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+
+const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(6);
 
 const VideoPreview: React.FC = () => {
   const [play, setPlay] = useState(true);
-  const [muted, setMuted] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [buffering, setBuffering] = useState(false);
-  const [hiddenAll, setHiddenAll] = useState(false);
-  const [status, setStatus] = useState<AVPlaybackStatus>()
-  const { colors } = useTheme();
+  const [hiddenControls, setHiddenControls] = useState(true);
+  const [hiddenControlsTimeout, setHiddenControlsTimeout] =
+    useState<NodeJS.Timeout>();
+  const [status, setStatus] = useState<AVPlaybackStatus>();
+
   const linkUtils = new LinkUtils();
   const videoRef = useRef<Video>(null);
+  const navigation = useNavigation();
   const route = useRoute();
   const routeParams = route.params as {
     name: string;
@@ -43,14 +50,22 @@ const VideoPreview: React.FC = () => {
     poster: string;
   };
 
+  const { colors } = useTheme();
+
+  useEffect(() => {
+    SystemNavigationBar.stickyImmersive();
+    return () => {
+      SystemNavigationBar.navigationShow();
+    };
+  }, []);
+
   const handleSetInitialData = (data: AVPlaybackStatus) => {
     if (!data.isLoaded) return;
 
     setStatus(data);
     setDuration(data.durationMillis);
     setCurrentPosition(data.positionMillis);
-    // setBuffering(data.isBuffering);
-  }
+  };
 
   const handleUpdateStatus = (newStatus: AVPlaybackStatus) => {
     if (!newStatus.isLoaded) return;
@@ -65,21 +80,35 @@ const VideoPreview: React.FC = () => {
 
     if (status.isPlaying) {
       await videoRef.current.pauseAsync();
-    }
-    else {
+    } else {
       await videoRef.current.playAsync();
     }
 
-    setPlay(old => !old);
-  }
+    setPlay((old) => !old);
+  };
 
   const handleSeek = async (value: number) => {
-    await videoRef.current.setPositionAsync(value)
+    await videoRef.current.setPositionAsync(value);
     setCurrentPosition(value);
   };
 
-  const handleHiddenAll = () => {
-    setHiddenAll((old) => !old);
+  const handleHiddenControls = () => {
+    if (!hiddenControls) {
+      setHiddenControls(true);
+      return;
+    }
+
+    setHiddenControls(false);
+
+    const timeout = setTimeout(async () => {
+      setHiddenControls(true);
+    }, TIME_FOR_HIDE_CONTROLS);
+    clearTimeout(hiddenControlsTimeout);
+    setHiddenControlsTimeout(timeout);
+  };
+
+  const handleGoBack = () => {
+    navigation.goBack();
   };
 
   const downloadFile = async () => {
@@ -88,92 +117,105 @@ const VideoPreview: React.FC = () => {
 
   return (
     <>
-      {!hiddenAll && (
-        <MotiView
-          from={{
-            translateY: -50,
-          }}
-          animate={{
-            translateY: 0,
-          }}
-          transition={{
-            duration: 350,
-            type: "timing",
-          }}
-        >
-          <Header title={routeParams.name}  bgColor="#000">
-            <HeaderButton onPress={downloadFile}>
-              <Feather name="download" size={25} color="#fff" />
-            </HeaderButton>
-          </Header>
-          <StatusBar backgroundColor="#000" />
-        </MotiView>
-      )}
-      <StatusBar animated hidden={hiddenAll} />
       <Container>
-        <VideoPlayerWrapper onPress={handleHiddenAll}>
-          {buffering && (
-            <BufferingContainer>
-              <LoadingIndicator />
-            </BufferingContainer>
+        <AnimatePresence>
+          {!hiddenControls && (
+            <HeaderContainer
+              from={{
+                translateY: -50,
+              }}
+              animate={{
+                translateY: 0,
+              }}
+              exit={{
+                translateY: -50,
+              }}
+              transition={{
+                duration: 350,
+                type: "timing",
+              }}
+            >
+              <Header>
+                <HeaderButton onPress={handleGoBack}>
+                  <Feather name="x" color="#fff" size={28} />
+                </HeaderButton>
+                <HeaderTitle numberOfLines={1} ellipsizeMode="middle">
+                  {routeParams.name}
+                </HeaderTitle>
+                <HeaderButton>
+                  <Feather name="download" color="#fff" size={28} />
+                </HeaderButton>
+              </Header>
+            </HeaderContainer>
           )}
+        </AnimatePresence>
+        <VideoPlayerWrapper>
           <Video
             ref={videoRef}
             style={{ width: "100%", height: "100%" }}
             shouldPlay={play}
             isLooping={true}
-            isMuted={muted}
             volume={1}
             source={{ uri: routeParams.url }}
             posterSource={{ uri: routeParams.poster }}
             resizeMode={ResizeMode.CONTAIN}
             onLoad={handleSetInitialData}
             onPlaybackStatusUpdate={handleUpdateStatus}
-            progressUpdateIntervalMillis={1000}
+            progressUpdateIntervalMillis={800}
           />
         </VideoPlayerWrapper>
-        {!hiddenAll && (
-          <PlayerControlsContainer>
-            <PlayerButton onPress={handlePlayPause}>
-              <PlayerIcon>
-                <MaterialCommunityIcons
-                  name={play ? "pause" : "play"}
-                  color="#fff"
-                  size={25}
-                />
-              </PlayerIcon>
-            </PlayerButton>
-            <PlayerSeekContainer>
-              <PlayerPositionContainer>
-                <PlayerPosition>
-                  {millisToTime(currentPosition)}
-                </PlayerPosition>
-              </PlayerPositionContainer>
-              <PlayerSeek
-                minimumValue={0}
-                maximumValue={duration}
-                value={currentPosition}
-                step={1000}
-                thumbTintColor={colors.secondary}
-                minimumTrackTintColor={colors.primary}
-                maximumTrackTintColor={colors.dark_gray}
-                onSlidingComplete={handleSeek}
-              />
-              <PlayerPositionContainer>
-                <PlayerPosition>{millisToTime(duration)}</PlayerPosition>
-              </PlayerPositionContainer>
-            </PlayerSeekContainer>
-            <PlayerButton onPress={() => setMuted((old) => !old)}>
-              <PlayerIcon>
-                <MaterialCommunityIcons
-                  name={muted ? "volume-mute" : "volume-high"}
-                  color="#fff"
-                  size={22}
-                />
-              </PlayerIcon>
-            </PlayerButton>
-          </PlayerControlsContainer>
-        )}
+        <PlayerControlsContainer onPress={handleHiddenControls}>
+          <AnimatePresence>
+            {!hiddenControls && (
+              <MotiView
+                from={{ opacity: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{
+                  opacity: 0,
+                  scale: 1.1,
+                }}
+                transition={{
+                  type: "timing",
+                  duration: 200,
+                }}
+              >
+                <PlayerButtonContainer>
+                  <PlayerButton onPress={handlePlayPause}>
+                    <PlayerIcon>
+                      <MaterialCommunityIcons
+                        name={play ? "pause" : "play"}
+                        color="#fff"
+                        size={25}
+                      />
+                    </PlayerIcon>
+                  </PlayerButton>
+                </PlayerButtonContainer>
+                <PlayerControls>
+                  <PlayerSeekContainer>
+                    <PlayerPositionContainer>
+                      <PlayerPosition>
+                        {millisToTime(currentPosition)}
+                      </PlayerPosition>
+                    </PlayerPositionContainer>
+                    <PlayerSeek
+                      minimumValue={0}
+                      maximumValue={duration}
+                      value={currentPosition}
+                      step={50}
+                      thumbTintColor={colors.secondary}
+                      minimumTrackTintColor={colors.secondary}
+                      maximumTrackTintColor={colors.dark_gray}
+                      onSlidingComplete={handleSeek}
+                    />
+                    <PlayerPositionContainer>
+                      <PlayerPosition>{millisToTime(duration)}</PlayerPosition>
+                    </PlayerPositionContainer>
+                  </PlayerSeekContainer>
+                </PlayerControls>
+              </MotiView>
+            )}
+          </AnimatePresence>
+        </PlayerControlsContainer>
       </Container>
     </>
   );

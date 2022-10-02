@@ -2,6 +2,16 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.20.0
+
+### Fixing bugs
+
+- Add array utils based in "for-loop"
+  - Add array utils in components
+- Fix header title and extra header buttons
+- Add animations
+- Padronize video players
+
 ## 0.19.4
 
 - Add fullscreen in YouTube Player

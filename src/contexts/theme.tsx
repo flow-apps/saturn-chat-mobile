@@ -35,9 +35,10 @@ const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     (async () => {
-      StatusBar.setBarStyle("light-content");
       await nav.setNavigationColor(theme.colors.shape, theme.title !== "light");
     })();
+    
+    StatusBar.setBarStyle("light-content");
   }, [theme]);
 
   return (

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import ReactNative, { Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import ReactNative, { Dimensions, Pressable } from "react-native";
 import Header from "../../components/Header";
 import ImageZoom from "react-native-image-pan-zoom";
 import { Container, ImageContainer, Image } from "./styles";
@@ -10,8 +10,11 @@ import { useCallback } from "react";
 import { LinkUtils } from "../../utils/link";
 import { useImageDimensions } from "@react-native-community/hooks";
 import Loading from "../../components/Loading";
+import { AnimatePresence, MotiView } from "moti";
 
 const ImagePreview = () => {
+  const [hiddenHeader, setHiddenHeader] = useState(false);
+
   const linkUtils = new LinkUtils();
 
   const route = useRoute();
@@ -26,24 +29,31 @@ const ImagePreview = () => {
     await linkUtils.openLink(url);
   }, [name, url]);
 
+  const handleHiddenAndShowHeader = () => {
+    setHiddenHeader((old) => !old);
+  };
+
   if (!dimensions) return <Loading />;
 
   return (
     <>
-      <Header title={name}>
+      <Header bgColor="#00000000" title={name}>
         <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />
         </HeaderButton>
       </Header>
       <Container>
         <ImageContainer>
+          {/* @ts-ignore */}
           <ImageZoom
             imageWidth={Dimensions.get("screen").width}
             imageHeight={Dimensions.get("screen").height}
             cropWidth={Dimensions.get("screen").width}
             cropHeight={Dimensions.get("screen").height}
-            enableDoubleClickZoom={true}
-            useNativeDriver={true}
+            minScale={1}
+            useNativeDriver
+            enableCenterFocus
+            enableDoubleClickZoom
           >
             <Image
               source={{ uri: url }}

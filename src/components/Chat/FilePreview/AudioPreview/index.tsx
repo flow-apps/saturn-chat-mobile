@@ -35,35 +35,37 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
 
   const { colors } = useTheme();
 
-  useFocusEffect(() => {
-    loadAudio({
-      name: audio.name,
-      url: audio.url,
-      onStatusUpdate: async (status) => {
-        if (!status.isLoaded) return;
+  useFocusEffect(
+    useCallback(() => {
+      loadAudio({
+        name: audio.name,
+        url: audio.url,
+        onStatusUpdate: async (status) => {
+          if (!status.isLoaded) return;
 
-        if (duration === 0) {
-          setDuration(Number(status?.durationMillis));
-        }
+          if (duration === 0) {
+            setDuration(Number(status?.durationMillis));
+          }
 
-        if (status.isPlaying) {
-          setCurrentPosition(status?.positionMillis);
-        }
-      },
-      onFinishAudio: async () => {
-        setCurrentPosition(0);
-      },
-    });
-  });
+          if (status.isPlaying) {
+            setCurrentPosition(status?.positionMillis);
+          }
+        },
+        onFinishAudio: async () => {
+          setCurrentPosition(0);
+        },
+      });
+    }, [audio])
+  );
 
   const handlePlayPauseAudio = useCallback(async () => {
     await playAndPauseAudio(audio.name, currentPosition);
-  }, [audio.name, currentAudioName, currentPosition])
+  }, [audio.name, currentAudioName, currentPosition]);
 
-  const onChangePosition = useCallback(async (value: number) => {
+  const onChangePosition = async (value: number) => {
     await changeAudioPosition(audio.name, value);
     setCurrentPosition(value);
-  }, [audio.name])
+  };
 
   return (
     <Container>

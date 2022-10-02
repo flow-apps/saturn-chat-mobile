@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import YouTubeIFrame, {
   IYouTubeIFrameRef,
-} from "../../../Modals/YouTubeIFrame";
+} from "../YouTubeIFrame";
 import URLParse from "url-parse";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MotiView } from "moti";
