@@ -68,9 +68,6 @@ const InviteUsers: React.FC = () => {
         if (res.status === 200) {
           const data = res.data as Friend[];
           const sorted = _.sortBy(data, { invited: false });
-
-          console.log(data)
-
           setRequests(sorted);
         }
 

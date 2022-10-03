@@ -16,10 +16,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 interface HeaderProps {
   title: string;
-  onPressTitle?: () => unknown;
   backButton?: boolean;
   bgColor?: string;
   children?: JSX.Element | JSX.Element[];
+  onPressTitle?: () => unknown;
 }
 
 const Header = ({

@@ -1,20 +1,17 @@
-import React, { useEffect, useState } from "react";
-import ReactNative, { Dimensions, Pressable } from "react-native";
+import React, { useEffect } from "react";
+import ReactNative, { Dimensions, StatusBar } from "react-native";
 import Header from "../../components/Header";
+import Loading from "../../components/Loading";
 import ImageZoom from "react-native-image-pan-zoom";
+import Feather from "@expo/vector-icons/Feather";
 import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
-import Feather from "@expo/vector-icons/Feather";
 import { HeaderButton } from "../../components/Header/styles";
 import { useCallback } from "react";
 import { LinkUtils } from "../../utils/link";
 import { useImageDimensions } from "@react-native-community/hooks";
-import Loading from "../../components/Loading";
-import { AnimatePresence, MotiView } from "moti";
 
 const ImagePreview = () => {
-  const [hiddenHeader, setHiddenHeader] = useState(false);
-
   const linkUtils = new LinkUtils();
 
   const route = useRoute();
@@ -29,19 +26,16 @@ const ImagePreview = () => {
     await linkUtils.openLink(url);
   }, [name, url]);
 
-  const handleHiddenAndShowHeader = () => {
-    setHiddenHeader((old) => !old);
-  };
-
   if (!dimensions) return <Loading />;
 
   return (
     <>
-      <Header bgColor="#00000000" title={name}>
+      <Header bgColor="#111" title={name}>
         <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />
         </HeaderButton>
       </Header>
+      <StatusBar backgroundColor="#111" />
       <Container>
         <ImageContainer>
           {/* @ts-ignore */}
