@@ -28,6 +28,7 @@ import SystemNavigationBar from "react-native-system-navigation-bar";
 import { secondsToMilliseconds } from "date-fns";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { FileService } from "../../services/file";
 
 const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(6);
 
@@ -40,12 +41,14 @@ const VideoPreview: React.FC = () => {
     useState<NodeJS.Timeout>();
   const [status, setStatus] = useState<AVPlaybackStatus>();
 
+  const fileService = new FileService()
   const linkUtils = new LinkUtils();
   const videoRef = useRef<Video>(null);
   const navigation = useNavigation();
   const route = useRoute();
   const routeParams = route.params as {
     name: string;
+    original_name: string;
     url: string;
     poster: string;
   };
@@ -71,7 +74,6 @@ const VideoPreview: React.FC = () => {
     if (!newStatus.isLoaded) return;
 
     setStatus(newStatus);
-    // setBuffering(newStatus.isBuffering);
     setCurrentPosition(newStatus.positionMillis);
   };
 
@@ -112,7 +114,7 @@ const VideoPreview: React.FC = () => {
   };
 
   const downloadFile = async () => {
-    await linkUtils.openLink(routeParams.url);
+    await fileService.downloadFile(routeParams.url, routeParams.original_name)
   };
 
   return (
@@ -140,9 +142,9 @@ const VideoPreview: React.FC = () => {
                   <Feather name="x" color="#fff" size={28} />
                 </HeaderButton>
                 <HeaderTitle numberOfLines={1} ellipsizeMode="middle">
-                  {routeParams.name}
+                  {routeParams.original_name}
                 </HeaderTitle>
-                <HeaderButton>
+                <HeaderButton onPress={downloadFile}>
                   <Feather name="download" color="#fff" size={28} />
                 </HeaderButton>
               </Header>

@@ -27,6 +27,7 @@ import { useEffect } from "react";
 import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
 import AudioPreview from "./AudioPreview";
+import { FileService } from "../../../services/file";
 
 interface IFilePreviewProps {
   name: string;
@@ -41,6 +42,8 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
   const { colors } = useTheme();
+
+  const fileService = new FileService()
   const linkUtils = new LinkUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const mimeType = useMemo(() => MimeTypes.lookup(name), []);
@@ -73,7 +76,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
 
-    await linkUtils.openLink(url);
+    await fileService.downloadFile(url, original_name)
   }, [url, name]);
 
   const renderIcon = () => {
@@ -141,14 +144,16 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
 
   const handleGoImagePreview = () => {
     return navigation.navigate("ImagePreview", {
-      name: original_name,
+      name,
+      original_name,
       url,
     });
   };
 
   const handleGoVideoPreview = () => {
     return navigation.navigate("VideoPreview", {
-      name: original_name,
+      name,
+      original_name,
       url,
       poster: videoThumb,
     });
@@ -156,7 +161,8 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
 
   const handleGoPdfPreview = () => {
     return navigation.navigate("PdfPreview", {
-      name: original_name,
+      name,
+      original_name,
       url,
     });
   };
@@ -166,7 +172,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
       <Container>
         <Alert
           title="❗ Muito cuidado"
-          content={`Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Arquivo: ${name}`}
+          content={`Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Nome do arquivo: ${original_name}`}
           visible={downloadWarning}
           cancelButtonText="Não baixar"
           okButtonText="Baixar"

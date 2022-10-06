@@ -10,12 +10,17 @@ import { HeaderButton } from "../../components/Header/styles";
 import { useCallback } from "react";
 import { LinkUtils } from "../../utils/link";
 import { useImageDimensions } from "@react-native-community/hooks";
+import { FileService } from "../../services/file";
 
 const ImagePreview = () => {
-  const linkUtils = new LinkUtils();
+  const fileService = new FileService();
 
   const route = useRoute();
-  const { name, url } = route.params as { name: string; url: string };
+  const { name, original_name, url } = route.params as {
+    name: string;
+    original_name: string;
+    url: string;
+  };
   const { dimensions } = useImageDimensions({ uri: url });
 
   useEffect(() => {
@@ -23,14 +28,14 @@ const ImagePreview = () => {
   }, []);
 
   const downloadFile = useCallback(async () => {
-    await linkUtils.openLink(url);
-  }, [name, url]);
+    await fileService.downloadFile(url, original_name);
+  }, [original_name, url]);
 
   if (!dimensions) return <Loading />;
 
   return (
     <>
-      <Header bgColor="#111" title={name}>
+      <Header bgColor="#111" title={original_name}>
         <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />
         </HeaderButton>

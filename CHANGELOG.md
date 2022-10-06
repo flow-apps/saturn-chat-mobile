@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.20.1
+
+- Fix DFS (Download Files System)
+- Fix the PDF Previewer
+
 ## 0.20.0
 
 ### Fixing bugs
