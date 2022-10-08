@@ -8,6 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     version: "0.0.1",
     orientation: "default",
     icon: "./assets/icon.png",
+    scheme: "saturnchat",
     plugins: [
       "@react-native-firebase/app",
       "@react-native-firebase/perf",

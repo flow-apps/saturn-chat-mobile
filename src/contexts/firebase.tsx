@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
-import Crashlytics from "@react-native-firebase/crashlytics"
-import Performance from "@react-native-firebase/perf"
-
 import * as Analytics from "expo-firebase-analytics";
+import Crashlytics from "@react-native-firebase/crashlytics";
+import Performance from "@react-native-firebase/perf";
+
 import { useAuth } from "./auth";
 
 type FirebaseContextProps = {
@@ -14,7 +14,9 @@ const FirebaseContext = createContext<FirebaseContextProps>(
   {} as FirebaseContextProps
 );
 
-const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [analytics, setAnalytics] = useState<typeof Analytics>(Analytics);
   const { user } = useAuth();
 
@@ -25,27 +27,21 @@ const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
       }
 
       Analytics.setClientId(uuid.v4().toString());
-
-      setAnalytics(analytics);
+      setAnalytics(Analytics);
     })();
   }, []);
 
   useEffect(() => {
     (async () => {
       if (user) {
-        await Crashlytics().setUserId(String(user?.id))
-        await Crashlytics().setAttributes(user as {})
+        await Crashlytics().setUserId(String(user?.id));
+        await Crashlytics().setAttributes(user as {});
       }
-  
-      await Crashlytics().setCrashlyticsCollectionEnabled(!__DEV__)
-    })()
-  }, [])
 
-  useEffect(() => {
-    (async () => {
-      await Performance().setPerformanceCollectionEnabled(!__DEV__)
-    })()
-  }, [])
+      await Crashlytics().setCrashlyticsCollectionEnabled(!__DEV__);
+      await Performance().setPerformanceCollectionEnabled(!__DEV__);
+    })();
+  }, []);
 
   return (
     <FirebaseContext.Provider

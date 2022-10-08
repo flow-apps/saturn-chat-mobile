@@ -7,20 +7,21 @@ import { navigationRef } from "./rootNavigation";
 import { useFirebase } from "../contexts/firebase";
 import Loading from "../components/Loading";
 import config from "../config";
+import * as Linking from "expo-linking"
 
 
 const Routes = () => {
   const { analytics } = useFirebase()
   const { signed, loadingData } = useAuth();
 
-  const linking: LinkingOptions = {
-    prefixes: [config.WEBSITE_URL, "saturnchat://"],
+  const linking: LinkingOptions<{}> = {
+    prefixes: [config.WEBSITE_URL, "saturnchat://", Linking.createURL("/")],
     config: {
       screens: {
         Invite: "invite/:inviteID",
-        [signed ? "Groups" : "OnBoarding"]: "*"
+        [signed ? "Groups" : "OnBoarding"]: "*",
       },
-      initialRouteName: signed ? "Groups" : "OnBoarding",
+      initialRouteName: (signed ? "Groups" : "OnBoarding") as never,
     },
   }
   

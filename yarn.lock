@@ -1843,6 +1843,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.2.1.tgz#8f1c8cf62de1bd91ce1e32585f7eb666f21e5025"
   integrity sha512-6HUS5HbB9bvEN4GiwBlxECgPWQIugHE+kfnxqX2jHUl1SE57MRpw00m1qVs4hXtEPQndBl6mAQiGbKCOtLPVbg==
 
+"@react-native-firebase/app-distribution@^15.7.0":
+  version "15.7.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app-distribution/-/app-distribution-15.7.0.tgz#c0c30ebec703a92c5f49d23b91a03045676c4cdd"
+  integrity sha512-qTSDohNwCNReJ+/J137/FbV8aRQW9JFrM6KGOfz3gf/FOM7IwcRGAGHs8CfgEhKApDrZkYFnD9JVSPAN1V71fw==
+
 "@react-native-firebase/app@^12.7.3":
   version "12.9.3"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-12.9.3.tgz#7f0f8ee8598557e3d8997d5a7e820f89d2a3479d"
@@ -1859,6 +1864,11 @@
   dependencies:
     "@expo/config-plugins" "^4.0.3"
     stacktrace-js "^2.0.0"
+
+"@react-native-firebase/dynamic-links@^15.7.0":
+  version "15.7.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/dynamic-links/-/dynamic-links-15.7.0.tgz#7407de1126c52b3dcb50c2df5f0e12406dc790f9"
+  integrity sha512-ocER0FAImUIgU3h7in5csuQD5SsFRt98cO6lTD7GbTUgRKYwK9f67VdKvkraefr3NWe+EvBJLLTaQYavnTyI+A==
 
 "@react-native-firebase/perf@^12.7.3":
   version "12.9.3"
