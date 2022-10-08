@@ -1,10 +1,10 @@
 import RNBrowser from "react-native-inappbrowser-reborn";
 import secrets from "../secrets.json";
 import URLParse from "url-parse";
-import * as ExpoLinking from "expo-linking"
+import * as ExpoLinking from "expo-linking";
 import { Linking } from "react-native";
 import SimpleToast from "react-native-simple-toast";
-import { navigate } from "../routes/rootNavigation";
+import { ArrayUtils } from "./array";
 
 class LinkUtils {
   isSaturnChatLink(url: string) {
@@ -13,6 +13,14 @@ class LinkUtils {
     const { hostname } = new URLParse(url.replace("www.", ""), true);
 
     return secrets.SaturnChatDomains.includes(hostname);
+  }
+
+  hasSaturnChatDeepLinkInApp(path: string) {
+    const arrayUtils = new ArrayUtils();
+    const paths = ["invite"];
+    const separatedPath = path.split("/").filter(Boolean).shift().toLowerCase();
+
+    return arrayUtils.has(paths, (p) => separatedPath === p);
   }
 
   getAllLinksFromText(text: string) {
@@ -31,14 +39,18 @@ class LinkUtils {
     const isSaturnChatLink = this.isSaturnChatLink(url);
 
     if (isSaturnChatLink) {
-      const { hostname, path, queryParams } = ExpoLinking.parse(url);
-      const deepURL = ExpoLinking.createURL(path, {
-        queryParams,
-      })
+      const { path, queryParams } = ExpoLinking.parse(url);
 
-      await ExpoLinking.openURL(deepURL)
-      
-      return
+      if (this.hasSaturnChatDeepLinkInApp(path)) {
+        const deepURL = ExpoLinking.createURL(path, {
+          queryParams,
+        });
+
+        if (await ExpoLinking.canOpenURL(deepURL)) {
+          await ExpoLinking.openURL(deepURL);
+          return;
+        }
+      }
     }
 
     try {

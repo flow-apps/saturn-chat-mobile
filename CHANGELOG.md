@@ -2,6 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.20.3
+
+- Open app links inside app
+- Fix deep links
+- Add link utils
+
 ## 0.20.2
 
 - Fetch remote configs directly in app, using _React Native Firebase Remote Config_

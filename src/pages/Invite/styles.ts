@@ -30,6 +30,10 @@ export const InviteTitle = styled.Text`
 
 export const InviteAnimationContainer = styled.View`
   height: 150px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
 `;
 
 export const InviteAnimation = styled(AnimatedLottieView)``;
