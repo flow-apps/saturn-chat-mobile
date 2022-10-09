@@ -41,6 +41,7 @@ import * as Localize from "expo-localization";
 import { InviteData } from "../../../../../@types/interfaces";
 import { ConvertDate } from "../../../../utils/convertDate";
 import config from "../../../../config";
+import { AnimatePresence, MotiView } from "moti";
 
 const NewInvites: React.FC = () => {
   const [invites, setInvites] = useState<InviteData[]>([]);
@@ -53,7 +54,7 @@ const NewInvites: React.FC = () => {
   const route = useRoute();
   const { id } = route.params as { id: string };
 
-  const expireInValues = [1, 7, 15, 30];
+  const expireInValues = [1, 3, 7, 15, 30];
 
   useEffect(() => {
     (async () => {
@@ -88,8 +89,8 @@ const NewInvites: React.FC = () => {
     }
   };
 
-  const handleCopyLink = (url: string) => {
-    Clipboard.setString(url);
+  const handleCopyLink = async (url: string) => {
+    await Clipboard.setStringAsync(url);
     Toast.show("Convite copiado!");
   };
 
@@ -97,7 +98,7 @@ const NewInvites: React.FC = () => {
 
   return (
     <>
-      <Header title="Criar convites"  />
+      <Header title="Criar convites" />
       <Container>
         <CreateInviteLinkContainer>
           <CreateInviteLinkTitle>Gerar convite</CreateInviteLinkTitle>
@@ -128,43 +129,69 @@ const NewInvites: React.FC = () => {
                   onChangeValue={setUnlimitedUsages}
                 />
               </CreateInviteLinkConfigInline>
-              <CreateInviteLinkConfig disabled={unlimitedUsages}>
-                <CreateInviteLinkOptionLabel>
-                  <CreateInviteLinkOptionText>
-                    Limite de usos ({String(usages).padStart(3, "0")})
-                  </CreateInviteLinkOptionText>
-                </CreateInviteLinkOptionLabel>
-                <AmountUsagesSlider
-                  step={1}
-                  value={usages}
-                  minimumValue={1}
-                  maximumValue={250}
-                  minimumTrackTintColor={colors.primary}
-                  maximumTrackTintColor={colors.light_gray}
-                  thumbTintColor={colors.secondary}
-                  onSlidingComplete={setUsages}
-                />
-              </CreateInviteLinkConfig>
-              <CreateInviteLinkConfig disabled={permanent}>
-                <CreateInviteLinkOptionLabel>
-                  <CreateInviteLinkOptionText>
-                    Expirar em {expireIn} dias
-                  </CreateInviteLinkOptionText>
-                </CreateInviteLinkOptionLabel>
-                <CreateInviteLinkOptionScroll>
-                  {expireInValues.map((value, index) => (
-                    <CreateInviteLinkOptionCard
-                      selected={value === expireIn}
-                      key={index}
-                      onPress={() => setExpireIn(value)}
-                    >
-                      <CreateInviteLinkOptionCardText>
-                        {value} Dias
-                      </CreateInviteLinkOptionCardText>
-                    </CreateInviteLinkOptionCard>
-                  ))}
-                </CreateInviteLinkOptionScroll>
-              </CreateInviteLinkConfig>
+              <AnimatePresence>
+                {!unlimitedUsages && (
+                  <MotiView
+                    from={{ opacity: 1, height: 60 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{
+                      type: "timing",
+                      duration: 250,
+                    }}
+                  >
+                    <CreateInviteLinkConfig>
+                      <CreateInviteLinkOptionLabel>
+                        <CreateInviteLinkOptionText>
+                          Usar no máximo {String(usages).padStart(3, "0")} vezes
+                        </CreateInviteLinkOptionText>
+                      </CreateInviteLinkOptionLabel>
+                      <AmountUsagesSlider
+                        step={1}
+                        value={usages}
+                        minimumValue={1}
+                        maximumValue={250}
+                        minimumTrackTintColor={colors.primary}
+                        maximumTrackTintColor={colors.light_gray}
+                        thumbTintColor={colors.secondary}
+                        onValueChange={setUsages}
+                      />
+                    </CreateInviteLinkConfig>
+                  </MotiView>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {!permanent && (
+                  <MotiView
+                    from={{ opacity: 1, height: 100 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{
+                      type: "timing",
+                      duration: 250,
+                    }}
+                  >
+                    <CreateInviteLinkConfig>
+                      <CreateInviteLinkOptionLabel>
+                        <CreateInviteLinkOptionText>
+                          Expirar em {String(expireIn).padStart(2, "0")} dias
+                        </CreateInviteLinkOptionText>
+                      </CreateInviteLinkOptionLabel>
+                      <CreateInviteLinkOptionScroll>
+                        {expireInValues.map((value, index) => (
+                          <CreateInviteLinkOptionCard
+                            selected={value === expireIn}
+                            key={index}
+                            onPress={() => setExpireIn(value)}
+                          >
+                            <CreateInviteLinkOptionCardText>
+                              {String(value).padStart(2, "0")} Dias
+                            </CreateInviteLinkOptionCardText>
+                          </CreateInviteLinkOptionCard>
+                        ))}
+                      </CreateInviteLinkOptionScroll>
+                    </CreateInviteLinkConfig>
+                  </MotiView>
+                )}
+              </AnimatePresence>
             </CreateInviteLinkConfigs>
             <Button title="Gerar" onPress={handleCreateInvite} />
           </CreateInviteLinkWrapper>
@@ -177,7 +204,7 @@ const NewInvites: React.FC = () => {
                 <InviteLeftSide>
                   <InviteLink
                     numberOfLines={1}
-                    onLongPress={() =>
+                    onPress={() =>
                       handleCopyLink(
                         config.WEBSITE_URL + "/invite/" + invite.invite_code
                       )
@@ -189,7 +216,7 @@ const NewInvites: React.FC = () => {
                   <InviteDuration>
                     <Feather name="clock" size={14} /> Expira em:{" "}
                     {invite.is_permanent ? (
-                      <MaterialCommunityIcons name="infinity" />
+                      <MaterialCommunityIcons name="infinity" size={14} />
                     ) : (
                       convertDate.formatToDate(invite.expire_in, true)
                     )}
@@ -197,7 +224,7 @@ const NewInvites: React.FC = () => {
                   <InviteUsage>
                     Foi usado {invite.usage_amount} vezes de {""}
                     {invite.is_unlimited_usage ? (
-                      <MaterialCommunityIcons name="infinity" />
+                      <MaterialCommunityIcons name="infinity" size={14} />
                     ) : (
                       invite.max_usage_amount
                     )}
@@ -206,9 +233,9 @@ const NewInvites: React.FC = () => {
                 <InviteRemoveButton>
                   <InviteRemoveText>
                     <Feather
-                      name="trash"
+                      name="x-circle"
                       onPress={() => handleDeleteInvite(invite.id)}
-                      size={20}
+                      size={21}
                       color={colors.red}
                     />
                   </InviteRemoveText>

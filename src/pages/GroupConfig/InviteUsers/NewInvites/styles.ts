@@ -1,11 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "../../../../styles/fonts";
-
-import Slider from "@react-native-community/slider"
-
-interface CreateInviteOptionProps {
-  disabled?: boolean;
-}
+import Slider from "@react-native-community/slider";
 
 interface OptionCardProps {
   selected?: boolean;
@@ -47,10 +42,9 @@ export const CreateInviteLinkConfigs = styled.View`
   margin: 5px 0px 15px 0px;
 `;
 
-export const CreateInviteLinkConfig = styled.View<CreateInviteOptionProps>`
+export const CreateInviteLinkConfig = styled.View`
   margin-top: 15px;
-  display: ${(props) => (props.disabled ? "none" : "flex")};
-  opacity: ${(props) => (props.disabled ? "0" : "1")};
+  flex: 1;
 `;
 
 export const CreateInviteLinkConfigInline = styled(CreateInviteLinkConfig)`
@@ -71,14 +65,15 @@ export const CreateInviteLinkOptionText = styled.Text`
 
 export const CreateInviteLinkOptionScroll = styled.ScrollView.attrs({
   horizontal: true,
-  showsHorizontalScrollIndicator: false
+  showsHorizontalScrollIndicator: false,
 })`
   margin: 5px;
 `;
 
 export const CreateInviteLinkOptionCard = styled.TouchableOpacity<OptionCardProps>`
   background: ${(props) => props.theme.colors.background};
-  border: ${props => props.selected ? `1px solid ${props.theme.colors.primary}` : "none"};
+  border: ${(props) =>
+    props.selected ? `1px solid ${props.theme.colors.primary}` : "none"};
   border-radius: 5px;
   padding: 10px 25px;
   margin-right: 5px;
@@ -90,8 +85,7 @@ export const CreateInviteLinkOptionCardText = styled.Text`
   font-family: ${fonts.heading};
 `;
 
-export const AmountUsagesSlider = styled(Slider)`
-`
+export const AmountUsagesSlider = styled(Slider)``;
 
 export const YourInvitesContainer = styled.View``;
 
@@ -110,25 +104,29 @@ export const InviteContainer = styled.View`
   justify-content: space-between;
   margin-bottom: 10px;
   background-color: ${(props) => props.theme.colors.shape};
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 15px;
 `;
 
 export const InviteLeftSide = styled.View``;
 
 export const InviteLink = styled.Text`
   color: ${(props) => props.theme.colors.secondary};
-  font-size: 14px;
+  font-size: 12px;
   font-family: ${fonts.text};
 `;
 
 export const InviteDuration = styled.Text`
   font-family: ${fonts.text};
+  font-size: 12px;
   color: ${(props) => props.theme.colors.primary};
 `;
 
-export const InviteUsage = styled(InviteDuration)`
+export const InviteUsage = styled.Text`
+  font-family: ${fonts.text};
+  font-size: 12px;
   color: ${(props) => props.theme.colors.light_heading};
+  margin-left: 3px;
 `;
 
 export const InviteRemoveButton = styled.TouchableOpacity`
@@ -136,4 +134,3 @@ export const InviteRemoveButton = styled.TouchableOpacity`
 `;
 
 export const InviteRemoveText = styled.Text``;
-
