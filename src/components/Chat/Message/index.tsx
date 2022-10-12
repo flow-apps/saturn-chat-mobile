@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
 
-import secrets from "../../../secrets.json";
+import config from "../../../config";
 import isSameMinute from "date-fns/isSameMinute";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
@@ -97,7 +97,7 @@ const Message = ({
 
       allLinks.map((link) => {
         const { host, pathname } = new URLParser(link);
-        if (!secrets.SaturnChatDomains.includes(host)) return;
+        if (!config.SATURN_CHAT_DOMAINS.includes(host)) return;
         if (!pathname) return;
 
         const partsOfPath = pathname.split("/").filter(Boolean);
@@ -196,7 +196,7 @@ const Message = ({
     async (link: string) => {
       const { hostname } = new URLParser(link);
 
-      if (secrets.SaturnChatDomains.includes(hostname)) {
+      if (config.SATURN_CHAT_DOMAINS.includes(hostname)) {
         return await openLink(link);
       }
 

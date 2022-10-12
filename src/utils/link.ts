@@ -1,10 +1,10 @@
-import RNBrowser from "react-native-inappbrowser-reborn";
-import secrets from "../secrets.json";
-import URLParse from "url-parse";
 import * as ExpoLinking from "expo-linking";
 import { Linking } from "react-native";
-import SimpleToast from "react-native-simple-toast";
 import { ArrayUtils } from "./array";
+import URLParse from "url-parse";
+import SimpleToast from "react-native-simple-toast";
+import RNBrowser from "react-native-inappbrowser-reborn";
+import config from "../config";
 
 class LinkUtils {
   isSaturnChatLink(url: string) {
@@ -12,7 +12,7 @@ class LinkUtils {
 
     const { hostname } = new URLParse(url.replace("www.", ""), true);
 
-    return secrets.SaturnChatDomains.includes(hostname);
+    return config.SATURN_CHAT_DOMAINS.includes(hostname);
   }
 
   hasSaturnChatDeepLinkInApp(path: string) {
