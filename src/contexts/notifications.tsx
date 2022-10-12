@@ -13,6 +13,7 @@ import secrets from "../secrets.json";
 
 import { useAuth } from "./auth";
 import { Alert } from "react-native";
+import { configureNotificationsHandlers } from "../configs/notifications";
 
 interface NotificationsContextProps {
   expoToken: string;
@@ -43,7 +44,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const registerOneSignal = useCallback(() => {
     if (!signed) return;
-    
+
     OneSignal.setLocationShared(false);
     OneSignal.setLanguage(Localize.locale);
     OneSignal.setExternalUserId(user.id);
@@ -56,6 +57,8 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     });
     OneSignal.setAppId(secrets.OneSignalAppID);
+    
+    configureNotificationsHandlers(signed)
     console.log("[ OneSignal ] Connection ready!");
   }, [signed, user]);
 
