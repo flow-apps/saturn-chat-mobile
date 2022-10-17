@@ -1,11 +1,12 @@
 import { AxiosResponse } from "axios";
 import api from "./api";
 import FormData from "form-data";
+import { UserData } from "../../@types/interfaces";
 
 interface Response extends AxiosResponse {
   data: {
     token: string;
-    user: object;
+    user: UserData;
   };
 }
 

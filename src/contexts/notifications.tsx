@@ -4,19 +4,18 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useMemo,
 } from "react";
 import * as Localize from "expo-localization";
-import OneSignal from "react-native-onesignal";
 
 import api from "../services/api";
 import secrets from "../secrets.json";
 
 import { useAuth } from "./auth";
-import { Alert } from "react-native";
-import { configureNotificationsHandlers } from "../configs/notifications";
+import { Alert, Platform } from "react-native";
+import { configureNotificationsHandlers, OneSignal } from "../configs/notifications";
 
 interface NotificationsContextProps {
-  expoToken: string;
   enabled: boolean;
   toggleEnabledNotifications: () => void;
 }
@@ -28,26 +27,33 @@ const NotificationsContext = createContext<NotificationsContextProps>(
 const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [expoToken, setExpoToken] = useState("");
   const [enabled, setEnabled] = useState(true);
+
+  const platform = useMemo(() => Platform.OS, []);
+  const language = useMemo(() => Localize.locale, []);
 
   const { signed, user } = useAuth();
 
   const toggleEnabledNotifications = async () => {
-    if (!signed || !expoToken.length) return;
-    setEnabled((old) => !old);
+    if (!signed) return;
+
+    setEnabled((old) => {
+      OneSignal.disablePush(!old);
+      return !old;
+    });
 
     await api.patch(
-      `/users/notify/toggle/${expoToken}?enabled=${enabled ? "no" : "yes"}`
+      `/users/notify/toggle?enabled=${
+        enabled ? "no" : "yes"
+      }&platform=${platform}`
     );
   };
 
-  const registerOneSignal = useCallback(() => {
+  const registerOneSignal = useCallback(async () => {
     if (!signed) return;
 
     OneSignal.setLocationShared(false);
     OneSignal.setLanguage(Localize.locale);
-    OneSignal.setExternalUserId(user.id);
     OneSignal.promptForPushNotificationsWithUserResponse((res) => {
       if (!res) {
         Alert.alert(
@@ -57,9 +63,17 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     });
     OneSignal.setAppId(secrets.OneSignalAppID);
-    
-    configureNotificationsHandlers(signed)
-    console.log("[ OneSignal ] Connection ready!");
+
+    configureNotificationsHandlers(signed);
+
+    await api
+      .post("/users/notify/register", {
+        platform,
+        language,
+      })
+      .then((res) => {
+        setEnabled(res.data.send_notification);
+      });
   }, [signed, user]);
 
   useEffect(() => {
@@ -69,7 +83,6 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <NotificationsContext.Provider
       value={{
-        expoToken,
         toggleEnabledNotifications,
         enabled,
       }}

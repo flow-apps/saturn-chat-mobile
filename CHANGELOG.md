@@ -2,6 +2,15 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.21.0
+
+- Add OneSignal Notification
+- Remove UserID and Email on logout
+- Add new register notification
+- Fix toggle notification state
+- Disable push notification in OneSignal when disable on app
+- Move OneSignal instance to config file
+
 ## 0.20.3
 
 - Open app links inside app

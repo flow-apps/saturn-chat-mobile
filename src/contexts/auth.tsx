@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import * as auth from "../services/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../services/api";
-import { UserData } from "../../@types/interfaces";
 import FormData from "form-data";
-import { usePersistedState } from "../hooks/usePersistedState";
+import api from "../services/api";
 import websocket from "../configs/websocket";
+import * as auth from "../services/auth";
+
+import { Platform } from "react-native";
+import { UserData } from "../../@types/interfaces";
+import { OneSignal } from "../configs/notifications";
 
 interface AuthContextData {
   signed: boolean;
@@ -32,22 +34,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [registerError, setRegisterError] = useState(false);
-  const [storedToken, setStoredToken] = usePersistedState(
-    "@SaturnChat:NotificationToken",
-    ""
-  );
 
   useEffect(() => {
     setLoadingData(true);
     async function loadStorageData() {
       const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
       const storageToken = await AsyncStorage.getItem("@SaturnChat:token");
+      const headerToken = `Bearer ${storageToken}`;
 
       if (storageUser && storageToken) {
-        api.defaults.headers["authorization"] = `Bearer ${storageToken}`;
-        websocket.query.token = `Bearer ${storageToken}`;
+        api.defaults.headers["authorization"] = headerToken;
+        websocket.query.token = headerToken;
         setUser(JSON.parse(String(storageUser)));
-        setToken(`Bearer ${storageToken}`);
+        setToken(headerToken);
       }
       setLoadingData(false);
     }
@@ -57,9 +56,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   async function updateUser(data: any) {
     if (data.token) {
+      const headerToken = `Bearer ${data.token}`;
+
       await AsyncStorage.setItem("@SaturnChat:token", data.token, () => {
-        api.defaults.headers["authorization"] = `Bearer ${data.token}`;
-        websocket.query.token = `Bearer ${data.token}`;
+        api.defaults.headers["authorization"] = headerToken;
+        websocket.query.token = headerToken;
         setToken(data.token);
       });
     }
@@ -78,6 +79,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     auth
       .signIn(email, password)
       .then(async (response) => {
+        OneSignal.setEmail(email);
+        OneSignal.setExternalUserId(response.data.user.id);
+
         await updateUser(response.data);
         setLoginError(false);
       })
@@ -93,6 +97,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     auth
       .signUp(data)
       .then(async (response) => {
+        OneSignal.setEmail(response.data.user.email);
+        OneSignal.setExternalUserId(response.data.user.id);
+
         await updateUser(response.data);
         setRegisterError(false);
       })
@@ -103,12 +110,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   function signOut() {
+    OneSignal.removeExternalUserId();
+
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
-        if (storedToken) {
-          await api.delete(`/users/notify/unregister/${storedToken}`);
-          setStoredToken("");
-        }
+        await api.delete(`/users/notify/unregister?platform=${Platform.OS}`);
 
         api.defaults.headers["authorization"] = undefined;
         websocket.query.token = "";
