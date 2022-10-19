@@ -18,3 +18,7 @@ export enum FriendsStates {
   REQUESTED = "REQUESTED",
   FRIENDS = "FRIENDS",
 }
+
+export enum NotificationsTypes {
+  CHAT_MESSAGE = "CHAT_MESSAGE"
+}

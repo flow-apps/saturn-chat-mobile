@@ -2,6 +2,13 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.21.1
+
+- Add Notification Opened Handler
+- Open messages in the chat
+- Refactor routes
+- Add Notification Types
+
 ## 0.21.0
 
 - Add OneSignal Notification

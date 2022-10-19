@@ -22,7 +22,6 @@ import PunishParticipant from "../pages/Participants/Participant/PunishParticipa
 import VideoPreview from "../pages/VideoPreview";
 import PdfPreview from "../pages/PdfPreview";
 import SwitchPassword from "../pages/Configurations/SwitchPassword";
-import Friends from "../pages/Friends";
 import InvitesManager from "../pages/InvitesManager";
 import FriendsManager from "../pages/FriendsManager";
 
