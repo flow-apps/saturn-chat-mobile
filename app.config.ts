@@ -18,9 +18,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       turboModules: true,
     },
     isDetached: true,
-    androidNavigationBar: {
-      visible: "sticky-immersive"
-    },
     androidStatusBar: {
       backgroundColor: "#0088ff",
       barStyle: "light-content",
@@ -31,7 +28,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0088FF",
     },
     updates: {
-      fallbackToCacheTimeout: 0,
+      fallbackToCacheTimeout: 1000,
       checkAutomatically: "ON_LOAD",
       enabled: true,
     },
