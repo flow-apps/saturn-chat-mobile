@@ -207,7 +207,7 @@ NOTE: The versions here not represents the release versions, check the App Store
 
 ## 0.3.2
 
-- Add HTTP Metric in Axios requests
+- --Add HTTP Metric in Axios requests-- **_Not working now, check the new versions for solutions_**
 - Add Analytics in invite screen
 
 ## 0.3.1
@@ -221,7 +221,7 @@ NOTE: The versions here not represents the release versions, check the App Store
 ## 0.3.0
 
 - Add and configure React Native Firebase
-- Add more ads in many screens
+- Add more ads
 
 ## 0.2.0
 
@@ -229,6 +229,6 @@ NOTE: The versions here not represents the release versions, check the App Store
 
 ## 0.1.0
 
-- Add fields validation in many screens
+- Add fields validation
 - Add disable option in buttons
 - Add error message in register screen
