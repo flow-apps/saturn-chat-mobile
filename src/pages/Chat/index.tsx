@@ -67,7 +67,6 @@ import SelectedFiles from "../../components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
-import { getWebsocket } from "../../services/websocket";
 import { useAds } from "../../contexts/ads";
 import { useFirebase } from "../../contexts/firebase";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
@@ -77,6 +76,7 @@ import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage
 import { useAudioPlayer } from "../../contexts/audioPlayer";
 import { NavigateType } from "../../../@types/types";
 import { ArrayUtils } from "../../utils/array";
+import { useWebsocket } from "../../contexts/websocket";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -138,7 +138,8 @@ const Chat: React.FC = () => {
   const [participant, setParticipant] = useState<ParticipantsData>(
     {} as ParticipantsData
   );
-  const [socket, setSocket] = useState<Socket>(getWebsocket());
+
+  const { socket } = useWebsocket();
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -149,14 +150,6 @@ const Chat: React.FC = () => {
   const { unloadAllAudios, unloadAudio, currentAudioName, playAndPauseAudio } =
     useAudioPlayer();
   const appState = useAppState();
-
-  navigation.addListener("blur", async () => {
-    await unloadAllAudios();
-
-    if (!socket) return;
-    socket.emit("leave_chat");
-    socket.offAny();
-  });
 
   useEffect(() => {
     (async () => {
@@ -400,12 +393,15 @@ const Chat: React.FC = () => {
       if (fileRes.selectedFile?.file.type !== "success") return;
 
       const newFile = fileRes.selectedFile;
-      const isSelected = arrayUtils.has(
-        files,
-        (f) =>
-          (f.file.type !== "cancel" && f.file.uri === newFile.file.uri) ||
-          f.file.name === newFile.file.name
-      );
+      const isSelected = arrayUtils.has(files, (f) => {
+        if (f.file?.type === "cancel") {
+          return false;
+        }
+
+        return (
+          f.file.uri === newFile.file.uri || f.file?.name === newFile.file.name
+        );
+      });
 
       if (isSelected) return setIsSelectedFile(true);
       if (fileRes.usageSize) setFilesSizeUsed(fileRes.usageSize);

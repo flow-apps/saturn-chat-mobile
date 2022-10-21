@@ -2,6 +2,15 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.22.0
+
+- Start refactor Websocket system
+  - Add Websocket manager in React Context
+  - Connect in the WS only signed
+  - Auto Reconnect attempt
+- Refactor auth context for arrow functions
+- Fix file selector types
+
 ## 0.21.1
 
 - Add Notification Opened Handler

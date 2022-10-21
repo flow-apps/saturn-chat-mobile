@@ -1,14 +1,15 @@
-import { ManagerOptions, SocketOptions } from "socket.io-client";
+import { ManagerOptions } from "socket.io-client";
 
-export default {
+const websocketConfig: ManagerOptions = {
   path: "/socket.io/",
-  timeout: 2000,
-  reconnectionDelay: 500,
-  forceNew: true,
-  jsonp: false,
+  reconnectionDelay: 250,
   withCredentials: true,
   transports: ["websocket"],
+  // @ts-ignore
+  jsonp: false,
   query: {
     token: ""
   }
-}
+} 
+
+export default websocketConfig;

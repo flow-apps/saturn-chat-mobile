@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loadStorageData();
   }, []);
 
-  async function updateUser(data: any) {
+  const updateUser = async (data: { token?: string; user: UserData }) => {
     if (data.token) {
       const headerToken = `Bearer ${data.token}`;
 
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   }
 
-  async function signIn(email: string, password: string) {
+  const signIn = async (email: string, password: string) => {
     setLoading(true);
     setLoginError(false);
     auth
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => setLoading(false));
   }
 
-  async function signUp(data: FormData) {
+  const signUp = async (data: FormData) => {
     setLoading(true);
     setRegisterError(false);
     auth
@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => setLoading(false));
   }
 
-  function signOut() {
+  const signOut = () => {
     OneSignal.removeExternalUserId();
 
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(

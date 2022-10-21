@@ -1,15 +1,17 @@
 import "react-native-reanimated";
 import React from "react";
 import Routes from "./src/routes";
-import { preventAutoHideAsync, hideAsync } from "expo-splash-screen"
+import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
 import { AuthProvider } from "./src/contexts/auth";
 import { ThemeControllerProvider } from "./src/contexts/theme";
 import { NotificationsProvider } from "./src/contexts/notifications";
 import { AdsProvider } from "./src/contexts/ads";
-import { AudioPlayerProvider } from "./src/contexts/audioPlayer"
+import { AudioPlayerProvider } from "./src/contexts/audioPlayer";
 import { FirebaseProvider } from "./src/contexts/firebase";
 import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs";
+import { WebsocketProvider } from "./src/contexts/websocket";
+
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 
@@ -25,6 +27,7 @@ import {
   Poppins_300Light_Italic,
   useFonts,
 } from "@expo-google-fonts/poppins";
+import { ChatProvider } from "./src/contexts/chat";
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -40,28 +43,32 @@ export default function App() {
   });
 
   if (!fontLoaded) {
-    preventAutoHideAsync()
-    return <></>
+    preventAutoHideAsync();
+    return <></>;
   }
 
-  hideAsync()
+  hideAsync();
 
   return (
     <>
       <ThemeControllerProvider>
-          <FirebaseProvider>
-            <AuthProvider>
-              <NotificationsProvider>
-                <AdsProvider>
-                  <RemoteConfigsProvider>
-                    <AudioPlayerProvider>
-                      <Routes />
-                    </AudioPlayerProvider>
-                  </RemoteConfigsProvider>
-                </AdsProvider>
-              </NotificationsProvider>
-            </AuthProvider>
-          </FirebaseProvider>
+        <FirebaseProvider>
+          <AuthProvider>
+            <NotificationsProvider>
+              <AdsProvider>
+                <RemoteConfigsProvider>
+                  <WebsocketProvider>
+                    <ChatProvider>
+                      <AudioPlayerProvider>
+                        <Routes />
+                      </AudioPlayerProvider>
+                    </ChatProvider>
+                  </WebsocketProvider>
+                </RemoteConfigsProvider>
+              </AdsProvider>
+            </NotificationsProvider>
+          </AuthProvider>
+        </FirebaseProvider>
       </ThemeControllerProvider>
     </>
   );
