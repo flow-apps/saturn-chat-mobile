@@ -74,27 +74,13 @@ import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 import { useAudioPlayer } from "../../contexts/audioPlayer";
-import { NavigateType } from "../../../@types/types";
 import { ArrayUtils } from "../../utils/array";
 import { useWebsocket } from "../../contexts/websocket";
+import { useChat } from "../../contexts/chat";
 
 interface File {
   file: DocumentPicker.DocumentResult;
   type: string;
-}
-
-interface DeleteMessageResult {
-  id: string;
-  type: "message" | "audio";
-  voice_message?: {
-    id: string;
-    name: string;
-  };
-  files?: {
-    id: string;
-    name: string;
-    type: string;
-  }[];
 }
 
 const recordService = new RecordService();
@@ -139,15 +125,27 @@ const Chat: React.FC = () => {
     {} as ParticipantsData
   );
 
-  const { socket } = useWebsocket();
-
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
-  const { unloadAllAudios, unloadAudio, currentAudioName, playAndPauseAudio } =
+  const { socket } = useWebsocket();
+  const {
+    handleJoinRoom,
+    handleSetReadMessage,
+    handleSetTyping,
+    handleSendMessage,
+    handleSendVoiceMessage,
+    onSendedUserMessage,
+    onNewUserMessage,
+    onNewUserTyping,
+    onDeletedUserTyping,
+    onDeleteUserMessage,
+  } = useChat();
+
+  const { unloadAudio, currentAudioName, playAndPauseAudio } =
     useAudioPlayer();
   const appState = useAppState();
 
@@ -158,7 +156,7 @@ const Chat: React.FC = () => {
         socket.emit("leave_chat");
       } else if (appState === "active") {
         if (!socket) return;
-        socket.emit("connect_in_chat", id);
+        handleJoinRoom(id);
       }
     })();
   }, [appState]);
@@ -187,16 +185,11 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     fetchOldMessages();
+    configureSocketListeners();
   }, []);
 
-  useEffect(() => {
-    connectSockets();
-  }, [socket]);
-
-  const connectSockets = useCallback(() => {
-    if (!socket) return;
-
-    socket.on("sended_user_message", ({ msg, localReference }) => {
+  const configureSocketListeners = useCallback(() => {
+    onSendedUserMessage(({ msg, localReference }) => {
       setOldMessages((old) =>
         arrayUtils.iterator(old, (m) =>
           m.localReference === localReference ? { ...msg, sended: true } : m
@@ -204,18 +197,18 @@ const Chat: React.FC = () => {
       );
     });
 
-    socket.on("new_user_message", (msg) => {
+    onNewUserMessage((msg) => {
       setOldMessages((old) => [msg, ...old]);
-      socket.emit("set_read_message", msg.id);
+      handleSetReadMessage(msg.id);
     });
 
-    socket.on("new_user_typing", (newUser: UserData) => {
+    onNewUserTyping((newUser) => {
       if (newUser.id === user?.id) return;
 
       setTypingUsers((old) => [...old, newUser]);
     });
 
-    socket.on("deleted_user_typing", (removedUserID: string) => {
+    onDeletedUserTyping((removedUserID) => {
       const filteredUsers = arrayUtils.removeOne(
         typingUsers,
         (user) => user.id === removedUserID
@@ -223,7 +216,7 @@ const Chat: React.FC = () => {
       setTypingUsers(filteredUsers);
     });
 
-    socket.on("delete_user_message", async (result: DeleteMessageResult) => {
+    onDeleteUserMessage(async (result) => {
       if (result.voice_message) {
         await unloadAudio(result.voice_message.name);
       }
@@ -231,9 +224,9 @@ const Chat: React.FC = () => {
       if (result.files) {
         const processedMessages = arrayUtils.iterator(
           result.files,
-          async (f) => {
-            if (f.type === "audio") {
-              await unloadAudio(f.name);
+          async (file) => {
+            if (file.type === "audio") {
+              await unloadAudio(file.name);
             }
           }
         );
@@ -256,18 +249,19 @@ const Chat: React.FC = () => {
         navigation.navigate("Groups");
       }
     });
-  }, [socket]);
+  }, []);
 
   const handleTypingTimeout = () => {
     setIsTyping(false);
-    socket?.emit("remove_user_typing", { typing: false, userID: user?.id });
+    handleSetTyping({ action: "REMOVE" });
   };
 
   const handleTyping = () => {
     if (!isTyping) {
       setIsTyping(true);
 
-      socket?.emit("add_user_typing", { typing: true });
+      handleSetTyping({ action: "ADD" });
+
       const timeout = setTimeout(handleTypingTimeout, 3000);
 
       setTypingTimeout(timeout);
@@ -354,7 +348,7 @@ const Chat: React.FC = () => {
             }
           );
 
-          socket?.emit("new_voice_message", {
+          handleSendVoiceMessage({
             audio: sendedAudio.data,
             reply_to_id: replyingMessage?.id,
             message,
@@ -368,7 +362,7 @@ const Chat: React.FC = () => {
     }
   };
 
-  const fetchOldMessages = async () => {
+  const fetchOldMessages = useCallback(async () => {
     setFetching(true);
     const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
 
@@ -384,7 +378,7 @@ const Chat: React.FC = () => {
     }
 
     setFetching(false);
-  };
+  }, [id, page, fetchedAll, fetching])
 
   const handleFileSelector = async () => {
     const fileRes = await fileService.get();
@@ -524,9 +518,10 @@ const Chat: React.FC = () => {
       const trace = perf().newTrace("send_message_without_file");
 
       await trace.start();
-      socket?.emit("new_user_message", {
-        message,
+      handleSendMessage({
+        withFiles: false,
         reply_to_id: replyingMessage?.id,
+        message,
         localReference,
       });
       await trace.stop();
@@ -549,10 +544,9 @@ const Chat: React.FC = () => {
         }
       });
 
-      setFiles([]);
-
       filesData.append("message", message);
-      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
+      if (replyingMessage) 
+        filesData.append("reply_to_id", replyingMessage?.id);
 
       await trace.start();
       api
@@ -567,8 +561,9 @@ const Chat: React.FC = () => {
         })
         .then((res) => {
           if (res.status === 200) {
-            socket?.emit("new_message_with_files", {
+            handleSendMessage({
               message_id: res.data.message_id,
+              withFiles: true,
               localReference,
             });
           }
@@ -578,6 +573,7 @@ const Chat: React.FC = () => {
         });
 
       await trace.stop();
+      setFiles([]);
     }
 
     setSendingFile(false);
@@ -594,8 +590,6 @@ const Chat: React.FC = () => {
     return (
       <Message
         message={item}
-        socket={socket as Socket}
-        index={index}
         participant={participant as ParticipantsData}
         lastMessage={lastMessage}
         onReplyMessage={handleReplyMessage}

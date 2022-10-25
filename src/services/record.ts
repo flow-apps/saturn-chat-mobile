@@ -67,7 +67,7 @@ class RecordService {
       await audio.stopAndUnloadAsync();
 
       if (audio._finalDurationMillis < 1000) {
-        return Toast.show("Aperte e segure para gravar");
+        return Toast.show("Grave uma mensagem de pelo menos 1 segundo");
       }
 
       const uri = audio.getURI();
@@ -78,8 +78,8 @@ class RecordService {
         ios: Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.ios.extension,
       });
       const duration = audio._finalDurationMillis;
-      const audioInfos = await FileSystem.getInfoAsync(uri);      
-
+      const audioInfos = await FileSystem.getInfoAsync(uri);
+      
       return await onRecordFinish({
         audioInfos,
         duration,

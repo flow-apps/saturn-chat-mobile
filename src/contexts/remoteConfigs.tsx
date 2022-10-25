@@ -38,7 +38,6 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       await RemoteConfig().setConfigSettings({
-        minimumFetchIntervalMillis: minutesToMilliseconds(30),
       });
       await RemoteConfig()
         .setDefaults({
@@ -52,9 +51,12 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
           premium_max_message_length: 5000,
         })
         .then(() => RemoteConfig().fetchAndActivate())
-        .then((fetched) => {});
+        .then(async (fetched) => {
+          if (fetched) {
+            await updateUserConfigs();
+          }
+        });
 
-      await updateUserConfigs();
     })();
   }, []);
 
@@ -68,6 +70,9 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       allConfigs[key] = entry.asString();
     });
 
+    console.log(configs);
+    
+
     setAllConfigs(configs)
 
     if (false) {
@@ -80,7 +85,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     return setUserConfigs({
-      fileUpload: Number(configs.premium_file_upload),
+      fileUpload: Number(configs.default_file_upload),
       amountGroups: Number(configs.default_max_groups),
       amountParticipants: Number(configs.default_max_participants),
       messageLength: Number(configs.default_max_message_length),

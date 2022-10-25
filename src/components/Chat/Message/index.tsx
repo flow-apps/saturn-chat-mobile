@@ -8,7 +8,6 @@ import { convertToTimeZone } from "date-fns-timezone";
 
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import {
   MessageData,
@@ -47,13 +46,12 @@ import InviteInMessage from "../RichContent/InviteInMessage";
 import LinkPreview from "../RichContent/LinkPreview";
 import { MotiView } from "moti";
 import { ArrayUtils } from "../../../utils/array";
+import { useWebsocket } from "../../../contexts/websocket";
 
 interface MessageProps {
   participant: ParticipantsData;
   message: MessageData;
   lastMessage: MessageData | null;
-  index: number;
-  socket: Socket;
   onReplyMessage: (message: MessageData) => void;
   children?: React.ReactNode;
 }
@@ -66,8 +64,6 @@ const Message = ({
   message,
   lastMessage,
   participant,
-  index,
-  socket,
   onReplyMessage,
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
@@ -80,16 +76,19 @@ const Message = ({
   const { user } = useAuth();
   const { colors } = useTheme();
   const { unloadAudio } = useAudioPlayer();
+
+  const { socket } = useWebsocket();
+
   const linkUtils = new LinkUtils();
   const arrayUtils = new ArrayUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
-  }, []);
+  }, [message, user]);
 
   const sended = useMemo(() => {
     return _.isUndefined(message?.sended) ? true : message.sended;
-  }, [message.sended]);
+  }, [message]);
 
   useEffect(() => {
     (async () => {
@@ -138,7 +137,7 @@ const Message = ({
     }
   }, [message, lastMessage]);
 
-  const renderDate = () => {
+  const renderDate = useCallback(() => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
       return (
         <MessageDateContainer>
@@ -162,7 +161,7 @@ const Message = ({
         return <></>;
       }
     }
-  };
+  }, [message, lastMessage]);
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
@@ -173,7 +172,7 @@ const Message = ({
     return format(tzDate, "dd/MM/yy, HH:mm");
   }, []);
 
-  const deleteMessage = async () => {
+  const deleteMessage = useCallback(async () => {
     const files = message.files;
     if (files) {
       const processedMessages = arrayUtils.iterator(files, async (f) => {
@@ -190,7 +189,7 @@ const Message = ({
 
     socket.emit("delete_user_message", message.id);
     setDeleted(true);
-  };
+  }, [message]);
 
   const alertLink = useCallback(
     async (link: string) => {
@@ -300,7 +299,7 @@ const Message = ({
           duration: 400,
         }}
       >
-        <Container key={index} isRight={isRight} style={{ scaleY: -1 }}>
+        <Container isRight={isRight} style={{ scaleY: -1 }}>
           {message.reply_to && (
             <ReplyingMessage replying_message={message.reply_to} />
           )}
@@ -363,7 +362,6 @@ export default memo(Message, (prev, next) => {
     prev.message.id === next.message.id &&
     prev.message.message === next.message.message &&
     prev.message.voice_message === next.message.voice_message &&
-    prev.lastMessage?.id === next.lastMessage?.id &&
-    prev.socket === next.socket
+    prev.lastMessage?.id === next.lastMessage?.id
   );
 });

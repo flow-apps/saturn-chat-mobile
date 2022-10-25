@@ -2,6 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.22.1
+
+- Improve message component performance
+- Add Group ID in all sockets emit
+- Get sockets in each message component
+
 ## 0.22.0
 
 - Start refactor Websocket system
