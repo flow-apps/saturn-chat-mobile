@@ -2,6 +2,10 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.22.2
+
+- Add Handle Delete Message in chat context
+
 ## 0.22.1
 
 - Improve message component performance

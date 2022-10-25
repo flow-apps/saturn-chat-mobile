@@ -29,6 +29,10 @@ interface IHandleSendVoiceMessage {
   localReference: string;
 }
 
+interface IHandleDeleteMessage {
+  message_id: string;
+}
+
 interface DeleteMessageResult {
   id: string;
   type: "message" | "audio";
@@ -50,6 +54,7 @@ interface IChatContext {
   handleSetTyping: (data: IHandleSetTyping) => void;
   handleSendMessage: (data: IHandleSendMessage) => void;
   handleSendVoiceMessage: (data: IHandleSendVoiceMessage) => void;
+  handleDeleteMessage: (data: IHandleDeleteMessage) => void;
   onSendedUserMessage: (
     callback: (data: onSendedUserMessageCallbackType) => void
   ) => void;
@@ -143,6 +148,13 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     [socket, currentGroupId]
   );
 
+  const handleDeleteMessage = useCallback((data: IHandleDeleteMessage) => {
+    socket.emit("delete_user_message", {
+      message_id: data.message_id,
+      group_id: currentGroupId
+    });
+  }, [socket, currentGroupId])
+
   const onSendedUserMessage = useCallback(
     (callback: (data: onSendedUserMessageCallbackType) => void) => {
       socket.on("sended_user_message", callback);
@@ -187,6 +199,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         handleSetTyping,
         handleSendMessage,
         handleSendVoiceMessage,
+        handleDeleteMessage,
         onSendedUserMessage,
         onNewUserMessage,
         onNewUserTyping,

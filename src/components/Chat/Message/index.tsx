@@ -46,7 +46,7 @@ import InviteInMessage from "../RichContent/InviteInMessage";
 import LinkPreview from "../RichContent/LinkPreview";
 import { MotiView } from "moti";
 import { ArrayUtils } from "../../../utils/array";
-import { useWebsocket } from "../../../contexts/websocket";
+import { useChat } from "../../../contexts/chat";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -77,7 +77,7 @@ const Message = ({
   const { colors } = useTheme();
   const { unloadAudio } = useAudioPlayer();
 
-  const { socket } = useWebsocket();
+  const { handleDeleteMessage } = useChat();
 
   const linkUtils = new LinkUtils();
   const arrayUtils = new ArrayUtils();
@@ -187,7 +187,7 @@ const Message = ({
       await unloadAudio(message.voice_message.name);
     }
 
-    socket.emit("delete_user_message", message.id);
+    handleDeleteMessage({ message_id: message.id });
     setDeleted(true);
   }, [message]);
 
