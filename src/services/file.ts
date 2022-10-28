@@ -1,7 +1,6 @@
 import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
-import RNFB, { RNFetchBlobConfig } from "react-native-fetch-blob";
-import * as FS from "expo-file-system"
+import RNFB, { RNFetchBlobConfig } from "rn-fetch-blob";
 import { Platform } from "react-native";
 import SimpleToast from "react-native-simple-toast";
 

@@ -11,6 +11,9 @@
 
 -dontnote **
 
+-keep class io.invertase.firebase.** {*;}
+-dontwarn io.invertase.firebase.**
+
 # React Native Fast Image
 
 -keep public class com.dylanvann.fastimage.* {*;}

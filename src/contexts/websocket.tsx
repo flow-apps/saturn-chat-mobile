@@ -18,21 +18,27 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const { token, signed } = useAuth();
 
   useEffect(() => {
-    if (!signed || !token) return;
+    if (!signed || !token) {
+      setSocket(null)
+      return
+    };
 
     const createdSocket = io(config.API_URL, {
       ...websocketConfig,
       query: {
         token,
       },
-    }).connect();
+    });
     createdSocket.compress(true);
+    createdSocket.connect()
 
     setSocket(createdSocket);
 
     return () => {
-      socket.offAny();
-      socket.disconnect();
+      if (socket && socket.connected) {
+        socket.offAny();
+        socket.disconnect();
+      }
     };
   }, [token, signed]);
 
