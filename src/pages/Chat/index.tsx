@@ -145,29 +145,30 @@ const Chat: React.FC = () => {
     onDeleteUserMessage,
   } = useChat();
 
-  const { unloadAudio, currentAudioName, playAndPauseAudio } =
-    useAudioPlayer();
+  const { unloadAudio, currentAudioName, playAndPauseAudio } = useAudioPlayer();
   const appState = useAppState();
 
   useEffect(() => {
-    (async () => {
-      if (appState === "background" || appState === "inactive") {
-        if (!socket) return;
+    if (appState === "active") {
+      if (!socket) return;
+      handleJoinRoom(id);
+    }
+    return () => {
+      if (socket) {
         socket.emit("leave_chat");
-      } else if (appState === "active") {
-        if (!socket) return;
-        handleJoinRoom(id);
       }
-    })();
+    };
   }, [appState]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
+      configureSocketListeners();
 
       const groupRes = await api.get(`/group/${id}`);
       if (groupRes.status === 200) setGroup(groupRes.data);
 
+      await fetchOldMessages();
       setLoading(false);
     })();
   }, []);
@@ -181,11 +182,6 @@ const Chat: React.FC = () => {
 
       setLoading(false);
     })();
-  }, []);
-
-  useEffect(() => {
-    fetchOldMessages();
-    configureSocketListeners();
   }, []);
 
   const configureSocketListeners = useCallback(() => {
@@ -249,7 +245,7 @@ const Chat: React.FC = () => {
         navigation.navigate("Groups");
       }
     });
-  }, []);
+  }, [socket]);
 
   const handleTypingTimeout = () => {
     setIsTyping(false);
@@ -378,7 +374,7 @@ const Chat: React.FC = () => {
     }
 
     setFetching(false);
-  }, [id, page, fetchedAll, fetching])
+  }, [page, fetchedAll, fetching]);
 
   const handleFileSelector = async () => {
     const fileRes = await fileService.get();
@@ -452,21 +448,21 @@ const Chat: React.FC = () => {
     [message]
   );
 
-  const handleGoGroupConfig = useCallback(() => {
+  const handleGoGroupConfig = () => {
     navigation.navigate("GroupConfig", { id });
-  }, [id]);
+  };
 
-  const handleGoGroupParticipants = useCallback(() => {
+  const handleGoGroupParticipants = () => {
     navigation.navigate("Participants", { id });
-  }, [id]);
+  };
 
-  const handleGoGroupInfos = useCallback(() => {
+  const handleGoGroupInfos = () => {
     navigation.navigate("GroupInfos", { id });
-  }, [id]);
+  };
 
-  const handleGoFriendInfos = useCallback(() => {
+  const handleGoFriendInfos = () => {
     navigation.navigate("UserProfile", { id: friendId });
-  }, [id]);
+  };
 
   const handleGoStar = () => {
     analytics.logEvent("IncreaseUpload");
@@ -545,8 +541,7 @@ const Chat: React.FC = () => {
       });
 
       filesData.append("message", message);
-      if (replyingMessage) 
-        filesData.append("reply_to_id", replyingMessage?.id);
+      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
 
       await trace.start();
       api
