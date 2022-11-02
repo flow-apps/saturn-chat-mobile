@@ -29,7 +29,9 @@ const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
   return (
-    <StackRoutes.Navigator screenOptions={{ headerShown: false }}>
+    <StackRoutes.Navigator
+      screenOptions={{ headerShown: false, presentation: "modal" }}
+    >
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="FriendsManager" component={FriendsManager} />
       <StackRoutes.Screen name="InvitesManager" component={InvitesManager} />
@@ -42,7 +44,10 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="Participants" component={Participants} />
       <StackRoutes.Screen name="Participant" component={Participant} />
       <StackRoutes.Screen name="ChangeRole" component={ChangeRole} />
-      <StackRoutes.Screen name="PunishParticipant" component={PunishParticipant} />
+      <StackRoutes.Screen
+        name="PunishParticipant"
+        component={PunishParticipant}
+      />
       <StackRoutes.Screen name="UserProfile" component={UserProfile} />
       <StackRoutes.Screen name="Search" component={Search} />
       <StackRoutes.Screen name="GroupConfig" component={GroupConfig} />

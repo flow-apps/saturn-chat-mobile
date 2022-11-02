@@ -59,7 +59,7 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
         if (res.status === 200) {
           const data = res.data as ParticipantData;
 
-          analytics.logEvent("join_group", {
+          analytics().logEvent("join_group", {
             method: "invite",
             group_id: data.group_id,
           });

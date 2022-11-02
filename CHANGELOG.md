@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.22.3
+
+- Fix Remote Configs Context
+- Fix Perf in create group screen
+
 ## 0.22.2
 
 - Add Handle Delete Message in chat context

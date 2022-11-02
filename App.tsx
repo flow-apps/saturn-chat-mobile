@@ -50,26 +50,24 @@ export default function App() {
   hideAsync();
 
   return (
-    <>
-      <ThemeControllerProvider>
-        <FirebaseProvider>
-          <AuthProvider>
-            <NotificationsProvider>
-              <AdsProvider>
-                <RemoteConfigsProvider>
-                  <WebsocketProvider>
-                    <ChatProvider>
-                      <AudioPlayerProvider>
-                        <Routes />
-                      </AudioPlayerProvider>
-                    </ChatProvider>
-                  </WebsocketProvider>
-                </RemoteConfigsProvider>
-              </AdsProvider>
-            </NotificationsProvider>
-          </AuthProvider>
-        </FirebaseProvider>
-      </ThemeControllerProvider>
-    </>
+    <ThemeControllerProvider>
+      <FirebaseProvider>
+        <AuthProvider>
+          <NotificationsProvider>
+            <AdsProvider>
+              <WebsocketProvider>
+                <ChatProvider>
+                  <AudioPlayerProvider>
+                    <RemoteConfigsProvider>
+                      <Routes />
+                    </RemoteConfigsProvider>
+                  </AudioPlayerProvider>
+                </ChatProvider>
+              </WebsocketProvider>
+            </AdsProvider>
+          </NotificationsProvider>
+        </AuthProvider>
+      </FirebaseProvider>
+    </ThemeControllerProvider>
   );
 }

@@ -116,8 +116,8 @@ const NewGroup: React.FC = () => {
       .then(async (response) => {
         if (response.status === 200) {
           navigator.navigate("GroupsChat");
-          trace.putMetric("group_id", response.data.id);
-          await analytics.logEvent("created_group", {
+          trace.putAttribute("group_id", response.data.id);
+          await analytics().logEvent("created_group", {
             group_id: response.data.id,
           });
         }
@@ -157,7 +157,10 @@ const NewGroup: React.FC = () => {
     });
 
     if (!photo.cancelled) {
+      // @ts-ignore
       setGroupPhotoPreview(photo.uri);
+
+      // @ts-ignore
       return setGroupPhoto(photo);
     }
   };

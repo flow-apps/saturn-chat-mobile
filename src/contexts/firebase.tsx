@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import uuid from "react-native-uuid";
-import * as Analytics from "expo-firebase-analytics";
+import Analytics from "@react-native-firebase/analytics";
+
 import Crashlytics from "@react-native-firebase/crashlytics";
 import Performance from "@react-native-firebase/perf";
 
@@ -23,10 +24,10 @@ const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       if (user) {
-        await Analytics.setUserId(user.id);
+        await analytics().setUserId(user.id)
       }
 
-      Analytics.setClientId(uuid.v4().toString());
+      await analytics().setAnalyticsCollectionEnabled(__DEV__);
       setAnalytics(Analytics);
     })();
   }, []);
@@ -38,8 +39,8 @@ const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({
         await Crashlytics().setAttributes(user as {});
       }
 
-      await Crashlytics().setCrashlyticsCollectionEnabled(!__DEV__);
-      await Performance().setPerformanceCollectionEnabled(!__DEV__);
+      await Crashlytics().setCrashlyticsCollectionEnabled(__DEV__);
+      await Performance().setPerformanceCollectionEnabled(__DEV__);
     })();
   }, []);
 

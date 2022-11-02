@@ -41,7 +41,7 @@ const Login: React.FC = () => {
 
   async function handleLogin() {
     await signIn(email, password);
-    await analytics.logEvent("login", {
+    await analytics().logEvent("login", {
       method: "email/password"
     })
   }

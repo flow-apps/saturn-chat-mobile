@@ -1,6 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import RemoteConfig from "@react-native-firebase/remote-config";
-import { minutesToMilliseconds } from "date-fns";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import remoteConfig from "@react-native-firebase/remote-config";
+import { hoursToMilliseconds } from "date-fns";
+import { minutesToMilliseconds } from "date-fns/esm";
 
 interface RemoteConfigContextProps {
   allConfigs: Configs;
@@ -36,11 +43,13 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    (async () => {
-      await RemoteConfig().setConfigSettings({
-      });
-      await RemoteConfig()
-        .setDefaults({
+    remoteConfig()
+      .setConfigSettings({
+        minimumFetchIntervalMillis: hoursToMilliseconds(1),
+        fetchTimeMillis: minutesToMilliseconds(1),
+      })
+      .then(() =>
+        remoteConfig().setDefaults({
           default_max_groups: 2,
           premium_max_groups: 10,
           default_file_upload: 12,
@@ -50,30 +59,21 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
           default_max_message_length: 500,
           premium_max_message_length: 5000,
         })
-        .then(() => RemoteConfig().fetchAndActivate())
-        .then(async (fetched) => {
-          if (fetched) {
-            await updateUserConfigs();
-          }
-        });
-
-    })();
+      )
+      .then(() => remoteConfig().fetchAndActivate())
+      .then(() => updateUserConfigs());
   }, []);
 
-  const updateUserConfigs = async () => {
-    const values = RemoteConfig().getAll();
+  const updateUserConfigs = useCallback(async () => {
+    if (remoteConfig().lastFetchStatus !== "success") return;
+
+    const values = remoteConfig().getAll();
     const configs = {} as Configs;
 
     Object.entries(values).forEach(($) => {
       const [key, entry] = $;
-
-      allConfigs[key] = entry.asString();
+      configs[key] = entry.asString();
     });
-
-    console.log(configs);
-    
-
-    setAllConfigs(configs)
 
     if (false) {
       return setUserConfigs({
@@ -90,7 +90,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       amountParticipants: Number(configs.default_max_participants),
       messageLength: Number(configs.default_max_message_length),
     });
-  };
+  }, [remoteConfig().lastFetchStatus]);
 
   return (
     <RemoteConfigsContext.Provider
@@ -105,9 +105,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 const useRemoteConfigs = () => {
-  const configsContext = useContext(RemoteConfigsContext);
-
-  return configsContext;
+  return useContext(RemoteConfigsContext);
 };
 
 export { RemoteConfigsProvider, useRemoteConfigs };

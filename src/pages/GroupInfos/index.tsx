@@ -75,7 +75,7 @@ const GroupInfos: React.FC = () => {
       .get(`/group/participants/new/${group?.id}`)
       .then(async () => {
         setIsParticipating(true);
-        await analytics.logEvent("join_group", {
+        await analytics().logEvent("join_group", {
           group_id: id,
         });
         return navigation.navigate("Chat", { id });

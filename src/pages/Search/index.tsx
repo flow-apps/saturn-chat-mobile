@@ -52,7 +52,7 @@ const Search: React.FC = () => {
     setLoadedAll(false);
     setPage(0);
 
-    await analytics.logEvent("search", {
+    await analytics().logEvent("search", {
       search_term: query,
     });
     const response = await api.get(`/groups/search?q=${query}`);

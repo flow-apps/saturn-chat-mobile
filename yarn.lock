@@ -1838,6 +1838,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.2.1.tgz#8f1c8cf62de1bd91ce1e32585f7eb666f21e5025"
   integrity sha512-6HUS5HbB9bvEN4GiwBlxECgPWQIugHE+kfnxqX2jHUl1SE57MRpw00m1qVs4hXtEPQndBl6mAQiGbKCOtLPVbg==
 
+"@react-native-firebase/analytics@^16.4.0":
+  version "16.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-16.4.0.tgz#f7f76a83b9ba2a30260599910017e4b8121f037d"
+  integrity sha512-ixPDWIo756IGkjdKtQr+FH5y8UjzoshVV/0GeKB9zev9OxuUF6ja9Vc6ujLACm1zI/QhpH4mXlo4BCRyx7N5nQ==
+
 "@react-native-firebase/app-distribution@^15.7.0":
   version "15.7.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app-distribution/-/app-distribution-15.7.0.tgz#c0c30ebec703a92c5f49d23b91a03045676c4cdd"
@@ -3826,20 +3831,6 @@ expo-file-system@~14.0.0:
   dependencies:
     "@expo/config-plugins" "^4.0.14"
     uuid "^3.4.0"
-
-expo-firebase-analytics@~7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/expo-firebase-analytics/-/expo-firebase-analytics-7.0.0.tgz#ca8b07fa27a60215364865dc1339c195a646d388"
-  integrity sha512-bDM+d6P0RbQbgAJQ2+Az/VHtMIbtKObdeR7UIsiB/m6HjGxqz8lO5/A6gkNbC1f24B0mQj5QEhR6Vwcdrbv9/w==
-  dependencies:
-    expo-firebase-core "~5.0.0"
-
-expo-firebase-core@~5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/expo-firebase-core/-/expo-firebase-core-5.0.0.tgz#0cdea28eafa8a4c45a30790d45354ef07522a755"
-  integrity sha512-OQ4oIuv+FyJ+tXc/bNulm7gAwYfEvt5yVVtr2ia6aqln+tsnVsNooyAMI+aJZ3y264rNXUocLGRN1TwV11DRsQ==
-  dependencies:
-    expo-constants "~13.1.0"
 
 expo-font@~10.1.0:
   version "10.1.0"

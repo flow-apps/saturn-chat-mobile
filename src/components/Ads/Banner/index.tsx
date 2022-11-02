@@ -38,7 +38,7 @@ const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const handleGoPremium = async () => {
-    await analytics.logEvent("RemoveBannerAD", {
+    await analytics().logEvent("RemoveBannerAD", {
       requested_in: name
     })
     navigation.navigate("PurchasePremium")

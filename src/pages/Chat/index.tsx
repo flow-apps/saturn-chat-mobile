@@ -465,7 +465,7 @@ const Chat: React.FC = () => {
   };
 
   const handleGoStar = () => {
-    analytics.logEvent("IncreaseUpload");
+    analytics().logEvent("IncreaseUpload");
     navigation.navigate("PurchasePremium");
   };
 
