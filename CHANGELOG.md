@@ -2,6 +2,18 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.23.0
+
+- Add React Native Google Mobile Ads
+  - Add app.json
+  - Fix AndroidManifest.xml
+- Uninstall dependencies
+  - Expo Ads AdMob
+  - Hermes Engine
+- Update React Native Firebase App
+- Change Banner
+- Change Ads Context
+
 ## 0.22.3
 
 - Fix Remote Configs Context

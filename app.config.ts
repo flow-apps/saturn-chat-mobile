@@ -1,7 +1,9 @@
-import { ExpoConfig, ConfigContext } from "@expo/config"
-import secrets from "./src/secrets.json"
+import { ExpoConfig, ConfigContext } from "@expo/config";
+import secrets from "./src/secrets.json";
 
-export default ({ config }: ConfigContext): ExpoConfig => ({
+export default ({ config }: ConfigContext): ExpoConfig => {  
+
+  return {
     ...config,
     name: "Saturn Chat",
     slug: "SaturnChat",
@@ -9,10 +11,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     orientation: "default",
     icon: "./assets/icon.png",
     scheme: "saturnchat",
+    platforms: ["android", "ios"],
+    assetBundlePatterns: ["**/*", "./src/assets"],
     plugins: [
       "@react-native-firebase/app",
       "@react-native-firebase/perf",
-      "@react-native-firebase/crashlytics"
+      "@react-native-firebase/crashlytics",
     ],
     experiments: {
       turboModules: true,
@@ -22,17 +26,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#0088ff",
       barStyle: "light-content",
     },
-    splash: {
-      image: "./assets/splash.png",
-      resizeMode: "contain",
-      backgroundColor: "#0088FF",
-    },
     updates: {
       fallbackToCacheTimeout: 1000,
       checkAutomatically: "ON_LOAD",
       enabled: true,
     },
-    assetBundlePatterns: ["**/*", "./src/assets"],
     ios: {
       supportsTablet: true,
       buildNumber: "0.0.1",
@@ -44,7 +42,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     android: {
       // @ts-ignore
-      jsEngine: "hermes", 
+      jsEngine: "hermes",
       allowBackup: true,
       package: "com.flowapps.saturnchat",
       googleServicesFile: "./google-services.json",
@@ -56,10 +54,5 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         googleMobileAdsAppId: secrets.AdsAppID.android,
       },
     },
-    web: {
-      favicon: "./assets/favicon.png",
-      config: {
-        firebase: secrets.Firebase.web_config
-      }
-    },
-});
+  };
+};

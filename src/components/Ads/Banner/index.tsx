@@ -1,5 +1,5 @@
 import React from "react";
-import { AdMobBanner } from "expo-ads-admob";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import {
   BannerContainer,
   Container,
@@ -16,17 +16,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 type BannerProps = {
   isPremium?: boolean;
-  size?:
-    | "banner"
-    | "largeBanner"
-    | "mediumRectangle"
-    | "fullBanner"
-    | "leaderboard"
-    | "smartBannerPortrait"
-    | "smartBannerLandscape";
+  size?: BannerAdSize;
 };
 
-const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
+const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) => {
   const { analytics } = useFirebase()
   const { name } = useRoute()
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
@@ -65,10 +58,9 @@ const Banner = ({ isPremium = false, size = "banner" }: BannerProps) => {
         </RemoveBannerText>
       </RemoveBanner>
       <BannerContainer>
-        <AdMobBanner
-          adUnitID={adUnitID}
-          bannerSize={size}
-          servePersonalizedAds
+        <BannerAd
+          unitId={adUnitID}
+          size={size}
         />
       </BannerContainer>
     </Container>
