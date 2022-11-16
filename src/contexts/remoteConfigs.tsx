@@ -65,8 +65,6 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const updateUserConfigs = useCallback(async () => {
-    if (remoteConfig().lastFetchStatus !== "success") return;
-
     const values = remoteConfig().getAll();
     const configs = {} as Configs;
 
@@ -90,7 +88,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       amountParticipants: Number(configs.default_max_participants),
       messageLength: Number(configs.default_max_message_length),
     });
-  }, [remoteConfig().lastFetchStatus]);
+  }, []);
 
   return (
     <RemoteConfigsContext.Provider

@@ -17,7 +17,6 @@ const HomeRoutes = () => {
 
   return (
     <tabRoutes.Navigator
-      lazy
       tabBarOptions={{
         activeTintColor: colors.primary,
         inactiveTintColor: colors.light_heading,
