@@ -1,4 +1,3 @@
-import "react-native-reanimated";
 import React from "react";
 import Routes from "./src/routes";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";

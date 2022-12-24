@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import uuid from "react-native-uuid";
 import Analytics from "@react-native-firebase/analytics";
 
 import Crashlytics from "@react-native-firebase/crashlytics";

@@ -11,7 +11,6 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useAuth } from "../../contexts/auth";
 import { GroupData, ParticipantsData } from "../../../@types/interfaces";
 import { useEffect } from "react";
 import api from "../../services/api";
@@ -25,6 +24,8 @@ import {
 } from "../../utils/authorizedRoles";
 
 import _ from "lodash";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { BannerAdSize } from "react-native-google-mobile-ads";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -175,7 +176,7 @@ const GroupConfig: React.FC = () => {
               </OptionText>
             </OptionContainer>
           )}
-          <Banner size="largeBanner" />
+          <Banner size={BannerAdSize.LARGE_BANNER} />
         </OptionsContainer>
       </Container>
     </>

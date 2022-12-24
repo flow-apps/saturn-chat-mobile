@@ -299,7 +299,7 @@ const Message = ({
           duration: 400,
         }}
       >
-        <Container isRight={isRight} style={{ scaleY: -1 }}>
+        <Container isRight={isRight} style={{ transform: [{ scaleY: -1 }] }}>
           {message.reply_to && (
             <ReplyingMessage replying_message={message.reply_to} />
           )}

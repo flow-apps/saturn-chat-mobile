@@ -69,16 +69,18 @@ const EditProfile: React.FC = () => {
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
-    });
+      selectionLimit: 1
+    })
 
-    if (!photo.cancelled) {
+    if (!photo.canceled) {
       SimpleToast.show("Atualizando avatar...");
-      const uriParts = photo.uri.split(".");
+      const uri = photo.assets[0].uri;
+      const uriParts = uri.split(".");
       const fileType = uriParts.pop();
       const data = new FormData();
 
       data.append("avatar", {
-        uri: photo.uri,
+        uri: uri,
         name: `avatar.${fileType}`,
         type: `image/${fileType}`,
       });
@@ -91,7 +93,7 @@ const EditProfile: React.FC = () => {
         })
         .then(async (res) => {
           await updateUser(res.data)
-          setNewAvatar(photo.uri);
+          setNewAvatar(uri);
           SimpleToast.show("Avatar atualizado");
         });
     }

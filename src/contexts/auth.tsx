@@ -25,7 +25,7 @@ interface AuthContextData {
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [token, setToken] = useState("");
@@ -145,10 +145,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export function useAuth() {
+function useAuth() {
   const context = useContext(AuthContext);
 
   return context;
 }
 
-export default AuthContext;
+export { AuthProvider, useAuth };

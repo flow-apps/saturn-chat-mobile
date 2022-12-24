@@ -35,7 +35,7 @@ import { useFirebase } from "../../../contexts/firebase";
 import config from "../../../config";
 
 const Register: React.FC = () => {
-  const [avatar, setAvatar] = useState<ImageInfo>();
+  const [avatar, setAvatar] = useState<ImagePicker.ImagePickerAsset>();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -106,10 +106,11 @@ const Register: React.FC = () => {
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
+      selectionLimit: 1,
     });
 
-    if (!photo.cancelled) {
-      return setAvatar(photo);
+    if (!photo.canceled) {
+      return setAvatar(photo.assets[0]);
     }
   }
 

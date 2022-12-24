@@ -654,7 +654,8 @@ const Chat: React.FC = () => {
             ListFooterComponent={renderFooter}
             updateCellsBatchingPeriod={200}
             windowSize={25}
-            style={{ scaleY: -1 }}
+            style={{ transform: [{ scaleY: -1 }] }}
+            contentContainerStyle={{ height: "100%" }}
           />
         </MessageContainer>
         <FormContainer>

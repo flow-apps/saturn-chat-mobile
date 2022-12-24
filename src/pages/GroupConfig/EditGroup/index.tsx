@@ -25,6 +25,7 @@ import {
   TextArea,
 } from "./styles";
 import { verifyBetweenValues } from "../../../utils";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const EditGroup: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -80,16 +81,18 @@ const EditGroup: React.FC = () => {
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
+      selectionLimit: 1
     });
 
-    if (!photo.cancelled) {
+    if (!photo.canceled) {
       SimpleToast.show("Atualizando avatar...");
-      const uriParts = photo.uri.split(".");
+      const uri = photo.assets[0].uri;
+      const uriParts = uri.split(".");
       const fileType = uriParts.pop();
       const data = new FormData();
 
       data.append("group_avatar", {
-        uri: photo.uri,
+        uri: uri,
         name: `group_avatar.${fileType}`,
         type: `image/${fileType}`,
       });
@@ -101,7 +104,7 @@ const EditGroup: React.FC = () => {
           },
         })
         .then(() => {
-          setNewAvatar(photo.uri);
+          setNewAvatar(uri);
           SimpleToast.show("Avatar atualizado");
         });
     }

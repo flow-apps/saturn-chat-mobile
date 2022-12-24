@@ -9,7 +9,6 @@ import Loading from "../components/Loading";
 import config from "../config";
 import * as Linking from "expo-linking"
 
-
 const Routes = () => {
   const { analytics } = useFirebase()
   const { signed, loadingData } = useAuth();

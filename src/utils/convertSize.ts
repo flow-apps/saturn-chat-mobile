@@ -5,6 +5,6 @@ export function convertBytesToMB(bytes: number) {
 
   return String((size >= 1 ? size : size * 1024).toFixed(2)).replace(
     ".",
-    Localize.decimalSeparator
+    Localize.getLocales().shift().decimalSeparator
   ) + (size >= 1 ? "MB" : "KB")
 }

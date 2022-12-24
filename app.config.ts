@@ -2,7 +2,6 @@ import { ExpoConfig, ConfigContext } from "@expo/config";
 import secrets from "./src/secrets.json";
 
 export default ({ config }: ConfigContext): ExpoConfig => {  
-
   return {
     ...config,
     name: "Saturn Chat",

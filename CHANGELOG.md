@@ -2,6 +2,14 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.24.0
+
+- Upgrade Expo from SDK 45 to 47
+- Fix deprecated features
+- Fix chat FlatList
+- Remove Perf from Axios Requests *(temp)*
+- Add new localhost IP from API
+
 ## 0.23.0
 
 - Add React Native Google Mobile Ads

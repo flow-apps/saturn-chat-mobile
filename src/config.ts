@@ -1,5 +1,5 @@
 const configs = {
-  API_URL: __DEV__ ? "http://192.168.0.112:3000" : "http://192.168.0.112:3000",
+  API_URL: __DEV__ ? "http://192.168.0.108:3000" : "http://192.168.0.108:3000",
   SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.app"],
   WEBSITE_URL: "https://saturn-chat.vercel.app",
   ADS: {
