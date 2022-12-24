@@ -8,7 +8,7 @@ import {
   HeaderTitleContainer,
   HeaderContainer,
 } from "./styles";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { StatusBar } from "expo-status-bar";

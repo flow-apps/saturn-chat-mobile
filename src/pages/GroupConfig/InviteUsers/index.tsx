@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 import Header from "../../../components/Header";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import {
   Container,
   EmptyListContainer,

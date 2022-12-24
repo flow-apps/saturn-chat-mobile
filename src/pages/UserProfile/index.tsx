@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import AdBanner from "../../components/Ads/Banner";
 import Group from "../../components/Group";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import Header from "../../components/Header";
 import PremiumName from "../../components/PremiumName";
 import Loading from "../../components/Loading";

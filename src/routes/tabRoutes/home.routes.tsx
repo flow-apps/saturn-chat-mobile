@@ -1,4 +1,4 @@
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -17,21 +17,23 @@ const HomeRoutes = () => {
 
   return (
     <tabRoutes.Navigator
-      tabBarOptions={{
-        activeTintColor: colors.primary,
-        inactiveTintColor: colors.light_heading,
-        activeBackgroundColor: "#00000000",
-        labelPosition: "below-icon",
-        keyboardHidesTabBar: true,
-        iconStyle: {
+      screenOptions={{
+        // @ts-ignore
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.light_heading,
+        tabBarActiveBackgroundColor: "#00000000",
+        tabBarLabelPosition: "below-icon",
+        tabBarKeyboardHidesTabBar: true,
+        tabBarIconStyle: {
           transform: [{ scale: 0.9 }],
           marginBottom: 5,
         },
-        labelStyle: {
+        tabBarLabelStyle: {
           fontSize: 10,
           fontFamily: fonts["text-bold"],
         },
-        style: {
+        tabBarStyle: {
           padding: 15,
           elevation: 10,
           height: 70,

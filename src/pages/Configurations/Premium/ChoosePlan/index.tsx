@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../../../../components/Header";
 import { useTheme } from "styled-components";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import {
   Animation,
   AnimationContainer,

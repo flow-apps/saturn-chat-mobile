@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AdBanner from "../../components/Ads/Banner";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { GroupData } from "../../../@types/interfaces";
 import Header from "../../components/Header";

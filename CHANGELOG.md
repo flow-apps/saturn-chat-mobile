@@ -2,6 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.25.0
+
+- Upgrade React Navigation
+  - Fix deprecated tab bar options
+- Fix Expo Vector Icons
+
 ## 0.24.0
 
 - Upgrade Expo from SDK 45 to 47

@@ -18,7 +18,7 @@ import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
 
 import { ProgressBar } from "react-native-paper";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";

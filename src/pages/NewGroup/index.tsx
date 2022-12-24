@@ -32,7 +32,7 @@ import {
   ReachedLimitStarContainer,
   ReachedLimitStarDescription,
 } from "./styles";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";

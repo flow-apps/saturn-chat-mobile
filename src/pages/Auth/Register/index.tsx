@@ -7,7 +7,7 @@ import Loading from "../../../components/Loading";
 import formData from "form-data";
 
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { Alert, Keyboard, KeyboardAvoidingView, Linking } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";

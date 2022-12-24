@@ -3,7 +3,7 @@ import ReactNative, { Dimensions, StatusBar } from "react-native";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import ImageZoom from "react-native-image-pan-zoom";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
 import { HeaderButton } from "../../components/Header/styles";
