@@ -37,8 +37,11 @@ const Routes = () => {
       fallback={<Loading />}
       onReady={() => routeNameRef.current = navigationRef.current?.getCurrentRoute()?.name}
       onStateChange={async () => {
-        const previousRouteName = navigationRef.current as any as string | undefined
-        const currentRouteName = navigationRef.current?.getCurrentRoute()?.name
+        if (!navigationRef.current)
+          return;
+        
+        const previousRouteName = navigationRef.current.getCurrentRoute().name
+        const currentRouteName = navigationRef.current.getCurrentRoute().name
 
         if (previousRouteName !== currentRouteName) {
           await analytics().logEvent('screen_view', { currentRouteName });
