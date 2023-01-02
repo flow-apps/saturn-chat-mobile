@@ -6,8 +6,7 @@ import React, {
   useState,
 } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { hoursToMilliseconds } from "date-fns";
-import { minutesToMilliseconds } from "date-fns/esm";
+import { hoursToMilliseconds, minutesToMilliseconds } from "date-fns";
 
 interface RemoteConfigContextProps {
   allConfigs: Configs;

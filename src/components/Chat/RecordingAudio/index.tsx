@@ -1,5 +1,5 @@
 import React from "react";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { millisToTime } from "../../../utils/format";
 import {
   RecordingAudioContainer,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import {
   Container,
   ReplyingMessageAuthorWrapper,

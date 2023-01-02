@@ -6,7 +6,7 @@ import {
   Option,
   OptionText,
 } from "./styles";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { MessageData } from "../../../@types/interfaces";
 import { useAuth } from "../../contexts/auth";
 import { TouchableOpacity, StatusBar } from "react-native";

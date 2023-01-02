@@ -78,6 +78,9 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleJoinRoom = useCallback(
     (groupId: string) => {
+      if (!socket)
+        return
+
       console.log(`Conectando o usuário ao grupo ${groupId}`);
 
       socket.emit("connect_in_chat", groupId);
@@ -89,6 +92,9 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSetReadMessage = useCallback(
     (messageId: string) => {
+      if (!socket)
+        return
+
       socket.emit("set_read_message", {
         message_id: messageId,
         group_id: currentGroupId,
@@ -99,6 +105,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSetTyping = useCallback(
     (data: IHandleSetTyping) => {
+
+      if (!socket)
+        return
+
       if (data.action === "ADD") {
         socket?.emit("add_user_typing", {
           typing: true,
@@ -117,6 +127,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSendMessage = useCallback(
     (data: IHandleSendMessage) => {
+
+      if (!socket)
+        return
+
       if (!data.withFiles) {
         socket.emit("new_user_message", {
           localReference: data.localReference,
@@ -137,6 +151,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSendVoiceMessage = useCallback(
     (data: IHandleSendVoiceMessage) => {
+
+      if (!socket)
+        return
+
       socket.emit("new_voice_message", {
         audio: data.audio,
         reply_to_id: data.reply_to_id,
@@ -149,6 +167,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const handleDeleteMessage = useCallback((data: IHandleDeleteMessage) => {
+
+    if (!socket)
+        return
+
     socket.emit("delete_user_message", {
       message_id: data.message_id,
       group_id: currentGroupId
@@ -157,6 +179,9 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const onSendedUserMessage = useCallback(
     (callback: (data: onSendedUserMessageCallbackType) => void) => {
+
+      if (!socket)
+        return
       socket.on("sended_user_message", callback);
     },
     [socket]
@@ -164,6 +189,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const onNewUserMessage = useCallback(
     (callback: (data: MessageData) => void) => {
+
+      if (!socket)
+        return
+
       socket.on("new_user_message", callback);
     },
     [socket]
@@ -171,6 +200,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const onNewUserTyping = useCallback(
     (callback: (data: UserData) => void) => {
+
+      if (!socket)
+        return
+
       socket.on("new_user_typing", callback);
     },
     [socket]
@@ -178,6 +211,10 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const onDeletedUserTyping = useCallback(
     (callback: (userId: string) => void) => {
+
+      if (!socket)
+        return
+
       socket.on("deleted_user_typing", callback);
     },
     [socket]
@@ -185,6 +222,9 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const onDeleteUserMessage = useCallback(
     (callback: (result: DeleteMessageResult) => void) => {
+      if (!socket)
+        return
+        
       socket.on("delete_user_message", callback);
     },
     [socket]

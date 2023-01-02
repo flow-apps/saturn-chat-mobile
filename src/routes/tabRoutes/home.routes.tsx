@@ -1,8 +1,6 @@
-import { Feather } from "@expo/vector-icons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "styled-components";
 import Configurations from "../../pages/Configurations";
 import Friends from "../../pages/Friends";

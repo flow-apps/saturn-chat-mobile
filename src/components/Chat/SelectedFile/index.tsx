@@ -1,6 +1,6 @@
 import React from "react";
 import { File, ImageFile, OtherFile, RemoveFileButton } from "./styles";
-import Feather from "@expo/vector-icons/Feather";
+import { Feather } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { DocumentResult } from "expo-document-picker";
 

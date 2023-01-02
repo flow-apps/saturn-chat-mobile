@@ -9,7 +9,7 @@ import {
   AudioDurationContainer,
   AudioDuration,
 } from "./styles";
-import  MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../../utils/format";
 import { useFocusEffect  } from "@react-navigation/native";
@@ -95,5 +95,5 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
 };
 
 export default React.memo(AudioPlayer, (prev, next) => {
-  return prev.audio.url !== next.audio.url && prev.deleted !== next.deleted;
+  return prev.audio.url === next.audio.url && prev.deleted !== next.deleted;
 });

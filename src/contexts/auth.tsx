@@ -20,11 +20,10 @@ interface AuthContextData {
   updateUser: (data: any) => Promise<void>;
   signIn(email: string, password: string): Promise<void>;
   signUp(data: FormData): Promise<void>;
-  signOut(): void;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
-
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -36,23 +35,23 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [registerError, setRegisterError] = useState(false);
 
   useEffect(() => {
-    setLoadingData(true);
-    async function loadStorageData() {
-      const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
-      const storageToken = await AsyncStorage.getItem("@SaturnChat:token");
-      const headerToken = `Bearer ${storageToken}`;
-
-      if (storageUser && storageToken) {
-        api.defaults.headers["authorization"] = headerToken;
-        websocket.query.token = headerToken;
-        setUser(JSON.parse(String(storageUser)));
-        setToken(headerToken);
-      }
-      setLoadingData(false);
-    }
-
     loadStorageData();
   }, []);
+  
+  async function loadStorageData() {
+    setLoadingData(true);
+    const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
+    const storageToken = await AsyncStorage.getItem("@SaturnChat:token");
+    const headerToken = `Bearer ${storageToken}`;
+
+    if (storageUser && storageToken) {
+      api.defaults.headers["authorization"] = headerToken;
+      websocket.query.token = headerToken;
+      setUser(JSON.parse(String(storageUser)));
+      setToken(headerToken);
+    }
+    setLoadingData(false);
+  }
 
   const updateUser = async (data: { token?: string; user: UserData }) => {
     if (data.token) {
@@ -145,10 +144,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-function useAuth() {
-  const context = useContext(AuthContext);
-
-  return context;
+const useAuth = () => {
+  return useContext(AuthContext);
 }
 
 export { AuthProvider, useAuth };

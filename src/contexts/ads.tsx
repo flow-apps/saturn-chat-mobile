@@ -57,7 +57,9 @@ const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     })();
 
     return () => {
-      Interstitial.removeAllListeners()
+      if (Interstitial) {
+        Interstitial.removeAllListeners();
+      }
     }
   }, []);
 
