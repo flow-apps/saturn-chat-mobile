@@ -8,7 +8,7 @@ type StartRecordAudioProps = {
 };
 
 type FinishRecordAudioProps = {
-  audio: Audio.Recording
+  audio: Audio.Recording;
   onRecordFinish: (data: OnRecordFinishProps) => any;
 };
 
@@ -35,21 +35,21 @@ class RecordService {
         return;
       }
 
-      if (!this.recording || this.recording._isDoneRecording) 
+      if (!this.recording || this.recording._isDoneRecording)
         this.recording = new Audio.Recording();
 
       this.recording
         .prepareToRecordAsync({
-          ...Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY,
+          ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
           keepAudioActiveHint: true,
         })
         .then(async () => {
           await this.recording.startAsync();
-          
-          this.recording.setOnRecordingStatusUpdate(status => {
-            onDurationUpdate(status.durationMillis)
-          })
-        })
+
+          this.recording.setOnRecordingStatusUpdate((status) => {
+            onDurationUpdate(status.durationMillis);
+          });
+        });
       return {
         recording: this.recording,
       };
@@ -58,10 +58,7 @@ class RecordService {
     }
   }
 
-  async finish({
-    audio,
-    onRecordFinish,
-  }: FinishRecordAudioProps) {
+  async finish({ audio, onRecordFinish }: FinishRecordAudioProps) {
     try {
       if (!audio) return;
       await audio.stopAndUnloadAsync();
@@ -74,18 +71,18 @@ class RecordService {
       if (!uri) return;
 
       const extension = Platform.select({
-        android: Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.android.extension,
-        ios: Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY.ios.extension,
+        android: Audio.RecordingOptionsPresets.HIGH_QUALITY.android.extension,
+        ios: Audio.RecordingOptionsPresets.HIGH_QUALITY.ios.extension,
       });
       const duration = audio._finalDurationMillis;
       const audioInfos = await FileSystem.getInfoAsync(uri);
-      
+
       return await onRecordFinish({
         audioInfos,
         duration,
         audioURI: uri,
         extension: extension || "unknown",
-      })
+      });
     } catch (error) {
       new Error(error);
     }

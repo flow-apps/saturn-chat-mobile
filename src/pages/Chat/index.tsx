@@ -526,7 +526,7 @@ const Chat: React.FC = () => {
     if (files.length > 0) {
       setSendingFile(true);
       const filesData = new FormData();
-      const trace = await perf().newTrace("send_message_with_files");
+      const trace = perf().newTrace("send_message_with_files");
 
       arrayUtils.iterator(files, (file) => {
         if (file.file.type === "success") {
@@ -564,7 +564,9 @@ const Chat: React.FC = () => {
           }
         })
         .catch((error) => {
-          crashlytics()?.recordError(error, "Send File Error");
+          crashlytics()?.recordError(new Error(error), "Send File Error");
+          console.log(JSON.stringify(error));
+          
         });
 
       await trace.stop();
