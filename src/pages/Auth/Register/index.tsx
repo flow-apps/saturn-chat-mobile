@@ -31,7 +31,7 @@ import {
   SelectAvatarSubtitle,
   SelectAvatarTitle,
 } from "./styles";
-import { useFirebase } from "../../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
 import config from "../../../config";
 
 const Register: React.FC = () => {
@@ -47,7 +47,6 @@ const Register: React.FC = () => {
 
   const { colors } = useTheme();
   const { signUp, loading, registerError } = useAuth();
-  const { analytics } = useFirebase();
 
   const passwordValidation = useMemo(() => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, []);
   const emailValidation = useMemo(() => /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g, [])
@@ -197,6 +196,7 @@ const Register: React.FC = () => {
                   <Input
                     keyboardType="email-address"
                     placeholder="Ex.: usuario@exemplo.com"
+                    autoCapitalize="none"
                     onChangeText={handleSetEmail}
                     value={email}
                   />
@@ -209,6 +209,7 @@ const Register: React.FC = () => {
                   <Input
                     onChangeText={handleSetPassword}
                     value={password}
+                    autoCapitalize="none"
                     secureTextEntry
                   />
                   {passError && (
@@ -229,6 +230,7 @@ const Register: React.FC = () => {
                   <Input
                     value={passwordConfirm}
                     onChangeText={handleSetPassConfirm}
+                    autoCapitalize="none"
                     secureTextEntry
                   />
                   {passConfirmError && password.length > 0 && (

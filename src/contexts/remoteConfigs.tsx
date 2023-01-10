@@ -42,25 +42,26 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    remoteConfig()
-      .setConfigSettings({
+    (async () => {
+      await remoteConfig().setConfigSettings({
         minimumFetchIntervalMillis: hoursToMilliseconds(1),
         fetchTimeMillis: minutesToMilliseconds(1),
       })
-      .then(() =>
-        remoteConfig().setDefaults({
-          default_max_groups: 2,
-          premium_max_groups: 10,
-          default_file_upload: 12,
-          premium_file_upload: 120,
-          default_max_participants: 200,
-          premium_max_participants: 1000,
-          default_max_message_length: 500,
-          premium_max_message_length: 5000,
-        })
-      )
-      .then(() => remoteConfig().fetchAndActivate())
-      .then(() => updateUserConfigs());
+
+      await remoteConfig().setDefaults({
+        default_max_groups: 2,
+        premium_max_groups: 10,
+        default_file_upload: 12,
+        premium_file_upload: 120,
+        default_max_participants: 200,
+        premium_max_participants: 1000,
+        default_max_message_length: 500,
+        premium_max_message_length: 5000,
+      })
+
+      await remoteConfig().fetchAndActivate()
+      await updateUserConfigs()
+    })()
   }, []);
 
   const updateUserConfigs = useCallback(async () => {
@@ -71,6 +72,8 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       const [key, entry] = $;
       configs[key] = entry.asString();
     });
+
+    setAllConfigs(configs)
 
     if (false) {
       return setUserConfigs({

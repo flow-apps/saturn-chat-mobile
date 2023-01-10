@@ -68,7 +68,7 @@ import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
 import { useAds } from "../../contexts/ads";
-import { useFirebase } from "../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
@@ -97,7 +97,6 @@ const Chat: React.FC = () => {
   const arrayUtils = new ArrayUtils();
 
   const { Interstitial } = useAds();
-  const { analytics } = useFirebase();
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();

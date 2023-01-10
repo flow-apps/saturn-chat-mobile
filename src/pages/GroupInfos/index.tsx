@@ -33,7 +33,8 @@ import {
   ParticipantsNumber,
   ParticipantsTitle,
 } from "./styles";
-import { useFirebase } from "../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
+
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -44,7 +45,6 @@ const GroupInfos: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { id } = useRoute().params as { id: string };
 
-  const { analytics } = useFirebase();
 
   useEffect(() => {
     async function getGroup() {

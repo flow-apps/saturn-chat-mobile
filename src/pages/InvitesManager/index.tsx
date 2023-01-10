@@ -34,11 +34,10 @@ const InvitesManager: React.FC = () => {
       (async () => {
         setLoading(true);
         const res = await api.get("/invites/requests");
+        const data = res.data;
 
-        if (res.status === 200) {
-          const data = res.data;
+        if (res.status === 200 && data) {
           const sorted = _.orderBy(data, ["created_at"], "desc");
-
           setRequests(sorted);
         }
 
@@ -77,23 +76,23 @@ const InvitesManager: React.FC = () => {
     action: "ACCEPT" | "REJECT"
   ) => {
     if (action === "ACCEPT") {
-      const res = await api.get(`/inv/join/${inviteID}`)
+      const res = await api.get(`/inv/join/${inviteID}`);
 
       if (res.status === 200) {
-        SimpleToast.show("Convite aceito!")
+        SimpleToast.show("Convite aceito!");
       }
-
     } else {
-      const res = await api.delete(`/invites/${inviteID}`)
+      const res = await api.delete(`/invites/${inviteID}`);
 
       if (res.status === 204) {
-        SimpleToast.show("Convite recusado!")
+        SimpleToast.show("Convite recusado!");
       }
     }
 
-    const filteredRequests = requests.filter(request => request.id !== inviteID)
-    setRequests(filteredRequests)
-
+    const filteredRequests = requests.filter(
+      (request) => request.id !== inviteID
+    );
+    setRequests(filteredRequests);
   };
 
   if (loading) return <Loading />;

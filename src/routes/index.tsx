@@ -4,13 +4,13 @@ import { useAuth } from "../contexts/auth";
 import AppRoutes from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
 import { navigationRef } from "./rootNavigation";
-import { useFirebase } from "../contexts/firebase";
 import Loading from "../components/Loading";
 import config from "../config";
 import * as Linking from "expo-linking";
 
+import analytics from "@react-native-firebase/analytics";
+
 const Routes = () => {
-  const { analytics } = useFirebase();
   const { signed, loadingData } = useAuth();
 
   const linking: LinkingOptions<{}> = {

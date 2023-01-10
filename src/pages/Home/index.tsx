@@ -151,8 +151,7 @@ const Home: React.FC = () => {
             )}
             showsHorizontalScrollIndicator={false}
             data={groups}
-            initialNumToRender={5}
-            removeClippedSubviews
+            initialNumToRender={10}
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => (
               <GroupButton

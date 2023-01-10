@@ -43,7 +43,7 @@ import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
-import { useFirebase } from "../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
 import { verifyBetweenValues } from "../../utils";
 import { UserData } from "../../../@types/interfaces";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
@@ -63,7 +63,6 @@ const NewGroup: React.FC = () => {
 
   const [isSendable, setIsSendable] = useState(false);
 
-  const { analytics } = useFirebase();
   const { colors } = useTheme();
   const { userConfigs, allConfigs } = useRemoteConfigs();
   const premium = false;
@@ -115,11 +114,11 @@ const NewGroup: React.FC = () => {
       })
       .then(async (response) => {
         if (response.status === 200) {
-          navigator.navigate("GroupsChat");
           trace.putAttribute("group_id", response.data.id);
           await analytics().logEvent("created_group", {
             group_id: response.data.id,
           });
+          navigator.navigate("GroupsChat");
         }
       })
       .finally(async () => {

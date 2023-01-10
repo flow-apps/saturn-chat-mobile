@@ -7,7 +7,8 @@ import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
 import Loading from "../../../components/Loading";
-import { useFirebase } from "../../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
+
 import { useAuth } from "../../../contexts/auth";
 import {
   Container,
@@ -32,7 +33,6 @@ const Login: React.FC = () => {
 
   const navigator = useNavigation<StackNavigationProp<any>>();
 
-  const { analytics } = useFirebase()
   const { signIn, loginError, loading } = useAuth();
 
   function handleNavigateSignUp() {

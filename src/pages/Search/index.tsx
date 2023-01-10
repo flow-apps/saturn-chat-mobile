@@ -26,7 +26,7 @@ import { GroupData } from "../../../@types/interfaces";
 import api from "../../services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
-import { useFirebase } from "../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
 import { MotiView } from "@motify/components";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -37,7 +37,6 @@ const Search: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [query, setQuery] = useState("");
 
-  const { analytics } = useFirebase();
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -133,9 +132,15 @@ const Search: React.FC = () => {
                     speed={0.5}
                     source={require("../../assets/search.json")}
                   />
-                  <NoResultText>Sem resultados no momento</NoResultText>
+                  <NoResultText>
+                    {loading
+                      ? "Buscando grupos..."
+                      : "Sem resultados no momento"}
+                  </NoResultText>
                   <NoResultSubText>
-                    Tente buscar algo como "🌈 Arco-Íris"
+                    {loading
+                      ? "Isso pode demorar um pouco"
+                      : "Tente buscar o nome de algum grupo"}
                   </NoResultSubText>
                 </NoResultsContainer>
               }

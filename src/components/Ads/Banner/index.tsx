@@ -11,8 +11,9 @@ import { Feather } from "@expo/vector-icons";
 import config from "../../../config";
 import secrets from "../../../secrets.json";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useFirebase } from "../../../contexts/firebase";
 import { StackNavigationProp } from "@react-navigation/stack";
+
+import analytics from "@react-native-firebase/analytics";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -20,7 +21,6 @@ type BannerProps = {
 };
 
 const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) => {
-  const { analytics } = useFirebase()
   const { name } = useRoute()
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
@@ -31,13 +31,14 @@ const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) 
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const handleGoPremium = async () => {
+    navigation.navigate("PurchasePremium")
     await analytics().logEvent("RemoveBannerAD", {
       requested_in: name
     })
-    navigation.navigate("PurchasePremium")
   }
 
-  if (isPremium) return <></>;
+  if (isPremium) 
+    return <></>;
 
   return (
     <Container

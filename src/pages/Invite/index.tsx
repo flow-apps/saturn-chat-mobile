@@ -23,7 +23,7 @@ import Loading from "../../components/Loading";
 import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";
 import { useAuth } from "../../contexts/auth";
-import { useFirebase } from "../../contexts/firebase";
+import analytics from "@react-native-firebase/analytics";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 const Invite: React.FC = () => {
@@ -31,7 +31,6 @@ const Invite: React.FC = () => {
   const [invite, setInvite] = useState<null | InviteData>(null);
   const [participating, setParticipating] = useState(false);
   const { user } = useAuth();
-  const { analytics } = useFirebase();
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();

@@ -18,7 +18,7 @@ interface HeaderProps {
   title: string;
   backButton?: boolean;
   bgColor?: string;
-  children?: React.ReactNode[];
+  children?: React.ReactNode | React.ReactNode[]
   onPressTitle?: () => unknown;
 }
 
