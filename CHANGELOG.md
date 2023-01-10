@@ -2,6 +2,13 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.26.1
+
+- Fix invites manager
+- Remove extra zero in friends counter
+- Disable button if the number of friends is zero
+- Grow tabBar icons
+
 ## 0.26.0
 
 - Fix register form fields
@@ -81,7 +88,7 @@ NOTE: The versions here not represents the release versions, check the App Store
 
 ## 0.20.2
 
-- Fetch remote configs directly in app, using _React Native Firebase Remote Config_
+- Fetch remote configs directly in app, using *React Native Firebase Remote Config*
   - Add default configs
   - Add cache
 
@@ -253,7 +260,7 @@ NOTE: The versions here not represents the release versions, check the App Store
 
 ## 0.3.2
 
-- --Add HTTP Metric in Axios requests-- **_Not working now, check the new versions for solutions_**
+- --Add HTTP Metric in Axios requests-- ***Not working now, check the new versions for solutions***
 - Add Analytics in invite screen
 
 ## 0.3.1

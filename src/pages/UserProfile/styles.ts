@@ -97,7 +97,7 @@ export const GroupsTitle = styled.Text`
   font-size: 20px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.dark_heading};
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 
 export const Groups = styled.View``;

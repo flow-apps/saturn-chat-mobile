@@ -36,7 +36,7 @@ const InvitesManager: React.FC = () => {
         const res = await api.get("/invites/requests");
         const data = res.data;
 
-        if (res.status === 200 && data) {
+        if (res.status === 200) {
           const sorted = _.orderBy(data, ["created_at"], "desc");
           setRequests(sorted);
         }
@@ -116,7 +116,7 @@ const InvitesManager: React.FC = () => {
           ListEmptyComponent={() => (
             <EmptyListContainer>
               <EmptyListTitle>
-                Não há convites nem solicitações de amizade. Volte mais tarde.
+                Não há convites para grupos nem solicitações de amizade. Volte mais tarde.
               </EmptyListTitle>
             </EmptyListContainer>
           )}

@@ -49,7 +49,6 @@ const UserProfile: React.FC = () => {
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
   const [friendInfos, setFriendInfos] = useState<FriendData>();
 
-  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
@@ -169,10 +168,8 @@ const UserProfile: React.FC = () => {
             )}
             {userInfos?.id === user?.id && (
               <FriendsInfosContainer>
-                <FriendsContainer onPress={openFriendsManager}>
-                  <FriendsNumber>
-                    {String(userInfos?.friendsAmount).padStart(2, "0")}
-                  </FriendsNumber>
+                <FriendsContainer disabled={!userInfos?.friendsAmount} onPress={openFriendsManager}>
+                  <FriendsNumber>{userInfos?.friendsAmount}</FriendsNumber>
                   <FriendsTitle>Amigos</FriendsTitle>
                 </FriendsContainer>
               </FriendsInfosContainer>

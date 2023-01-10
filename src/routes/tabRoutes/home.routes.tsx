@@ -22,6 +22,7 @@ const HomeRoutes = () => {
         tabBarInactiveTintColor: colors.light_heading,
         tabBarActiveBackgroundColor: "#00000000",
         tabBarLabelPosition: "below-icon",
+        // @ts-ignore
         tabBarKeyboardHidesTabBar: true,
         tabBarIconStyle: {
           transform: [{ scale: 0.9 }],
@@ -47,7 +48,7 @@ const HomeRoutes = () => {
         options={{
           title: "Grupos",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="groups" size={size + 5} color={color} />
+            <MaterialIcons name="groups" size={size + 6} color={color} />
           ),
         }}
       />
@@ -58,7 +59,7 @@ const HomeRoutes = () => {
         options={{
           title: "Amigos",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="people" size={size + 5} color={color} />
+            <MaterialIcons name="people" size={size + 6} color={color} />
           ),
           unmountOnBlur: true,
         }}
