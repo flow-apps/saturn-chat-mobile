@@ -45,7 +45,6 @@ const GroupInfos: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { id } = useRoute().params as { id: string };
 
-
   useEffect(() => {
     async function getGroup() {
       if (group) return;
@@ -146,13 +145,13 @@ const GroupInfos: React.FC = () => {
                     ))}
                 </GroupTagsScroll>
               </GroupTagsContainer>
-              <AdBannerWrapper>
-                <AdBanner />
-              </AdBannerWrapper>
               <GroupDescContainer>
                 <GroupDescTitle>Descrição</GroupDescTitle>
                 <GroupDesc>{group.description}</GroupDesc>
               </GroupDescContainer>
+              <AdBannerWrapper>
+                <AdBanner />
+              </AdBannerWrapper>
             </BasicInfos>
           </BasicInfosContainer>
         </GroupContainer>

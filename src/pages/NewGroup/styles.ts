@@ -23,6 +23,7 @@ export const SelectGroupPhoto = styled.TouchableOpacity`
   border: 2px dashed ${(props) => props.theme.colors.dark_gray};
   align-items: center;
   justify-content: center;
+  margin-bottom: 15px;
 `;
 
 export const GroupPhoto = styled.Image`
