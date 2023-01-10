@@ -24,13 +24,19 @@ import PdfPreview from "../pages/PdfPreview";
 import SwitchPassword from "../pages/Configurations/SwitchPassword";
 import InvitesManager from "../pages/InvitesManager";
 import FriendsManager from "../pages/FriendsManager";
+import { useTheme } from "styled-components";
 
 const StackRoutes = createStackNavigator();
 
 const AppRoutes = () => {
+  const { colors } = useTheme();
+
   return (
     <StackRoutes.Navigator
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        cardStyle: { backgroundColor: colors.background, opacity: 1 },
+      }}
     >
       <StackRoutes.Screen name="Groups" component={HomeRoutes} />
       <StackRoutes.Screen name="FriendsManager" component={FriendsManager} />
