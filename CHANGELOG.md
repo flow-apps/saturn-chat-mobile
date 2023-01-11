@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.26.3
+
+- Fix chat scroll
+- Remove reversed message component
+
 ## 0.26.2
 
 - Fix navigation theme

@@ -655,10 +655,10 @@ const Chat: React.FC = () => {
             renderItem={renderMessage}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
-            updateCellsBatchingPeriod={200}
-            windowSize={25}
-            style={{ transform: [{ scaleY: -1 }] }}
-            contentContainerStyle={{ height: "100%" }}
+            updateCellsBatchingPeriod={1000}
+            windowSize={18}
+            inverted
+            contentContainerStyle={{ minHeight: "100%" }}
           />
         </MessageContainer>
         <FormContainer>
