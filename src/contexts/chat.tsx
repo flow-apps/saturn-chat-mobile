@@ -81,10 +81,9 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log(`Conectando o usuário ao grupo ${groupId}`);
 
       socket.emit("connect_in_chat", groupId);
-
       setCurrentGroupId(groupId);
     },
-    [socket]
+    [socket, currentGroupId]
   );
 
   const handleSetReadMessage = useCallback(

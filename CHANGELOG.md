@@ -2,6 +2,12 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.26.2
+
+- Fix navigation theme
+- Fix socket connection on 1st login
+- Add socket depends in useEffect
+
 ## 0.26.1
 
 - Fix invites manager

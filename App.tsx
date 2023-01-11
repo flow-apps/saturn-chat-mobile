@@ -52,9 +52,9 @@ export default function App() {
     <ThemeControllerProvider>
       <FirebaseProvider>
         <AuthProvider>
-          <NotificationsProvider>
-            <AdsProvider>
-              <WebsocketProvider>
+          <WebsocketProvider>
+            <NotificationsProvider>
+              <AdsProvider>
                 <ChatProvider>
                   <AudioPlayerProvider>
                     <RemoteConfigsProvider>
@@ -62,9 +62,9 @@ export default function App() {
                     </RemoteConfigsProvider>
                   </AudioPlayerProvider>
                 </ChatProvider>
-              </WebsocketProvider>
-            </AdsProvider>
-          </NotificationsProvider>
+              </AdsProvider>
+            </NotificationsProvider>
+          </WebsocketProvider>
         </AuthProvider>
       </FirebaseProvider>
     </ThemeControllerProvider>

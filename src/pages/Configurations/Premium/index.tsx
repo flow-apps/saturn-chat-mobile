@@ -67,7 +67,7 @@ const Premium: React.FC = () => {
           <SubtitleWrapper>
             <Subtitle>
               Aproveite ao máximo todos os recursos disponíveis como envio de
-              arquivos maiores, criar mais grupos, remover todos os anúncios, e
+              arquivos maiores, criar mais grupos, remover todos os anúncios chatos, e
               mais!
             </Subtitle>
           </SubtitleWrapper>
@@ -76,7 +76,7 @@ const Premium: React.FC = () => {
             <BuyButton onPress={handleGoChoosePlan}>
               <BuyButtonText>
                 <Feather name="star" size={18} /> Obter a partir de R$ 39
-                {Localize.decimalSeparator}99
+                {Localize.getLocales()[0].decimalSeparator}99
               </BuyButtonText>
             </BuyButton>
           </BuyWrapper>
@@ -161,7 +161,7 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Gosta de textões? Então aumente suas mensagens de{" "}
+                  Gosta de mandar textões? Então aumente suas mensagens de{" "}
                   {allConfigs.default_max_message_length} caracteres para
                   maravilhosos {allConfigs.premium_max_message_length}{" "}
                   caracteres!
@@ -178,8 +178,8 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Apoie o desenvolvimento do aplicativo e a trazer muitas
-                  novidades ❤
+                  Apoia o desenvolvimento do aplicativo e a trazer muitas
+                  novidades de maneira rápida ❤
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>

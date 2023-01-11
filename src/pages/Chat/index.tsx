@@ -149,20 +149,22 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (appState === "active") {
-      if (!socket) return;
+      if (!socket) 
+        return;
+      
       handleJoinRoom(id);
+      configureSocketListeners();
     }
     return () => {
       if (socket) {
         socket.emit("leave_chat");
       }
     };
-  }, [appState]);
+  }, [appState, socket]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      configureSocketListeners();
 
       const groupRes = await api.get(`/group/${id}`);
       if (groupRes.status === 200) setGroup(groupRes.data);
@@ -577,7 +579,7 @@ const Chat: React.FC = () => {
     setReplyingMessage(undefined);
   }, [message, files]);
 
-  const renderMessage = ({
+  const renderMessage = useCallback(({
     item,
     index,
   }: ListRenderItem<MessageData> | any) => {
@@ -591,8 +593,8 @@ const Chat: React.FC = () => {
         onReplyMessage={handleReplyMessage}
       />
     );
-  };
-  const memoizedRenderMessage = useMemo(() => renderMessage, [oldMessages]);
+  }, [oldMessages])
+
   const getItemID = (item: MessageData) => item.id;
   const renderFooter = () =>
     fetching && !fetchedAll ? <LoadingIndicator /> : <></>;
@@ -650,7 +652,7 @@ const Chat: React.FC = () => {
             data={oldMessages}
             extraData={oldMessages.length}
             keyExtractor={getItemID}
-            renderItem={memoizedRenderMessage}
+            renderItem={renderMessage}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
             updateCellsBatchingPeriod={200}

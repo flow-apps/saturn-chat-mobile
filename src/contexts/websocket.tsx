@@ -13,7 +13,7 @@ const WebsocketContext = createContext({} as IWebsocketContext);
 const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [socket, setSocket] = useState<Socket>();
+  const [socket, setSocket] = useState<Socket>(null);
 
   const { token, signed } = useAuth();
 
@@ -23,6 +23,8 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
       return
     };
 
+    console.log("Conectando ao Socket");
+    
     const createdSocket = io(config.API_URL, {
       ...websocketConfig,
       query: {
@@ -40,7 +42,7 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
         socket.disconnect();
       }
     };
-  }, [token, signed]);
+  }, [signed, token]);
 
   return (
     <WebsocketContext.Provider

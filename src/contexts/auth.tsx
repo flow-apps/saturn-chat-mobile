@@ -60,7 +60,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await AsyncStorage.setItem("@SaturnChat:token", data.token, () => {
         api.defaults.headers["authorization"] = headerToken;
         websocket.query.token = headerToken;
-        setToken(data.token);
+        setToken(headerToken);
       });
     }
     await AsyncStorage.setItem(

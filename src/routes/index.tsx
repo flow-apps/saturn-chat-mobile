@@ -1,7 +1,11 @@
 import React, { useRef } from "react";
-import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
-import { useAuth } from "../contexts/auth";
 import AppRoutes from "./app.routes";
+import {
+  LinkingOptions,
+  NavigationContainer,
+  DarkTheme,
+} from "@react-navigation/native";
+import { useAuth } from "../contexts/auth";
 import { AuthRoutes } from "./auth.routes";
 import { navigationRef } from "./rootNavigation";
 import Loading from "../components/Loading";
@@ -9,9 +13,11 @@ import config from "../config";
 import * as Linking from "expo-linking";
 
 import analytics from "@react-native-firebase/analytics";
+import { useTheme } from "styled-components";
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
+  const { title, colors } = useTheme();
 
   const linking: LinkingOptions<{}> = {
     prefixes: [config.WEBSITE_URL, "saturnchat://", Linking.createURL("/")],
@@ -34,6 +40,14 @@ const Routes = () => {
     <NavigationContainer
       linking={linking}
       fallback={<Loading />}
+      theme={
+        title === "dark"
+          ? {
+              ...DarkTheme,
+              colors: { ...DarkTheme.colors, background: colors.background },
+            }
+          : undefined
+      }
       onReady={() => {
         if (navigationRef.current && routeNameRef.current) {
           routeNameRef.current = navigationRef.current.getCurrentRoute()?.name;
