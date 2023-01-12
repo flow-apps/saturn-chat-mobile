@@ -7,10 +7,7 @@ export const Container = styled.View`
   background-color: ${(props) => props.theme.colors.background};
 `;
 
-export const Messages = styled.FlatList.attrs({
-  maxToRenderPerBatch: 20,
-  initialNumToRender: 20,
-})`` as unknown as typeof FlatList;
+export const Messages = styled.FlatList`` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`
   flex: 1;

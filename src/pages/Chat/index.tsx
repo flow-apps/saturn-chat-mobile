@@ -20,7 +20,7 @@ import crashlytics from "@react-native-firebase/crashlytics";
 import { ProgressBar } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Audio } from "expo-av";
 import { Socket } from "socket.io-client";
@@ -149,30 +149,36 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (appState === "active") {
-      if (!socket) 
-        return;
-      
+      if (!socket) return;
+
       handleJoinRoom(id);
-      configureSocketListeners();
     }
     return () => {
       if (socket) {
         socket.emit("leave_chat");
+        socket.offAny();
       }
     };
   }, [appState, socket]);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        setLoading(true);
 
-      const groupRes = await api.get(`/group/${id}`);
-      if (groupRes.status === 200) setGroup(groupRes.data);
+        if (!group.id) {
+          const groupRes = await api.get(`/group/${id}`);
 
-      await fetchOldMessages();
-      setLoading(false);
-    })();
-  }, []);
+          if (groupRes.status === 200) setGroup(groupRes.data);
+        }
+        configureSocketListeners();
+
+        await fetchOldMessages();
+        setPage(0);
+        setLoading(false);
+      })();
+    }, [id])
+  );
 
   useLayoutEffect(() => {
     (async () => {
@@ -200,7 +206,11 @@ const Chat: React.FC = () => {
     });
 
     onNewUserTyping((newUser) => {
-      if (newUser.id === user?.id) return;
+      if (
+        newUser.id === user?.id ||
+        arrayUtils.has(typingUsers, (tp) => tp.id === newUser.id)
+      )
+        return;
 
       setTypingUsers((old) => [...old, newUser]);
     });
@@ -567,7 +577,6 @@ const Chat: React.FC = () => {
         .catch((error) => {
           crashlytics()?.recordError(new Error(error), "Send File Error");
           console.log(JSON.stringify(error));
-          
         });
 
       await trace.stop();
@@ -579,21 +588,21 @@ const Chat: React.FC = () => {
     setReplyingMessage(undefined);
   }, [message, files]);
 
-  const renderMessage = useCallback(({
-    item,
-    index,
-  }: ListRenderItem<MessageData> | any) => {
-    const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
+  const renderMessage = useCallback(
+    ({ item, index }: ListRenderItem<MessageData> | any) => {
+      const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
-    return (
-      <Message
-        message={item}
-        participant={participant as ParticipantsData}
-        lastMessage={lastMessage}
-        onReplyMessage={handleReplyMessage}
-      />
-    );
-  }, [oldMessages])
+      return (
+        <Message
+          message={item}
+          participant={participant as ParticipantsData}
+          lastMessage={lastMessage}
+          onReplyMessage={handleReplyMessage}
+        />
+      );
+    },
+    [oldMessages]
+  );
 
   const getItemID = (item: MessageData) => item.id;
   const renderFooter = () =>
@@ -655,10 +664,11 @@ const Chat: React.FC = () => {
             renderItem={renderMessage}
             onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
-            updateCellsBatchingPeriod={1000}
-            windowSize={18}
-            inverted
+            initialNumToRender={20}
+            maxToRenderPerBatch={10}
+            windowSize={15}
             contentContainerStyle={{ minHeight: "100%" }}
+            inverted
           />
         </MessageContainer>
         <FormContainer>

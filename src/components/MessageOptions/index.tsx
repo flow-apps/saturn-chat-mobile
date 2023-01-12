@@ -12,7 +12,7 @@ import { useAuth } from "../../contexts/auth";
 import { TouchableOpacity, StatusBar } from "react-native";
 import { ParticipantRoles } from "../../../@types/enums";
 
-interface IOptions {
+export interface IOptions {
   content: string;
   action: () => unknown;
   onlyOwner: boolean;
@@ -103,4 +103,3 @@ const MessageOptions = ({
 };
 
 export default MessageOptions;
-export type { IOptions }

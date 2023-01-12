@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, memo } from "react";
 import Markdown, {
   MarkdownIt,
   RenderRules,
@@ -75,10 +75,13 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
   }, [message, user]);
 
   return (
+    // @ts-ignore
     <Markdown markdownit={markdownRules} rules={renderRules} mergeStyle>
       {message.message}
     </Markdown>
   );
 };
 
-export default MessageMark;
+export default memo(MessageMark, (prev, next) => {
+  return prev.message.id === next.message.id
+});

@@ -359,9 +359,6 @@ const Message = ({
 
 export default memo(Message, (prev, next) => {
   return (
-    prev.message.id === next.message.id &&
-    prev.message.message === next.message.message &&
-    prev.message.voice_message === next.message.voice_message &&
-    prev.lastMessage?.id === next.lastMessage?.id
+    prev.message.id === next.message.id
   );
 });
