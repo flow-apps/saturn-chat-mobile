@@ -166,14 +166,16 @@ const Message = ({
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
     const tzDate = convertToTimeZone(isoDate, {
-      timeZone: Localize.timezone,
+      timeZone: Localize.getCalendars()[0].timeZone,
     });
 
-    return format(tzDate, "dd/MM/yy, HH:mm");
+    return format(isoDate, "dd/MM/yy, HH:mm");
   }, []);
 
   const deleteMessage = useCallback(async () => {
     const files = message.files;
+    handleDeleteMessage({ message_id: message.id });
+
     if (files) {
       const processedMessages = arrayUtils.iterator(files, async (f) => {
         if (f.type === "audio") {
@@ -187,8 +189,6 @@ const Message = ({
       await unloadAudio(message.voice_message.name);
     }
 
-    handleDeleteMessage({ message_id: message.id });
-    setDeleted(true);
   }, [message]);
 
   const alertLink = useCallback(
@@ -306,7 +306,7 @@ const Message = ({
             isRight={isRight}
             sended={sended}
             onLongPress={handleOpenMsgOptions}
-            delayLongPress={250}
+            delayLongPress={200}
           >
             <MessageOptions
               close={handleCloseMsgOptions}

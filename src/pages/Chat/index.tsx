@@ -76,10 +76,14 @@ interface File {
   type: string;
 }
 
+interface TextInputRef extends TextInput {
+  value: string;
+}
+
 const recordService = new RecordService();
 
 const Chat: React.FC = () => {
-  const messageInputRef = useRef<TextInput>(null);
+  const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id, name, friendId } = route.params as {
@@ -94,7 +98,7 @@ const Chat: React.FC = () => {
   const { userConfigs } = useRemoteConfigs();
   const { width } = Dimensions.get("window");
 
-  const [message, setMessage] = useState<string>("");
+  const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
@@ -194,6 +198,8 @@ const Chat: React.FC = () => {
     });
 
     onNewUserMessage((msg) => {
+      if (arrayUtils.has(oldMessages, (oldMsg) => oldMsg.id === msg.id)) return;
+
       setOldMessages((old) => [msg, ...old]);
       handleSetReadMessage(msg.id);
     });
@@ -321,7 +327,7 @@ const Chat: React.FC = () => {
               id: localReference,
               author: user as UserData,
               group,
-              message,
+              message: "",
               participant,
               voice_message: {
                 name: `attachment_audio_${localReference}${extension}`,
@@ -351,7 +357,7 @@ const Chat: React.FC = () => {
           handleSendVoiceMessage({
             audio: sendedAudio.data,
             reply_to_id: replyingMessage?.id,
-            message,
+            message: "",
             localReference,
           });
           setReplyingMessage(undefined);
@@ -433,16 +439,20 @@ const Chat: React.FC = () => {
     }
   }, [page, fetching, fetchedAll]);
 
-  const handleSetMessage = useCallback(
-    (newMessage: string) => {
-      if (newMessage.length >= userConfigs.messageLength) {
-        return SimpleToast.show("Limite de 500 caracteres atingido!");
-      }
+  const handleSetMessage = (newMessage: string) => {
+    if (newMessage.length >= userConfigs.messageLength) {
+      return SimpleToast.show("Limite de 500 caracteres atingido!");
+    }
 
-      setMessage(newMessage);
-    },
-    [message]
-  );
+    if (newMessage.length > 0 && !isTypingMessage) {
+      setIsTypingMessage(true);
+    } else if (newMessage.length <= 0 && isTypingMessage) {
+      setIsTypingMessage(false);
+    }
+
+    messageInputRef.current.value = newMessage;
+    handleTyping();
+  };
 
   const handleGoGroupConfig = () => {
     navigation.navigate("GroupConfig", { id });
@@ -474,10 +484,12 @@ const Chat: React.FC = () => {
   };
 
   const handleMessageSubmit = useCallback(async () => {
-    if (files.length === 0 && message.length === 0) return;
+    const message = messageInputRef.current.value || "";
+
+    if (files.length === 0 && !message) return;
 
     const localReference = uuid.v4() as string;
-    setMessage("");
+
     handleTypingTimeout();
 
     setOldMessages((old) => [
@@ -509,6 +521,10 @@ const Chat: React.FC = () => {
     if (files.length === 0) {
       const trace = perf().newTrace("send_message_without_file");
 
+      messageInputRef.current.clear();
+      messageInputRef.current.value = "";
+      setIsTypingMessage(false);
+
       await trace.start();
       handleSendMessage({
         withFiles: false,
@@ -516,7 +532,13 @@ const Chat: React.FC = () => {
         message,
         localReference,
       });
+
+      if (replyingMessage) {
+        setReplyingMessage(undefined);
+      }
       await trace.stop();
+
+      return;
     }
 
     if (files.length > 0) {
@@ -565,13 +587,16 @@ const Chat: React.FC = () => {
         });
 
       await trace.stop();
+
       setFiles([]);
+      setSendingFile(false);
+      setSendedFileProgress(0);
     }
 
-    setSendingFile(false);
-    setSendedFileProgress(0);
-    setReplyingMessage(undefined);
-  }, [message, files]);
+    if (replyingMessage) {
+      setReplyingMessage(undefined);
+    }
+  }, [files]);
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
@@ -646,10 +671,10 @@ const Chat: React.FC = () => {
             extraData={oldMessages.length}
             estimatedListSize={{
               width: width - 10,
-              height: 30 * 180,
+              height: 10 * 105,
             }}
-            drawDistance={18 * 180}
-            estimatedItemSize={180}
+            drawDistance={20 * 105}
+            estimatedItemSize={105}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={handleFetchMoreMessages}
@@ -706,20 +731,19 @@ const Chat: React.FC = () => {
             <MessageInput
               ref={messageInputRef}
               as={TextInput}
+              cursorColor={colors.secondary}
               placeholderTextColor={colors.dark_heading}
+              onChangeText={handleSetMessage}
+              maxLength={userConfigs?.messageLength || 500}
               placeholder={
                 recordingAudio ? "Gravando audio..." : "Sua mensagem..."
               }
-              onChangeText={handleSetMessage}
-              onTextInput={handleTyping}
-              defaultValue={message}
-              maxLength={userConfigs?.messageLength || 500}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
-              {message.length > 0 || files.length > 0 ? (
+              {isTypingMessage || files.length > 0 ? (
                 <SendButton>
                   <Feather
                     name="send"
