@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.26.4
+
+- Add FlashList in Chat fro better performance
+- Fix group count on create new group
+
 ## 0.26.3
 
 - Fix chat scroll

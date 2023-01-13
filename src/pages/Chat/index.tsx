@@ -2,17 +2,11 @@ import React, {
   useCallback,
   useLayoutEffect,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import {
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  TextInput,
-} from "react-native";
+import { Dimensions, ListRenderItem, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -23,7 +17,6 @@ import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Audio } from "expo-av";
-import { Socket } from "socket.io-client";
 import { useTheme } from "styled-components";
 import {
   FileData,
@@ -55,7 +48,6 @@ import {
   InputContainer,
   MessageContainer,
   MessageInput,
-  Messages,
   OptionsButton,
   OptionsContainer,
   SendButton,
@@ -67,7 +59,6 @@ import SelectedFiles from "../../components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
-import { useAds } from "../../contexts/ads";
 import analytics from "@react-native-firebase/analytics";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { AnimatePresence, MotiView } from "moti";
@@ -77,6 +68,8 @@ import { useAudioPlayer } from "../../contexts/audioPlayer";
 import { ArrayUtils } from "../../utils/array";
 import { useWebsocket } from "../../contexts/websocket";
 import { useChat } from "../../contexts/chat";
+
+import { FlashList } from "@shopify/flash-list";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -96,10 +89,10 @@ const Chat: React.FC = () => {
   };
   const arrayUtils = new ArrayUtils();
 
-  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
+  const { width } = Dimensions.get("window");
 
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
@@ -432,21 +425,13 @@ const Chat: React.FC = () => {
     setFilesSizeUsed((used) => used - fileSize);
   };
 
-  const handleFetchMoreMessages = async (
-    event: NativeSyntheticEvent<NativeScrollEvent>
-  ) => {
+  const handleFetchMoreMessages = useCallback(async () => {
     if (fetchedAll) return;
-
-    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const listHeight = layoutMeasurement.height + contentOffset.y;
-
-    if (listHeight >= contentSize.height) {
-      if (!fetching) {
-        setPage((old) => old + 1);
-        await fetchOldMessages();
-      }
+    if (!fetching) {
+      setPage((old) => old + 1);
+      await fetchOldMessages();
     }
-  };
+  }, [page, fetching, fetchedAll]);
 
   const handleSetMessage = useCallback(
     (newMessage: string) => {
@@ -604,7 +589,6 @@ const Chat: React.FC = () => {
     [oldMessages]
   );
 
-  const getItemID = (item: MessageData) => item.id;
   const renderFooter = () =>
     fetching && !fetchedAll ? <LoadingIndicator /> : <></>;
 
@@ -657,27 +641,34 @@ const Chat: React.FC = () => {
       <Container>
         <Typing typingUsers={typingUsers} />
         <MessageContainer>
-          <Messages
+          <FlashList
             data={oldMessages}
             extraData={oldMessages.length}
-            keyExtractor={getItemID}
+            estimatedListSize={{
+              width: width - 10,
+              height: 30 * 180,
+            }}
+            drawDistance={18 * 180}
+            estimatedItemSize={180}
             renderItem={renderMessage}
-            onScroll={handleFetchMoreMessages}
             ListFooterComponent={renderFooter}
-            initialNumToRender={20}
-            maxToRenderPerBatch={10}
-            windowSize={15}
-            contentContainerStyle={{ minHeight: "100%" }}
-            inverted
+            onEndReached={handleFetchMoreMessages}
+            onEndReachedThreshold={0.8}
+            showsVerticalScrollIndicator={false}
+            disableHorizontalListHeightMeasurement
           />
         </MessageContainer>
         <FormContainer>
           <AnimatePresence>
             {recordingAudio && (
               <MotiView
-                from={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                from={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 40 }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{
+                  type: "timing",
+                  duration: 250,
+                }}
               >
                 <RecordingAudio audioDuration={audioDuration} />
               </MotiView>

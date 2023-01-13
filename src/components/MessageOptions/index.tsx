@@ -68,7 +68,6 @@ const MessageOptions = ({
                 option.authorizedRoles[0] === "ALL" ||
                 option.authorizedRoles.includes(participant_role) ? (
                   <Option
-                    key={index}
                     onPress={() => handleExecAction(option.action)}
                   >
                     <OptionText color={option.color}>
@@ -81,7 +80,6 @@ const MessageOptions = ({
                 ) : (
                   !option.onlyOwner && (
                     <Option
-                      key={index}
                       onPress={() => handleExecAction(option.action)}
                     >
                       <OptionText color={option.color}>

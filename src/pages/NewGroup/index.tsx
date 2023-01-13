@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Alert,
   Keyboard,
@@ -67,6 +67,20 @@ const NewGroup: React.FC = () => {
   const { userConfigs, allConfigs } = useRemoteConfigs();
   const premium = false;
   const navigator = useNavigation<StackNavigationProp<any>>();
+
+  const amountGroups = useMemo(() => {
+    if (!user.groups) return 0;
+
+    let counter = 0;
+
+    user.groups.map((group) => {
+      if (group.owner_id === user.id && group.type === "GROUP") {
+        counter++;
+      }
+    });
+
+    return counter;
+  }, [user]);
 
   useEffect(() => {
     (async () => {
@@ -168,7 +182,7 @@ const NewGroup: React.FC = () => {
     return <Loading />;
   }
 
-  if (user && user.groups && user.groups.length >= userConfigs.amountGroups) {
+  if (amountGroups >= userConfigs.amountGroups) {
     return (
       <Container>
         <ReachedLimitContainer>
@@ -183,8 +197,8 @@ const NewGroup: React.FC = () => {
             Você atingiu o limite de {userConfigs.amountGroups} grupos!
           </ReachedLimitTitle>
           <ReachedLimitDescription>
-            Esse limite é estipulado para que todos possam criar suas comunidades
-            no Saturn Chat e também para evitar problemas chatos
+            Esse limite é estipulado para que todos possam criar suas
+            comunidades no Saturn Chat e também para evitar problemas chatos
             como spam.
           </ReachedLimitDescription>
           {!premium && (
@@ -192,7 +206,8 @@ const NewGroup: React.FC = () => {
               <ReachedLimitStarDescription>
                 Você também pode se tornar uma Star e criar até{" "}
                 {allConfigs.premium_max_groups} grupos com{" "}
-                {allConfigs.premium_max_participants} participantes em cada grupo.
+                {allConfigs.premium_max_participants} participantes em cada
+                grupo.
               </ReachedLimitStarDescription>
               <Button
                 title="Tornar-se Star"

@@ -12,6 +12,7 @@ export const Messages = styled.FlatList`` as unknown as typeof FlatList;
 export const MessageContainer = styled.View`
   flex: 1;
   padding: 0px 5px 0px 5px;
+  transform: rotate(180deg);
 `;
 
 export const FileSendedProgressContainer = styled.View`

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { UserData } from "../../../../@types/interfaces";
 import {
   Container,
@@ -15,10 +15,11 @@ type TypingProps = {
 };
 
 const Typing = ({ typingUsers }: TypingProps) => {
-  if (typingUsers.length <= 0) return <></>;
+  if (typingUsers.length <= 0) 
+    return <></>;
 
   const names = useMemo(
-    () => typingUsers.map((User) => User.name),
+    () => typingUsers.map((user) => user.name),
     [typingUsers]
   );
   const joinedNames = useMemo(() => names.join(", "), [names]);
@@ -36,7 +37,7 @@ const Typing = ({ typingUsers }: TypingProps) => {
         <TypingRightSide>
           <TypingUsersContainer>
             <TypingUsersText numberOfLines={1}>
-              {names.length < 5 ? joinedNames : "Vários usuários"}{" "}
+              {names.length < 5 ? joinedNames : "Varias pessoas"}{" "}
               {names.length <= 1 && names.length < 5 ? "está " : "estão "}
               digitando
             </TypingUsersText>
@@ -47,4 +48,4 @@ const Typing = ({ typingUsers }: TypingProps) => {
   );
 };
 
-export default Typing;
+export default memo(Typing);

@@ -38,6 +38,7 @@ export interface GroupData {
     name: string;
     url: string;
   };
+  owner_id: string;
   owner: UserData;
   participantsAmount?: number;
   unreadMessagesAmount?: number;

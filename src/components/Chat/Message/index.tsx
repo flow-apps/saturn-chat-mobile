@@ -237,7 +237,6 @@ const Message = ({
       return message.files.map((file) => {
         return (
           <FilePreview
-            key={file.id}
             name={file.name}
             original_name={file.original_name}
             url={file.url}
@@ -256,7 +255,7 @@ const Message = ({
     return (
       <>
         {invitesData.map((invite, index) => (
-          <InviteInMessage key={index} inviteID={invite.id} />
+          <InviteInMessage inviteID={invite.id} />
         ))}
       </>
     );
@@ -268,7 +267,7 @@ const Message = ({
     return (
       <>
         {message.links.map((link, index) => (
-          <LinkPreview key={index} link={link} openLink={alertLink} />
+          <LinkPreview link={link} openLink={alertLink} />
         ))}
       </>
     );
