@@ -102,7 +102,9 @@ const GroupConfig: React.FC = () => {
 
   return (
     <>
-      <Header title={`Opções do ${group.type === "GROUP" ? "grupo" : "chat"}`} />
+      <Header
+        title={`Opções do ${group.type === "GROUP" ? "grupo" : "chat"}`}
+      />
       <Alert
         visible={showDeleteGroupAlert}
         title="⚠ Cuidado, isso é perigoso!"
@@ -162,20 +164,28 @@ const GroupConfig: React.FC = () => {
               onChangeValue={handleSetNotifications}
             />
           </OptionContainer> */}
-          <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
-          {rolesForDeleteGroup.includes(participant.role) ? (
-            <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>
-              <OptionText color={colors.red}>
-                <Feather name="trash" size={25} /> Apagar grupo
-              </OptionText>
-            </OptionContainer>
-          ) : (
-            <OptionContainer onPress={() => setShowExitGroup(true)}>
-              <OptionText color={colors.red}>
-                <Feather name="log-out" size={25} /> Sair do grupo
-              </OptionText>
-            </OptionContainer>
-          )}
+          {rolesForDeleteGroup.includes(participant.role) &&
+            group.type === "GROUP" && (
+              <>
+                <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
+                <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>
+                  <OptionText color={colors.red}>
+                    <Feather name="trash" size={25} /> Apagar grupo
+                  </OptionText>
+                </OptionContainer>
+              </>
+            )}
+          {!rolesForDeleteGroup.includes(participant.role) &&
+            group.type === "GROUP" && (
+              <>
+                <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
+                <OptionContainer onPress={() => setShowExitGroup(true)}>
+                  <OptionText color={colors.red}>
+                    <Feather name="log-out" size={25} /> Sair do grupo
+                  </OptionText>
+                </OptionContainer>
+              </>
+            )}
           <Banner size={BannerAdSize.LARGE_BANNER} />
         </OptionsContainer>
       </Container>

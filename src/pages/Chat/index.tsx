@@ -158,6 +158,24 @@ const Chat: React.FC = () => {
     };
   }, [appState, socket]);
 
+  useEffect(() => {
+    (async () => {
+      if (appState === "active") {
+        setLoading(true);
+        if (page > 0) {
+          setPage(0);
+        }
+
+        if (fetchedAll) {
+          setFetchedAll(false);
+        }
+
+        await fetchOldMessages();
+        setLoading(false);
+      }
+    })();
+  }, [appState]);
+
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -368,24 +386,6 @@ const Chat: React.FC = () => {
     }
   };
 
-  const fetchOldMessages = useCallback(async () => {
-    setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
-
-    if (data.messages.length === 0) {
-      setFetching(false);
-      return setFetchedAll(true);
-    }
-
-    if (page > 0) {
-      setOldMessages((old) => [...old, ...data.messages]);
-    } else {
-      setOldMessages(data.messages);
-    }
-
-    setFetching(false);
-  }, [page, fetchedAll, fetching]);
-
   const handleFileSelector = async () => {
     const fileRes = await fileService.get();
 
@@ -431,13 +431,32 @@ const Chat: React.FC = () => {
     setFilesSizeUsed((used) => used - fileSize);
   };
 
-  const handleFetchMoreMessages = useCallback(async () => {
+  const handleFetchMoreMessages = async () => {
     if (fetchedAll) return;
     if (!fetching) {
-      setPage((old) => old + 1);
       await fetchOldMessages();
     }
-  }, [page, fetching, fetchedAll]);
+  };
+
+  const fetchOldMessages = async () => {
+    setFetching(true);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
+
+    if (data.messages.length === 0) {
+      setFetching(false);
+      setFetchedAll(true);
+      return;
+    }
+
+    if (page > 0) {
+      setOldMessages((old) => [...old, ...data.messages]);
+    } else {
+      setOldMessages(data.messages);
+    }
+
+    setPage((old) => old + 1);
+    setFetching(false);
+  };
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
@@ -470,8 +489,8 @@ const Chat: React.FC = () => {
     navigation.navigate("UserProfile", { id: friendId });
   };
 
-  const handleGoStar = () => {
-    analytics().logEvent("IncreaseUpload");
+  const handleGoStar = async () => {
+    await analytics().logEvent("IncreaseUpload");
     navigation.navigate("PurchasePremium");
   };
 
@@ -596,7 +615,7 @@ const Chat: React.FC = () => {
     if (replyingMessage) {
       setReplyingMessage(undefined);
     }
-  }, [files]);
+  }, [files, messageInputRef.current]);
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
@@ -611,7 +630,7 @@ const Chat: React.FC = () => {
         />
       );
     },
-    [oldMessages]
+    [oldMessages.length]
   );
 
   const renderFooter = () =>
@@ -652,16 +671,16 @@ const Chat: React.FC = () => {
           group.type === "GROUP" ? handleGoGroupInfos : handleGoFriendInfos
         }
       >
-        {group.type === "GROUP" ? (
+        {group.type === "GROUP" && (
           <HeaderButton onPress={handleGoGroupParticipants}>
             <Feather name="users" size={22} color="#fff" />
           </HeaderButton>
-        ) : (
-          <></>
         )}
-        <HeaderButton onPress={handleGoGroupConfig}>
-          <Feather name="more-vertical" size={22} color="#fff" />
-        </HeaderButton>
+        {group.type === "GROUP" && (
+          <HeaderButton onPress={handleGoGroupConfig}>
+            <Feather name="more-vertical" size={22} color="#fff" />
+          </HeaderButton>
+        )}
       </Header>
       <Container>
         <Typing typingUsers={typingUsers} />
@@ -669,11 +688,16 @@ const Chat: React.FC = () => {
           <FlashList
             data={oldMessages}
             extraData={oldMessages.length}
+            keyExtractor={(item) => item.id}
+            viewabilityConfig={{
+              minimumViewTime: 500,
+              itemVisiblePercentThreshold: 5
+            }}
             estimatedListSize={{
               width: width - 10,
               height: 10 * 105,
             }}
-            drawDistance={20 * 105}
+            drawDistance={23 * 105}
             estimatedItemSize={105}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}

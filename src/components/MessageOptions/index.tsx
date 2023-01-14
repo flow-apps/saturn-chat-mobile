@@ -16,6 +16,7 @@ export interface IOptions {
   content: string;
   action: () => unknown;
   onlyOwner: boolean;
+  showInDM: boolean;
   iconName?: keyof typeof Feather.glyphMap;
   color?: string;
   authorizedRoles: ParticipantRoles[] | string[];
@@ -45,6 +46,34 @@ const MessageOptions = ({
     }
   }, []);
 
+  const canShowOptionChecker = (option: IOptions) => {
+    const roles = option.authorizedRoles;
+    const groupType = message.group.type;
+    const authorId = message.author.id;
+
+    if (!option.showInDM && groupType === "DIRECT") {
+      return false;
+    }
+
+    if (option.onlyOwner && authorId !== user.id && groupType === "DIRECT") {
+      return false;
+    }
+
+    if (roles[0] === "ALL") {
+      return true;
+    }
+
+    if (
+      option.onlyOwner &&
+      authorId !== user.id &&
+      !roles.includes(participant_role)
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <>
       <Container
@@ -63,13 +92,9 @@ const MessageOptions = ({
           <MessageOptionsContainer>
             <MessageOptionsModal>
               <StatusBar barStyle="light-content" />
-              {options.map((option, index) =>
-                (option.onlyOwner && message.author.id === user?.id) ||
-                option.authorizedRoles[0] === "ALL" ||
-                option.authorizedRoles.includes(participant_role) ? (
-                  <Option
-                    onPress={() => handleExecAction(option.action)}
-                  >
+              {options.map((option) =>
+                canShowOptionChecker(option) ? (
+                  <Option onPress={() => handleExecAction(option.action)}>
                     <OptionText color={option.color}>
                       {option.iconName && (
                         <Feather name={option.iconName} size={18} />
@@ -79,9 +104,7 @@ const MessageOptions = ({
                   </Option>
                 ) : (
                   !option.onlyOwner && (
-                    <Option
-                      onPress={() => handleExecAction(option.action)}
-                    >
+                    <Option onPress={() => handleExecAction(option.action)}>
                       <OptionText color={option.color}>
                         {option.iconName && (
                           <Feather name={option.iconName} size={18} />

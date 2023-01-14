@@ -188,7 +188,6 @@ const Message = ({
     if (message.voice_message) {
       await unloadAudio(message.voice_message.name);
     }
-
   }, [message]);
 
   const alertLink = useCallback(
@@ -225,6 +224,10 @@ const Message = ({
     await Clipboard.setStringAsync(message.message);
     SimpleToast.show("Mensagem copiada");
   }, [message.message]);
+
+  const handleShowUser = () => {
+    navigation.navigate("UserProfile", { id: message.author.id })
+  }
 
   const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
@@ -273,6 +276,10 @@ const Message = ({
     );
   }, [message.links]);
 
+  const replyMessage = () => {
+    onReplyMessage(message)
+  }
+
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
 
@@ -298,7 +305,7 @@ const Message = ({
           duration: 400,
         }}
       >
-        <Container isRight={isRight} >
+        <Container isRight={isRight}>
           {message.reply_to && (
             <ReplyingMessage replying_message={message.reply_to} />
           )}
@@ -317,9 +324,10 @@ const Message = ({
                 {
                   iconName: "corner-up-right",
                   content: "Responder",
-                  action: () => onReplyMessage(message),
+                  action: replyMessage,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
+                  showInDM: true,
                 },
                 {
                   iconName: "copy",
@@ -327,6 +335,15 @@ const Message = ({
                   action: handleCopyMessage,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
+                  showInDM: true,
+                },
+                {
+                  iconName: "user",
+                  content: "Ver perfil",
+                  action: handleShowUser,
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                  showInDM: true,
                 },
                 {
                   iconName: "trash-2",
@@ -335,6 +352,7 @@ const Message = ({
                   color: colors.red,
                   onlyOwner: true,
                   authorizedRoles: rolesForDeleteMessage,
+                  showInDM: true,
                 },
               ]}
             />
@@ -357,7 +375,6 @@ const Message = ({
 };
 
 export default memo(Message, (prev, next) => {
-  return (
-    prev.message.id === next.message.id
-  );
+  return prev.message.id === next.message.id &&
+    prev.lastMessage === next.lastMessage
 });
