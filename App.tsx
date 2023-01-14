@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Routes from "./src/routes";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
@@ -27,8 +27,16 @@ import {
   useFonts,
 } from "@expo-google-fonts/poppins";
 import { ChatProvider } from "./src/contexts/chat";
+import {
+  reloadAsync,
+  fetchUpdateAsync,
+  checkForUpdateAsync,
+} from "expo-updates";
+
+preventAutoHideAsync();
 
 export default function App() {
+  const [ready, setReady] = useState(false);
   const [fontLoaded] = useFonts({
     Poppins_300Light_Italic,
     Poppins_400Regular,
@@ -41,9 +49,32 @@ export default function App() {
     FiraCode_500Medium,
   });
 
-  if (!fontLoaded) {
-    preventAutoHideAsync();
-    return <></>;
+  useEffect(() => {
+    (async () => {
+      if (__DEV__) {
+        setReady(true);
+        return;
+      }
+
+      const { isAvailable } = await checkForUpdateAsync();
+
+      if (isAvailable) {
+        await fetchUpdateAsync().then(async (value) => {
+          if (value.isNew) {
+            await reloadAsync();
+            return;
+          } else {
+            setReady(true);
+          }
+        });
+      } else {
+        setReady(true);
+      }
+    })();
+  }, []);
+
+  if (!fontLoaded || !ready) {
+    return null;
   }
 
   hideAsync();

@@ -9,6 +9,8 @@ import { Platform } from "react-native";
 import { UserData } from "../../@types/interfaces";
 import { OneSignal } from "../configs/notifications";
 
+import analytics from "@react-native-firebase/analytics";
+
 interface AuthContextData {
   signed: boolean;
   loading: boolean;
@@ -78,8 +80,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     auth
       .signIn(email, password)
       .then(async (response) => {
+
+        const userId = response.data.user.id
+
         OneSignal.setEmail(email);
-        OneSignal.setExternalUserId(response.data.user.id);
+        OneSignal.setExternalUserId(userId);
+        await analytics().setUserId(userId)
 
         await updateUser(response.data);
         setLoginError(false);
@@ -96,8 +102,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     auth
       .signUp(data)
       .then(async (response) => {
+        const userId = response.data.user.id
+
         OneSignal.setEmail(response.data.user.email);
-        OneSignal.setExternalUserId(response.data.user.id);
+        OneSignal.setExternalUserId(userId);
+        await analytics().setUserId(userId)
 
         await updateUser(response.data);
         setRegisterError(false);

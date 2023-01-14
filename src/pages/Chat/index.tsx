@@ -161,7 +161,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async () => {
       if (appState === "active") {
-        setLoading(true);
         if (page > 0) {
           setPage(0);
         }
@@ -171,7 +170,6 @@ const Chat: React.FC = () => {
         }
 
         await fetchOldMessages();
-        setLoading(false);
       }
     })();
   }, [appState]);

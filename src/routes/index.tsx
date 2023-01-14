@@ -49,13 +49,9 @@ const Routes = () => {
           : undefined
       }
       onReady={() => {
-        if (navigationRef.current && routeNameRef.current) {
-          routeNameRef.current = navigationRef.current.getCurrentRoute()?.name;
-        }
+        routeNameRef.current = navigationRef.current.getCurrentRoute()?.name;
       }}
       onStateChange={async () => {
-        if (!navigationRef.current || !routeNameRef.current) return;
-
         const previousRouteName = navigationRef.current.getCurrentRoute().name;
         const currentRouteName = navigationRef.current.getCurrentRoute().name;
 
