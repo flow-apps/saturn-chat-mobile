@@ -91,6 +91,7 @@ export const GroupsSubtitle = styled.Text`
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
   margin-top: -10px;
+  margin-bottom: 5px;
 `;
 
 export const GroupsList = styled.View`
@@ -127,3 +128,7 @@ export const GroupsListEmptyLink = styled(GroupsListEmptySubTitle)`
   color: ${(props) => props.theme.colors.primary};
   font-family: ${fonts.heading};
 `;
+
+export const AdContainer = styled.View` 
+  width: 100%;
+`

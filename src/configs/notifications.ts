@@ -21,7 +21,14 @@ const configureNotificationsHandlers = async (signed: boolean) => {
           await openLink(data.open_url_on_click);
         }
         if (data.type === NotificationsTypes.CHAT_MESSAGE) {
-          navigate("Chat", { id: data.group_id });
+          const isDM = data.group_type === "DIRECT";
+          const name = data.friend_name;
+
+          navigate("Chat", {
+            id: data.group_id,
+            name: isDM ? name : undefined,
+            friendId: isDM ? data.friend_id : undefined
+          });
         }
       }
     }

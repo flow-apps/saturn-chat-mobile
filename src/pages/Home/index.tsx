@@ -14,6 +14,7 @@ import { HeaderButton } from "../../components/Header/styles";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
 import {
+  AdContainer,
   Container,
   GroupButton,
   GroupHasMessage,
@@ -194,6 +195,9 @@ const Home: React.FC = () => {
                 <GroupsSubtitle>
                   Você está em {groupsCount} grupos
                 </GroupsSubtitle>
+                <AdContainer>
+                  <Banner />
+                </AdContainer>
               </TitleWrapper>
             )}
             endFillColor={colors.shape}

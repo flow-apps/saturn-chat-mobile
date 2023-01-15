@@ -154,6 +154,7 @@ const Chat: React.FC = () => {
       if (socket) {
         socket.emit("leave_chat");
         socket.offAny();
+        handleTypingTimeout();
       }
     };
   }, [appState, socket]);
@@ -161,6 +162,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     (async () => {
       if (appState === "active") {
+        setLoading(true)
         if (page > 0) {
           setPage(0);
         }
@@ -170,28 +172,27 @@ const Chat: React.FC = () => {
         }
 
         await fetchOldMessages();
+        setLoading(false)
       }
     })();
   }, [appState]);
 
-  useFocusEffect(
-    useCallback(() => {
-      (async () => {
-        setLoading(true);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
 
-        if (!group.id) {
-          const groupRes = await api.get(`/group/${id}`);
+      if (!group.id) {
+        const groupRes = await api.get(`/group/${id}`);
 
-          if (groupRes.status === 200) setGroup(groupRes.data);
-        }
-        configureSocketListeners();
+        if (groupRes.status === 200) setGroup(groupRes.data);
+      }
+      configureSocketListeners();
 
-        await fetchOldMessages();
-        setPage(0);
-        setLoading(false);
-      })();
-    }, [id])
-  );
+      await fetchOldMessages();
+      setPage(0);
+      setLoading(false);
+    })();
+  }, []);
 
   useLayoutEffect(() => {
     (async () => {
@@ -500,7 +501,7 @@ const Chat: React.FC = () => {
     setReplyingMessage(undefined);
   };
 
-  const handleMessageSubmit = useCallback(async () => {
+  const handleMessageSubmit = async () => {
     const message = messageInputRef.current.value || "";
 
     if (files.length === 0 && !message) return;
@@ -613,7 +614,7 @@ const Chat: React.FC = () => {
     if (replyingMessage) {
       setReplyingMessage(undefined);
     }
-  }, [files, messageInputRef.current]);
+  };
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
@@ -688,12 +689,7 @@ const Chat: React.FC = () => {
             extraData={oldMessages.length}
             keyExtractor={(item) => item.id}
             viewabilityConfig={{
-              minimumViewTime: 500,
-              itemVisiblePercentThreshold: 5
-            }}
-            estimatedListSize={{
-              width: width - 10,
-              height: 10 * 105,
+              minimumViewTime: 750,
             }}
             drawDistance={23 * 105}
             estimatedItemSize={105}

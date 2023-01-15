@@ -118,12 +118,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const signOut = () => {
-    OneSignal.removeExternalUserId();
-
+    
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
         await api.delete(`/users/notify/unregister?platform=${Platform.OS}`);
-
+        OneSignal.removeExternalUserId();
+        
         api.defaults.headers["authorization"] = undefined;
         websocket.query.token = "";
         setToken("");

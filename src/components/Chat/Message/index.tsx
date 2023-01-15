@@ -294,17 +294,6 @@ const Message = ({
         okButtonAction={openLink}
         visible={showLinkAlert}
       />
-      <MotiView
-        from={{
-          scale: sended ? 1 : 0.5,
-          translateX: sended ? 0 : !isRight ? -150 : 150,
-        }}
-        animate={{ scale: 1, translateX: 0 }}
-        transition={{
-          type: "timing",
-          duration: 400,
-        }}
-      >
         <Container isRight={isRight}>
           {message.reply_to && (
             <ReplyingMessage replying_message={message.reply_to} />
@@ -369,12 +358,11 @@ const Message = ({
           {renderDate()}
           {renderAuthor()}
         </Container>
-      </MotiView>
     </>
   );
 };
 
 export default memo(Message, (prev, next) => {
   return prev.message.id === next.message.id &&
-    prev.lastMessage === next.lastMessage
+    prev.lastMessage?.id === next.lastMessage?.id
 });

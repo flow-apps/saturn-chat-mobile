@@ -49,9 +49,11 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  const registerOneSignal = useCallback(async () => {
+  const registerOneSignal = async () => {
     if (!signed) return;
 
+    OneSignal.setAppId(secrets.OneSignalAppID);
+    OneSignal.setExternalUserId(user.id)
     OneSignal.setLocationShared(false);
     OneSignal.setLanguage(Localize.locale);
     OneSignal.promptForPushNotificationsWithUserResponse((res) => {
@@ -62,7 +64,6 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         );
       }
     });
-    OneSignal.setAppId(secrets.OneSignalAppID);
 
     configureNotificationsHandlers(signed);
 
@@ -74,11 +75,11 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       .then((res) => {
         setEnabled(res.data.send_notification);
       });
-  }, [signed, user]);
+  }
 
   useEffect(() => {
     registerOneSignal();
-  }, [signed]);
+  }, []);
 
   return (
     <NotificationsContext.Provider

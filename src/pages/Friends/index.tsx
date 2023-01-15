@@ -4,6 +4,7 @@ import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { FriendData } from "../../../@types/interfaces";
+import Banner from "../../components/Ads/Banner";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import { useAuth } from "../../contexts/auth";
@@ -15,6 +16,7 @@ import {
 } from "../../utils/friends";
 
 import {
+  AdContainer,
   Container,
   EmptyListContainer,
   EmptyListTitle,
@@ -77,6 +79,9 @@ const Friends: React.FC = () => {
                 Envie mensagens privadas aos seus amigos. Você só pode falar com
                 pessoas da sua lista de amigos.
               </PresentationSubtitle>
+              <AdContainer>
+                <Banner />
+              </AdContainer>
             </PresentationContainer>
           )}
           ListEmptyComponent={() => (

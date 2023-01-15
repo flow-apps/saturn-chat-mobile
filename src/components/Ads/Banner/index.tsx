@@ -61,6 +61,9 @@ const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) 
       <BannerContainer>
         <BannerAd
           unitId={adUnitID}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: false,
+          }}
           size={size}
         />
       </BannerContainer>

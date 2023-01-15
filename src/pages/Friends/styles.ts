@@ -8,7 +8,9 @@ export const Container = styled.View`
   padding: 15px;
 `;
 
-export const PresentationContainer = styled.View``;
+export const PresentationContainer = styled.View`
+  margin-bottom: 15px;
+`;
 
 export const PresentationTitle = styled.Text`
   font-size: 22px;
@@ -21,7 +23,7 @@ export const PresentationSubtitle = styled.Text`
   font-size: 16px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 `;
 
 export const FriendsListContainer = styled.View`
@@ -77,4 +79,8 @@ export const EmptyListTitle = styled.Text`
   text-align: center;
   color: ${(props) => props.theme.colors.black};
   font-family: ${fonts.text};
+`;
+
+export const AdContainer = styled.View`
+  width: 100%;
 `;
