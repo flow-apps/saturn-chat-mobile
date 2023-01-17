@@ -22,6 +22,8 @@ export interface Configs {
   premium_max_groups: string;
   default_max_message_length: string;
   premium_max_message_length: string;
+  ad_multiple_in_chat: string;
+  ad_multiple_in_home: string;
 }
 
 interface UserConfigs {
@@ -57,6 +59,8 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
         premium_max_participants: 1000,
         default_max_message_length: 500,
         premium_max_message_length: 5000,
+        ad_multiple_in_chat: 7,
+        ad_multiple_in_home: 5
       })
 
       await remoteConfig().fetchAndActivate()

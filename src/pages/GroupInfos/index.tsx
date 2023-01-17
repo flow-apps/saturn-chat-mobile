@@ -37,16 +37,24 @@ import analytics from "@react-native-firebase/analytics";
 
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import { useAds } from "../../contexts/ads";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
   const [loading, setLoading] = useState(true);
   const [isParticipating, setIsParticipating] = useState(false);
   const navigation = useNavigation<StackNavigationProp<any>>();
+
+  const { Interstitial } = useAds()
   const { id } = useRoute().params as { id: string };
 
   useEffect(() => {
     async function getGroup() {
+      if (Interstitial.loaded) {
+        await Interstitial.show()
+      }
+      
       if (group) return;
 
       setLoading(true);

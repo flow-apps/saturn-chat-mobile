@@ -69,3 +69,7 @@ export const MessageInput = styled.TextInput.attrs({
 export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.Pressable``;
+
+export const AdContainer = styled.View`
+  margin: 10px 0px;
+`

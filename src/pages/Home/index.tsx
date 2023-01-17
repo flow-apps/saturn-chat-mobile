@@ -34,6 +34,8 @@ import {
   QuickAccessTitle,
   TitleWrapper,
 } from "./styles";
+import { BannerAdSize } from "react-native-google-mobile-ads";
+import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 
 export interface ParticipantData {
   id: string;
@@ -48,6 +50,8 @@ const Home: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
   const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+
+  const { allConfigs } = useRemoteConfigs()
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
   useFocusEffect(
@@ -195,9 +199,11 @@ const Home: React.FC = () => {
                 <GroupsSubtitle>
                   Você está em {groupsCount} grupos
                 </GroupsSubtitle>
-                <AdContainer>
-                  <Banner />
-                </AdContainer>
+                {groups.length > 0 && (
+                  <AdContainer>
+                    <Banner />
+                  </AdContainer>
+                )}
               </TitleWrapper>
             )}
             endFillColor={colors.shape}
@@ -212,7 +218,10 @@ const Home: React.FC = () => {
                     activeOpacity={0.5}
                     onPress={() => handleGoChat(item.id)}
                   />
-                  {index > 0 && index % 5 === 0 ? <Banner /> : <></>}
+                  {index > 0 &&
+                    index % Number(allConfigs.ad_multiple_in_home) === 0 && (
+                      <Banner />
+                    )}
                 </>
               );
             }}

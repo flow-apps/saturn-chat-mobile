@@ -39,6 +39,7 @@ import Loading from "../../components/Loading";
 import Message from "../../components/Chat/Message";
 import api from "../../services/api";
 import {
+  AdContainer,
   AudioButton,
   AudioContainer,
   Container,
@@ -70,6 +71,9 @@ import { useWebsocket } from "../../contexts/websocket";
 import { useChat } from "../../contexts/chat";
 
 import { FlashList } from "@shopify/flash-list";
+import { useAds } from "../../contexts/ads";
+import Banner from "../../components/Ads/Banner";
+import { BannerAdSize } from "react-native-google-mobile-ads";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -95,7 +99,7 @@ const Chat: React.FC = () => {
 
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { userConfigs } = useRemoteConfigs();
+  const { userConfigs, allConfigs } = useRemoteConfigs();
   const { width } = Dimensions.get("window");
 
   const [isTypingMessage, setIsTypingMessage] = useState(false);
@@ -127,6 +131,7 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
+  const { Interstitial } = useAds();
   const { socket } = useWebsocket();
   const {
     handleJoinRoom,
@@ -146,9 +151,18 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (appState === "active") {
-      if (!socket) return;
-
+      setLoading(true);
       handleJoinRoom(id);
+      if (page > 0) {
+        setPage(0);
+      }
+
+      if (fetchedAll) {
+        setFetchedAll(false);
+      }
+
+      fetchOldMessages();
+      setLoading(false);
     }
     return () => {
       if (socket) {
@@ -161,25 +175,11 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      if (appState === "active") {
-        setLoading(true)
-        if (page > 0) {
-          setPage(0);
-        }
-
-        if (fetchedAll) {
-          setFetchedAll(false);
-        }
-
-        await fetchOldMessages();
-        setLoading(false)
-      }
-    })();
-  }, [appState]);
-
-  useEffect(() => {
-    (async () => {
       setLoading(true);
+
+      if (Interstitial.loaded) {
+        await Interstitial.show();
+      }
 
       if (!group.id) {
         const groupRes = await api.get(`/group/${id}`);
@@ -189,6 +189,7 @@ const Chat: React.FC = () => {
       configureSocketListeners();
 
       await fetchOldMessages();
+
       setPage(0);
       setLoading(false);
     })();
@@ -621,12 +622,21 @@ const Chat: React.FC = () => {
       const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
       return (
-        <Message
-          message={item}
-          participant={participant as ParticipantsData}
-          lastMessage={lastMessage}
-          onReplyMessage={handleReplyMessage}
-        />
+        <>
+          <Message
+            message={item}
+            participant={participant as ParticipantsData}
+            lastMessage={lastMessage}
+            onReplyMessage={handleReplyMessage}
+          />
+          {
+            index > 0 && index % Number(allConfigs.ad_multiple_in_chat) === 0 && (
+              <AdContainer>
+                <Banner rotate />
+              </AdContainer>
+            )
+          }
+        </>
       );
     },
     [oldMessages.length]
@@ -689,10 +699,14 @@ const Chat: React.FC = () => {
             extraData={oldMessages.length}
             keyExtractor={(item) => item.id}
             viewabilityConfig={{
-              minimumViewTime: 750,
+              minimumViewTime: 500,
             }}
-            drawDistance={23 * 105}
-            estimatedItemSize={105}
+            drawDistance={23 * 60}
+            estimatedItemSize={60}
+            estimatedListSize={{
+              width: width - 10,
+              height: oldMessages.length * 60
+            }}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={handleFetchMoreMessages}

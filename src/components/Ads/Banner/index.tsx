@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import {
   BannerContainer,
@@ -17,10 +17,11 @@ import analytics from "@react-native-firebase/analytics";
 
 type BannerProps = {
   isPremium?: boolean;
+  rotate?: boolean;
   size?: BannerAdSize;
 };
 
-const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) => {
+const Banner = ({ isPremium = false, rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const { name } = useRoute()
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
@@ -52,6 +53,7 @@ const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) 
         type: "timing",
         duration: 1200
       }}
+      style={{ transform: [{ rotate: rotate ? "180deg" : "0deg" }] }}
     >
       <RemoveBanner onPress={handleGoPremium}>
         <RemoveBannerText>
@@ -71,4 +73,4 @@ const Banner = ({ isPremium = false, size = BannerAdSize.BANNER }: BannerProps) 
   );
 };
 
-export default Banner;
+export default memo(Banner);

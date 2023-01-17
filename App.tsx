@@ -33,6 +33,8 @@ import {
   checkForUpdateAsync,
 } from "expo-updates";
 
+import * as Constants from "expo-constants";
+
 preventAutoHideAsync();
 
 export default function App() {
@@ -51,12 +53,16 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      if (__DEV__) {
+      if (__DEV__ || Constants.default.debugMode) {
         setReady(true);
         return;
       }
 
-      const { isAvailable } = await checkForUpdateAsync();
+      const { isAvailable } = await checkForUpdateAsync()
+        .then(result => result)
+        .catch(() => {
+          return { isAvailable: false }
+        })
 
       if (isAvailable) {
         await fetchUpdateAsync().then(async (value) => {

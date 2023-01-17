@@ -142,6 +142,6 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
 export default memo(LinkPreview, (prev, next) => {
   return (
-    prev.link.link === next.link.link || prev.link.image === next.link.image
+    prev.link.link === next.link.link
   );
 });

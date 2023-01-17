@@ -49,6 +49,7 @@ const UserProfile: React.FC = () => {
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
   const [friendInfos, setFriendInfos] = useState<FriendData>();
 
+  const { Interstitial } = useAds()
   const { colors } = useTheme();
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
@@ -60,9 +61,11 @@ const UserProfile: React.FC = () => {
     useCallback(() => {
       (async () => {
         setLoading(true);
-        // const isReady = await Interstitial.getIsReadyAsync();
-        // if (isReady) await Interstitial.showAdAsync();
         const res = await api.get(`/users?user_id=${id}`);
+
+        if (Interstitial.loaded) {
+          await Interstitial.show()
+        }
 
         if (res.status === 200) {
           setUserInfos(res.data);

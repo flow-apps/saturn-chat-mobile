@@ -3,6 +3,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
+import { BannerAdSize } from "react-native-google-mobile-ads";
 import { FriendData } from "../../../@types/interfaces";
 import Banner from "../../components/Ads/Banner";
 import Header from "../../components/Header";
@@ -79,9 +80,13 @@ const Friends: React.FC = () => {
                 Envie mensagens privadas aos seus amigos. Você só pode falar com
                 pessoas da sua lista de amigos.
               </PresentationSubtitle>
-              <AdContainer>
-                <Banner />
-              </AdContainer>
+              {
+                  friends.length > 0 && (
+                    <AdContainer>
+                      <Banner />
+                    </AdContainer>
+                  )
+                }
             </PresentationContainer>
           )}
           ListEmptyComponent={() => (
