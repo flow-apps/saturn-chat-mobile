@@ -46,7 +46,7 @@ const ChoosePlan: React.FC = () => {
           <PlanContainer>
             <PlanTitle>Mensal</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice>R$ 39,99</PlanPrice>
+              <PlanPrice>R$ 29,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton>
               <PlanBuyButtonText>Eu quero esse!</PlanBuyButtonText>
@@ -58,7 +58,7 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor={colors.primary}>Trimestral</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice planColor={colors.primary}>R$ 119,99</PlanPrice>
+              <PlanPrice planColor={colors.primary}>R$ 89,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton>
               <PlanBuyButtonText>Eu quero esse!</PlanBuyButtonText>
@@ -70,8 +70,8 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor="#FF5E0D">Anual</PlanTitle>
             <PlanPriceContainer>
-              <PlanDiscountText> R$ 479,88 </PlanDiscountText>
-              <PlanPrice planColor="#FF5E0D">R$ 439,89</PlanPrice>
+              <PlanDiscountText> R$ 359,99 </PlanDiscountText>
+              <PlanPrice planColor="#FF5E0D">R$ 299,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton>
               <PlanBuyButtonText>Eu quero esse!</PlanBuyButtonText>

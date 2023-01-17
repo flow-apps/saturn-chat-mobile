@@ -63,7 +63,8 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   }: LoadAudioData) => {
     const hasSound = arrayUtils.has(sounds, (sound) => sound.name === name);
 
-    if (hasSound) return;
+    if (hasSound) 
+      return;
 
     const audio = await Audio.Sound.createAsync(
       { uri: url, name },
@@ -131,9 +132,10 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const playAudio = async (name: string, position = 0) => {
     const sound = arrayUtils.findFirst(sounds, (s) => s.name === name);
-    let soundsForSave = arrayUtils.removeOne(sounds, (s) => s.name === name);
-
+    
     if (!sound) return;
+
+    let soundsForSave = arrayUtils.removeOne(sounds, (s) => sound.name === name);
 
     if (currentAudioName && currentAudioName !== sound.name) {
       const playingSound = arrayUtils.findFirst(

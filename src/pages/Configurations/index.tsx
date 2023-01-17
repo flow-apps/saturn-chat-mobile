@@ -78,6 +78,7 @@ const Configurations: React.FC = () => {
           okButtonAction={signOut}
         />
         <SectionsContainer>
+          <Banner />
           <SectionContainer>
             <SectionTitle>Geral</SectionTitle>
             <ConfigsContainer>
@@ -156,7 +157,6 @@ const Configurations: React.FC = () => {
             onPress={handleSignOut}
           />
         </SectionsContainer>
-        <Banner />
       </Container>
     </>
   );

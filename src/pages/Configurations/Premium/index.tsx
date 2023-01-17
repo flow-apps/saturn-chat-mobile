@@ -75,7 +75,7 @@ const Premium: React.FC = () => {
             <BuyBonusText>Assine agora e ganhe 1 mês grátis!</BuyBonusText>
             <BuyButton onPress={handleGoChoosePlan}>
               <BuyButtonText>
-                <Feather name="star" size={18} /> Obter a partir de R$ 39
+                <Feather name="star" size={18} /> Obter a partir de R$ 29
                 {Localize.getLocales()[0].decimalSeparator}99
               </BuyButtonText>
             </BuyButton>

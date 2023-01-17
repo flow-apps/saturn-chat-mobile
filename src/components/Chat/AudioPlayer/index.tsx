@@ -12,7 +12,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../../utils/format";
-import { useFocusEffect  } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { AudioData } from "../../../../@types/interfaces";
 import { useAudioPlayer } from "../../../contexts/audioPlayer";
 
@@ -32,23 +32,26 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
 
   const { colors } = useTheme();
 
-  useFocusEffect(useCallback(() => {
-    loadAudio({
-      name: audio.name,
-      url: audio.url,
-      onStatusUpdate: async (status) => {
-        if (!status.isLoaded) return;
-
-        if (status.isPlaying) {
-          setCurrentPosition(status?.positionMillis);
-        }
-        
-      },
-      onFinishAudio: async () => {
-        setCurrentPosition(0);        
-      },
-    });
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        await loadAudio({
+          name: audio.name,
+          url: audio.url,
+          onStatusUpdate: async (status) => {
+            if (!status.isLoaded) return;
+  
+            if (status.isPlaying) {
+              setCurrentPosition(status?.positionMillis);
+            }
+          },
+          onFinishAudio: async () => {
+            setCurrentPosition(0);
+          },
+        });
+      })()
+    }, [audio])
+  );
 
   const handlePlayPauseAudio = async () => {
     await playAndPauseAudio(audio.name, currentPosition);
@@ -95,5 +98,5 @@ const AudioPlayer = ({ audio, deleted }: IAudioPlayer) => {
 };
 
 export default React.memo(AudioPlayer, (prev, next) => {
-  return prev.audio.url === next.audio.url && prev.deleted !== next.deleted;
+  return prev.audio.url === next.audio.url;
 });

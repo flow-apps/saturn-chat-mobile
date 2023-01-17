@@ -629,13 +629,12 @@ const Chat: React.FC = () => {
             lastMessage={lastMessage}
             onReplyMessage={handleReplyMessage}
           />
-          {
-            index > 0 && index % Number(allConfigs.ad_multiple_in_chat) === 0 && (
+          {index > 0 &&
+            index % Number(allConfigs.ad_multiple_in_chat) === 0 && (
               <AdContainer>
                 <Banner rotate />
               </AdContainer>
-            )
-          }
+            )}
         </>
       );
     },
@@ -701,11 +700,11 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={23 * 60}
-            estimatedItemSize={60}
+            drawDistance={25 * 116}
+            estimatedItemSize={116}
             estimatedListSize={{
               width: width - 10,
-              height: oldMessages.length * 60
+              height: oldMessages.length * 116,
             }}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
@@ -775,26 +774,52 @@ const Chat: React.FC = () => {
               <OptionsButton onPress={handleFileSelector}>
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
-              {isTypingMessage || files.length > 0 ? (
-                <SendButton>
-                  <Feather
-                    name="send"
-                    size={26}
-                    color={colors.primary}
-                    onPress={handleMessageSubmit}
-                    style={{ transform: [{ rotate: "45deg" }] }}
-                  />
-                </SendButton>
-              ) : (
-                <AudioContainer>
-                  <AudioButton
-                    onPressIn={recordAudio}
-                    onPressOut={stopRecordAudioAndSubmit}
+              <AnimatePresence>
+                {(isTypingMessage || files.length > 0) && (
+                  <MotiView
+                    from={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 25 }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{
+                      type: "timing",
+                      duration: 350
+                    }}
                   >
-                    <Feather name="mic" size={26} color={colors.secondary} />
-                  </AudioButton>
-                </AudioContainer>
-              )}
+                    <SendButton>
+                      <Feather
+                        name="send"
+                        size={26}
+                        color={colors.primary}
+                        onPress={handleMessageSubmit}
+                        style={{ transform: [{ rotate: "45deg" }] }}
+                      />
+                    </SendButton>
+                  </MotiView>
+                )}
+                </AnimatePresence>
+                <AnimatePresence>
+                
+                {!isTypingMessage && files.length <= 0 && (
+                  <MotiView
+                  from={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 25 }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{
+                    type: "timing",
+                    duration: 350
+                  }}
+                  >
+                  <AudioContainer>
+                    <AudioButton
+                      onPressIn={recordAudio}
+                      onPressOut={stopRecordAudioAndSubmit}
+                    >
+                      <Feather name="mic" size={26} color={colors.secondary} />
+                    </AudioButton>
+                  </AudioContainer>
+                  </MotiView>
+                )}
+              </AnimatePresence>
             </OptionsContainer>
           </InputContainer>
         </FormContainer>
