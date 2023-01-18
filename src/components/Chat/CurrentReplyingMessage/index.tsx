@@ -62,8 +62,12 @@ const CurrentReplyingMessage = ({
     <>
       <MotiView
         from={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "100%" }}
-        exit={{ opacity: 0 }}
+        animate={{ opacity: 1, height: 120 }}
+        exit={{ opacity: 0, height: 0 }}
+        transition={{
+          type: "timing",
+          duration: 350
+        }}
       >
         <ReplyingMessageContainer>
           <ReplyingMessageContentContainer>

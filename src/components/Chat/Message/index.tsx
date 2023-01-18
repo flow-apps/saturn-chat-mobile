@@ -47,6 +47,7 @@ import LinkPreview from "../RichContent/LinkPreview";
 import { MotiView } from "moti";
 import { ArrayUtils } from "../../../utils/array";
 import { useChat } from "../../../contexts/chat";
+import { Swipeable } from "react-native-gesture-handler";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -226,8 +227,8 @@ const Message = ({
   }, [message.message]);
 
   const handleShowUser = () => {
-    navigation.navigate("UserProfile", { id: message.author.id })
-  }
+    navigation.navigate("UserProfile", { id: message.author.id });
+  };
 
   const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
@@ -276,9 +277,20 @@ const Message = ({
     );
   }, [message.links]);
 
-  const replyMessage = () => {
-    onReplyMessage(message)
-  }
+  const replyMessage = (direction?: "right" | "left") => {
+    if (!direction) {
+      onReplyMessage(message);
+      return;
+    }
+
+    if (direction === "left" && isRight)
+      return;
+
+    if (direction === "right" && !isRight)
+      return;
+
+    onReplyMessage(message);
+  };
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
@@ -294,6 +306,13 @@ const Message = ({
         okButtonAction={openLink}
         visible={showLinkAlert}
       />
+      <Swipeable
+        overshootLeft={!isRight}
+        overshootRight={isRight}
+        overshootFriction={8}
+        onSwipeableWillClose={(direction) => replyMessage(direction)}
+        containerStyle={{ transform: [{ rotate: "180deg" }] }}
+      >
         <Container isRight={isRight}>
           {message.reply_to && (
             <ReplyingMessage replying_message={message.reply_to} />
@@ -358,11 +377,14 @@ const Message = ({
           {renderDate()}
           {renderAuthor()}
         </Container>
+      </Swipeable>
     </>
   );
 };
 
 export default memo(Message, (prev, next) => {
-  return prev.message.id === next.message.id &&
+  return (
+    prev.message.id === next.message.id &&
     prev.lastMessage?.id === next.lastMessage?.id
+  );
 });

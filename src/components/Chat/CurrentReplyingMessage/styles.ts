@@ -10,6 +10,7 @@ export const ReplyingMessageContainer = styled.View`
   padding: 10px;
   border-radius: 10px;
   margin-top: 5px;
+  height: 100%;
 `;
 
 export const ReplyingMessageContentContainer = styled.View``;

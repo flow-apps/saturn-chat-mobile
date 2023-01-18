@@ -11,7 +11,7 @@ export const Container = styled.View<IMessageProps>`
   width: 100%;
   padding: 0 10px;
   margin: 5px 3px 5px;
-  transform: rotate(180deg);
+  /* transform: rotate(180deg); */
 `;
 
 export const MessageAuthorContainer = styled.TouchableOpacity`
