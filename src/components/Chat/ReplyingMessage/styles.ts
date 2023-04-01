@@ -1,3 +1,4 @@
+import { darken, lighten } from 'polished';
 import styled from 'styled-components/native';
 import fonts from '../../../styles/fonts';
 
@@ -6,7 +7,7 @@ export const Container = styled.View`
   border-color: ${props => props.theme.colors.light_primary};
   padding: 12px 5px 12px 20px;
   width: 85%;
-  background-color: ${props => props.theme.colors.shape + "88"};
+  background-color: ${props => darken(0.03, props.theme.colors.shape)};
   margin: 10px 0px 7px 0px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -18,7 +19,7 @@ export const ReplyingTitleContainer = styled.View``
 export const ReplyingTitle = styled.Text`
   font-family: ${fonts.text};
   font-size: 10px;
-  color: ${props => props.theme.colors.secondary};
+  color: ${props => props.theme.colors.dark_heading};
 `
 
 export const ReplyingMessageWrapper = styled.View``
@@ -28,7 +29,7 @@ export const ReplyingMessageAuthorWrapper = styled.View``
 export const ReplyingMessageAuthorName = styled.Text`
   font-size: 14px;
   font-family: ${fonts.heading};
-  color: ${props => props.theme.colors.dark_heading};
+  color: ${props => props.theme.colors.secondary};
 `
 
 export const ReplyingMessageContentContainer = styled.View`

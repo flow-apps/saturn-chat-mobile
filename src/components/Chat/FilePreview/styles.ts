@@ -14,6 +14,7 @@ export const Container = styled.View`
 
 export const FileContainer = styled.View`
   flex-direction: row;
+  padding: 5px 0px 8px 0px;
 `;
 
 export const FileIconContainer = styled.View`
@@ -37,7 +38,7 @@ export const FileName = styled.Text.attrs({
 `;
 
 export const FileSize = styled.Text`
-  font-size: 12px;
+  font-size: 11px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.primary};
 `;

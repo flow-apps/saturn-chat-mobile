@@ -2,9 +2,19 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.27.0
+
+- Add Audio Player V2
+  - Refactor Audio API Context
+  - Fix slow audios download
+  - Add click and play immediately
+  - Fix audio position reset on send new message
+  - Each audio work independently
+- Improve styles
+
 ## 0.26.4
 
-- Add FlashList in Chat fro better performance
+- Add FlashList in Chat for better performance
 - Fix group count on create new group
 
 ## 0.26.3
@@ -117,7 +127,7 @@ NOTE: The versions here not represents the release versions, check the App Store
 
 ### Fixing bugs
 
-- Add array utils based in "for-loop"
+- Add array utils based in "for-loops"
   - Add array utils in components
 - Fix header title and extra header buttons
 - Add animations
@@ -186,22 +196,22 @@ NOTE: The versions here not represents the release versions, check the App Store
 
 ## 0.15.1
 
-- Integrate Audio Player Context to Audio Previewer
-- Improve unload audios feature
+- Integrate Audio Player Context to Audio Previewer *(check the version 0.27.0)*
+- Improve unload audios feature *(check the version 0.27.0)*
 
 ## 0.15.0
 
-- Add Audio Player Context
+- Add Audio Player Context *(check the version 0.27.0)*
   - Integrate to Voice Message Player
   - Add Play/Pause feature
   - Add Load/Unload audios
   - Add change current audio position feature
   - Pause an audio when another is requested for play
-- Unload all audios on left chat
+- Unload all audios on left chat *(check the version 0.27.0)*
 
 ## 0.14.0
 
-- Add audio previewer
+- Add audio previewer *(check the version 0.27.0)*
   - Change icon for audio file preview
   - Add audio player in file preview
   - Add memo in audio player

@@ -39,13 +39,10 @@ import { LinkUtils } from "../../../utils/link";
 import _ from "lodash";
 import { useAuth } from "../../../contexts/auth";
 import ReplyingMessage from "../ReplyingMessage";
-import { useAudioPlayer } from "../../../contexts/audioPlayer";
 
 import URLParser from "url-parse";
 import InviteInMessage from "../RichContent/InviteInMessage";
 import LinkPreview from "../RichContent/LinkPreview";
-import { MotiView } from "moti";
-import { ArrayUtils } from "../../../utils/array";
 import { useChat } from "../../../contexts/chat";
 import { Swipeable } from "react-native-gesture-handler";
 
@@ -76,12 +73,10 @@ const Message = ({
 
   const { user } = useAuth();
   const { colors } = useTheme();
-  const { unloadAudio } = useAudioPlayer();
 
   const { handleDeleteMessage } = useChat();
 
   const linkUtils = new LinkUtils();
-  const arrayUtils = new ArrayUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
@@ -174,21 +169,7 @@ const Message = ({
   }, []);
 
   const deleteMessage = useCallback(async () => {
-    const files = message.files;
     handleDeleteMessage({ message_id: message.id });
-
-    if (files) {
-      const processedMessages = arrayUtils.iterator(files, async (f) => {
-        if (f.type === "audio") {
-          await unloadAudio(f.name);
-        }
-      });
-      await Promise.all(processedMessages);
-    }
-
-    if (message.voice_message) {
-      await unloadAudio(message.voice_message.name);
-    }
   }, [message]);
 
   const alertLink = useCallback(
@@ -233,7 +214,7 @@ const Message = ({
   const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
 
-    return <AudioPlayer audio={message.voice_message} deleted={deleted} />;
+    return <AudioPlayer audio={message.voice_message} />;
   }, [message.voice_message]);
 
   const renderFiles = useCallback(() => {

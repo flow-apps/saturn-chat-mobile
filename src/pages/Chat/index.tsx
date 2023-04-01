@@ -14,7 +14,7 @@ import crashlytics from "@react-native-firebase/crashlytics";
 import { ProgressBar } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/core";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Audio } from "expo-av";
 import { useTheme } from "styled-components";
@@ -73,7 +73,6 @@ import { useChat } from "../../contexts/chat";
 import { FlashList } from "@shopify/flash-list";
 import { useAds } from "../../contexts/ads";
 import Banner from "../../components/Ads/Banner";
-import { BannerAdSize } from "react-native-google-mobile-ads";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -146,7 +145,6 @@ const Chat: React.FC = () => {
     onDeleteUserMessage,
   } = useChat();
 
-  const { unloadAudio, currentAudioName, playAndPauseAudio } = useAudioPlayer();
   const appState = useAppState();
 
   useEffect(() => {
@@ -241,22 +239,6 @@ const Chat: React.FC = () => {
     });
 
     onDeleteUserMessage(async (result) => {
-      if (result.voice_message) {
-        await unloadAudio(result.voice_message.name);
-      }
-
-      if (result.files) {
-        const processedMessages = arrayUtils.iterator(
-          result.files,
-          async (file) => {
-            if (file.type === "audio") {
-              await unloadAudio(file.name);
-            }
-          }
-        );
-        await Promise.all(processedMessages);
-      }
-
       if (replyingMessage?.id === result.id) {
         setReplyingMessage(undefined);
       }
@@ -300,7 +282,6 @@ const Chat: React.FC = () => {
     if (recordingAudio) return;
 
     try {
-      if (currentAudioName) await playAndPauseAudio(currentAudioName);
 
       const record = await recordService.start({
         onDurationUpdate(duration) {
@@ -629,12 +610,6 @@ const Chat: React.FC = () => {
             lastMessage={lastMessage}
             onReplyMessage={handleReplyMessage}
           />
-          {index > 0 &&
-            index % Number(allConfigs.ad_multiple_in_chat) === 0 && (
-              <AdContainer>
-                <Banner rotate />
-              </AdContainer>
-            )}
         </>
       );
     },
@@ -702,10 +677,6 @@ const Chat: React.FC = () => {
             }}
             drawDistance={25 * 116}
             estimatedItemSize={116}
-            estimatedListSize={{
-              width: width - 10,
-              height: oldMessages.length * 116,
-            }}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={handleFetchMoreMessages}

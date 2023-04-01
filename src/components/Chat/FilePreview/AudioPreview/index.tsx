@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   AudioPreviewButton,
@@ -13,67 +13,93 @@ import {
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../../../utils/format";
 import { useAudioPlayer } from "../../../../contexts/audioPlayer";
-import { useFocusEffect } from "@react-navigation/native";
+import { SoundObject } from "expo-av/build/Audio";
 
 interface AudioPreviewProps {
-  deleted: boolean;
   audio: {
     name: string;
     url: string;
   };
 }
 
-const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
-  const [currentPosition, setCurrentPosition] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const {
-    loadAudio,
-    playAndPauseAudio,
-    changeAudioPosition,
-    currentAudioName,
-  } = useAudioPlayer();
-
+const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
+  const { Audio, currentAudioName, setCurrentAudioName } = useAudioPlayer();
   const { colors } = useTheme();
 
-  useFocusEffect(
-    useCallback(() => {
-      loadAudio({
-        name: audio.name,
-        url: audio.url,
-        onStatusUpdate: async (status) => {
-          if (!status.isLoaded) return;
+  const [sound, setSound] = useState<SoundObject>();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-          if (duration === 0) {
-            setDuration(Number(status?.durationMillis));
-          }
+  useEffect(() => {
+    (async () => {
+      const newSound = await Audio.Sound.createAsync({ uri: audio.url });
 
-          if (status.isPlaying) {
-            setCurrentPosition(status?.positionMillis);
+      setSound(newSound);
+    })();
+  }, [audio]);
+
+  useEffect(() => {
+    if (sound) {
+      sound.sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.isLoaded) {
+          if (!duration) setDuration(status.durationMillis);
+
+          setCurrentPosition(status.positionMillis);
+
+          if (status.didJustFinish) {
+            setIsPlaying(false);
+            setCurrentPosition(0);
+
+            if (sound) {
+              await sound.sound.pauseAsync();
+              await sound.sound.setPositionAsync(0);
+            }
           }
-        },
-        onFinishAudio: async () => {
-          setCurrentPosition(0);
-        },
+        }
       });
-    }, [audio])
-  );
+    }
 
-  const handlePlayPauseAudio = useCallback(async () => {
-    await playAndPauseAudio(audio.name, currentPosition);
-  }, [audio.name, currentAudioName, currentPosition]);
+    return () => {
+      if (sound && sound.status.isLoaded) {
+        sound.sound.unloadAsync();
+      }
+    };
+  }, [sound, audio]);
 
-  const onChangePosition = async (value: number) => {
-    await changeAudioPosition(audio.name, value);
-    setCurrentPosition(value);
+  useEffect(() => {
+    (async () => {
+      if (currentAudioName !== audio.name && isPlaying) {
+        setIsPlaying(false);
+        await sound.sound.pauseAsync();
+      }
+    })();
+  }, [currentAudioName]);
+
+  const playAndPause = async () => {
+    if (isPlaying) {
+      setCurrentAudioName("");
+      setIsPlaying(false);
+      await sound.sound.pauseAsync();
+    } else {
+      setCurrentAudioName(audio.name);
+      setIsPlaying(true);
+      await sound.sound.playFromPositionAsync(currentPosition);
+    }
+  };
+
+  const seekAudio = async (newPos: number) => {
+    setCurrentPosition(newPos);
+    await sound.sound.setPositionAsync(newPos);
   };
 
   return (
     <Container>
       <AudioPreviewContainer>
         <AudioPreviewControllersWrapper>
-          <AudioPreviewButton onPress={handlePlayPauseAudio}>
+          <AudioPreviewButton onPress={playAndPause}>
             <MaterialIcons
-              name={currentAudioName === audio.name ? "pause" : "play-arrow"}
+              name={isPlaying ? "pause" : "play-arrow"}
               size={28}
               color={colors.black}
             />
@@ -86,12 +112,12 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
               thumbTintColor={colors.secondary}
               minimumTrackTintColor={colors.primary}
               maximumTrackTintColor={colors.dark_gray}
-              onSlidingComplete={onChangePosition}
+              onSlidingComplete={seekAudio}
             />
           </AudioPreviewSeekContainer>
           <AudioPreviewDurationContainer>
             <AudioPreviewDuration>
-              {currentAudioName === audio.name
+              {isPlaying || currentPosition > 0
                 ? millisToTime(currentPosition)
                 : millisToTime(duration)}
             </AudioPreviewDuration>
@@ -102,6 +128,4 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio, deleted }) => {
   );
 };
 
-export default React.memo(AudioPreview, (prev, next) => {
-  return prev.audio.url === next.audio.url;
-});
+export default React.memo(AudioPreview);

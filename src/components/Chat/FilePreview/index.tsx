@@ -54,7 +54,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
           {
             uri: url,
             cache: "immutable",
-            priority: "high",
+            priority: "normal",
           },
         ]);
       } else if (type === "video") {
@@ -81,22 +81,22 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
   const renderIcon = () => {
     switch (type) {
       case "image":
-        return <Feather name="image" size={35} color={colors.black} />;
+        return <Feather name="image" size={30} color={colors.black} />;
 
       case "text":
-        return <Feather name="file-text" size={35} color={colors.black} />;
+        return <Feather name="file-text" size={30} color={colors.black} />;
 
       case "application":
-        return <Feather name="file-minus" size={35} color={colors.black} />;
+        return <Feather name="file-minus" size={30} color={colors.black} />;
 
       case "video":
-        return <Feather name="video" size={35} color={colors.black} />;
+        return <Feather name="video" size={30} color={colors.black} />;
 
       case "audio":
-        return <Feather name="disc" size={35} color={colors.black} />;
+        return <Feather name="headphones" size={30} color={colors.black} />;
 
       default:
-        return <Feather name="file" size={35} color={colors.black} />;
+        return <Feather name="file" size={30} color={colors.black} />;
     }
   };
 
@@ -126,7 +126,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
           <FilePreviewContainer>
             <MaterialCommunityIcons
               name="file-pdf-box"
-              size={35}
+              size={30}
               color={colors.secondary}
             />
           </FilePreviewContainer>
@@ -136,7 +136,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
 
     return (
       <FileButton onPress={handleDownloadFile}>
-        <Feather name="download" size={30} color={colors.secondary} />
+        <Feather name="download" size={28} color={colors.secondary} />
       </FileButton>
     );
   };
@@ -188,12 +188,10 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
         </FileContainer>
       </Container>
       {type === "audio" && (
-        <AudioPreview deleted={deleted} audio={{ name, url }} />
+        <AudioPreview audio={{ name, url }} />
       )}
     </>
   );
 };
 
-export default React.memo(FilePreview, (prev, next) => {
-  return prev.url === next.url && prev.deleted === next.deleted;
-});
+export default React.memo(FilePreview);
