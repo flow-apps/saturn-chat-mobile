@@ -1,5 +1,4 @@
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useDeviceOrientation } from "@react-native-community/hooks";
+import { Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { secondsToMilliseconds } from "date-fns";
 import { AnimatePresence, MotiView } from "moti";
 import React, {
@@ -10,7 +9,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StatusBar } from "react-native";
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../../../utils/format";
@@ -32,22 +30,25 @@ import {
   YouTubePlayerPlayAndPauseContainer,
   YouTubePlayerSeekBar,
   YouTubePlayerSeekBarContainer,
+  YouTubeVideoTitle,
 } from "./styles";
+import { LinkUtils } from "../../../../utils/link";
 
 interface IYouTubeIFrame {
   videoId: string;
+  title: string;
 }
 
 export interface IYouTubeIFrameRef {
   openYouTubeIFrameModal: () => void;
 }
 
-const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(6);
+const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(3);
 
 const YouTubeIFrame: React.ForwardRefRenderFunction<
   IYouTubeIFrameRef,
   IYouTubeIFrame
-> = ({ videoId }, ref) => {
+> = ({ videoId, title }, ref) => {
   const [videoStatus, setVideoStatus] = useState<"PLAYING" | "PAUSED">(
     "PLAYING"
   );
@@ -60,6 +61,7 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
   const ytPlayerRef = useRef<IYouTubeControllers>(null);
 
   const { colors } = useTheme();
+  const linkUtils = new LinkUtils()
 
   const playPauseVideo = useCallback(() => {
     if (videoStatus === "PLAYING") {
@@ -84,7 +86,7 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
 
   const openYouTubeIFrameModal = useCallback(async () => {
     setModalVisible(true);
-    await SystemNavigationBar.stickyImmersive()
+    await SystemNavigationBar.stickyImmersive();
   }, [modalVisible]);
 
   const handleCloseModal = useCallback(async () => {
@@ -107,6 +109,9 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
     setHiddenControlsTimeout(timeout);
   }, [hiddenControls, hiddenControlsTimeout]);
 
+  const openVideoOnYouTube = useCallback(() => {
+    linkUtils.openLink(`https://youtube.com/v/${videoId}`)
+  }, [videoId])
 
   useEffect(() => {
     if (ytPlayerRef.current) {
@@ -125,24 +130,38 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
       animationType="slide"
       statusBarTranslucent
     >
+      <AnimatePresence>
       {!hiddenControls && (
         <YouTubeModalHeader
-        from={{
-          translateY: -50,
-        }}
-        animate={{
-          translateY: 0,
-        }}
-        exit={{
-          translateY: -50,
-        }}
-          transition={{ type: "timing", duration: 300 }}
+          from={{
+            translateY: -50,
+            opacity: 0
+          }}
+          animate={{
+            translateY: 0,
+            opacity: 1
+          }}
+          exit={{
+            translateY: -50,
+            opacity: 0
+          }}
+          transition={{
+            duration: 350,
+            type: "timing",
+          }}
         >
-          <YouTubeModalHeaderButton onPress={handleCloseModal}>
-            <Feather name="x" size={25} color="#fff" />
-          </YouTubeModalHeaderButton>
+            <YouTubeModalHeaderButton onPress={handleCloseModal}>
+              <Feather name="x" size={25} color="#fff" />
+            </YouTubeModalHeaderButton>
+            <YouTubeVideoTitle ellipsizeMode="middle" numberOfLines={1}>
+              {title}
+            </YouTubeVideoTitle>
+            <YouTubeModalHeaderButton onPress={openVideoOnYouTube}>
+              <FontAwesome name="youtube-play" size={25} color="#fff" />
+            </YouTubeModalHeaderButton>
         </YouTubeModalHeader>
       )}
+      </AnimatePresence>
       <YouTubeModal>
         <YouTubeVideoPlayer
           ref={ytPlayerRef}

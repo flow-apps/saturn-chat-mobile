@@ -30,7 +30,7 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { FileService } from "../../services/file";
 
-const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(6);
+const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(3);
 
 const VideoPreview: React.FC = () => {
   const [play, setPlay] = useState(true);
@@ -125,12 +125,15 @@ const VideoPreview: React.FC = () => {
             <HeaderContainer
               from={{
                 translateY: -50,
+                opacity: 0
               }}
               animate={{
                 translateY: 0,
+                opacity: 1
               }}
               exit={{
                 translateY: -50,
+                opacity: 0
               }}
               transition={{
                 duration: 350,

@@ -19,7 +19,7 @@ export const HeaderContainer = styled(MotiView)`
   background-color: transparent;
   z-index: 20;
   top: ${getStatusBarHeight() - 20}px;
-  `;
+`;
 
 export const Header = styled.View`
   flex-direction: row;
@@ -35,6 +35,7 @@ export const HeaderButton = styled.TouchableOpacity`
 export const HeaderTitle = styled.Text`
   color: #fff;
   font-family: ${fonts["text-bold"]};
+  font-size: 12px;
   flex: 1;
 `;
 
@@ -106,7 +107,7 @@ export const PlayerPositionContainer = styled.View``;
 
 export const PlayerPosition = styled.Text`
   color: #fff;
-  font-family: ${fonts.code};
+  font-family: ${fonts.text};
   font-size: 12px;
   margin: 0 5px;
 `;

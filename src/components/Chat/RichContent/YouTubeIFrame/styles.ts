@@ -23,11 +23,19 @@ export const YouTubeModalHeader = styled(MotiView)`
   justify-content: space-between;
   background-color: transparent;
   z-index: 10;
-  top: ${getStatusBarHeight() - 10}px;
+  top: ${getStatusBarHeight() - 20}px;
 `;
 
 export const YouTubeModalHeaderButton = styled.TouchableOpacity`
   margin: 0 5px;
+`;
+
+export const YouTubeVideoTitle = styled.Text`
+  color: #fff;
+  font-family: ${fonts["text-bold"]};
+  font-size: 12px;
+  flex: 1;
+  margin: 0px 5px;
 `;
 
 export const YouTubePlayerControlsContainer = styled.Pressable`

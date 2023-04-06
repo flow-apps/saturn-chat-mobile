@@ -73,7 +73,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
   return (
     <>
-      {!!videoId && <YouTubeIFrame ref={ytIFrameRef} videoId={videoId} />}
+      {!!videoId && <YouTubeIFrame ref={ytIFrameRef} title={link.title} videoId={videoId} />}
       <Container>
         {!!link.siteName && (
           <WebsiteNameContainer>
