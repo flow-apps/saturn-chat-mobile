@@ -2,6 +2,11 @@
 
 NOTE: The versions here not represents the release versions, check the App Store's for real app version.
 
+## 0.27.1
+
+- Improve style of video players
+- Navigate to Home when a group was deleted or user has banned or kicked
+
 ## 0.27.0
 
 - Add Audio Player V2

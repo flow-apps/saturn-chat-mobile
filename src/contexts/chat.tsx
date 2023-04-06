@@ -1,7 +1,14 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { MessageData, UserData } from "../../@types/interfaces";
 import { useAuth } from "./auth";
 import { useWebsocket } from "./websocket";
+import { getRoutes, navigate } from "../routes/rootNavigation";
 
 type onSendedUserMessageCallbackType = {
   msg: MessageData;
@@ -191,6 +198,40 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     },
     [socket]
   );
+
+  useEffect(() => {
+    if (socket?.connected) {
+      socket.on("deleted_group", () => {
+        const historyRoutes = getRoutes();
+        const inChatScreen = historyRoutes
+          ?.map((value) => value.name)
+          .includes("Chat");
+
+        if (inChatScreen) navigate("Groups");
+      });
+      socket.on("kicked_user", (data) => {
+        const historyRoutes = getRoutes();
+        const inChatScreen = historyRoutes
+          ?.map((value) => value.name)
+          .includes("Chat");
+
+        if (user?.id === data.userId && inChatScreen) navigate("Groups");
+      });
+      socket.on("banned_user", (data) => {
+        const historyRoutes = getRoutes();
+        const inChatScreen = historyRoutes
+          ?.map((value) => value.name)
+          .includes("Chat");
+        if (user?.id === data.userId && inChatScreen) navigate("Groups");
+      });
+    }
+
+    return () => {
+      socket?.off("kicked_user");
+      socket?.off("banned_user");
+      socket?.off("deleted_group");
+    };
+  }, [socket]);
 
   return (
     <ChatContext.Provider

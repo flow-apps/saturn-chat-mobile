@@ -54,7 +54,7 @@ const Routes = () => {
       onStateChange={async () => {
         const previousRouteName = navigationRef.current.getCurrentRoute().name;
         const currentRouteName = navigationRef.current.getCurrentRoute().name;
-
+        
         if (previousRouteName !== currentRouteName) {
           await analytics().logEvent("screen_view", { currentRouteName });
         }

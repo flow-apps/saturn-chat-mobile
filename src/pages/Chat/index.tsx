@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import { Dimensions, ListRenderItem, TextInput } from "react-native";
+import { ListRenderItem, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -39,7 +39,6 @@ import Loading from "../../components/Loading";
 import Message from "../../components/Chat/Message";
 import api from "../../services/api";
 import {
-  AdContainer,
   AudioButton,
   AudioContainer,
   Container,
@@ -65,14 +64,12 @@ import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
-import { useAudioPlayer } from "../../contexts/audioPlayer";
 import { ArrayUtils } from "../../utils/array";
 import { useWebsocket } from "../../contexts/websocket";
 import { useChat } from "../../contexts/chat";
 
 import { FlashList } from "@shopify/flash-list";
 import { useAds } from "../../contexts/ads";
-import Banner from "../../components/Ads/Banner";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -88,7 +85,7 @@ const recordService = new RecordService();
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const route = useRoute();
+  const route = useRoute();  
   const { id, name, friendId } = route.params as {
     id: string;
     name?: string;
@@ -98,9 +95,9 @@ const Chat: React.FC = () => {
 
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { userConfigs, allConfigs } = useRemoteConfigs();
-  const { width } = Dimensions.get("window");
+  const { userConfigs } = useRemoteConfigs();
 
+  const [adShowed, setAdShowed] = useState(false);
   const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -175,8 +172,9 @@ const Chat: React.FC = () => {
     (async () => {
       setLoading(true);
 
-      if (Interstitial.loaded) {
+      if (Interstitial.loaded && !adShowed) {
         await Interstitial.show();
+        setAdShowed(true)
       }
 
       if (!group.id) {
@@ -244,16 +242,6 @@ const Chat: React.FC = () => {
       }
 
       setOldMessages((old) => old.filter((msg) => msg.id !== result.id));
-    });
-
-    socket.on("deleted_group", (groupID) => {
-      if (route.name === "Chat") navigation.navigate("Groups");
-    });
-
-    socket.on("kicked_group", (data) => {
-      if (user?.id === data.user_id && route.name === "Chat") {
-        navigation.navigate("Groups");
-      }
     });
   }, [socket]);
 
