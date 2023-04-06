@@ -38,13 +38,15 @@ export const AudioPreviewSeekContainer = styled.View`
   margin-left: 2px;
 `;
 
-export const AudioPreviewDurationContainer = styled.View``;
+export const AudioPreviewDurationContainer = styled.View`
+  margin: 0px 5px;
+`;
 
-export const AudioPreviewSeek = styled(Slider)``;
+export const AudioPreviewSeek = styled(Slider)`
+`;
 
 export const AudioPreviewDuration = styled.Text`
   font-family: ${fonts["mono-regular"]};
   font-size: 12px;
   color: ${({ theme }) => theme.colors.black};
-  margin-right: 5px;
 `;

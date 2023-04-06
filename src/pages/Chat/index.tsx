@@ -85,7 +85,7 @@ const recordService = new RecordService();
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const route = useRoute();  
+  const route = useRoute();
   const { id, name, friendId } = route.params as {
     id: string;
     name?: string;
@@ -174,7 +174,7 @@ const Chat: React.FC = () => {
 
       if (Interstitial.loaded && !adShowed) {
         await Interstitial.show();
-        setAdShowed(true)
+        setAdShowed(true);
       }
 
       if (!group.id) {
@@ -270,7 +270,6 @@ const Chat: React.FC = () => {
     if (recordingAudio) return;
 
     try {
-
       const record = await recordService.start({
         onDurationUpdate(duration) {
           setAudioDuration(duration);
@@ -741,7 +740,8 @@ const Chat: React.FC = () => {
                     exit={{ opacity: 0, width: 0 }}
                     transition={{
                       type: "timing",
-                      duration: 350
+                      duration: 350,
+                      delay: 50
                     }}
                   >
                     <SendButton>
@@ -755,27 +755,31 @@ const Chat: React.FC = () => {
                     </SendButton>
                   </MotiView>
                 )}
-                </AnimatePresence>
-                <AnimatePresence>
-                
+              </AnimatePresence>
+              <AnimatePresence>
                 {!isTypingMessage && files.length <= 0 && (
                   <MotiView
-                  from={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 25 }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{
-                    type: "timing",
-                    duration: 350
-                  }}
+                    from={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 25 }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{
+                      type: "timing",
+                      duration: 350,
+                      delay: 50
+                    }}
                   >
-                  <AudioContainer>
-                    <AudioButton
-                      onPressIn={recordAudio}
-                      onPressOut={stopRecordAudioAndSubmit}
-                    >
-                      <Feather name="mic" size={26} color={colors.secondary} />
-                    </AudioButton>
-                  </AudioContainer>
+                    <AudioContainer>
+                      <AudioButton
+                        onPressIn={recordAudio}
+                        onPressOut={stopRecordAudioAndSubmit}
+                      >
+                        <Feather
+                          name="mic"
+                          size={26}
+                          color={colors.secondary}
+                        />
+                      </AudioButton>
+                    </AudioContainer>
                   </MotiView>
                 )}
               </AnimatePresence>
