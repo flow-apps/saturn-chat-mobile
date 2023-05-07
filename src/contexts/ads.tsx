@@ -4,7 +4,7 @@ import mobileAds, {
   AdEventType,
   InterstitialAd,
 } from "react-native-google-mobile-ads";
-import secrets from "../secrets.json";
+import secrets from "../../secrets.json";
 import config from "../config";
 
 interface ADSContextProps {

@@ -9,7 +9,7 @@ import {
 import { Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import config from "../../../config";
-import secrets from "../../../secrets.json";
+import secrets from "../../../../secrets.json";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 

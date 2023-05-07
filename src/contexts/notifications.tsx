@@ -3,13 +3,12 @@ import React, {
   useContext,
   useEffect,
   useState,
-  useCallback,
   useMemo,
 } from "react";
 import * as Localize from "expo-localization";
 
 import api from "../services/api";
-import secrets from "../secrets.json";
+import secrets from "../../secrets.json";
 
 import { useAuth } from "./auth";
 import { Alert, Platform } from "react-native";
