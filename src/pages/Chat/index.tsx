@@ -732,57 +732,27 @@ const Chat: React.FC = () => {
               <OptionsButton onPress={handleFileSelector}>
                 <Feather name="file" size={24} color={colors.primary} />
               </OptionsButton>
-              <AnimatePresence>
-                {(isTypingMessage || files.length > 0) && (
-                  <MotiView
-                    from={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 25 }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{
-                      type: "timing",
-                      duration: 350,
-                      delay: 50
-                    }}
+              {(isTypingMessage || files.length > 0) && (
+                <SendButton>
+                  <Feather
+                    name="send"
+                    size={26}
+                    color={colors.primary}
+                    onPress={handleMessageSubmit}
+                    style={{ transform: [{ rotate: "45deg" }] }}
+                  />
+                </SendButton>
+              )}
+              {!isTypingMessage && files.length <= 0 && (
+                <AudioContainer>
+                  <AudioButton
+                    onPressIn={recordAudio}
+                    onPressOut={stopRecordAudioAndSubmit}
                   >
-                    <SendButton>
-                      <Feather
-                        name="send"
-                        size={26}
-                        color={colors.primary}
-                        onPress={handleMessageSubmit}
-                        style={{ transform: [{ rotate: "45deg" }] }}
-                      />
-                    </SendButton>
-                  </MotiView>
-                )}
-              </AnimatePresence>
-              <AnimatePresence>
-                {!isTypingMessage && files.length <= 0 && (
-                  <MotiView
-                    from={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 25 }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{
-                      type: "timing",
-                      duration: 350,
-                      delay: 50
-                    }}
-                  >
-                    <AudioContainer>
-                      <AudioButton
-                        onPressIn={recordAudio}
-                        onPressOut={stopRecordAudioAndSubmit}
-                      >
-                        <Feather
-                          name="mic"
-                          size={26}
-                          color={colors.secondary}
-                        />
-                      </AudioButton>
-                    </AudioContainer>
-                  </MotiView>
-                )}
-              </AnimatePresence>
+                    <Feather name="mic" size={26} color={colors.secondary} />
+                  </AudioButton>
+                </AudioContainer>
+              )}
             </OptionsContainer>
           </InputContainer>
         </FormContainer>
