@@ -18,6 +18,7 @@ import { ParticipantsData } from "../../../../@types/interfaces";
 import { ParticipantRoles } from "../../../../@types/enums";
 import api from "../../../services/api";
 import Loading from "../../../components/Loading";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const Participant: React.FC = () => {
   const { colors } = useTheme();

@@ -1,6 +1,8 @@
 import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import fonts from "../../styles/fonts";
+import CachedImage from "../CachedImage";
+import { darken, lighten } from "polished";
 
 interface OptionTextProps {
   color?: string;
@@ -8,9 +10,42 @@ interface OptionTextProps {
 
 export const Container = styled.Modal``;
 
+export const MessageInfosContainer = styled.View`
+  flex-direction: row;
+  width: 90%;
+  background-color: ${({ theme }) => theme.colors.shape};
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 10px;
+  align-items: center;
+`;
+
+export const MessageInfos = styled.View`
+  flex-direction: column;
+`;
+
+export const UserName = styled.Text`
+  font-size: 15px;
+  font-family: ${fonts["text"]};
+  color: ${({ theme }) => theme.colors.black};
+`;
+
+export const MessageText = styled.Text`
+  font-size: 12px;
+  font-family: ${fonts["text"]};
+  color: ${({ theme }) => theme.colors.light_heading};
+`;
+
+export const MessageAvatar = styled(CachedImage)`
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  margin-right: 10px;
+`;
+
 export const MessageOptionsContainer = styled.View`
   flex: 1;
-  background-color: #00000055;
+  background-color: #00000088;
   align-items: center;
   justify-content: center;
 `;
@@ -18,8 +53,10 @@ export const MessageOptionsContainer = styled.View`
 export const MessageOptionsModal = styled.View`
   padding: 10px;
   width: 90%;
-  background-color: ${(props) => props.theme.colors.shape};
+  background-color: ${({ theme }) => lighten(0.05, theme.colors.shape)};
   border-radius: 15px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 `;
 
 export const Option = styled.TouchableOpacity`

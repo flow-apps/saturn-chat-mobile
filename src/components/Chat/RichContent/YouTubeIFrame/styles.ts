@@ -36,6 +36,7 @@ export const YouTubeVideoTitle = styled.Text`
   font-size: 12px;
   flex: 1;
   margin: 0px 5px;
+  margin-top: 5px;
 `;
 
 export const YouTubePlayerControlsContainer = styled.Pressable`

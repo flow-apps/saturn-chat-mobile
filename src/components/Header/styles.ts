@@ -20,7 +20,6 @@ export const HeaderContainer = styled.View`
 export const HeaderTitleContainer = styled.View`
   justify-content: center;
   flex: 1;
-  margin-top: -4px;
 `;
 
 export const HeaderTitle = styled.Text<{ goBack?: boolean }>`

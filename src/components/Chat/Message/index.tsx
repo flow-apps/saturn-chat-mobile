@@ -328,11 +328,11 @@ const Message = ({
                 },
                 {
                   iconName: "user",
-                  content: "Ver perfil",
-                  action: handleShowUser,
+                  content: "Opções do participante",
+                  action: handleGoParticipant,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
-                  showInDM: true,
+                  showInDM: false,
                 },
                 {
                   iconName: "trash-2",

@@ -1,10 +1,15 @@
 import React, { memo, useCallback } from "react";
 import {
   Container,
+  MessageAvatar,
+  MessageInfos,
+  MessageInfosContainer,
   MessageOptionsContainer,
   MessageOptionsModal,
+  MessageText,
   Option,
   OptionText,
+  UserName,
 } from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { MessageData } from "../../../@types/interfaces";
@@ -90,6 +95,17 @@ const MessageOptions = ({
           style={{ flex: 1 }}
         >
           <MessageOptionsContainer>
+            <MessageInfosContainer>
+              <MessageAvatar uri={message.author?.avatar.url} />
+              <MessageInfos>
+                <UserName>{message.author.name}</UserName>
+                <MessageText ellipsizeMode="tail" numberOfLines={1}>
+                  {!!message.voice_message && "🎤 Mensagem de voz"}
+                  {message.files.length > 0 && `(${message.files.length} arquivos) `}
+                  {!!message.message && message.message}
+                </MessageText>
+              </MessageInfos>
+            </MessageInfosContainer>
             <MessageOptionsModal>
               <StatusBar barStyle="light-content" />
               {options.map((option) =>
