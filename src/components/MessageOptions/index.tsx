@@ -96,7 +96,7 @@ const MessageOptions = ({
         >
           <MessageOptionsContainer>
             <MessageInfosContainer>
-              <MessageAvatar uri={message.author?.avatar.url} />
+              <MessageAvatar uri={message.author?.avatar?.url} />
               <MessageInfos>
                 <UserName>{message.author.name}</UserName>
                 <MessageText ellipsizeMode="tail" numberOfLines={1}>

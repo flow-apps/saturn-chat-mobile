@@ -1,5 +1,10 @@
+import remoteConfig from "@react-native-firebase/remote-config";
+
+remoteConfig().fetchAndActivate();
+const APIUrlProd = remoteConfig().getString("api_url");
+
 const configs = {
-  API_URL: __DEV__ ? "http://192.168.0.108:3000" : "http://192.168.0.108:3000",
+  API_URL: __DEV__ ? "http://192.168.0.108:3000" : APIUrlProd,
   SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.app"],
   WEBSITE_URL: "https://saturn-chat.vercel.app",
   ADS: {

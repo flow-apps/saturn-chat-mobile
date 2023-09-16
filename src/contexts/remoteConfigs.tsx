@@ -79,6 +79,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     setAllConfigs(configs)
 
+    // For premium users
     if (false) {
       return setUserConfigs({
         fileUpload: parseFloat(configs.premium_file_upload),
