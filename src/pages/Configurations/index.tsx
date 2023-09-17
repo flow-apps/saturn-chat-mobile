@@ -11,7 +11,8 @@ import {
 } from "./styles";
 import Header from "../../components/Header";
 import { useAuth } from "../../contexts/auth";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Switcher from "../../components/Switcher";
 import { useThemeController } from "../../contexts/theme";
 import Button from "../../components/Button";

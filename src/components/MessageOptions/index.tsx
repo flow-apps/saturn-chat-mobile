@@ -11,7 +11,7 @@ import {
   OptionText,
   UserName,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { MessageData } from "../../../@types/interfaces";
 import { useAuth } from "../../contexts/auth";
 import { TouchableOpacity, StatusBar } from "react-native";

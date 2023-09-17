@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native";
 import { FriendData } from "../../../@types/interfaces";
 import { useAuth } from "../../contexts/auth";
@@ -15,7 +15,7 @@ import {
   UnFriendButton,
 } from "./styles";
 
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import api from "../../services/api";
 import Loading from "../../components/Loading";
 import { useTheme } from "styled-components";

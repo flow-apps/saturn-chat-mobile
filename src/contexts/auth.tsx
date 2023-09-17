@@ -7,7 +7,6 @@ import * as auth from "../services/auth";
 
 import { Platform } from "react-native";
 import { UserData } from "../../@types/interfaces";
-import { OneSignal } from "../configs/notifications";
 
 import analytics from "@react-native-firebase/analytics";
 
@@ -40,7 +39,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loadStorageData();
   }, []);
   
-  async function loadStorageData() {
+  const loadStorageData = async () => {
     setLoadingData(true);
     const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
     const storageToken = await AsyncStorage.getItem("@SaturnChat:token");
@@ -83,8 +82,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const userId = response.data.user.id
 
-        OneSignal.setEmail(email);
-        OneSignal.setExternalUserId(userId);
         await analytics().setUserId(userId)
 
         await updateUser(response.data);
@@ -104,8 +101,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       .then(async (response) => {
         const userId = response.data.user.id
 
-        OneSignal.setEmail(response.data.user.email);
-        OneSignal.setExternalUserId(userId);
         await analytics().setUserId(userId)
 
         await updateUser(response.data);
@@ -118,12 +113,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const signOut = () => {
-    
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
         await api.delete(`/users/notify/unregister?platform=${Platform.OS}`);
-        OneSignal.removeExternalUserId();
-        
+
         api.defaults.headers["authorization"] = undefined;
         websocket.query.token = "";
         setToken("");

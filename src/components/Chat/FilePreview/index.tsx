@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";

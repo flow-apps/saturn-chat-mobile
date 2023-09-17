@@ -12,7 +12,7 @@ import {
   ReplyingMessageWrapper,
 } from "./styles";
 
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { MessageData } from "../../../../@types/interfaces";
 import { millisToTime } from "../../../utils/format";

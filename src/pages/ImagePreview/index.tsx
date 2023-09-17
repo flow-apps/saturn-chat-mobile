@@ -3,13 +3,12 @@ import ReactNative, { Dimensions, StatusBar } from "react-native";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import ImageZoom from "react-native-image-pan-zoom";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
 import { HeaderButton } from "../../components/Header/styles";
 import { useCallback } from "react";
-import { LinkUtils } from "../../utils/link";
-import { useImageDimensions } from "@react-native-community/hooks";
+import { useImageDimensions } from "@react-native-community/hooks/lib/useImageDimensions";
 import { FileService } from "../../services/file";
 
 const ImagePreview = () => {
@@ -56,6 +55,7 @@ const ImagePreview = () => {
           >
             <Image
               source={{ uri: url }}
+              //@ts-ignore
               width={dimensions.width}
               height={dimensions.height}
               resizeMode="center"

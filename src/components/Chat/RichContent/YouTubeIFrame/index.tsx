@@ -1,5 +1,7 @@
-import { Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { secondsToMilliseconds } from "date-fns";
+import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
 import { AnimatePresence, MotiView } from "moti";
 import React, {
   forwardRef,

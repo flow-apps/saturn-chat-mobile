@@ -8,10 +8,10 @@ import {
   HeaderTitleContainer,
   HeaderContainer,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from "expo-status-bar/build/StatusBar";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 interface HeaderProps {

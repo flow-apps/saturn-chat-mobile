@@ -8,7 +8,7 @@ import Switcher from "../../../components/Switcher";
 import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
 import api from "../../../services/api";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { GroupData } from "../../../../@types/interfaces";
@@ -24,7 +24,6 @@ import {
   SwitcherText,
   TextArea,
 } from "./styles";
-import { verifyBetweenValues } from "../../../utils";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 const EditGroup: React.FC = () => {

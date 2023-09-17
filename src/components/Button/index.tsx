@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { RectButtonProps } from "react-native-gesture-handler";
 import { ButtonText, Container } from "./styles";
 

@@ -1,9 +1,8 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import _ from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
+import isNumber from "lodash/isNumber";
+import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
-import { BannerAdSize } from "react-native-google-mobile-ads";
 import { FriendData } from "../../../@types/interfaces";
 import Banner from "../../components/Ads/Banner";
 import Header from "../../components/Header";
@@ -114,7 +113,7 @@ const Friends: React.FC = () => {
                   <FriendAvatar uri={getFriendAvatar(user.id, item)} />
                   <FriendName>{friendName}</FriendName>
                 </FriendLeftContainer>
-                {_.isNumber(item?.unreadMessagesAmount) &&
+                {isNumber(item?.unreadMessagesAmount) &&
                   item?.unreadMessagesAmount > 0 && (
                     <UnreadMessages>
                       <UnreadMessagesText>

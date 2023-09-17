@@ -9,7 +9,7 @@ import {
   AudioDurationContainer,
   AudioDuration,
 } from "./styles";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTheme } from "styled-components";
 import { millisToTime } from "../../../utils/format";
 import { AudioData } from "../../../../@types/interfaces";

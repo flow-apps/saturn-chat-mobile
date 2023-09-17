@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from 'react-native-paper';
+import Checkbox from 'react-native-paper/src/components/Checkbox';
 import { useTheme } from 'styled-components';
 
 interface CheckboxProps {

@@ -10,7 +10,7 @@ import {
   ParticipantOptionsContainer,
   ParticipantOptionsTitle,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { useRoute } from "@react-navigation/native";

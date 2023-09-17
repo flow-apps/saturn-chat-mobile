@@ -19,16 +19,17 @@ import {
 } from "./styles";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "styled-components";
-import { ResizeMode, AVPlaybackStatus, Video } from "expo-av";
+import Video from "expo-av/build/Video";
 import { millisToTime } from "../../utils/format";
 import { MotiView } from "@motify/components";
-import { LinkUtils } from "../../utils/link";
 import { AnimatePresence } from "moti";
 import SystemNavigationBar from "react-native-system-navigation-bar";
-import { secondsToMilliseconds } from "date-fns";
-import { Feather } from "@expo/vector-icons";
+import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { FileService } from "../../services/file";
+import { AVPlaybackStatus } from "expo-av/build/AV";
+import { ResizeMode } from "expo-av/build/Video.types";
 
 const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(3);
 
@@ -42,7 +43,6 @@ const VideoPreview: React.FC = () => {
   const [status, setStatus] = useState<AVPlaybackStatus>();
 
   const fileService = new FileService()
-  const linkUtils = new LinkUtils();
   const videoRef = useRef<Video>(null);
   const navigation = useNavigation();
   const route = useRoute();

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Boarding from "react-native-onboarding-swiper";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";

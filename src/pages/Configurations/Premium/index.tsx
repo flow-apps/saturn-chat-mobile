@@ -1,12 +1,12 @@
 import React from "react";
 import Header from "../../../components/Header";
 import * as Localize from "expo-localization";
-import {
-  Feather,
-  FontAwesome,
-  Foundation,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Feather from "@expo/vector-icons/Feather";
+import Foundation from "@expo/vector-icons/Foundation";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import {
   Container,
   ContentWrapper,

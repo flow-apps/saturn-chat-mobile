@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
 import { Keyboard } from "react-native";

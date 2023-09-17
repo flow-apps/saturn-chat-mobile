@@ -1,4 +1,4 @@
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import React from "react";
 import { useTheme } from "styled-components";
 import { InviteData } from "../../../../@types/interfaces";

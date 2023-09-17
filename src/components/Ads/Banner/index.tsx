@@ -7,7 +7,7 @@ import {
   RemoveBannerText,
 } from "./styles";
 import { Platform } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import config from "../../../config";
 import secrets from "../../../../secrets.json";
 import { useNavigation, useRoute } from "@react-navigation/native";

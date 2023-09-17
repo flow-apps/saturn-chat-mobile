@@ -8,7 +8,6 @@ import {
   ParticipantsList,
   ParticipantContainer,
   ParticipantAvatar,
-  ParticipanteName,
   Participant,
   OwnerTagContainer,
   OwnerTag,
@@ -31,7 +30,6 @@ import Banner from "../../components/Ads/Banner";
 import { AdBannerWrapper } from "../GroupInfos/styles";
 import PremiumName from "../../components/PremiumName";
 import { ParticipantsData } from "../../../@types/interfaces";
-import _ from "lodash";
 import { useAuth } from "../../contexts/auth";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -144,7 +142,7 @@ const Participants: React.FC = () => {
 
   return (
     <>
-      <Header title={`${participants.length} Participantes`}  />
+      <Header title={`${participants.length} Participantes`} />
       <Container>
         <ParticipantsContainer>
           <SectionContainer>
@@ -154,14 +152,13 @@ const Participants: React.FC = () => {
               renderItem={renderItem}
               onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
               ListFooterComponent={
-                fetching && !loadedAll ? (
+                fetching &&
+                !loadedAll && (
                   <ActivityIndicator
                     style={{ margin: 10 }}
                     size="large"
                     color={colors.primary}
                   />
-                ) : (
-                  <></>
                 )
               }
             />

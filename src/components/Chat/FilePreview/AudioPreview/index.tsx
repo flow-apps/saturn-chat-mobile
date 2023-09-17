@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   AudioPreviewButton,
   AudioPreviewContainer,

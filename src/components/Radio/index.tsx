@@ -1,5 +1,5 @@
 import React from 'react';
-import { RadioButton } from 'react-native-paper';
+import { RadioButton } from 'react-native-paper/lib/module/components/RadioButton';
 import { useTheme } from 'styled-components';
 
 interface RadioProps {

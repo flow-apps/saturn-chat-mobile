@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 
 import {
   Container,
@@ -23,7 +23,6 @@ import {
   rolesForInvite,
 } from "../../utils/authorizedRoles";
 
-import _ from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BannerAdSize } from "react-native-google-mobile-ads";
 

@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
-import _ from "lodash";
 import { MotiView } from "moti";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";

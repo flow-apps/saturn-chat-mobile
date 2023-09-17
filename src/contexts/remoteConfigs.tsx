@@ -6,7 +6,9 @@ import React, {
   useState,
 } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { hoursToMilliseconds, minutesToMilliseconds } from "date-fns";
+import { minutesToMilliseconds } from "date-fns";
+
+import appConfigs from "../config"
 
 interface RemoteConfigContextProps {
   allConfigs: Configs;
@@ -14,6 +16,7 @@ interface RemoteConfigContextProps {
 }
 
 export interface Configs {
+  api_url: string;
   default_file_upload: string;
   premium_file_upload: string;
   default_max_participants: string;
@@ -46,11 +49,12 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       await remoteConfig().setConfigSettings({
-        minimumFetchIntervalMillis: hoursToMilliseconds(1),
+        minimumFetchIntervalMillis: minutesToMilliseconds(5),
         fetchTimeMillis: minutesToMilliseconds(1),
       })
 
       await remoteConfig().setDefaults({
+        api_url: appConfigs.API_URL,
         default_max_groups: 2,
         premium_max_groups: 10,
         default_file_upload: 12,

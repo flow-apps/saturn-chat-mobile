@@ -12,7 +12,10 @@ import secrets from "../../secrets.json";
 
 import { useAuth } from "./auth";
 import { Alert, Platform } from "react-native";
-import { configureNotificationsHandlers, OneSignal } from "../configs/notifications";
+import {
+  configureNotificationsHandlers,
+  OneSignal,
+} from "../configs/notifications";
 
 interface NotificationsContextProps {
   enabled: boolean;
@@ -37,24 +40,17 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!signed) return;
 
     setEnabled((old) => {
-      OneSignal.disablePush(!old);
       return !old;
     });
 
     await api.patch(
-      `/users/notify/toggle?enabled=${
-        enabled ? "no" : "yes"
-      }&platform=${platform}`
+      `/users/notify/toggle?enabled=${enabled ? "0" : "1"}&platform=${platform}`
     );
   };
 
   const registerOneSignal = async () => {
     if (!signed) return;
-
-    OneSignal.setAppId(secrets.OneSignalAppID);
-    OneSignal.setExternalUserId(user.id)
-    OneSignal.setLocationShared(false);
-    OneSignal.setLanguage(Localize.locale);
+    
     OneSignal.promptForPushNotificationsWithUserResponse((res) => {
       if (!res) {
         Alert.alert(
@@ -74,7 +70,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       .then((res) => {
         setEnabled(res.data.send_notification);
       });
-  }
+  };
 
   useEffect(() => {
     registerOneSignal();

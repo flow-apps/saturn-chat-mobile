@@ -5,18 +5,18 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useAppState } from "@react-native-community/hooks";
+import { useAppState } from "@react-native-community/hooks/lib/useAppState";
 import { ListRenderItem, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
 
-import { ProgressBar } from "react-native-paper";
-import { Feather } from "@expo/vector-icons";
+import { ProgressBar } from "react-native-paper/lib/module/components/ProgressBar";
+import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Audio } from "expo-av";
+import Audio from "expo-av/build/Audio";
 import { useTheme } from "styled-components";
 import {
   FileData,
@@ -68,7 +68,7 @@ import { ArrayUtils } from "../../utils/array";
 import { useWebsocket } from "../../contexts/websocket";
 import { useChat } from "../../contexts/chat";
 
-import { FlashList } from "@shopify/flash-list";
+import FlashList from "@shopify/flash-list/dist/FlashList";
 import { useAds } from "../../contexts/ads";
 
 interface File {
@@ -662,8 +662,8 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={25 * 116}
-            estimatedItemSize={116}
+            drawDistance={30 * 120}
+            estimatedItemSize={120}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={handleFetchMoreMessages}

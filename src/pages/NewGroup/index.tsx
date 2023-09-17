@@ -32,7 +32,7 @@ import {
   ReachedLimitStarContainer,
   ReachedLimitStarDescription,
 } from "./styles";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import Button from "../../components/Button";
 import * as ImagePicker from "expo-image-picker";
@@ -47,7 +47,6 @@ import analytics from "@react-native-firebase/analytics";
 import { verifyBetweenValues } from "../../utils";
 import { UserData } from "../../../@types/interfaces";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
-import _ from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 const NewGroup: React.FC = () => {

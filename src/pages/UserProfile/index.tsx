@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import AdBanner from "../../components/Ads/Banner";
 import Group from "../../components/Group";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import Header from "../../components/Header";
 import PremiumName from "../../components/PremiumName";
 import Loading from "../../components/Loading";
@@ -38,7 +38,7 @@ import {
   AddFriendContainer,
 } from "./styles";
 
-import _ from "lodash";
+import isNull from "lodash/isNull";
 import FriendActionButtons from "../../components/UserProfile/FriendActionButtons";
 import AddFriendButton from "../../components/UserProfile/AddFriendButton";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -164,7 +164,7 @@ const UserProfile: React.FC = () => {
                 align="center"
               />
             </BasicInfos>
-            {!_.isNull(userInfos?.bio) && userInfos?.bio.length && (
+            {!isNull(userInfos?.bio) && userInfos?.bio.length && (
               <BioContainer>
                 <BioContent>{userInfos?.bio}</BioContent>
               </BioContainer>

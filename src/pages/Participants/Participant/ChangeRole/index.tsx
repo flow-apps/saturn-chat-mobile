@@ -17,7 +17,7 @@ import {
   RolePermission,
 } from "./styles";
 
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import roles from "./roles";
 import Button from "../../../../components/Button";
 import { useRoute } from "@react-navigation/core";

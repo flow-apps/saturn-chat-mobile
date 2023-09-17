@@ -11,7 +11,7 @@ import {
   InviteAnimationContainer,
   InviteInvalidReason,
 } from "./styles";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from "expo-status-bar/build/StatusBar";
 import {
   useFocusEffect,
   useNavigation,

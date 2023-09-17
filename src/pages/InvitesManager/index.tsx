@@ -16,7 +16,9 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import SimpleToast from "react-native-simple-toast";
 import FriendRequest from "../../components/InvitesManager/FriendRequest";
 import { StackNavigationProp } from "@react-navigation/stack";
-import _ from "lodash";
+
+import orderBy from "lodash/orderBy";
+
 import GroupInvite from "../../components/InvitesManager/GroupInvite";
 
 interface Request extends FriendData, InviteData {
@@ -37,7 +39,7 @@ const InvitesManager: React.FC = () => {
         const data = res.data;
 
         if (res.status === 200) {
-          const sorted = _.orderBy(data, ["created_at"], "desc");
+          const sorted = orderBy(data, ["created_at"], "desc");
           setRequests(sorted);
         }
 

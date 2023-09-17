@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "../../../../components/Header";
 import { useTheme } from "styled-components";
-import { Feather } from "@expo/vector-icons";
 import {
   Animation,
   AnimationContainer,
@@ -53,6 +52,7 @@ const ChoosePlan: React.FC = () => {
             </PlanBuyButton>
           </PlanContainer>
           <PlanContainer
+            //@ts-ignore
             colors={[colors.shape, colors.background]}
             planColor={colors.primary}
           >
@@ -65,6 +65,7 @@ const ChoosePlan: React.FC = () => {
             </PlanBuyButton>
           </PlanContainer>
           <PlanContainer
+            //@ts-ignore
             colors={[colors.shape, colors.background]}
             planColor="#FF5E0D"
           >

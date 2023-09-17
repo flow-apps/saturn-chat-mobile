@@ -20,14 +20,14 @@ import {
 
 import * as Clipboard from "expo-clipboard";
 import SimpleToast from "react-native-simple-toast";
-import { useImageDimensions } from "@react-native-community/hooks";
+import { useImageDimensions } from "@react-native-community/hooks/lib/useImageDimensions";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import YouTubeIFrame, {
   IYouTubeIFrameRef,
 } from "../YouTubeIFrame";
 import URLParse from "url-parse";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MotiView } from "moti";
 
 interface LinkPreviewProps {

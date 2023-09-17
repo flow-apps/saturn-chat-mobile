@@ -4,7 +4,6 @@ import config from "../../../config";
 import isSameMinute from "date-fns/isSameMinute";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
-import { convertToTimeZone } from "date-fns-timezone";
 
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -15,7 +14,6 @@ import {
   UserData,
 } from "../../../../@types/interfaces";
 
-import * as Localize from "expo-localization";
 import * as Clipboard from "expo-clipboard";
 
 import Alert from "../../Alert";
@@ -35,16 +33,19 @@ import { ParticipantRoles, ParticipantStates } from "../../../../@types/enums";
 import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
 import MessageMark from "../../Markdown/MessageMark";
 import SimpleToast from "react-native-simple-toast";
+
 import { LinkUtils } from "../../../utils/link";
-import _ from "lodash";
 import { useAuth } from "../../../contexts/auth";
+
+import isUndefined from "lodash/isUndefined";
+
 import ReplyingMessage from "../ReplyingMessage";
 
 import URLParser from "url-parse";
 import InviteInMessage from "../RichContent/InviteInMessage";
 import LinkPreview from "../RichContent/LinkPreview";
 import { useChat } from "../../../contexts/chat";
-import { Swipeable } from "react-native-gesture-handler";
+import Swipeable from "react-native-gesture-handler/Swipeable";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -83,7 +84,7 @@ const Message = ({
   }, [message, user]);
 
   const sended = useMemo(() => {
-    return _.isUndefined(message?.sended) ? true : message.sended;
+    return isUndefined(message?.sended) ? true : message.sended;
   }, [message]);
 
   useEffect(() => {
@@ -161,9 +162,6 @@ const Message = ({
 
   const formatHour = useCallback((date: string) => {
     const isoDate = parseISO(date);
-    const tzDate = convertToTimeZone(isoDate, {
-      timeZone: Localize.getCalendars()[0].timeZone,
-    });
 
     return format(isoDate, "dd/MM/yy, HH:mm");
   }, []);
@@ -206,10 +204,6 @@ const Message = ({
     await Clipboard.setStringAsync(message.message);
     SimpleToast.show("Mensagem copiada");
   }, [message.message]);
-
-  const handleShowUser = () => {
-    navigation.navigate("UserProfile", { id: message.author.id });
-  };
 
   const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
