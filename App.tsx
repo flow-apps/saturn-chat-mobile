@@ -11,19 +11,22 @@ import { FirebaseProvider } from "./src/contexts/firebase";
 import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs";
 import { WebsocketProvider } from "./src/contexts/websocket";
 
-import { useFonts } from "expo-font"
+import { useFonts } from "expo-font";
 
-import Roboto_500Medium from "@expo-google-fonts/roboto/Roboto_500Medium.ttf.png";
-import Roboto_900Black from "@expo-google-fonts/roboto/Roboto_900Black.ttf.png";
-import FiraCode_500Medium from "@expo-google-fonts/fira-code/FiraCode_500Medium.ttf.png";
+import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
+import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
 
-import RobotoMono_400Regular from "@expo-google-fonts/roboto-mono/RobotoMono_400Regular.ttf.png";
-import RobotoMono_600SemiBold from "@expo-google-fonts/roboto-mono/RobotoMono_600SemiBold.ttf.png";
-import RobotoMono_700Bold from "@expo-google-fonts/roboto-mono/RobotoMono_700Bold.ttf.png";
+import {
+  RobotoMono_400Regular,
+  RobotoMono_600SemiBold,
+  RobotoMono_700Bold,
+} from "@expo-google-fonts/roboto-mono";
 
-import Poppins_400Regular from "@expo-google-fonts/poppins/Poppins_400Regular.ttf.png";
-import Poppins_600SemiBold from "@expo-google-fonts/poppins/Poppins_600SemiBold.ttf.png";
-import Poppins_300Light_Italic from "@expo-google-fonts/poppins/Poppins_300Light_Italic.ttf.png"
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_300Light_Italic,
+} from "@expo-google-fonts/poppins";
 
 import { ChatProvider } from "./src/contexts/chat";
 import {
@@ -58,10 +61,10 @@ export default function App() {
       }
 
       const { isAvailable } = await checkForUpdateAsync()
-        .then(result => result)
+        .then((result) => result)
         .catch(() => {
-          return { isAvailable: false }
-        })
+          return { isAvailable: false };
+        });
 
       if (isAvailable) {
         await fetchUpdateAsync().then(async (value) => {
