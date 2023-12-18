@@ -2,6 +2,8 @@
 
 ![PhotoEditor_20220508_161707](https://user-images.githubusercontent.com/62728884/167312603-b868aede-3521-4f4d-be55-d4a8993484ed.png)
 
+[VEJA MEU VÍDEO APRESENTANDO O APP](https://youtu.be/jNbEUl9iVpA?si=ytG583lMQWobuzEH)
+
 ## ❓ O que é o Saturn Chat?
 
 O *Saturn Chat* é um app voltado para conversas em grupo, sempre preservando a privacidade, a simplicidade e agilidade. O Saturn Chat está sendo totalmente desenvolvido pelo [@pedrohenriquebraga](https://github.com/pedrohenriquebraga). Está sendo usado no desenvolvimento do APP React Native e Expo (Bare Workflow).
