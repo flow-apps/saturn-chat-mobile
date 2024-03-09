@@ -2,17 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>EXUpdatesSDKVersion</key>
-    <string>47.0.0</string>
     <key>EXUpdatesEnabled</key>
     <true/>
     <key>EXUpdatesCheckOnLaunch</key>
     <string>ALWAYS</string>
     <key>EXUpdatesLaunchWaitMs</key>
-    <integer>1000</integer>
+    <integer>0</integer>
     <key>EXUpdatesURL</key>
-    <string>https://exp.host/@pedro-henriquebraga/SaturnChat</string>
+    <string>https://u.expo.dev/5702d402-a17b-417c-ad01-ac3ddd0446cc</string>
     <key>EXUpdatesReleaseChannel</key>
     <string>default</string>
+    <key>EXUpdatesRuntimeVersion</key>
+    <string>1.0.0</string>
   </dict>
 </plist>

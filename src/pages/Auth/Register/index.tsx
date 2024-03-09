@@ -47,8 +47,15 @@ const Register: React.FC = () => {
   const { colors } = useTheme();
   const { signUp, loading, registerError } = useAuth();
 
-  const passwordValidation = useMemo(() => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, []);
-  const emailValidation = useMemo(() => /^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/g, [])
+  const passwordValidation = useMemo(
+    () => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+    []
+  );
+  const emailValidation = useMemo(
+    () =>
+      /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi,
+    []
+  );
 
   function handleSetEmail(value: string) {
     setEmail(value);
@@ -67,7 +74,7 @@ const Register: React.FC = () => {
       setPassConfirmError(true);
     } else {
       setPassConfirmError(false);
-    }    
+    }
 
     if (!passwordValidation.test(value)) {
       setPassError(true);
@@ -238,7 +245,9 @@ const Register: React.FC = () => {
                 </FormField>
               </InputsContainer>
               <Button
-                enabled={!emailError && !passError && !passConfirmError && !!name}
+                enabled={
+                  !emailError && !passError && !passConfirmError && !!name
+                }
                 title="Criar conta"
                 onPress={handleSubmit}
               />

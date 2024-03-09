@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "removeComments": true,
+    "removeComments": true
   },
-  "extends": "expo/tsconfig.base",
+  "extends": "expo/tsconfig.base"
 }
