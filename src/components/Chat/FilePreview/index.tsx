@@ -1,8 +1,7 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 
-import Feather from "@expo/vector-icons/Feather";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
 import { convertBytesToMB } from "../../../utils/convertSize";
@@ -23,7 +22,6 @@ import {
   FilePreviewContainer,
   FileSize,
 } from "./styles";
-import { useEffect } from "react";
 import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
 import AudioPreview from "./AudioPreview";
@@ -38,18 +36,25 @@ interface IFilePreviewProps {
   deleted: boolean;
 }
 
-const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePreviewProps) => {
+const FilePreview = ({
+  name,
+  original_name,
+  size,
+  url,
+  type,
+  deleted,
+}: IFilePreviewProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
   const { colors } = useTheme();
 
-  const fileService = new FileService()
+  const fileService = new FileService();
   const linkUtils = new LinkUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const mimeType = useMemo(() => MimeTypes.lookup(name), []);
 
   useEffect(() => {
-    (async () => {      
+    (async () => {
       if (type === "image") {
         FastImage.preload([
           {
@@ -76,7 +81,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
 
-    await fileService.downloadFile(url, original_name)
+    await fileService.downloadFile(url, original_name);
   }, [url, name]);
 
   const renderIcon = () => {
@@ -188,9 +193,7 @@ const FilePreview = ({ name, original_name, size, url, type, deleted }: IFilePre
           <FileOpenAction>{renderPreview()}</FileOpenAction>
         </FileContainer>
       </Container>
-      {type === "audio" && (
-        <AudioPreview audio={{ name, url }} />
-      )}
+      {type === "audio" && <AudioPreview audio={{ name, url }} />}
     </>
   );
 };

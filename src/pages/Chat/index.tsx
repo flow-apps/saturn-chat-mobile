@@ -5,13 +5,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useAppState } from "@react-native-community/hooks/lib/useAppState";
+import { useAppState } from "@react-native-community/hooks";
 import { ListRenderItem, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
 
-import { ProgressBar } from "react-native-paper/lib/module/components/ProgressBar";
+import { ProgressBar } from "react-native-paper";
 import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useNavigation } from "@react-navigation/native";
@@ -590,14 +590,12 @@ const Chat: React.FC = () => {
       const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
       return (
-        <>
-          <Message
-            message={item}
-            participant={participant as ParticipantsData}
-            lastMessage={lastMessage}
-            onReplyMessage={handleReplyMessage}
-          />
-        </>
+        <Message
+          message={item}
+          participant={participant as ParticipantsData}
+          lastMessage={lastMessage}
+          onReplyMessage={handleReplyMessage}
+        />
       );
     },
     [oldMessages.length]
@@ -662,7 +660,7 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={30 * 120}
+            drawDistance={30 * 130}
             estimatedItemSize={120}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}

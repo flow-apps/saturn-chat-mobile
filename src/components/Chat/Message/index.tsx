@@ -131,6 +131,8 @@ const Message = ({
           />
         </MessageAuthorContainer>
       );
+    } else {
+      return <></>
     }
   }, [message, lastMessage]);
 
@@ -212,7 +214,7 @@ const Message = ({
   }, [message.voice_message]);
 
   const renderFiles = useCallback(() => {
-    if (message.files) {
+    if (message.files) {      
       return message.files.map((file) => {
         return (
           <FilePreview
