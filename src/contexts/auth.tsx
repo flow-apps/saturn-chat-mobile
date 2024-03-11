@@ -9,6 +9,7 @@ import { Platform } from "react-native";
 import { UserData } from "../../@types/interfaces";
 
 import analytics from "@react-native-firebase/analytics";
+import { OneSignal } from "../configs/notifications";
 
 interface AuthContextData {
   signed: boolean;
@@ -38,7 +39,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     loadStorageData();
   }, []);
-  
+
   const loadStorageData = async () => {
     setLoadingData(true);
     const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
@@ -46,15 +47,23 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const headerToken = `Bearer ${storageToken}`;
 
     if (storageUser && storageToken) {
+      const parsedUser = JSON.parse(String(storageUser));
+
+      OneSignal.login(parsedUser.id);
+      OneSignal.User.addEmail(parsedUser.email);
+      
       api.defaults.headers["authorization"] = headerToken;
       websocket.query.token = headerToken;
-      setUser(JSON.parse(String(storageUser)));
+      setUser(parsedUser);
       setToken(headerToken);
     }
     setLoadingData(false);
-  }
+  };
 
   const updateUser = async (data: { token?: string; user: UserData }) => {
+    OneSignal.login(data.user.id);
+    OneSignal.User.addEmail(data.user.email);
+
     if (data.token) {
       const headerToken = `Bearer ${data.token}`;
 
@@ -71,7 +80,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(data.user);
       }
     );
-  }
+  };
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
@@ -79,10 +88,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     auth
       .signIn(email, password)
       .then(async (response) => {
+        const userId = response.data.user.id;
 
-        const userId = response.data.user.id
-
-        await analytics().setUserId(userId)
+        await analytics().setUserId(userId);
 
         await updateUser(response.data);
         setLoginError(false);
@@ -91,7 +99,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setLoginError(true);
       })
       .finally(() => setLoading(false));
-  }
+  };
 
   const signUp = async (data: FormData) => {
     setLoading(true);
@@ -99,9 +107,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     auth
       .signUp(data)
       .then(async (response) => {
-        const userId = response.data.user.id
+        const userId = response.data.user.id;
 
-        await analytics().setUserId(userId)
+        await analytics().setUserId(userId);
 
         await updateUser(response.data);
         setRegisterError(false);
@@ -110,20 +118,21 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setRegisterError(true);
       })
       .finally(() => setLoading(false));
-  }
+  };
 
   const signOut = () => {
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
         await api.delete(`/users/notify/unregister?platform=${Platform.OS}`);
 
+        OneSignal.logout();
         api.defaults.headers["authorization"] = undefined;
         websocket.query.token = "";
         setToken("");
         setUser(null);
       }
     );
-  }
+  };
 
   return (
     <AuthContext.Provider
@@ -148,6 +157,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 const useAuth = () => {
   return useContext(AuthContext);
-}
+};
 
 export { AuthProvider, useAuth };

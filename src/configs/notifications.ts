@@ -1,4 +1,4 @@
-import OneSignal from "react-native-onesignal";
+import { OneSignal } from "react-native-onesignal";
 import { NotificationsTypes } from "../../@types/enums";
 import { navigate } from "../routes/rootNavigation";
 import { LinkUtils } from "../utils/link";
@@ -11,7 +11,7 @@ interface NotificationDataType {
 }
 
 const configureNotificationsHandlers = async (signed: boolean) => {
-  OneSignal.setNotificationOpenedHandler(async ({ action, notification }) => {
+  OneSignal.Notifications.addEventListener("click", async ({ action, notification }) => {
     if (action && signed) {
       const { openLink } = new LinkUtils();
       const data = notification.additionalData as NotificationDataType;
@@ -27,7 +27,7 @@ const configureNotificationsHandlers = async (signed: boolean) => {
           navigate("Chat", {
             id: data.group_id,
             name: isDM ? name : undefined,
-            friendId: isDM ? data.friend_id : undefined
+            friendId: isDM ? data.friend_id : undefined,
           });
         }
       }

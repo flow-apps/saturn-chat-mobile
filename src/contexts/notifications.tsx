@@ -11,7 +11,7 @@ import api from "../services/api";
 import secrets from "../../secrets.json";
 
 import { useAuth } from "./auth";
-import { Alert, Platform } from "react-native";
+import { Platform } from "react-native";
 import {
   configureNotificationsHandlers,
   OneSignal,
@@ -34,7 +34,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   const platform = useMemo(() => Platform.OS, []);
   const language = useMemo(() => Localize.locale, []);
 
-  const { signed, user } = useAuth();
+  const { signed } = useAuth();
 
   const toggleEnabledNotifications = async () => {
     if (!signed) return;
@@ -50,15 +50,17 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const registerOneSignal = async () => {
     if (!signed) return;
-    
-    OneSignal.promptForPushNotificationsWithUserResponse((res) => {
-      if (!res) {
-        Alert.alert(
-          "Oh não!",
-          "Sem essa permissão você não receberá notificações do app, como de mensagens novas!"
-        );
+
+    OneSignal.initialize(secrets.OneSignalAppID);
+
+    if (await OneSignal.Notifications.canRequestPermission()) {
+      const hasPermission = await OneSignal.Notifications.requestPermission(
+        true
+      );
+      if (!hasPermission) {
+        return;
       }
-    });
+    }
 
     configureNotificationsHandlers(signed);
 
@@ -74,7 +76,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     registerOneSignal();
-  }, []);
+  }, [signed]);
 
   return (
     <NotificationsContext.Provider

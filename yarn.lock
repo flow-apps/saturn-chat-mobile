@@ -6747,10 +6747,10 @@ react-native-codegen@^0.70.6:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
-react-native-create-thumbnail@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/react-native-create-thumbnail/-/react-native-create-thumbnail-1.6.4.tgz#90f5b0a587de6e3738a7632fe3d9a9624ed83581"
-  integrity sha512-JWuKXswDXtqUPfuqh6rjCVMvTSSG3kUtwvSK/YdaNU0i+nZKxeqHmt/CO2+TyI/WSUFynGVmWT1xOHhCZAFsRQ==
+react-native-create-thumbnail@2.0.0-rc.2:
+  version "2.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/react-native-create-thumbnail/-/react-native-create-thumbnail-2.0.0-rc.2.tgz#1435fc635508102abbf50993a297ae582dcd141f"
+  integrity sha512-ctq/WyggoSqvhIcr8qGd3CDqjCDg3vJo5jH82wuFhwYphUPoVE39jq0IfzclIcpfvZCZ3KePq+5Fr09sgPGmaw==
 
 react-native-fast-image@^8.5.11:
   version "8.6.3"
@@ -6830,10 +6830,10 @@ react-native-onboarding-swiper@^1.2.0:
   dependencies:
     tinycolor2 "^1.4.1"
 
-react-native-onesignal@^4.4.1:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.5.0.tgz#a5fef4348d429903bf3691e480d95a3ddf7bf5c1"
-  integrity sha512-9rocNYJXrAFUk1yG50vu0D7aYEeX8imEA3qDeBT+iwyFpy6E1xXNy3z9OPazzeuGi9/YaseEAiswpKBlaoJV3A==
+react-native-onesignal@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-5.0.6.tgz#f51ef9f4dd3a840c2b71ada6447fdf1ddf6025d0"
+  integrity sha512-P6HVBY3Hu2p2wzKYSCOwUH1ESxEDKpx7wFvTnWCAyMqOc9y1JstASVvoFqDwwuvLBNFmuFkSVXQ7VdsqzTRcQg==
   dependencies:
     invariant "^2.2.2"
 
