@@ -3926,11 +3926,6 @@ expo-image-picker@~14.0.2:
     expo-image-loader "~4.0.0"
     uuid "7.0.2"
 
-expo-in-app-purchases@~14.0.0:
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/expo-in-app-purchases/-/expo-in-app-purchases-14.0.0.tgz#84bf26c5a20442e5f5e07f15ae0bb0172c883165"
-  integrity sha512-bPdWhqjFy5pbDKzNWmEFSMzuO7UPUPeUm7apn4Fitw+LV7MnUscShOo1YmYY2Mj5GbLNCf/EeYOrqYrOGG8u8g==
-
 expo-json-utils@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/expo-json-utils/-/expo-json-utils-0.4.0.tgz#47ae83a1cc973101d62371f94790e9ad39491751"

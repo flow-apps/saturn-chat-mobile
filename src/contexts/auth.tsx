@@ -49,21 +49,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (storageUser && storageToken) {
       const parsedUser = JSON.parse(String(storageUser));
 
-      OneSignal.login(parsedUser.id);
-      OneSignal.User.addEmail(parsedUser.email);
-      
       api.defaults.headers["authorization"] = headerToken;
       websocket.query.token = headerToken;
       setUser(parsedUser);
       setToken(headerToken);
+
+      OneSignal.login(parsedUser.id);
+      OneSignal.User.addEmail(parsedUser.email);
     }
     setLoadingData(false);
   };
 
   const updateUser = async (data: { token?: string; user: UserData }) => {
-    OneSignal.login(data.user.id);
-    OneSignal.User.addEmail(data.user.email);
-
     if (data.token) {
       const headerToken = `Bearer ${data.token}`;
 
@@ -80,6 +77,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(data.user);
       }
     );
+
+    OneSignal.login(data.user.id);
+    OneSignal.User.addEmail(data.user.email);
   };
 
   const signIn = async (email: string, password: string) => {
