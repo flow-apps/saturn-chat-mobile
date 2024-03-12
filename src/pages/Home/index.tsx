@@ -35,6 +35,7 @@ import {
 } from "./styles";
 import { BannerAdSize } from "react-native-google-mobile-ads";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import configs from "../../config";
 
 export interface ParticipantData {
   id: string;
@@ -99,6 +100,18 @@ const Home: React.FC = () => {
   }, []);
 
   const handleGoNewGroup = () => navigation.navigate("NewGroup");
+
+  const handleGoOficialGroup = () => {
+    if (__DEV__) {
+      console.log("Em produção leva ao grupo de ID", configs.OFICIAL_GROUP_ID);
+      
+      return
+    }
+
+      navigation.navigate("GroupInfos", {
+        id: configs.OFICIAL_GROUP_ID,
+      });
+  }
 
   if (loading) return <Loading />;
   return (
@@ -188,7 +201,7 @@ const Home: React.FC = () => {
                   Acesse a aba{" "}
                   <Feather name="search" size={16} color={colors.secondary} /> e
                   pesquise algo ou entre no nosso{" "}
-                  <GroupsListEmptyLink>Grupo Oficial</GroupsListEmptyLink>!
+                  <GroupsListEmptyLink onPress={handleGoOficialGroup}>Grupo Oficial</GroupsListEmptyLink>!
                 </GroupsListEmptySubTitle>
               </GroupsListEmptyContainer>
             )}

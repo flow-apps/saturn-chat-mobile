@@ -32,5 +32,6 @@ export const Label = styled.Text`
 `;
 
 export const ShowPasswordContainer = styled.TouchableOpacity`
-  margin: 0px 10px;
+  margin-left: 15px;
+  margin-right: 5px;
 `;
