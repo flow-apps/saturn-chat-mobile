@@ -51,7 +51,7 @@ const Home: React.FC = () => {
   const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
-  const { allConfigs } = useRemoteConfigs()
+  const { allConfigs } = useRemoteConfigs();
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
   useFocusEffect(
@@ -104,14 +104,14 @@ const Home: React.FC = () => {
   const handleGoOficialGroup = () => {
     if (__DEV__) {
       console.log("Em produção leva ao grupo de ID", configs.OFICIAL_GROUP_ID);
-      
-      return
+
+      return;
     }
 
-      navigation.navigate("GroupInfos", {
-        id: configs.OFICIAL_GROUP_ID,
-      });
-  }
+    navigation.navigate("GroupInfos", {
+      id: configs.OFICIAL_GROUP_ID,
+    });
+  };
 
   if (loading) return <Loading />;
   return (
@@ -201,7 +201,10 @@ const Home: React.FC = () => {
                   Acesse a aba{" "}
                   <Feather name="search" size={16} color={colors.secondary} /> e
                   pesquise algo ou entre no nosso{" "}
-                  <GroupsListEmptyLink onPress={handleGoOficialGroup}>Grupo Oficial</GroupsListEmptyLink>!
+                  <GroupsListEmptyLink onPress={handleGoOficialGroup}>
+                    Grupo Oficial
+                  </GroupsListEmptyLink>
+                  !
                 </GroupsListEmptySubTitle>
               </GroupsListEmptyContainer>
             )}

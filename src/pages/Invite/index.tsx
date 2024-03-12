@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   AcceptInviteButton,
   AcceptInviteText,
@@ -37,31 +37,34 @@ const Invite: React.FC = () => {
   const params = route.params as { inviteID: string };
   const inviteID = params.inviteID;
 
-  useFocusEffect(() => {
-    (async () => {
-      setLoading(true);
-      api
-        .get(`/invites/${inviteID}?user_id=${user?.id}`)
-        .then((res) => {
-          if (res.status === 200) {
-            setInvite(res.data.invite);
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        setLoading(true);
+        api
+          .get(`/invites/${inviteID}?user_id=${user?.id}`)
+          .then((res) => {
+            if (res.status === 200) {
+              if (res.data.participant.state === "JOINED") {
+                setParticipating(true);
+              } else {
+                setParticipating(false);
+              }
 
-            if (res.data.participant.state === "JOINED") {
-              setParticipating(true);
-            } else {
-              setParticipating(false);
+              setInvite(res.data.invite);
             }
-          }
-        })
-        .catch(() => setInvite(null));
-
-      setLoading(false);
-    })();
-  });
+          })
+          .catch(() => setInvite(null))
+          .finally(() => {
+            setLoading(false);
+          });
+      })();
+    }, [inviteID])
+  );
 
   if (loading) return <Loading />;
 
-  if (!invite && !loading) {
+  if (!invite) {
     return (
       <>
         <StatusBar translucent />
