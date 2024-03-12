@@ -86,6 +86,7 @@ const Login: React.FC = () => {
                 <Input
                   onChangeText={setPassword}
                   value={password}
+                  textContentType="password"
                   passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
                   autoCapitalize="none"
                   secureTextEntry

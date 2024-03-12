@@ -2,29 +2,57 @@ import React, { useState } from "react";
 import { TextInputProps } from "react-native";
 import { TextInput } from "react-native";
 import { useTheme } from "styled-components";
-import { Container, Label, MainInput } from "./styles";
+import {
+  Container,
+  InputContainer,
+  Label,
+  MainInput,
+  ShowPasswordContainer,
+} from "./styles";
+import { Feather } from "@expo/vector-icons";
 
 interface InputProps extends TextInputProps {
   label?: string;
 }
 
-const Input = ({ label, ...rest }: InputProps) => {
+const Input = ({
+  label,
+  textContentType,
+  secureTextEntry,
+  keyboardType,
+  ...rest
+}: InputProps) => {
   const { colors } = useTheme();
-  const [focused, setFocused] = useState(false)
+  const [focused, setFocused] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(!secureTextEntry);
 
   return (
-    <Container
-    >
+    <Container>
       {label && <Label>{label}</Label>}
-      <MainInput
-        placeholderTextColor={colors.dark_heading + "88"}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        focused={focused}
-        as={TextInput}
-        {...rest}
-      />
+      <InputContainer>
+        <MainInput
+          placeholderTextColor={colors.dark_heading + "88"}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          focused={focused}
+          as={TextInput}
+          textContentType={textContentType}
+          secureTextEntry={!showPassword}
+          keyboardType={showPassword ? "visible-password" : keyboardType}
+          {...rest}
+        />
 
+        {textContentType === "password" && (
+          <ShowPasswordContainer onPress={() => setShowPassword((old) => !old)}>
+            <Feather
+              name={showPassword ? "eye-off" : "eye"}
+              size={20}
+              color={colors.black}
+            />
+          </ShowPasswordContainer>
+        )}
+      </InputContainer>
     </Container>
   );
 };

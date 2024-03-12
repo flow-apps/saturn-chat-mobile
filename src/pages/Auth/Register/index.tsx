@@ -216,6 +216,7 @@ const Register: React.FC = () => {
                     onChangeText={handleSetPassword}
                     value={password}
                     autoCapitalize="none"
+                    textContentType="password"
                     secureTextEntry
                   />
                   {passError && (
@@ -237,6 +238,7 @@ const Register: React.FC = () => {
                     value={passwordConfirm}
                     onChangeText={handleSetPassConfirm}
                     autoCapitalize="none"
+                    textContentType="password"
                     secureTextEntry
                   />
                   {passConfirmError && password.length > 0 && (
