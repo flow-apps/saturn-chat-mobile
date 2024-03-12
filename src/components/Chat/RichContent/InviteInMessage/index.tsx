@@ -47,8 +47,10 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             setInvite(res.data.invite);
           }
         })
-        .catch(() => setInvite(null));
-      setLoading(false);
+        .catch(() => setInvite(null))
+        .finally(() => {
+          setLoading(false);
+        });
     })();
   }, []);
 
@@ -73,7 +75,15 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
       });
   };
 
-  if (!invite && !loading) {
+  if (loading) {
+    return (
+      <Container>
+        <LoadingIndicator />
+      </Container>
+    );
+  }
+
+  if (!invite) {
     return (
       <Container>
         <GroupRightSideContainer>
@@ -83,14 +93,6 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             de usos!
           </GroupDescription>
         </GroupRightSideContainer>
-      </Container>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Container>
-        <LoadingIndicator />
       </Container>
     );
   }
