@@ -70,6 +70,7 @@ import { useChat } from "../../contexts/chat";
 
 import FlashList from "@shopify/flash-list/dist/FlashList";
 import { useAds } from "../../contexts/ads";
+import { OneSignal } from "react-native-onesignal";
 
 interface File {
   file: DocumentPicker.DocumentResult;
@@ -182,6 +183,7 @@ const Chat: React.FC = () => {
 
         if (groupRes.status === 200) setGroup(groupRes.data);
       }
+      OneSignal.Notifications.removeGroupedNotifications(group.id);
       configureSocketListeners();
 
       await fetchOldMessages();
