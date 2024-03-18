@@ -31,6 +31,7 @@ export const FriendRequestName = styled.Text`
 export const FriendRequestRightContainer = styled.View`
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
   flex: 1;
 `;
 

@@ -108,9 +108,9 @@ const MessageOptions = ({
             </MessageInfosContainer>
             <MessageOptionsModal>
               <StatusBar barStyle="light-content" />
-              {options.map((option) =>
+              {options.map((option, index) =>
                 canShowOptionChecker(option) ? (
-                  <Option onPress={() => handleExecAction(option.action)}>
+                  <Option key={index} onPress={() => handleExecAction(option.action)}>
                     <OptionText color={option.color}>
                       {option.iconName && (
                         <Feather name={option.iconName} size={18} />
@@ -120,7 +120,7 @@ const MessageOptions = ({
                   </Option>
                 ) : (
                   !option.onlyOwner && (
-                    <Option onPress={() => handleExecAction(option.action)}>
+                    <Option key={index} onPress={() => handleExecAction(option.action)}>
                       <OptionText color={option.color}>
                         {option.iconName && (
                           <Feather name={option.iconName} size={18} />

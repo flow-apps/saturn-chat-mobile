@@ -33,7 +33,7 @@ const FriendRequest: React.FC<FriendRequestProps> = ({
       onPress={() => OpenUserProfile(friend.requested_by.id)}
     >
       <FriendRequestLeftContainer>
-        <FriendRequestAvatar uri={friend.requested_by.avatar.url} />
+        <FriendRequestAvatar uri={friend.requested_by.avatar?.url} />
         <FriendRequestName numberOfLines={1} ellipsizeMode="middle">
           {friend.requested_by.name}
         </FriendRequestName>
