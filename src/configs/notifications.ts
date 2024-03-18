@@ -11,8 +11,9 @@ interface NotificationDataType {
 }
 
 const configureNotificationsHandlers = async (signed: boolean) => {
-  OneSignal.Notifications.addEventListener("click", async ({ action, notification }) => {
-    if (action && signed) {
+  OneSignal.Notifications.addEventListener("click", async ({ notification }) => {
+        
+    if (signed && notification) {
       const { openLink } = new LinkUtils();
       const data = notification.additionalData as NotificationDataType;
 
