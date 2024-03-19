@@ -49,8 +49,6 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const registerOneSignal = async () => {
-    OneSignal.Notifications.clearAll()
-
     if (!signed) return;
 
     OneSignal.initialize(secrets.OneSignalAppID);
@@ -64,6 +62,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
 
+    OneSignal.Notifications.clearAll();
     configureNotificationsHandlers(signed);
 
     await api
