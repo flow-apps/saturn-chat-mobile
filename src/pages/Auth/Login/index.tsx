@@ -76,7 +76,7 @@ const Login: React.FC = () => {
                   onChangeText={setEmail}
                   value={email}
                   keyboardType="email-address"
-                  
+                  textContentType="emailAddress"
                   autoCapitalize="none"
                 />
               </FieldContainer>

@@ -124,7 +124,7 @@ const Chat: React.FC = () => {
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [fetching, setFetching] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 

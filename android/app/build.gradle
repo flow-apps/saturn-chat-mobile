@@ -144,6 +144,8 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    // jniLibs.useLegacyPackaging = true
+
     packagingOptions {
         pickFirst 'lib/x86/libc++_shared.so'
         pickFirst 'lib/x86_64/libjsc.so'
@@ -152,6 +154,7 @@ android {
         pickFirst 'lib/x86_64/libc++_shared.so'
         pickFirst 'lib/armeabi-v7a/libc++_shared.so'
         pickFirst '**/libjsc.so'
+        pickFirst '**/libc++_shared.so'
     }
 
     defaultConfig {
@@ -159,8 +162,8 @@ android {
         applicationId "com.flowapps.saturnchat"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "0.0.6"
+        versionCode 7
+        versionName "0.0.7"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -306,6 +309,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.facebook.soloader:soloader:0.9.0+'
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion

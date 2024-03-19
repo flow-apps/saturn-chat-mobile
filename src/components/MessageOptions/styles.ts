@@ -22,6 +22,7 @@ export const MessageInfosContainer = styled.View`
 
 export const MessageInfos = styled.View`
   flex-direction: column;
+  flex: 1;
 `;
 
 export const UserName = styled.Text`
@@ -34,6 +35,7 @@ export const MessageText = styled.Text`
   font-size: 12px;
   font-family: ${fonts["text"]};
   color: ${({ theme }) => theme.colors.light_heading};
+  width: 100%;
 `;
 
 export const MessageAvatar = styled(CachedImage)`

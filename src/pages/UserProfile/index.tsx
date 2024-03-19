@@ -42,6 +42,7 @@ import isNull from "lodash/isNull";
 import FriendActionButtons from "../../components/UserProfile/FriendActionButtons";
 import AddFriendButton from "../../components/UserProfile/AddFriendButton";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { HeaderButton } from "../../components/Header/styles";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -49,7 +50,7 @@ const UserProfile: React.FC = () => {
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
   const [friendInfos, setFriendInfos] = useState<FriendData>();
 
-  const { Interstitial } = useAds()
+  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
@@ -64,7 +65,7 @@ const UserProfile: React.FC = () => {
         const res = await api.get(`/users?user_id=${id}`);
 
         if (Interstitial.loaded) {
-          await Interstitial.show()
+          await Interstitial.show();
         }
 
         if (res.status === 200) {
@@ -138,11 +139,21 @@ const UserProfile: React.FC = () => {
     }
   };
 
+  const handleGoEditProfile = () => {
+    navigation.navigate("EditProfile")
+  }
+
   if (loading) return <Loading />;
 
   return (
     <>
-      <Header title={userInfos?.name} />
+      <Header title={userInfos?.name}>
+        {userInfos?.id === user.id && (
+          <HeaderButton onPress={handleGoEditProfile}>
+            <Feather name="edit" size={22} color="#fff" />
+          </HeaderButton>
+        )}
+      </Header>
       <Container>
         <UserProfileContainer>
           <BasicInfosContainer>
@@ -171,7 +182,10 @@ const UserProfile: React.FC = () => {
             )}
             {userInfos?.id === user?.id && (
               <FriendsInfosContainer>
-                <FriendsContainer disabled={!userInfos?.friendsAmount} onPress={openFriendsManager}>
+                <FriendsContainer
+                  disabled={!userInfos?.friendsAmount}
+                  onPress={openFriendsManager}
+                >
                   <FriendsNumber>{userInfos?.friendsAmount}</FriendsNumber>
                   <FriendsTitle>Amigos</FriendsTitle>
                 </FriendsContainer>
@@ -184,24 +198,28 @@ const UserProfile: React.FC = () => {
               <Feather name="users" size={25} color={colors.light_heading} />{" "}
               Participando
             </GroupsTitle>
-            <Groups>
-              {userInfos?.participating?.map((participant, index) => {
-                const avatar = participant.group.group_avatar;
-                return (
-                  participant.group.privacy !== "PRIVATE" && (
-                    <View key={index * 1.5}>
-                      {!!index && index % 5 === 0 && <AdBanner />}
-                      <Group
-                        key={participant.id}
-                        name={participant.group.name}
-                        image={avatar ? avatar?.url : ""}
-                        onPress={() => handleGoGroupInfos(participant.group.id)}
-                      />
-                    </View>
-                  )
-                );
-              })}
-            </Groups>
+            {userInfos?.participating?.length > 0 && (
+              <Groups>
+                {userInfos?.participating?.map((participant, index) => {
+                  const avatar = participant.group.group_avatar;
+                  return (
+                    participant.group.privacy !== "PRIVATE" && (
+                      <View key={index * 1.5}>
+                        {!!index && index % 5 === 0 && <AdBanner />}
+                        <Group
+                          key={participant.id}
+                          name={participant.group.name}
+                          image={avatar ? avatar?.url : ""}
+                          onPress={() =>
+                            handleGoGroupInfos(participant.group.id)
+                          }
+                        />
+                      </View>
+                    )
+                  );
+                })}
+              </Groups>
+            )}
           </GroupsContainer>
         </UserProfileContainer>
       </Container>

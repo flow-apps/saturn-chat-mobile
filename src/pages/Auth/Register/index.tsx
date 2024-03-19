@@ -47,15 +47,9 @@ const Register: React.FC = () => {
   const { colors } = useTheme();
   const { signUp, loading, registerError } = useAuth();
 
-  const passwordValidation = useMemo(
-    () => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
-    []
-  );
-  const emailValidation = useMemo(
-    () =>
-      /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi,
-    []
-  );
+  const passwordValidation =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+  const emailValidation = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
   function handleSetEmail(value: string) {
     setEmail(value);
@@ -201,6 +195,7 @@ const Register: React.FC = () => {
                   <Label>Email</Label>
                   <Input
                     keyboardType="email-address"
+                    textContentType="emailAddress"
                     placeholder="Ex.: usuario@exemplo.com"
                     autoCapitalize="none"
                     onChangeText={handleSetEmail}
