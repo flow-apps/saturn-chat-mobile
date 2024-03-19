@@ -137,7 +137,7 @@ const Register: React.FC = () => {
       });
     }
 
-    await signUp(data);
+    await signUp(data, email);
     await analytics().logEvent("sign_up", {
       method: "email/password",
     });

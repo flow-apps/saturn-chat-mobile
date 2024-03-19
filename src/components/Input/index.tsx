@@ -39,7 +39,11 @@ const Input = ({
           as={TextInput}
           textContentType={textContentType}
           secureTextEntry={!showPassword}
-          keyboardType={showPassword ? "visible-password" : keyboardType}
+          keyboardType={
+            showPassword && textContentType === "password"
+              ? "visible-password"
+              : keyboardType
+          }
           {...rest}
         />
 

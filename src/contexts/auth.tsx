@@ -21,7 +21,7 @@ interface AuthContextData {
   token: string;
   updateUser: (data: any) => Promise<void>;
   signIn(email: string, password: string): Promise<void>;
-  signUp(data: FormData): Promise<void>;
+  signUp(data: FormData, email: string): Promise<void>;
   signOut: () => void;
 }
 
@@ -55,7 +55,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setToken(headerToken);
 
       OneSignal.login(parsedUser.id);
-      OneSignal.User.addEmail(parsedUser.email);
     }
     setLoadingData(false);
   };
@@ -79,7 +78,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 
     OneSignal.login(data.user.id);
-    OneSignal.User.addEmail(data.user.email);
   };
 
   const signIn = async (email: string, password: string) => {
@@ -93,6 +91,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await analytics().setUserId(userId);
 
         await updateUser(response.data);
+        OneSignal.User.addEmail(email);
         setLoginError(false);
       })
       .catch(() => {
@@ -101,7 +100,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => setLoading(false));
   };
 
-  const signUp = async (data: FormData) => {
+  const signUp = async (data: FormData, email: string) => {
     setLoading(true);
     setRegisterError(false);
     auth
@@ -112,6 +111,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await analytics().setUserId(userId);
 
         await updateUser(response.data);
+        OneSignal.User.addEmail(email);
+
         setRegisterError(false);
       })
       .catch(() => {

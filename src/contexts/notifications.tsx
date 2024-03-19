@@ -62,9 +62,10 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
 
-    OneSignal.Notifications.clearAll();
     configureNotificationsHandlers(signed);
-
+    
+    OneSignal.Notifications.clearAll();
+    
     await api
       .post("/users/notify/register", {
         platform,

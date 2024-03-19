@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import { ListRenderItem, TextInput } from "react-native";
+import { ListRenderItem, Platform, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -145,65 +145,6 @@ const Chat: React.FC = () => {
 
   const appState = useAppState();
 
-  useEffect(() => {
-    if (appState === "active") {
-      setLoading(true);
-      handleJoinRoom(id);
-      if (page > 0) {
-        setPage(0);
-      }
-
-      if (fetchedAll) {
-        setFetchedAll(false);
-      }
-
-      fetchOldMessages();
-      setLoading(false);
-    }
-    return () => {
-      if (socket) {
-        socket.emit("leave_chat");
-        socket.offAny();
-        handleTypingTimeout();
-      }
-    };
-  }, [appState, socket]);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-
-      if (Interstitial.loaded && !adShowed) {
-        await Interstitial.show();
-        setAdShowed(true);
-      }
-
-      if (!group.id) {
-        const groupRes = await api.get(`/group/${id}`);
-
-        if (groupRes.status === 200) setGroup(groupRes.data);
-      }
-      OneSignal.Notifications.removeGroupedNotifications(group.id);
-      configureSocketListeners();
-
-      await fetchOldMessages();
-
-      setPage(0);
-      setLoading(false);
-    })();
-  }, []);
-
-  useLayoutEffect(() => {
-    (async () => {
-      setLoading(true);
-      const participantRes = await api.get(`/group/participant/${id}`);
-      if (participantRes.status === 200)
-        setParticipant(participantRes.data.participant);
-
-      setLoading(false);
-    })();
-  }, []);
-
   const configureSocketListeners = useCallback(() => {
     onSendedUserMessage(({ msg, localReference }) => {
       setOldMessages((old) =>
@@ -269,7 +210,9 @@ const Chat: React.FC = () => {
   };
 
   const recordAudio = async () => {
-    if (recordingAudio) return;
+    const hasMessage = !!(messageInputRef.current.value || "");
+
+    if (recordingAudio || hasMessage) return;
 
     try {
       const record = await recordService.start({
@@ -401,14 +344,9 @@ const Chat: React.FC = () => {
     setFilesSizeUsed((used) => used - fileSize);
   };
 
-  const handleFetchMoreMessages = async () => {
-    if (fetchedAll) return;
-    if (!fetching) {
-      await fetchOldMessages();
-    }
-  };
-
   const fetchOldMessages = async () => {
+    if (fetching || fetchedAll) return;
+
     setFetching(true);
     const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
 
@@ -510,8 +448,6 @@ const Chat: React.FC = () => {
     if (files.length === 0) {
       const trace = perf().newTrace("send_message_without_file");
 
-      messageInputRef.current.clear();
-      messageInputRef.current.value = "";
       setIsTypingMessage(false);
 
       await trace.start();
@@ -526,11 +462,7 @@ const Chat: React.FC = () => {
         setReplyingMessage(undefined);
       }
       await trace.stop();
-
-      return;
-    }
-
-    if (files.length > 0) {
+    } else {
       setSendingFile(true);
       const filesData = new FormData();
       const trace = perf().newTrace("send_message_with_files");
@@ -582,6 +514,11 @@ const Chat: React.FC = () => {
       setSendedFileProgress(0);
     }
 
+    if (message) {
+      messageInputRef.current.clear();
+      messageInputRef.current.value = "";
+    }
+
     if (replyingMessage) {
       setReplyingMessage(undefined);
     }
@@ -609,6 +546,70 @@ const Chat: React.FC = () => {
   const disableLargeFile = () => setLargeFile(false);
   const disableIsSelectedFile = () => setIsSelectedFile(false);
   const disableAudioPermission = () => setAudioPermission(false);
+
+  useEffect(() => {
+    if (appState === "active") {
+      setLoading(true);
+      handleJoinRoom(id);
+      if (page > 0) {
+        setPage(0);
+      }
+
+      if (fetchedAll) {
+        setFetchedAll(false);
+      }
+
+      fetchOldMessages();
+      setLoading(false);
+    }
+    return () => {
+      if (socket) {
+        socket.emit("leave_chat");
+        socket.offAny();
+        handleTypingTimeout();
+      }
+    };
+  }, [appState, socket]);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+
+      if (Interstitial.loaded && !adShowed) {
+        await Interstitial.show();
+        setAdShowed(true);
+      }
+
+      if (Platform.OS === "android") {
+        OneSignal.Notifications.removeGroupedNotifications(id);
+      }
+
+      if (!group.id) {
+        const groupRes = await api.get(`/group/${id}`);
+
+        if (groupRes.status === 200) {
+          setGroup(groupRes.data);
+        }
+      }
+      configureSocketListeners();
+
+      await fetchOldMessages();
+
+      setPage(0);
+      setLoading(false);
+    })();
+  }, []);
+
+  useLayoutEffect(() => {
+    (async () => {
+      setLoading(true);
+      const participantRes = await api.get(`/group/participant/${id}`);
+      if (participantRes.status === 200)
+        setParticipant(participantRes.data.participant);
+
+      setLoading(false);
+    })();
+  }, []);
 
   if (loading || !socket) return <Loading />;
 
@@ -666,8 +667,8 @@ const Chat: React.FC = () => {
             estimatedItemSize={120}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
-            onEndReached={handleFetchMoreMessages}
-            onEndReachedThreshold={0.8}
+            onEndReached={fetchOldMessages}
+            onEndReachedThreshold={0.4}
             showsVerticalScrollIndicator={false}
             disableHorizontalListHeightMeasurement
           />
@@ -725,7 +726,7 @@ const Chat: React.FC = () => {
               onChangeText={handleSetMessage}
               maxLength={userConfigs?.messageLength || 500}
               placeholder={
-                recordingAudio ? "Gravando audio..." : "Sua mensagem..."
+                recordingAudio ? "Solte para enviar" : "Digite sua mensagem..."
               }
             />
             <OptionsContainer>
