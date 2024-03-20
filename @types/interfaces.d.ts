@@ -91,6 +91,7 @@ export interface InviteData {
   friend_id?: string;
   sended_by?: UserData;
   friend?: FriendData;
+  participants_amount?: number;
   group_id: string;
   group: GroupData;
   invite_code: string;

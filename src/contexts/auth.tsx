@@ -91,7 +91,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await analytics().setUserId(userId);
 
         await updateUser(response.data);
-        OneSignal.User.addEmail(email);
         setLoginError(false);
       })
       .catch(() => {
@@ -111,7 +110,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await analytics().setUserId(userId);
 
         await updateUser(response.data);
-        OneSignal.User.addEmail(email);
 
         setRegisterError(false);
       })

@@ -40,7 +40,7 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
             {invite.group.name}
           </GroupInviteName>
           <GroupInviteParticipantsAmount>
-            5 participantes
+            {invite?.participants_amount} participantes
           </GroupInviteParticipantsAmount>
         </GroupInviteInfosWrapper>
       </GroupInviteLeftContainer>
