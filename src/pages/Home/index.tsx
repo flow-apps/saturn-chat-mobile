@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,6 +27,7 @@ import {
   GroupsListEmptyTitle,
   GroupsSubtitle,
   GroupsTitle,
+  HasInvitesBullet,
   NewGroupButton,
   QuickAccessGroupsContainer,
   QuickAccessGroupsScroll,
@@ -36,6 +37,7 @@ import {
 import { BannerAdSize } from "react-native-google-mobile-ads";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import configs from "../../config";
+import { useHome } from "../../contexts/home";
 
 export interface ParticipantData {
   id: string;
@@ -53,16 +55,9 @@ const Home: React.FC = () => {
 
   const { allConfigs } = useRemoteConfigs();
   const { colors } = useTheme();
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  useFocusEffect(
-    useCallback(() => {
-      async function fetchGroups() {
-        await loadGroups();
-      }
+  const { hasInvites, handleCheckInvites } = useHome();
 
-      fetchGroups();
-    }, [])
-  );
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const loadGroups = useCallback(async () => {
     setLoading(true);
@@ -113,6 +108,17 @@ const Home: React.FC = () => {
     });
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchGroups() {
+        await loadGroups();
+      }
+      
+      handleCheckInvites()
+      fetchGroups();
+    }, [])
+  );
+
   if (loading) return <Loading />;
   return (
     <Container>
@@ -123,6 +129,7 @@ const Home: React.FC = () => {
           </HeaderButton>
           <HeaderButton onPress={handleGoInvitesManager}>
             <Feather name="mail" size={22} color="#fff" />
+            {hasInvites && <HasInvitesBullet />}
           </HeaderButton>
           <HeaderButton onPress={handleGoUserProfile}>
             <Feather name="user" size={22} color="#fff" />

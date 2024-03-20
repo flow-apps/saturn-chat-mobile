@@ -3,9 +3,9 @@ import React, {
   useCallback,
   useEffect,
   createContext,
+  useMemo,
 } from "react";
 import { StatusBar, useColorScheme } from "react-native";
-import { DefaultTheme } from "styled-components";
 import { ThemeProvider } from "styled-components/native";
 import { usePersistedState } from "../hooks/usePersistedState";
 import nav from "react-native-system-navigation-bar";
@@ -25,27 +25,37 @@ const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const defaultTheme = useColorScheme();
-  const [theme, setTheme] = usePersistedState<DefaultTheme>(
+  const [theme, setTheme] = usePersistedState<string>(
     "@SaturnChat:theme",
-    defaultTheme === "light" ? light : dark
+    defaultTheme
   );
   const toggleTheme = useCallback(() => {
-    setTheme(theme.title === "light" ? dark : light);
-  }, [theme, theme.title]);
+    setTheme(theme === "light" ? "dark" : "light");
+  }, [theme]);
+
+  const themes = useMemo(() => {
+    return {
+      dark,
+      light,
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
-      await nav.setNavigationColor(theme.colors.shape, theme.title !== "light");
+      await nav.setNavigationColor(
+        themes[theme].colors.shape,
+        theme !== "light"
+      );
     })();
-    
+
     StatusBar.setBarStyle("light-content");
   }, [theme]);
 
   return (
     <ThemeControllerContext.Provider
-      value={{ toggleTheme, currentThemeName: theme.title }}
+      value={{ toggleTheme, currentThemeName: theme }}
     >
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <ThemeProvider theme={themes[theme]}>{children}</ThemeProvider>
     </ThemeControllerContext.Provider>
   );
 };

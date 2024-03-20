@@ -1,10 +1,9 @@
-import { lighten } from "polished";
 import styled from "styled-components/native";
 import fonts from "../../../../styles/fonts";
 import CachedImage from "../../../CachedImage";
 
 export const Container = styled.View`
-  background-color: ${(props) => lighten(0.08, props.theme.colors.shape)};
+  background-color: ${(props) => props.theme.colors.shape};
   padding: 12px;
   border-radius: 12px;
   width: 85%;

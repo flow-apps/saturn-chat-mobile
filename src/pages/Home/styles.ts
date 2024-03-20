@@ -132,3 +132,8 @@ export const GroupsListEmptyLink = styled(GroupsListEmptySubTitle)`
 export const AdContainer = styled.View` 
   width: 100%;
 `
+
+export const HasInvitesBullet = styled(GroupHasMessage)`
+  right: 0;
+  bottom: 0;
+`

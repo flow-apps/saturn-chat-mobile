@@ -36,7 +36,8 @@ import {
 } from "expo-updates";
 
 import * as Constants from "expo-constants";
-import { OneSignal } from "./src/configs/notifications"
+import { OneSignal } from "./src/configs/notifications";
+import { HomeProvider } from "./src/contexts/home";
 
 preventAutoHideAsync();
 
@@ -98,7 +99,9 @@ export default function App() {
                 <ChatProvider>
                   <AudioPlayerProvider>
                     <RemoteConfigsProvider>
-                      <Routes />
+                      <HomeProvider>
+                        <Routes />
+                      </HomeProvider>
                     </RemoteConfigsProvider>
                   </AudioPlayerProvider>
                 </ChatProvider>

@@ -4,7 +4,7 @@ export default {
     black: "#000",
     white: "#fff",
     background: "#ffffff",
-    shape: "#F0F0F0",
+    shape: "#E9E9E9",
     light_gray: "#E5E5E5",
     dark_gray: "#C0C0C0",
     primary: "#0088FF",
