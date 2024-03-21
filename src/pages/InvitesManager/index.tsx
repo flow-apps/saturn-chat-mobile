@@ -92,7 +92,7 @@ const InvitesManager: React.FC = () => {
     }
 
     const filteredRequests = requests.filter(
-      (request) => request.id !== inviteID
+      (request) => request && request?.id !== inviteID
     );
     setRequests(filteredRequests);
   };

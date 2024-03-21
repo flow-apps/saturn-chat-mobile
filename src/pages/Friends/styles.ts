@@ -33,7 +33,7 @@ export const FriendsListContainer = styled.View`
 export const FriendContainer = styled.TouchableOpacity`
   align-items: center;
   flex-direction: row;
-  margin-bottom: 10px;
+  margin-top: 15px;
 `;
 
 export const FriendLeftContainer = styled.View`

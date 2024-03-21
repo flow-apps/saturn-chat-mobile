@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -34,10 +34,9 @@ import {
   QuickAccessTitle,
   TitleWrapper,
 } from "./styles";
-import { BannerAdSize } from "react-native-google-mobile-ads";
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
-import configs from "../../config";
 import { useHome } from "../../contexts/home";
+import configs from "../../config";
 
 export interface ParticipantData {
   id: string;
@@ -113,8 +112,8 @@ const Home: React.FC = () => {
       async function fetchGroups() {
         await loadGroups();
       }
-      
-      handleCheckInvites()
+
+      handleCheckInvites();
       fetchGroups();
     }, [])
   );

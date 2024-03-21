@@ -17,13 +17,15 @@ const HomeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [hasInvites, setHasInvites] = useState(false);
 
   const handleCheckInvites = () => {
+    if (!socket) return;
+
     socket.emit("check_has_invites");
   };
 
   useEffect(() => {
     if (socket) {
       socket.on("new_invite_received", ({ hasNewInvites }) => {
-        setHasInvites(hasNewInvites);
+        if (hasInvites !== hasNewInvites) setHasInvites(hasNewInvites);
       });
 
       handleCheckInvites();
