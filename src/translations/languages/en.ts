@@ -66,4 +66,14 @@ export const en = {
       },
     },
   },
+  Login: {
+    header_title: "Log in",
+    title: "Hello,\nWelcome back",
+    login_error: "Unable to log in, verify your details or create an account",
+    email: "E-mail",
+    password: "Password",
+    forgot_password: "Forgot your password?",
+    login_button: "Login",
+    register_button: "Are you new here? Create an account!"
+  }
 };

@@ -26,6 +26,7 @@ import {
   WelcomeTitle,
 } from "./styles";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -34,6 +35,7 @@ const Login: React.FC = () => {
   const navigator = useNavigation<StackNavigationProp<any>>();
 
   const { signIn, loginError, loading } = useAuth();
+  const { t } = useTranslate("Login");
 
   function handleNavigateSignUp() {
     navigator.navigate("Register");
@@ -42,34 +44,32 @@ const Login: React.FC = () => {
   async function handleLogin() {
     await signIn(email, password);
     await analytics().logEvent("login", {
-      method: "email/password"
-    })
+      method: "email/password",
+    });
   }
 
   if (loading) {
-    return <Loading />
+    return <Loading />;
   }
 
   return (
     <>
-      <Header title="Faça o login"  />
+      <Header title={t("header_title")} />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <WelcomeContainer>
-            <WelcomeTitle>Olá,{"\n"}Bem-vindo de volta</WelcomeTitle>
+            <WelcomeTitle>{t("title")}</WelcomeTitle>
           </WelcomeContainer>
           {loginError && (
             <ErrorContainer>
-              <ErrorText>
-                Erro ao fazer login, verifique seus dados ou crie uma conta
-              </ErrorText>
+              <ErrorText>{t("login_error")}</ErrorText>
             </ErrorContainer>
           )}
           <FormContainer>
             <FieldsContainer>
               <FieldContainer>
                 <Label>
-                  <Feather name="at-sign" size={16} /> Email
+                  <Feather name="at-sign" size={16} /> {t("email")}
                 </Label>
                 <Input
                   placeholder="seu@email.com"
@@ -82,7 +82,7 @@ const Login: React.FC = () => {
               </FieldContainer>
               <FieldContainer>
                 <Label>
-                  <Feather name="lock" size={16} /> Senha
+                  <Feather name="lock" size={16} /> {t("password")}
                 </Label>
                 <Input
                   onChangeText={setPassword}
@@ -93,15 +93,15 @@ const Login: React.FC = () => {
                   secureTextEntry
                 />
                 <ForgotPassword>
-                  <ForgotPasswordText>Esqueceu sua senha?</ForgotPasswordText>
+                  <ForgotPasswordText>
+                    {t("forgot_password")}
+                  </ForgotPasswordText>
                 </ForgotPassword>
               </FieldContainer>
             </FieldsContainer>
-            <Button title="Entrar" onPress={handleLogin} />
+            <Button title={t("login_button")} onPress={handleLogin} />
             <CreateAccountContainer onPress={handleNavigateSignUp}>
-              <CreateAccountText>
-                É novo por aqui? Crie uma conta!
-              </CreateAccountText>
+              <CreateAccountText>{t("register_button")}</CreateAccountText>
             </CreateAccountContainer>
           </FormContainer>
         </TouchableWithoutFeedback>

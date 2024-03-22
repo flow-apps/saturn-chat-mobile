@@ -63,4 +63,14 @@ export const pt = {
       }
     }
   },
+  Login: {
+    header_title: "Faça o login",
+    title: "Olá,\nBem-vindo de volta",
+    login_error: "Não foi possível fazer login, verifique seus dados ou crie uma conta",
+    email: "E-mail",
+    password: "Senha",
+    forgot_password: "Esqueceu sua senha?",
+    login_button: "Entrar",
+    register_button: "É novo por aqui? Crie uma conta!"
+  }
 };
