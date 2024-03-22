@@ -1,8 +1,8 @@
 export const pt = {
   Components: {
     Ads: {
-      remove_ad: "Remover anúncio"
-    }
+      remove_ad: "Remover anúncio",
+    },
   },
   OnBoarding: {
     done: "Começar",
@@ -35,54 +35,58 @@ export const pt = {
       title: "Vamos começar?",
       subtitle: "Acesse ou crie sua conta para começar a usar o app!",
       login: "Fazer login",
-      new_account: "Criar conta"
+      new_account: "Criar conta",
     },
     CreateAccount: {
       header_title: "Criar conta",
       avatar_select_label: "Escolha uma foto de perfil",
-      avatar_select_tip: "💡 Lembrando: Você deve selecionar uma imagem com no máximo 5MB.",
+      avatar_select_tip:
+        "💡 Lembrando: Você deve selecionar uma imagem com no máximo 5MB.",
       avatar_selected: "🖼 Esta foto está perfeita!",
-      register_error: "Não foi possível criar a conta, possivelmente o email já está em uso, tente fazer login",
+      register_error:
+        "Não foi possível criar a conta, possivelmente o email já está em uso, tente fazer login",
       labels: {
         name: "Nome",
         email: {
           label: "E-mail",
-          error: "Esse email não é válido"
+          error: "Esse email não é válido",
         },
         password: {
           label: "Digite uma senha",
           error: "A senha não segue os padrões segurança",
-          infos: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo"
+          infos:
+            "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
         },
         password_again: {
           label: "Confirme sua senha",
-          error: "As senhas não combinam"
-        }
+          error: "As senhas não combinam",
+        },
       },
       register_button: "Criar conta",
       consent: {
         guidelines: "Diretrizes da Comunidade",
         privacy_policy: "Politica de Privacidade",
-        line_0: "Ao clicar em \"Criar conta\" você aceita a nossa",
-        line_1: "e também nossas"
-      }
-    }
-  },
-  Login: {
-    header_title: "Faça o login",
-    title: "Olá,\nBem-vindo de volta",
-    login_error: "Não foi possível fazer login, verifique seus dados ou crie uma conta",
-    email: "E-mail",
-    password: "Senha",
-    forgot_password: "Esqueceu sua senha?",
-    login_button: "Entrar",
-    register_button: "É novo por aqui? Crie uma conta!"
+        line_0: 'Ao clicar em "Criar conta" você aceita a nossa',
+        line_1: "e também nossas",
+      },
+    },
+    Login: {
+      header_title: "Faça o login",
+      title: "Olá,\nBem-vindo de volta",
+      login_error:
+        "Não foi possível fazer login, verifique seus dados ou crie uma conta",
+      email: "E-mail",
+      password: "Senha",
+      forgot_password: "Esqueceu sua senha?",
+      login_button: "Entrar",
+      register_button: "É novo por aqui? Crie uma conta!",
+    },
   },
   TabBar: {
     groups: "Grupos",
     friends: "Amigos",
     new_group: "Novo grupo",
-    settings: "Configurações"
+    settings: "Configurações",
   },
   Home: {
     header_title: "Grupos",
@@ -91,11 +95,18 @@ export const pt = {
       title: "Que tal começar entrando num grupo?",
       search_text: "Acesse a aba",
       line_0: "e pesquise algo ou entre no nosso",
-      official_group: "Grupo Oficial"
+      official_group: "Grupo Oficial",
     },
     groups_list: {
       title: "Acessar os grupos",
-      subtitle: "Você está em {{count}} grupos"
-    }
-  }
+      subtitle: "Você está em {{count}} grupos",
+    },
+  },
+  Friends: {
+    header_title: "Amigos",
+    title: "Mensagens diretas",
+    subtitle:
+      "Envie mensagens privadas aos seus amigos. Você só pode falar com pessoas da sua lista de amigos.",
+    empty_list_text: "Você não possui nenhum amigo. Adicione novos amigos."
+  },
 };

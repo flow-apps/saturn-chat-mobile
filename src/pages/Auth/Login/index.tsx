@@ -35,7 +35,7 @@ const Login: React.FC = () => {
   const navigator = useNavigation<StackNavigationProp<any>>();
 
   const { signIn, loginError, loading } = useAuth();
-  const { t } = useTranslate("Login");
+  const { t } = useTranslate("Auth.Login");
 
   function handleNavigateSignUp() {
     navigator.navigate("Register");

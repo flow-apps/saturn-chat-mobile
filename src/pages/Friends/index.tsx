@@ -30,6 +30,7 @@ import {
   UnreadMessages,
   UnreadMessagesText,
 } from "./styles";
+import { useTranslate } from "../../hooks/useTranslate";
 
 interface OpenChatProps {
   id: string;
@@ -43,6 +44,7 @@ const Friends: React.FC = () => {
 
   const { user } = useAuth();
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Friends");
 
   useFocusEffect(
     useCallback(() => {
@@ -67,31 +69,26 @@ const Friends: React.FC = () => {
 
   return (
     <>
-      <Header title="Amigos" backButton={false} />
+      <Header title={t("header_title")} backButton={false} />
       <Container>
         <FlatList
           data={friends}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={() => (
             <PresentationContainer>
-              <PresentationTitle>Mensagens diretas</PresentationTitle>
-              <PresentationSubtitle>
-                Envie mensagens privadas aos seus amigos. Você só pode falar com
-                pessoas da sua lista de amigos.
-              </PresentationSubtitle>
-              {
-                  friends.length > 0 && (
-                    <AdContainer>
-                      <Banner />
-                    </AdContainer>
-                  )
-                }
+              <PresentationTitle>{t("title")}</PresentationTitle>
+              <PresentationSubtitle>{t("subtitle")}</PresentationSubtitle>
+              {friends.length > 0 && (
+                <AdContainer>
+                  <Banner />
+                </AdContainer>
+              )}
             </PresentationContainer>
           )}
           ListEmptyComponent={() => (
             <EmptyListContainer>
               <EmptyListTitle>
-                Você não possui nenhum amigo. Adicione novos amigos.
+                {t("empty_list_text")}
               </EmptyListTitle>
             </EmptyListContainer>
           )}

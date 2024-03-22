@@ -1,8 +1,8 @@
 export const en = {
   Components: {
     Ads: {
-      remove_ad: "Remove ad"
-    }
+      remove_ad: "Remove ad",
+    },
   },
   OnBoarding: {
     done: "Done",
@@ -69,16 +69,16 @@ export const en = {
         line_1: "and also our",
       },
     },
-  },
-  Login: {
-    header_title: "Log in",
-    title: "Hello,\nWelcome back",
-    login_error: "Unable to log in, check your login or create an account",
-    email: "E-mail",
-    password: "Password",
-    forgot_password: "Forgot your password?",
-    login_button: "Login",
-    register_button: "Are you new here? Create an account!",
+    Login: {
+      header_title: "Log in",
+      title: "Hello,\nWelcome back",
+      login_error: "Unable to log in, check your login or create an account",
+      email: "E-mail",
+      password: "Password",
+      forgot_password: "Forgot your password?",
+      login_button: "Login",
+      register_button: "Are you new here? Create an account!",
+    },
   },
   TabBar: {
     groups: "Groups",
@@ -97,7 +97,15 @@ export const en = {
     },
     groups_list: {
       title: "Access groups",
-      subtitle: "You are in {{count}} groups"
-    }
+      subtitle: "You are in {{count}} groups",
+    },
+  },
+  Friends: {
+    header_title: "Friends",
+    title: "Direct messages",
+    subtitle:
+      "Send private messages to your friends. You can only talk to people on your friends list.",
+    empty_list_text: "You don't have any friends. Add new friends."
+
   },
 };
