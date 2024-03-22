@@ -15,6 +15,7 @@ export const Friend = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 15px;
 `;
 
 export const FriendInfos = styled.View`

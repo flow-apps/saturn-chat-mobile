@@ -31,6 +31,9 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
 }) => {
   const { colors } = useTheme();
 
+  if (!invite)
+    return <></>
+
   return (
     <GroupInviteContainer onPress={() => OpenGroupProfile(invite.group_id)}>
       <GroupInviteLeftContainer>
@@ -46,14 +49,14 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
       </GroupInviteLeftContainer>
       <GroupInviteRightContainer>
         <GroupInviteActionButton
-          onPress={() => handleAcceptOrRejectInvite(invite.id, "ACCEPT")}
+          onPress={() => handleAcceptOrRejectInvite(invite?.id, "ACCEPT")}
         >
           <GroupInviteActionButtonText color={colors.primary}>
             Entrar
           </GroupInviteActionButtonText>
         </GroupInviteActionButton>
         <GroupInviteActionButton
-          onPress={() => handleAcceptOrRejectInvite(invite.id, "REJECT")}
+          onPress={() => handleAcceptOrRejectInvite(invite?.id, "REJECT")}
         >
           <GroupInviteActionButtonText color={colors.red}>
             <Feather name="x" size={20} />

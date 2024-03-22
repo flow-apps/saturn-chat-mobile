@@ -28,6 +28,9 @@ const FriendRequest: React.FC<FriendRequestProps> = ({
 }) => {
   const { colors } = useTheme();
 
+  if (!friend)
+    return
+
   return (
     <FriendRequestContainer
       onPress={() => OpenUserProfile(friend.requested_by.id)}

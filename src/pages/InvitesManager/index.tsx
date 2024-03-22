@@ -91,9 +91,9 @@ const InvitesManager: React.FC = () => {
       }
     }
 
-    const filteredRequests = requests.filter(
-      (request) => request && request?.id !== inviteID
-    );
+    const filteredRequests = requests
+      .filter(Boolean)
+      .filter((request) => request.id !== inviteID);
     setRequests(filteredRequests);
   };
 
@@ -118,11 +118,14 @@ const InvitesManager: React.FC = () => {
           ListEmptyComponent={() => (
             <EmptyListContainer>
               <EmptyListTitle>
-                Não há convites para grupos nem solicitações de amizade. Volte mais tarde.
+                Não há convites para grupos nem solicitações de amizade. Volte
+                mais tarde.
               </EmptyListTitle>
             </EmptyListContainer>
           )}
           renderItem={({ item }) => {
+            if (!item) return <></>;
+
             return item.type === "FRIEND_REQUEST" ? (
               <FriendRequest
                 friend={item}
