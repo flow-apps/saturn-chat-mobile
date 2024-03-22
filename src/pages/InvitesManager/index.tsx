@@ -36,11 +36,11 @@ const InvitesManager: React.FC = () => {
       (async () => {
         setLoading(true);
         const res = await api.get("/invites/requests");
-        const data = res.data;
+        const data = res.data;        
 
         if (res.status === 200) {
-          const sorted = orderBy(data, ["created_at"], "desc");
-          setRequests(sorted);
+          const sorted = orderBy(data, ["created_at"], "desc");          
+          setRequests(sorted.filter(Boolean));
         }
 
         setLoading(false);
