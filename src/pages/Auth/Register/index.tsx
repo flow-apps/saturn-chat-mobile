@@ -32,6 +32,7 @@ import {
 } from "./styles";
 import analytics from "@react-native-firebase/analytics";
 import config from "../../../config";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImagePicker.ImagePickerAsset>();
@@ -46,12 +47,13 @@ const Register: React.FC = () => {
 
   const { colors } = useTheme();
   const { signUp, loading, registerError } = useAuth();
+  const { t } = useTranslate("Auth.CreateAccount");
 
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
   const emailValidation = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  function handleSetEmail(value: string) {
+  const handleSetEmail = (value: string) => {
     setEmail(value);
 
     if (!emailValidation.test(value)) {
@@ -59,9 +61,9 @@ const Register: React.FC = () => {
     } else {
       setEmailError(false);
     }
-  }
+  };
 
-  function handleSetPassword(value: string) {
+  const handleSetPassword = (value: string) => {
     setPassword(value);
 
     if (passwordConfirm !== value) {
@@ -75,9 +77,9 @@ const Register: React.FC = () => {
     } else {
       setPassError(false);
     }
-  }
+  };
 
-  function handleSetPassConfirm(value: string) {
+  const handleSetPassConfirm = (value: string) => {
     setPasswordConfirm(value);
 
     if (password !== value) {
@@ -85,9 +87,9 @@ const Register: React.FC = () => {
     } else {
       setPassConfirmError(false);
     }
-  }
+  };
 
-  async function handleSelectAvatar() {
+  const handleSelectAvatar = async () => {
     const { granted } = await ImagePicker.getCameraPermissionsAsync();
 
     if (!granted) {
@@ -111,9 +113,9 @@ const Register: React.FC = () => {
     if (!photo.canceled) {
       return setAvatar(photo.assets[0]);
     }
-  }
+  };
 
-  async function handleSubmit() {
+  const handleSubmit = async () => {
     const data = new formData();
 
     data.append("name", name);
@@ -135,7 +137,7 @@ const Register: React.FC = () => {
     await analytics().logEvent("sign_up", {
       method: "email/password",
     });
-  }
+  };
 
   const handleGoPrivacyPolicie = async () => {
     await Linking.openURL(`${config.WEBSITE_URL}/privacy`);
@@ -151,7 +153,7 @@ const Register: React.FC = () => {
 
   return (
     <>
-      <Header title="Criar conta" />
+      <Header title={t("header_title")} />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView>
@@ -165,25 +167,20 @@ const Register: React.FC = () => {
                   )}
                 </SelectAvatarButton>
                 <SelectAvatarTitle>
-                  Escolha uma foto de perfil
+                  {t("avatar_select_label")}
                 </SelectAvatarTitle>
                 <SelectAvatarSubtitle>
-                  {!avatar
-                    ? "💡 Lembrando: Você deve selecionar uma imagem com no máximo 5MB."
-                    : "🖼 Esta foto está perfeita!"}
+                  {!avatar ? t("avatar_select_tip") : t("avatar_selected")}
                 </SelectAvatarSubtitle>
               </SelectAvatarContainer>
               {registerError && (
                 <ErrorContainer>
-                  <ErrorText>
-                    Erro ao se registrar, provavelmente o email já está em uso,
-                    tente fazer login
-                  </ErrorText>
+                  <ErrorText>{t("register_error")}</ErrorText>
                 </ErrorContainer>
               )}
               <InputsContainer>
                 <FormField>
-                  <Label>Nome</Label>
+                  <Label>{t("labels.name")}</Label>
                   <Input
                     autoCapitalize="words"
                     placeholder="Ex.: Pedro Henrique"
@@ -192,7 +189,7 @@ const Register: React.FC = () => {
                   />
                 </FormField>
                 <FormField>
-                  <Label>Email</Label>
+                  <Label>{t("labels.email.label")}</Label>
                   <Input
                     keyboardType="email-address"
                     textContentType="emailAddress"
@@ -202,11 +199,11 @@ const Register: React.FC = () => {
                     value={email}
                   />
                   {emailError && (
-                    <FieldError>Esse email não é válido</FieldError>
+                    <FieldError>{t("labels.email.error")}</FieldError>
                   )}
                 </FormField>
                 <FormField>
-                  <Label>Digite uma senha</Label>
+                  <Label>{t("labels.password.label")}</Label>
                   <Input
                     onChangeText={handleSetPassword}
                     value={password}
@@ -215,20 +212,14 @@ const Register: React.FC = () => {
                     secureTextEntry
                   />
                   {passError && (
-                    <FieldError>
-                      A senha não segue os padrões segurança
-                    </FieldError>
+                    <FieldError>{t("labels.password.error")}</FieldError>
                   )}
                   <FieldInfoContainer>
-                    <FieldInfo>
-                      Sua senha deve conter: no mínimo 8 caracteres (sendo ao
-                      menos 1 letra maiúsculo), pelo menos 1 número e pelo menos
-                      1 símbolo
-                    </FieldInfo>
+                    <FieldInfo>{t("labels.password.info")}</FieldInfo>
                   </FieldInfoContainer>
                 </FormField>
                 <FormField>
-                  <Label>Confirme sua senha</Label>
+                  <Label>{t("labels.password_again.label")}</Label>
                   <Input
                     value={passwordConfirm}
                     onChangeText={handleSetPassConfirm}
@@ -237,7 +228,7 @@ const Register: React.FC = () => {
                     secureTextEntry
                   />
                   {passConfirmError && password.length > 0 && (
-                    <FieldError>As senhas não combinam</FieldError>
+                    <FieldError>{t("labels.password_again.error")}</FieldError>
                   )}
                 </FormField>
               </InputsContainer>
@@ -245,17 +236,17 @@ const Register: React.FC = () => {
                 enabled={
                   !emailError && !passError && !passConfirmError && !!name
                 }
-                title="Criar conta"
+                title={t("register_button")}
                 onPress={handleSubmit}
               />
               <ConsentText>
-                Ao clicar em "Criar conta" você aceita a nossa{" "}
+                {t("consent.line_0")}{" "}
                 <Link onPress={handleGoPrivacyPolicie}>
-                  Politica de Privacidade
+                  {t("consent.privacy_policy")}
                 </Link>{" "}
-                e também nossas{" "}
+                {t("consent.line_1")}{" "}
                 <Link onPress={handleGoGuidelines}>
-                  Diretrizes da Comunidade
+                  {t("consent.guidelines")}
                 </Link>
               </ConsentText>
             </FormContainer>

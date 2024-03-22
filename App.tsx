@@ -36,7 +36,6 @@ import {
 } from "expo-updates";
 
 import * as Constants from "expo-constants";
-import { OneSignal } from "./src/configs/notifications";
 import { HomeProvider } from "./src/contexts/home";
 
 preventAutoHideAsync();
