@@ -37,6 +37,7 @@ import {
 import { useRemoteConfigs } from "../../contexts/remoteConfigs";
 import { useHome } from "../../contexts/home";
 import configs from "../../config";
+import { useTranslate } from "../../hooks/useTranslate";
 
 export interface ParticipantData {
   id: string;
@@ -55,6 +56,7 @@ const Home: React.FC = () => {
   const { allConfigs } = useRemoteConfigs();
   const { colors } = useTheme();
   const { hasInvites, handleCheckInvites } = useHome();
+  const { t } = useTranslate("Home");
 
   const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -121,7 +123,7 @@ const Home: React.FC = () => {
   if (loading) return <Loading />;
   return (
     <Container>
-      <Header title="Grupos" backButton={false}>
+      <Header title={t("header_title")} backButton={false}>
         <>
           <HeaderButton onPress={handleGoSearch}>
             <Feather name="search" size={22} color="#fff" />
@@ -149,7 +151,7 @@ const Home: React.FC = () => {
           duration: 800,
         }}
       >
-        <QuickAccessTitle>Acesso rápido</QuickAccessTitle>
+        <QuickAccessTitle>{t("quick_access")}</QuickAccessTitle>
         <QuickAccessGroupsScroll>
           <FlatList
             horizontal
@@ -201,14 +203,14 @@ const Home: React.FC = () => {
                   loop={false}
                 />
                 <GroupsListEmptyTitle>
-                  Que tal começar entrando num grupo?
+                  {t("empty_list.title")}
                 </GroupsListEmptyTitle>
                 <GroupsListEmptySubTitle>
-                  Acesse a aba{" "}
-                  <Feather name="search" size={16} color={colors.secondary} /> e
-                  pesquise algo ou entre no nosso{" "}
+                  {t("empty_list.search_text")}{" "}
+                  <Feather name="search" size={16} color={colors.secondary} />
+                  {t("empty_list.line_0")}{" "}
                   <GroupsListEmptyLink onPress={handleGoOficialGroup}>
-                    Grupo Oficial
+                    {t("empty_list.official_group")}
                   </GroupsListEmptyLink>
                   !
                 </GroupsListEmptySubTitle>
@@ -216,9 +218,9 @@ const Home: React.FC = () => {
             )}
             ListHeaderComponent={() => (
               <TitleWrapper>
-                <GroupsTitle>Acesse os grupos</GroupsTitle>
+                <GroupsTitle>{t("groups_list.title")}</GroupsTitle>
                 <GroupsSubtitle>
-                  Você está em {groupsCount} grupos
+                  {t("groups_list.subtitle", { count: groupsCount })}
                 </GroupsSubtitle>
                 {groups.length > 0 && (
                   <AdContainer>

@@ -1,4 +1,9 @@
 export const pt = {
+  Components: {
+    Ads: {
+      remove_ad: "Remover anúncio"
+    }
+  },
   OnBoarding: {
     done: "Começar",
     skip: "Pular",
@@ -72,5 +77,25 @@ export const pt = {
     forgot_password: "Esqueceu sua senha?",
     login_button: "Entrar",
     register_button: "É novo por aqui? Crie uma conta!"
+  },
+  TabBar: {
+    groups: "Grupos",
+    friends: "Amigos",
+    new_group: "Novo grupo",
+    settings: "Configurações"
+  },
+  Home: {
+    header_title: "Grupos",
+    quick_access: "Acesso rápido",
+    empty_list: {
+      title: "Que tal começar entrando num grupo?",
+      search_text: "Acesse a aba",
+      line_0: "e pesquise algo ou entre no nosso",
+      official_group: "Grupo Oficial"
+    },
+    groups_list: {
+      title: "Acessar os grupos",
+      subtitle: "Você está em {{count}} grupos"
+    }
   }
 };

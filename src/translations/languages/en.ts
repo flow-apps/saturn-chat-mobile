@@ -1,4 +1,9 @@
 export const en = {
+  Components: {
+    Ads: {
+      remove_ad: "Remove ad"
+    }
+  },
   OnBoarding: {
     done: "Done",
     skip: "Skip",
@@ -49,8 +54,7 @@ export const en = {
         password: {
           label: "Enter a password",
           error: "The password does not meet security standards",
-          info:
-            "Your password must contain: at least 8 characters (with least 1 capital letter), at least 1 number and at least 1 symbol",
+          info: "Your password must contain: at least 8 characters (with least 1 capital letter), at least 1 number and at least 1 symbol",
         },
         password_again: {
           label: "Confirm your password",
@@ -69,11 +73,31 @@ export const en = {
   Login: {
     header_title: "Log in",
     title: "Hello,\nWelcome back",
-    login_error: "Unable to log in, verify your details or create an account",
+    login_error: "Unable to log in, check your login or create an account",
     email: "E-mail",
     password: "Password",
     forgot_password: "Forgot your password?",
     login_button: "Login",
-    register_button: "Are you new here? Create an account!"
-  }
+    register_button: "Are you new here? Create an account!",
+  },
+  TabBar: {
+    groups: "Groups",
+    friends: "Friends",
+    new_group: "New Group",
+    settings: "Settings",
+  },
+  Home: {
+    header_title: "Groups",
+    quick_access: "Quick access",
+    empty_list: {
+      title: "How about starting by joining a group?",
+      search_text: "Access the tab",
+      line_0: "and search for something or join our",
+      official_group: "Official Group",
+    },
+    groups_list: {
+      title: "Access groups",
+      subtitle: "You are in {{count}} groups"
+    }
+  },
 };
