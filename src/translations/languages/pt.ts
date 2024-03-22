@@ -20,8 +20,17 @@ export const pt = {
       },
       3: {
         title: "Seja uma Star!",
-        subtitle: "Quando estiver pronto, vá ao menu de configurações e obtenha o plano Star e aproveite ao máximo o Saturn Chat!"
-      }
+        subtitle:
+          "Quando estiver pronto, vá ao menu de configurações e obtenha o plano Star e aproveite ao máximo o Saturn Chat!",
+      },
+    },
+  },
+  Auth: {
+    Home: {
+      title: "Vamos começar?",
+      subtitle: "Acesse ou crie sua conta para começar a usar o app!",
+      login: "Fazer login",
+      new_account: "Criar conta"
     },
   },
 };

@@ -12,9 +12,11 @@ import {
   Title,
   Wrapper,
 } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const Home: React.FC = () => {
   const navigator = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Auth.Home")
 
   async function registerNavigate() {
     navigator.navigate("Register");
@@ -34,15 +36,15 @@ const Home: React.FC = () => {
             autoPlay
           />
         </ImageWrapper>
-        <Title>Vamos começar?</Title>
-        <Subtitle>Acesse ou crie sua conta para começar a usar o app!</Subtitle>
+        <Title>{t("title")}</Title>
+        <Subtitle>{t("subtitle")}</Subtitle>
         <ButtonsContainer>
           <ButtonContainer>
-            <Button title="Criar conta" onPress={registerNavigate} />
+            <Button title={t("new_account")} onPress={registerNavigate} />
           </ButtonContainer>
           <ButtonContainer>
             <Button
-              title="Fazer login"
+              title={t("login")}
               textColor="#0088ff"
               bgColor="transparent"
               onPress={loginNavigate}

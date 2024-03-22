@@ -23,4 +23,12 @@ export const en = {
       }
     },
   },
+  Auth: {
+    Home: {
+      title: "Let's start?",
+      subtitle: "Access or create your account to start using the app!",
+      login: "Login",
+      new_account: "Create account"
+    }
+  }
 };
