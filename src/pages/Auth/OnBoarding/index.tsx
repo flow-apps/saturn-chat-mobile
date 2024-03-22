@@ -13,6 +13,7 @@ import {
 } from "./styles";
 
 import { usePersistedState } from "../../../hooks/usePersistedState";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const OnBoarding: React.FC = () => {
   const [hasBoarded, setHasBoarded] = usePersistedState<boolean>(
@@ -20,6 +21,8 @@ const OnBoarding: React.FC = () => {
     false
   );
   const { colors } = useTheme();
+
+  const { t } = useTranslate("OnBoarding");
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   useEffect(() => {
@@ -36,7 +39,7 @@ const OnBoarding: React.FC = () => {
   const DoneButton = () => {
     return (
       <ActionButton onPress={handleComplete}>
-        <ActionButtonText>Começar</ActionButtonText>
+        <ActionButtonText>{t("done")}</ActionButtonText>
       </ActionButton>
     );
   };
@@ -44,7 +47,7 @@ const OnBoarding: React.FC = () => {
   const SkipButton = () => {
     return (
       <ActionButton onPress={handleComplete}>
-        <ActionButtonText>Pular</ActionButtonText>
+        <ActionButtonText>{t("skip")}</ActionButtonText>
       </ActionButton>
     );
   };
@@ -74,13 +77,8 @@ const OnBoarding: React.FC = () => {
               autoPlay
             />
           ),
-          title: <BoardTitle>Bem-vindo ao Saturn Chat!</BoardTitle>,
-          subtitle: (
-            <BoardSubTitle>
-              Aqui você encontrará uma enorme variedade de grupos (ou criar um
-              do seu próprio jeito que quiser).
-            </BoardSubTitle>
-          ),
+          title: <BoardTitle>{t("pages.0.title")}</BoardTitle>,
+          subtitle: <BoardSubTitle>{t("pages.0.subtitle")}</BoardSubTitle>,
         },
         {
           backgroundColor: colors.background,
@@ -90,13 +88,8 @@ const OnBoarding: React.FC = () => {
               autoPlay
             />
           ),
-          title: <BoardTitle>Envie mensagens com facilidade!</BoardTitle>,
-          subtitle: (
-            <BoardSubTitle>
-              Com poucos cliques você já consegue enviar e receber mensagens com
-              fotos, vídeos e até mensagens de voz.
-            </BoardSubTitle>
-          ),
+          title: <BoardTitle>{t("pages.1.title")}</BoardTitle>,
+          subtitle: <BoardSubTitle>{t("pages.1.subtitle")}</BoardSubTitle>,
         },
         {
           backgroundColor: colors.background,
@@ -106,13 +99,8 @@ const OnBoarding: React.FC = () => {
               autoPlay
             />
           ),
-          title: <BoardTitle>Você está seguro!</BoardTitle>,
-          subtitle: (
-            <BoardSubTitle>
-              Aqui sua privacidade está preservada, seus dados não serão
-              vendidos a ninguém!
-            </BoardSubTitle>
-          ),
+          title: <BoardTitle>{t("pages.2.title")}</BoardTitle>,
+          subtitle: <BoardSubTitle>{t("pages.2.subtitle")}</BoardSubTitle>,
         },
         {
           backgroundColor: colors.background,
@@ -123,13 +111,8 @@ const OnBoarding: React.FC = () => {
               autoPlay
             />
           ),
-          title: <BoardTitle>Seja uma Star!</BoardTitle>,
-          subtitle: (
-            <BoardSubTitle>
-              Quando estiver pronto, vá ao menu de configurações e obtenha o
-              plano Star e aproveite ao máximo o Saturn Chat!
-            </BoardSubTitle>
-          ),
+          title: <BoardTitle>{t("pages.3.title")}</BoardTitle>,
+          subtitle: <BoardSubTitle>{t("pages.3.subtitle")}</BoardSubTitle>,
         },
       ]}
     />

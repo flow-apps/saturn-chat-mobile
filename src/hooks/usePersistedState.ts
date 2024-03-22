@@ -1,12 +1,13 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { StorageService } from "../services/storage";
 
-type Response<T> = [T, Dispatch<SetStateAction<T>>];
+type Response<T> = [T, Dispatch<SetStateAction<T>>, boolean];
 
 const storage = new StorageService();
 
 function usePersistedState<T>(key: string, initialState: any): Response<T> {
   const [state, setState] = useState<T>(initialState);
+  const [fetched, setFetched] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -14,6 +15,7 @@ function usePersistedState<T>(key: string, initialState: any): Response<T> {
 
       if (storagedValue) {
         setState(JSON.parse(storagedValue));
+        setFetched(true);
       }
     })();
   }, []);
@@ -24,7 +26,7 @@ function usePersistedState<T>(key: string, initialState: any): Response<T> {
     })();
   }, [key, state]);
 
-  return [state, setState];
+  return [state, setState, fetched];
 }
 
 export { usePersistedState };
