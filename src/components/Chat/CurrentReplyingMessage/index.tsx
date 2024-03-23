@@ -17,6 +17,7 @@ import { useTheme } from "styled-components";
 import { MessageData } from "../../../../@types/interfaces";
 import { millisToTime } from "../../../utils/format";
 import { MotiView } from "moti";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 interface CurrentReplyingMessageProps {
   message: MessageData;
@@ -28,6 +29,7 @@ const CurrentReplyingMessage = ({
   onRemoveReplying,
 }: CurrentReplyingMessageProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate("Components.Chat.ReplyingMessage");
 
   const renderMessageContent = () => {
     if (message.voice_message) {
@@ -43,7 +45,7 @@ const CurrentReplyingMessage = ({
       return (
         <ReplyingMessage textBreakStrategy="balanced" numberOfLines={2}>
           (<Feather name="file-minus" size={13} /> {message.files.length}{" "}
-          {message.files.length === 1 ? "arquivo" : "arquivos"}){" "}
+          {t("file_amount", { count: message.files.length })}){" "}
           {message.message ? message.message : ""}
         </ReplyingMessage>
       );
@@ -66,14 +68,14 @@ const CurrentReplyingMessage = ({
         exit={{ opacity: 0, height: 0 }}
         transition={{
           type: "timing",
-          duration: 350
+          duration: 350,
         }}
       >
         <ReplyingMessageContainer>
           <ReplyingMessageContentContainer>
             <ReplyingMessageTitleWrapper>
               <ReplyingMessageTitle>
-                <Feather name="corner-up-right" /> Você está respondendo:
+                <Feather name="corner-up-right" /> {t("replying_text")}
               </ReplyingMessageTitle>
             </ReplyingMessageTitleWrapper>
             <ReplyingMessageAuthorNameWrapper>

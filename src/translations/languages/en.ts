@@ -17,6 +17,37 @@ export const en = {
       requested: "Request sent",
       request: "Add to friends",
     },
+    Chat: {
+      AudioPlayer: {},
+      ReplyingMessage: {
+        file_amount_one: "file",
+        file_amount_other: "files",
+        replying_text: "You are replying:"
+      },
+      FilePreview: {},
+      Message: {
+        toasts: {
+          copied_message: "Copied message"
+        },
+        alerts: {
+          open_link: {
+            title: "⚠ Be careful, it can be dangerous",
+            content: "Are you sure you want to access this link? We cannot guarantee your security when accessing it.\n\n{{url}}",
+            ok_text: "Access",
+            cancel_text: "No"
+          }
+        },
+        options: {
+          reply: "Reply",
+          copy: "Copy",
+          part_opt: "Participant Options",
+          delete: "Delete"
+        }
+      },
+      RecordingAudio: {
+        recording: "Recording"
+      }
+    },
   },
   OnBoarding: {
     done: "Done",
@@ -284,10 +315,36 @@ export const en = {
   ChoosePlan: {
     header_title: "Choose your plan",
     title: "We are almost there!",
-    subtitle: "Now you must choose which plan you want, being able to choose between monthly, quarterly or annual plans.\n\nRemember, if it's your first subscription you get 1 month free!",
+    subtitle:
+      "Now you must choose which plan you want, being able to choose between monthly, quarterly or annual plans.\n\nRemember, if it's your first subscription you get 1 month free!",
     monthly: "Monthly",
     quarterly: "Quarterly",
     yearly: "Yearly",
-    button_text: "I want this!"
-  }
+    button_text: "I want this!",
+  },
+  Chat: {
+    alerts: {
+      file_size: {
+        title: "😱 So heavy!",
+        content:
+          "I can't carry something that heavy, try something up to {{amount}}MB!",
+        extra_button_text: "Get Star plan",
+      },
+      same_file: {
+        title: "🤔 I've seen this before",
+        content: "You have already chosen this file to be sent!",
+      },
+      mic_perm: {
+        title: "🙂 Please",
+        content:
+          "I need permission to use your microphone so i can record audio",
+      },
+    },
+    toasts: {
+      sending_voice: "Sending voice message...",
+    },
+    type_message: "Type your message...",
+    drop_send: "Drop to send",
+    sent: "sent",
+  },
 };

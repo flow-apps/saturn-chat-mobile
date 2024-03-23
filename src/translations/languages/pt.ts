@@ -17,6 +17,46 @@ export const pt = {
       requested: "Solicitação enviada",
       request: "Adicionar aos amigos",
     },
+    Chat: {
+      AudioPlayer: {},
+      ReplyingMessage: {
+        file_amount_one: "arquivo",
+        file_amount_other: "arquivos",
+        replying_text: "Você está respondendo:"
+      },
+      FilePreview: {
+        alerts: {
+          download: {
+            title: "❗ Muito cuidado",
+            content: "Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Nome do arquivo: {{name}}",
+            ok_text: "Baixar",
+            cancel_text: "Não baixar" 
+          }
+        }
+      },
+      Message: {
+        toasts: {
+          copied_message: "Mensagem copiada"
+        },
+        alerts: {
+          open_link: {
+            title: "⚠ Cuidado, pode ser perigoso",
+            content: "Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo.\n\n{{url}}",
+            ok_text: "Acessar",
+            cancel_text: "Não"
+          }
+        },
+        options: {
+          reply: "Responder",
+          copy: "Copiar",
+          part_opt: "Opções do participante",
+          delete: "Excluir"
+        }
+      },
+      RecordingAudio: {
+        recording: "Gravando"
+      }
+    },
   },
   OnBoarding: {
     done: "Começar",
@@ -287,10 +327,36 @@ export const pt = {
   ChoosePlan: {
     header_title: "Escolha seu plano",
     title: "Estamos quase lá!",
-    subtitle: "Agora você deve escolher qual plano você quer, podendo escolher entre os planos mensais, trimestrais ou anuais.\n\nLembre-se, se for sua primeira assinatura você ganha 1 mês grátis!",
+    subtitle:
+      "Agora você deve escolher qual plano você quer, podendo escolher entre os planos mensais, trimestrais ou anuais.\n\nLembre-se, se for sua primeira assinatura você ganha 1 mês grátis!",
     monthly: "Mensal",
     quarterly: "Trimestral",
     yearly: "Anual",
-    button_text: "Eu quero esse!"
-  }
+    button_text: "Eu quero esse!",
+  },
+  Chat: {
+    alerts: {
+      file_size: {
+        title: "😱 Que coisa pesada!",
+        content:
+          "Eu não consigo carregar algo tão pesado, tente algo de até {{amount}}MB!",
+        extra_button_text: "Obter plano Star",
+      },
+      same_file: {
+        title: "🤔 Já vi isso antes",
+        content: "Você já escolheu este arquivo para ser enviado!",
+      },
+      mic_perm: {
+        title: "🙂 Por favor",
+        content:
+          "Eu preciso de permissão para usar seu microfone, assim eu poderei gravar áudios",
+      },
+    },
+    toasts: {
+      sending_voice: "Enviando mensagem de voz...",
+    },
+    type_message: "Digite sua mensagem...",
+    drop_send: "Solte para enviar",
+    sent: "enviado",
+  },
 };

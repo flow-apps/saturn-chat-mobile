@@ -15,6 +15,7 @@ import { millisToTime } from "../../../utils/format";
 import { AudioData } from "../../../../@types/interfaces";
 import { useAudioPlayer } from "../../../contexts/audioPlayer";
 import { SoundObject } from "expo-av/build/Audio";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 interface IAudioPlayer {
   audio: AudioData;

@@ -29,7 +29,6 @@ import { HeaderButton } from "../../components/Header/styles";
 import { useAuth } from "../../contexts/auth";
 import uuid from "react-native-uuid";
 
-import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
 
 import FormData from "form-data";
@@ -71,15 +70,8 @@ import { useChat } from "../../contexts/chat";
 import FlashList from "@shopify/flash-list/dist/FlashList";
 import { useAds } from "../../contexts/ads";
 import { OneSignal } from "react-native-onesignal";
-
-interface File {
-  file: DocumentPicker.DocumentResult;
-  type: string;
-}
-
-interface TextInputRef extends TextInput {
-  value: string;
-}
+import { TextInputRef, File } from "./types";
+import { useTranslate } from "../../hooks/useTranslate";
 
 const recordService = new RecordService();
 
@@ -144,6 +136,7 @@ const Chat: React.FC = () => {
   } = useChat();
 
   const appState = useAppState();
+  const { t } = useTranslate("Chat");
 
   const configureSocketListeners = useCallback(() => {
     onSendedUserMessage(({ msg, localReference }) => {
@@ -240,7 +233,7 @@ const Chat: React.FC = () => {
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          SimpleToast.show("Enviando mensagem de voz...");
+          SimpleToast.show(t("toasts.sending_voice"));
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
@@ -616,23 +609,25 @@ const Chat: React.FC = () => {
   return (
     <>
       <Alert
-        title="😱 Que coisa pesada!"
-        content={`Eu não consigo carregar algo tão pesado, tente algo de até ${userConfigs.fileUpload}MB!`}
+        title={t("alerts.file_size.title")}
+        content={t("alerts.file_size.content", {
+          amount: userConfigs.fileUpload,
+        })}
         okButtonAction={disableLargeFile}
         extraButtonAction={handleGoStar}
-        extraButtonText="Obter plano Star"
+        extraButtonText={t("alerts.file_size.extra_button_text")}
         extraButton
         visible={largeFile}
       />
       <Alert
-        title="🤔 Já vi isso antes"
-        content="Você já escolheu este arquivo para ser enviado!"
+        title={t("alerts.same_file.title")}
+        content={t("alerts.same_file.subtitle")}
         okButtonAction={disableIsSelectedFile}
         visible={isSelectedFile}
       />
       <Alert
-        title="🙂 Por favor"
-        content="Eu preciso de permissão para usar seu microfone, assim eu poderei gravar áudios"
+        title={t("alerts.mic_perm.title")}
+        content={t("alerts.mic_perm.subtitle")}
         okButtonAction={disableAudioPermission}
         visible={audioPermission}
       />
@@ -698,7 +693,7 @@ const Chat: React.FC = () => {
             <FileSendedProgressContainer>
               <FileSendedText>
                 <Feather name="upload" size={16} /> {sendedFileProgress}%
-                enviado
+                {t("sent")}
               </FileSendedText>
               <ProgressBar
                 progress={sendedFileProgress / 100}
@@ -725,9 +720,7 @@ const Chat: React.FC = () => {
               placeholderTextColor={colors.dark_heading}
               onChangeText={handleSetMessage}
               maxLength={userConfigs?.messageLength || 500}
-              placeholder={
-                recordingAudio ? "Solte para enviar" : "Digite sua mensagem..."
-              }
+              placeholder={recordingAudio ? t("drop_send") : t("type_message")}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>
