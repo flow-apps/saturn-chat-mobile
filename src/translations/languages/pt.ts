@@ -172,4 +172,15 @@ export const pt = {
     },
     sign_out: "Sair da conta"
   },
+  Search: {
+    header_title: "Explorar",
+    input_placeholder: "O que procura hoje?",
+    title: "Sem resultados no momento",
+    subtitle: "Tente buscar o nome de algum grupo ou tag relacionado a ele",
+    loading: {
+      title: "Buscando grupos...",
+      subtitle: "Isso pode demorar um pouco"
+    },
+    participants: "participantes"
+  }
 };

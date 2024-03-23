@@ -29,6 +29,7 @@ import { useNavigation } from "@react-navigation/core";
 import analytics from "@react-native-firebase/analytics";
 import { MotiView } from "@motify/components";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "../../hooks/useTranslate";
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,7 @@ const Search: React.FC = () => {
 
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Search");
 
   const setQuerySearch = useCallback((text) => {
     setQuery(text);
@@ -83,24 +85,24 @@ const Search: React.FC = () => {
     setLoading(false);
   }, [page]);
 
-  async function reachEnd(distance: number) {
+  const reachEnd = async (distance: number) => {
     if (distance < 1 || loadedAll) return;
 
     if (!loading) {
       setPage((old) => old + 1);
       await fetchMoreGroups();
     }
-  }
+  };
 
-  async function handleGoGroupInfos(id: string) {
+  const handleGoGroupInfos = async (id: string) => {
     navigation.navigate("GroupInfos", {
       id,
     });
-  }
+  };
 
   return (
     <>
-      <Header title="Explorar" />
+      <Header title={t("header_title")} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
           <SearchContainer>
@@ -108,7 +110,8 @@ const Search: React.FC = () => {
               <Input
                 value={query}
                 onChangeText={setQuerySearch}
-                placeholder="O que procura hoje?"
+                placeholder={t("input_placeholder")}
+                textContentType="name"
                 returnKeyType="search"
                 onEndEditing={handleSearch}
                 selectionColor={colors.secondary}
@@ -133,14 +136,10 @@ const Search: React.FC = () => {
                     source={require("../../assets/search.json")}
                   />
                   <NoResultText>
-                    {loading
-                      ? "Buscando grupos..."
-                      : "Sem resultados no momento"}
+                    {loading ? t("loading.title") : t("title")}
                   </NoResultText>
                   <NoResultSubText>
-                    {loading
-                      ? "Isso pode demorar um pouco"
-                      : "Tente buscar o nome de algum grupo"}
+                    {loading ? t("loading.subtitle") : t("subtitle")}
                   </NoResultSubText>
                 </NoResultsContainer>
               }
@@ -181,7 +180,7 @@ const Search: React.FC = () => {
                         {item.description}
                       </GroupDesc>
                       <GroupParticipantsText>
-                        {item?.participantsAmount} participantes
+                        {item?.participantsAmount} {t("participants")}
                       </GroupParticipantsText>
                     </GroupInfosContainer>
                   </GroupCard>

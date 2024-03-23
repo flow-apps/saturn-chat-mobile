@@ -170,4 +170,15 @@ export const en = {
     },
     sign_out: "Sign out"
   },
+  Search: {
+    header_title: "Explorer",
+    input_placeholder: "What are you looking for today?",
+    title: "No results at the moment",
+    subtitle: "Try searching for the name of a group or tag related to it",
+    loading: {
+      title: "Searching for groups...",
+      subtitle: "This may take a while"
+    },
+    participants: "participants"
+  }
 };
