@@ -3,6 +3,10 @@ export const en = {
     Ads: {
       remove_ad: "Remove ad",
     },
+    GroupInvite: {
+      participants: "participants",
+      join: "Join"
+    }
   },
   OnBoarding: {
     done: "Done",
@@ -180,5 +184,16 @@ export const en = {
       subtitle: "This may take a while"
     },
     participants: "participants"
+  },
+  InviteManager: {
+    header_title: "Invitations and requests",
+    subtitle: "Manage your invitations and friend requests that you have received.",
+    empty_text: "There are no group invites or friend requests. Come back later.",
+    toasts: {
+      invite_accept: "Invitation accepted!",
+      invite_reject: "Invitation rejected :(",
+      request_accept: "Request accepted successfully!",
+      request_reject: "Request successfully rejected"
+    }
   }
 };

@@ -20,6 +20,7 @@ import {
   FriendRequestRightContainer,
   FriendRequestActionButton,
 } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const FriendRequest: React.FC<FriendRequestProps> = ({
   friend,
@@ -27,7 +28,7 @@ const FriendRequest: React.FC<FriendRequestProps> = ({
   handleAcceptOrRejectFriend,
 }) => {
   const { colors } = useTheme();
-
+  
   if (!friend)
     return
 

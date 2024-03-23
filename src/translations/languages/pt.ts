@@ -3,6 +3,10 @@ export const pt = {
     Ads: {
       remove_ad: "Remover anúncio",
     },
+    GroupInvite: {
+      participants: "participantes",
+      join: "Entrar"
+    }
   },
   OnBoarding: {
     done: "Começar",
@@ -182,5 +186,16 @@ export const pt = {
       subtitle: "Isso pode demorar um pouco"
     },
     participants: "participantes"
+  },
+  InviteManager: {
+    header_title: "Convites e soliticitações",
+    subtitle: "Gerencie seus convites e solicitações de amizade que você recebeu.",
+    empty_text: "Não há convites para grupos nem solicitações de amizade. Volte mais tarde.",
+    toasts: {
+      invite_accept: "Convite aceito!",
+      invite_reject: "Convite recusado :(",
+      request_accept: "Solicitação aceita com sucesso!",
+      request_reject: "Solicitação rejeitada com sucesso"
+    }
   }
 };

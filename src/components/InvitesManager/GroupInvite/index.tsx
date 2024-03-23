@@ -23,6 +23,7 @@ import {
   GroupInviteInfosWrapper,
   GroupInviteParticipantsAmount,
 } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const GroupInvite: React.FC<GroupInviteProps> = ({
   invite,
@@ -30,6 +31,7 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
   handleAcceptOrRejectInvite,
 }) => {
   const { colors } = useTheme();
+  const { t } = useTranslate("Components.GroupInvite")
 
   if (!invite)
     return <></>
@@ -43,7 +45,7 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
             {invite.group.name}
           </GroupInviteName>
           <GroupInviteParticipantsAmount>
-            {invite?.participants_amount} participantes
+            {invite?.participants_amount} {t("participants")}
           </GroupInviteParticipantsAmount>
         </GroupInviteInfosWrapper>
       </GroupInviteLeftContainer>
@@ -52,7 +54,7 @@ const GroupInvite: React.FC<GroupInviteProps> = ({
           onPress={() => handleAcceptOrRejectInvite(invite?.id, "ACCEPT")}
         >
           <GroupInviteActionButtonText color={colors.primary}>
-            Entrar
+            {t("join")}
           </GroupInviteActionButtonText>
         </GroupInviteActionButton>
         <GroupInviteActionButton

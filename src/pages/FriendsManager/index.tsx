@@ -21,6 +21,7 @@ import Loading from "../../components/Loading";
 import { useTheme } from "styled-components";
 import Alert from "../../components/Alert";
 import { getFriendAvatar, getFriendName } from "../../utils/friends";
+import { useTranslate } from "../../hooks/useTranslate";
 
 const FriendsManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,7 @@ const FriendsManager: React.FC = () => {
 
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslate("")
 
   useFocusEffect(
     useCallback(() => {
