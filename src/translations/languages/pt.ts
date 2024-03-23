@@ -247,20 +247,50 @@ export const pt = {
     toasts: {
       updated_pass: "Senha alterada com sucesso!",
       incorrect_pass: "Senha atual incorreta!",
-      error_pass: "Erro ao alterar senha!"
+      error_pass: "Erro ao alterar senha!",
     },
     labels: {
       current_password: "Senha atual",
       new_password: {
         label: "Nova senha",
         error: "A senha não segue os padrões segurança",
-        info: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo"
+        info: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
       },
       confirm_pass: {
         label: "Confirme a nova senha",
-        error: "As senhas não combinam"
-      }
+        error: "As senhas não combinam",
+      },
     },
-    done: "Alterar senha"
+    done: "Alterar senha",
+  },
+  Premium: {
+    header_title: "Faça parte da constelação!",
+    be_star: "Seja uma Star!",
+    title:
+      "Ganhe vantagens e recursos incríveis do Saturn Chat por um custo que cabe no seu bolso!",
+    subtitle:
+      "Aproveite ao máximo todos os recursos disponíveis como envio de arquivos maiores, criar mais grupos, remover todos os anúncios chatos, e mais!",
+    free_month: "Assine agora e ganhe 1 mês grátis!",
+    buy_button: "Obter a partir de {{price}}",
+    vantages_title: "Vantagens do plano Star:",
+    advantages: {
+      0: "Totalmente livre de anúncios chatos!",
+      1: "Aumente em {{multiple}}x o espaço para envio de arquivos, de {{default}}MB para incríveis {{premium}}MB de envio.",
+      2: "Aumente a quantidade de grupos que você pode criar de {{default}} para {{premium}} grupos.",
+      3: "Aumente a quantidade de participantes que você pode ter em seus grupos de {{default}} para {{premium}} participantes.",
+      4: "Ganhe um selo exclusivo ao lado do seu nome para sair ostentando!",
+      5: "Gosta de mandar textões? Então aumente suas mensagens de {{default}} caracteres para maravilhosos {{premium}} caracteres!",
+      6: "Apoia o desenvolvimento do aplicativo e a trazer muitas novidades de maneira rápida ❤",
+      7: "Exporte as mensagens de seus grupos em formato CSV.",
+    },
+  },
+  ChoosePlan: {
+    header_title: "Escolha seu plano",
+    title: "Estamos quase lá!",
+    subtitle: "Agora você deve escolher qual plano você quer, podendo escolher entre os planos mensais, trimestrais ou anuais.\n\nLembre-se, se for sua primeira assinatura você ganha 1 mês grátis!",
+    monthly: "Mensal",
+    quarterly: "Trimestral",
+    yearly: "Anual",
+    button_text: "Eu quero esse!"
   }
 };

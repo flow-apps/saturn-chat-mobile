@@ -245,20 +245,49 @@ export const en = {
     toasts: {
       updated_pass: "Password changed successfully!",
       incorrect_pass: "Incorrect old password!",
-      error_pass: "Error changing password!"
+      error_pass: "Error changing password!",
     },
     labels: {
       current_password: "Old password",
       new_password: {
         label: "New password",
         error: "The password does not meet security standards",
-        info: "Your password must contain: at least 8 characters (at least 1 capital letter), at least 1 number and at least 1 symbol"
+        info: "Your password must contain: at least 8 characters (at least 1 capital letter), at least 1 number and at least 1 symbol",
       },
       confirm_pass: {
         label: "Confirm new password",
-        error: "The passwords do not match"
-      }
+        error: "The passwords do not match",
+      },
     },
-    done: "Change Password"
+    done: "Change Password",
+  },
+  Premium: {
+    header_title: "Be part of the Constellation!",
+    be_star: "Be a Star!",
+    title: "Get amazing Saturn Chat features for a low cost!",
+    subtitle:
+      "Make the most of all available resources such as sending bigger files, create more groups, remove all annoying ads, and more!",
+    free_month: "Subscribe now and get 1 month free!",
+    buy_button: "Get from {{price}}",
+    vantages_title: "Advantages of the Star plan:",
+    advantages: {
+      0: "Totally boring ads free!",
+      1: "Increase the space for uploading files by {{multiple}}x, from {{default}}MB to an incredible {{premium}}MB.",
+      2: "Increase the number of groups you can create from {{default}} to {{premium}} groups.",
+      3: "Increase the amount of participants you can have in your groups from {{default}} to {{premium}} participants.",
+      4: "Get an exclusive badge next to your name!",
+      5: "Do you like sending big texts? So increase your messages from {{default}} characters to wonderful {{premium}} characters!",
+      6: "Supports app development and brings many features quickly ❤",
+      7: "Export your group messages in CSV format.",
+    },
+  },
+  ChoosePlan: {
+    header_title: "Choose your plan",
+    title: "We are almost there!",
+    subtitle: "Now you must choose which plan you want, being able to choose between monthly, quarterly or annual plans.\n\nRemember, if it's your first subscription you get 1 month free!",
+    monthly: "Monthly",
+    quarterly: "Quarterly",
+    yearly: "Yearly",
+    button_text: "I want this!"
   }
 };

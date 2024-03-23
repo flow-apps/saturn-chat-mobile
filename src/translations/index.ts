@@ -17,7 +17,7 @@ i18n.use(initReactI18next).init({
     ),
   },
   fallbackLng: "en",
-  lng: ExpoLocalization.locale.split("-")[0],
+  lng: __DEV__ ? "en" : ExpoLocalization.locale.split("-")[0],
 });
 
 export default i18n;

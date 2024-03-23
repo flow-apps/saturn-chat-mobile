@@ -33,17 +33,19 @@ import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useRemoteConfigs } from "../../../contexts/remoteConfigs";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const Premium: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { colors } = useTheme();
   const { allConfigs } = useRemoteConfigs();
+  const { t } = useTranslate("Premium");
 
   const handleGoChoosePlan = () => navigation.navigate("ChoosePlan");
 
   return (
     <>
-      <Header title="Faça parte da constelação!" />
+      <Header title={t("header_title")} />
       <Container>
         <ContentWrapper>
           <StarContainer>
@@ -53,33 +55,28 @@ const Premium: React.FC = () => {
               autoPlay
             />
             <StarTitle>
-              <Feather name="star" size={22} /> Seja uma Star!
+              <Feather name="star" size={22} /> {t("be_star")}
             </StarTitle>
           </StarContainer>
           <TitleWrapper>
-            <Title>
-              Ganhe vantagens e recursos incríveis do Saturn Chat por um custo
-              que cabe no seu bolso!
-            </Title>
+            <Title>{t("title")}</Title>
           </TitleWrapper>
           <SubtitleWrapper>
-            <Subtitle>
-              Aproveite ao máximo todos os recursos disponíveis como envio de
-              arquivos maiores, criar mais grupos, remover todos os anúncios chatos, e
-              mais!
-            </Subtitle>
+            <Subtitle>{t("subtitle")}</Subtitle>
           </SubtitleWrapper>
           <BuyWrapper>
-            <BuyBonusText>Assine agora e ganhe 1 mês grátis!</BuyBonusText>
+            <BuyBonusText>{t("free_month")}</BuyBonusText>
             <BuyButton onPress={handleGoChoosePlan}>
               <BuyButtonText>
-                <Feather name="star" size={18} /> Obter a partir de R$ 29
-                {Localize.getLocales()[0].decimalSeparator}99
+                <Feather name="star" size={18} />{" "}
+                {t("buy_button", {
+                  price: `R$ 19${Localize.getLocales()[0].decimalSeparator}99`,
+                })}
               </BuyButtonText>
             </BuyButton>
           </BuyWrapper>
           <VantagesWrapper>
-            <VantagesTitle>Vantagens do plano Star:</VantagesTitle>
+            <VantagesTitle>{t("vantages_title")}</VantagesTitle>
             <VantagesContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -88,9 +85,7 @@ const Premium: React.FC = () => {
                     <FontAwesome name="ban" size={26} color={colors.red} />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>
-                  Totalmente livre de anúncios chatos!
-                </VantageContent>
+                <VantageContent>{t("advantages.0")}</VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -99,14 +94,14 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Aumente em{" "}
-                  {Math.round(
-                    Number(allConfigs.premium_file_upload) /
-                      Number(allConfigs.default_file_upload)
-                  )}
-                  x o espaço para envio de arquivos, de{" "}
-                  {allConfigs.default_file_upload}MB para incríveis{" "}
-                  {allConfigs.premium_file_upload}MB de envio.
+                  {t("advantages.1", {
+                    multiple: Math.round(
+                      Number(allConfigs.premium_file_upload) /
+                        Number(allConfigs.default_file_upload)
+                    ),
+                    default: allConfigs.default_file_upload,
+                    premium: allConfigs.premium_file_upload,
+                  })}
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
@@ -116,9 +111,10 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Aumente a quantidade de grupos que você pode criar de{" "}
-                  {allConfigs.default_max_groups} para{" "}
-                  {allConfigs.premium_max_groups} grupos.
+                  {t("advantages.2", {
+                    default: allConfigs.default_max_groups,
+                    premium: allConfigs.premium_max_groups,
+                  })}
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
@@ -132,9 +128,10 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Aumente a quantidade de participantes que você pode ter em
-                  seus grupos de {allConfigs.default_max_participants} para{" "}
-                  {allConfigs.premium_max_participants} participantes.
+                  {t("advantages.3", {
+                    default: allConfigs.default_max_participants,
+                    premium: allConfigs.premium_max_participants,
+                  })}
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
@@ -143,10 +140,7 @@ const Premium: React.FC = () => {
                     <Feather name="star" size={28} color={colors.secondary} />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>
-                  Ganhe um selo exclusivo ao lado do seu nome para sair
-                  ostentando!
-                </VantageContent>
+                <VantageContent>{t("advantages.4")}</VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -159,10 +153,10 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  Gosta de mandar textões? Então aumente suas mensagens de{" "}
-                  {allConfigs.default_max_message_length} caracteres para
-                  maravilhosos {allConfigs.premium_max_message_length}{" "}
-                  caracteres!
+                  {t("advantages.5", {
+                    default: allConfigs.default_max_message_length,
+                    premium: allConfigs.premium_max_message_length,
+                  })}
                 </VantageContent>
               </VantageContainer>
               <VantageContainer>
@@ -175,10 +169,7 @@ const Premium: React.FC = () => {
                     />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>
-                  Apoia o desenvolvimento do aplicativo e a trazer muitas
-                  novidades de maneira rápida ❤
-                </VantageContent>
+                <VantageContent>{t("advantages.6")}</VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -191,9 +182,7 @@ const Premium: React.FC = () => {
                     />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>
-                  Exporte as mensagens de seus grupos em formato CSV.
-                </VantageContent>
+                <VantageContent>{t("advantages.7")}</VantageContent>
               </VantageContainer>
             </VantagesContainer>
           </VantagesWrapper>

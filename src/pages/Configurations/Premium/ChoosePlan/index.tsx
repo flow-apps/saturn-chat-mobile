@@ -17,13 +17,15 @@ import {
   PlansContainer,
   PlanTitle,
 } from "./styles";
+import { useTranslate } from "../../../../hooks/useTranslate";
 
 const ChoosePlan: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useTranslate("ChoosePlan");
 
   return (
     <>
-      <Header title="Escolha seu plano"  />
+      <Header title={t("header_title")} />
       <Container>
         <AnimationContainer>
           <Animation
@@ -32,23 +34,19 @@ const ChoosePlan: React.FC = () => {
             loop={false}
             autoPlay
           />
-          <AnimationTitle>Estamos quase lá!</AnimationTitle>
+          <AnimationTitle>{t("title")}</AnimationTitle>
         </AnimationContainer>
         <DescriptionWrapper>
-          <Description>
-            Agora você deve escolher qual plano você quer, podendo escolher
-            entre os planos mensais, trimestrais ou anuais.{"\n\n"}Lembre-se, se for sua
-            primeira assinatura você ganha 1 mês grátis!
-          </Description>
+          <Description>{t("subtitle")}</Description>
         </DescriptionWrapper>
         <PlansContainer>
           <PlanContainer>
-            <PlanTitle>Mensal</PlanTitle>
+            <PlanTitle>{t("monthly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice>R$ 29,99</PlanPrice>
+              <PlanPrice>R$ 19,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton>
-              <PlanBuyButtonText>Eu quero esse!</PlanBuyButtonText>
+              <PlanBuyButtonText>{t("button_text")}</PlanBuyButtonText>
             </PlanBuyButton>
           </PlanContainer>
           <PlanContainer
@@ -56,12 +54,12 @@ const ChoosePlan: React.FC = () => {
             colors={[colors.shape, colors.background]}
             planColor={colors.primary}
           >
-            <PlanTitle planColor={colors.primary}>Trimestral</PlanTitle>
+            <PlanTitle planColor={colors.primary}>{t("quarterly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice planColor={colors.primary}>R$ 89,99</PlanPrice>
+              <PlanPrice planColor={colors.primary}>R$ 59,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton>
-              <PlanBuyButtonText>Eu quero esse!</PlanBuyButtonText>
+              <PlanBuyButtonText>{t("button_text")}</PlanBuyButtonText>
             </PlanBuyButton>
           </PlanContainer>
           <PlanContainer
@@ -69,13 +67,13 @@ const ChoosePlan: React.FC = () => {
             colors={[colors.shape, colors.background]}
             planColor="#FF5E0D"
           >
-            <PlanTitle planColor="#FF5E0D">Anual</PlanTitle>
+            <PlanTitle planColor="#FF5E0D">{t("yearly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanDiscountText> R$ 359,99 </PlanDiscountText>
-              <PlanPrice planColor="#FF5E0D">R$ 299,99</PlanPrice>
+              <PlanDiscountText> R$ 239,99 </PlanDiscountText>
+              <PlanPrice planColor="#FF5E0D">R$ 219,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton>
-              <PlanBuyButtonText>Eu quero esse!</PlanBuyButtonText>
+              <PlanBuyButtonText>{t("button_text")}</PlanBuyButtonText>
             </PlanBuyButton>
           </PlanContainer>
         </PlansContainer>
