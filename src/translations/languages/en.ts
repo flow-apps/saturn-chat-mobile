@@ -219,18 +219,25 @@ export const en = {
       updated: "User updated",
       update_avatar: "Updating avatar...",
       updated_avatar: "Updated Avatar",
-      photo_permission: "We need permission to access your photos to change your avatar!"
+      photo_permission:
+        "We need permission to access your photos to change your avatar!",
     },
     labels: {
       name: {
         label: "Name",
-        placeholder: "max. 100 characters"
+        placeholder: "max. 100 characters",
       },
       bio: {
         label: "Message",
-        placeholder: "max. 100 characters"
-      }
+        placeholder: "max. 100 characters",
+      },
     },
-    done: "Done"
-  }
+    done: "Done",
+  },
+  SwitchLanguage: {
+    header_title: "Languages",
+    title: "Understand how languages ​​work",
+    subtitle:
+      "The application language is set using the device's default language.\n\nTo change the language, simply go to the device settings and change the language, and the application will automatically change the language.",
+  },
 };

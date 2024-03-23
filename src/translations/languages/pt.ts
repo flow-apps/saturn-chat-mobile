@@ -5,18 +5,18 @@ export const pt = {
     },
     GroupInvite: {
       participants: "participantes",
-      join: "Entrar"
+      join: "Entrar",
     },
     FriendActionButtons: {
       title: "está querendo ser seu amigo",
       accept: "Aceitar",
-      reject: "Recusar"
+      reject: "Recusar",
     },
     AddFriendButton: {
       friends: "Amigos",
       requested: "Solicitação enviada",
-      request: "Adicionar aos amigos"
-    }
+      request: "Adicionar aos amigos",
+    },
   },
   OnBoarding: {
     done: "Começar",
@@ -177,14 +177,14 @@ export const pt = {
     },
     account: {
       title: "Conta e privacidade",
-      edit_password: "Alterar senha"
+      edit_password: "Alterar senha",
     },
     about: {
       title: "Sobre",
       guidelines: "Diretrizes da Comunidade",
       privacy_policy: "Politica de Privacidade",
     },
-    sign_out: "Sair da conta"
+    sign_out: "Sair da conta",
   },
   Search: {
     header_title: "Explorar",
@@ -193,24 +193,26 @@ export const pt = {
     subtitle: "Tente buscar o nome de algum grupo ou tag relacionado a ele",
     loading: {
       title: "Buscando grupos...",
-      subtitle: "Isso pode demorar um pouco"
+      subtitle: "Isso pode demorar um pouco",
     },
-    participants: "participantes"
+    participants: "participantes",
   },
   InviteManager: {
     header_title: "Convites e soliticitações",
-    subtitle: "Gerencie seus convites e solicitações de amizade que você recebeu.",
-    empty_text: "Não há convites para grupos nem solicitações de amizade. Volte mais tarde.",
+    subtitle:
+      "Gerencie seus convites e solicitações de amizade que você recebeu.",
+    empty_text:
+      "Não há convites para grupos nem solicitações de amizade. Volte mais tarde.",
     toasts: {
       invite_accept: "Convite aceito!",
       invite_reject: "Convite recusado :(",
       request_accept: "Solicitação aceita com sucesso!",
-      request_reject: "Solicitação rejeitada com sucesso"
-    }
+      request_reject: "Solicitação rejeitada com sucesso",
+    },
   },
   Profile: {
     friends: "Amigos",
-    participating: "Participando"
+    participating: "Participando",
   },
   EditProfile: {
     header_title: "Editar perfil",
@@ -219,18 +221,25 @@ export const pt = {
       updated: "Usuário atualizado",
       update_avatar: "Atualizando avatar...",
       updated_avatar: "Avatar atualizado",
-      photo_permission: "Precisamos da permissão para acessar suas fotos para alterar seu avatar!"
+      photo_permission:
+        "Precisamos da permissão para acessar suas fotos para alterar seu avatar!",
     },
     labels: {
       name: {
         label: "Nome",
-        placeholder: "máx. 100 caractéres"
+        placeholder: "máx. 100 caractéres",
       },
       bio: {
         label: "Recado",
-        placeholder: "máx. 100 caractéres"
-      }
+        placeholder: "máx. 100 caractéres",
+      },
     },
-    done: "Concluir"
-  }
+    done: "Concluir",
+  },
+  SwitchLanguage: {
+    header_title: "Idiomas",
+    title: "Entenda como funciona os idiomas",
+    subtitle:
+      "O idioma do aplicativo é definido através do idioma padrão do dispositivo.\n\nPara trocar o idioma, basta entrar nas configurações do dispositivo e alterar o idioma, que o aplicativo trocará o idioma automaticamente.",
+  },
 };

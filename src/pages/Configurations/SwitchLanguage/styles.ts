@@ -12,12 +12,12 @@ export const Title = styled.Text`
   font-size: 20px;
   font-family: ${fonts.heading};
   text-align: center;
-  margin: 15px 0px;
+  margin: 20px 0px;
 `
 
 export const Content = styled.Text`
   font-size: 16px;
   font-family: ${fonts.text};
   color: ${props => props.theme.colors.black};
-  margin-bottom: 20px;
+  margin-top: 20px;
 `
