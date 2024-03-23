@@ -2,6 +2,7 @@ import React from "react";
 import Feather from "@expo/vector-icons/Feather";
 import { FriendsStates } from "../../../../@types/enums";
 import { FriendButton, FriendButtonText } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 interface AddFriendButtonProps {
   friendsState?: FriendsStates;
@@ -12,6 +13,9 @@ const AddFriendButton: React.FC<AddFriendButtonProps> = ({
   friendsState,
   handleActionFriend,
 }) => {
+
+  const { t } = useTranslate("Components.AddFriendButton")
+
   const friendIconSelector = () => {
     switch (friendsState) {
       case FriendsStates.REQUESTED:
@@ -26,11 +30,11 @@ const AddFriendButton: React.FC<AddFriendButtonProps> = ({
   const friendButtonTextSelector = () => {
     switch (friendsState) {
       case FriendsStates.FRIENDS:
-        return "Amigos";
+        return t("friends");
       case FriendsStates.REQUESTED:
-        return "Solicitação enviada";
+        return t("requested");
       default:
-        return "Adicionar aos amigos";
+        return t("request");
     }
   };
 

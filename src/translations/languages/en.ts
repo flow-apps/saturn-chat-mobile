@@ -5,8 +5,18 @@ export const en = {
     },
     GroupInvite: {
       participants: "participants",
-      join: "Join"
-    }
+      join: "Join",
+    },
+    FriendActionButtons: {
+      title: "wants to be your friend",
+      accept: "Accept",
+      reject: "Reject",
+    },
+    AddFriendButton: {
+      friends: "Friends",
+      requested: "Request sent",
+      request: "Add to friends",
+    },
   },
   OnBoarding: {
     done: "Done",
@@ -165,14 +175,14 @@ export const en = {
     },
     account: {
       title: "Account and privacy",
-      edit_password: "Change Password"
+      edit_password: "Change Password",
     },
     about: {
       title: "About",
       guidelines: "Community Guidelines",
       privacy_policy: "Privacy Policy",
     },
-    sign_out: "Sign out"
+    sign_out: "Sign out",
   },
   Search: {
     header_title: "Explorer",
@@ -181,19 +191,25 @@ export const en = {
     subtitle: "Try searching for the name of a group or tag related to it",
     loading: {
       title: "Searching for groups...",
-      subtitle: "This may take a while"
+      subtitle: "This may take a while",
     },
-    participants: "participants"
+    participants: "participants",
   },
   InviteManager: {
     header_title: "Invitations and requests",
-    subtitle: "Manage your invitations and friend requests that you have received.",
-    empty_text: "There are no group invites or friend requests. Come back later.",
+    subtitle:
+      "Manage your invitations and friend requests that you have received.",
+    empty_text:
+      "There are no group invites or friend requests. Come back later.",
     toasts: {
       invite_accept: "Invitation accepted!",
       invite_reject: "Invitation rejected :(",
       request_accept: "Request accepted successfully!",
-      request_reject: "Request successfully rejected"
-    }
-  }
+      request_reject: "Request successfully rejected",
+    },
+  },
+  Profile: {
+    friends: "Friends",
+    participating: "Participating",
+  },
 };

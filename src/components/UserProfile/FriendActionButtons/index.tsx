@@ -9,27 +9,34 @@ import {
   ActionTitle,
   Container,
 } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 interface FriendActionButtonsProps {
   name?: string;
   action: (action: "ACCEPT" | "REJECT") => any;
 }
 
-const FriendActionButtons: React.FC<FriendActionButtonsProps> = ({ name, action }) => {
+const FriendActionButtons: React.FC<FriendActionButtonsProps> = ({
+  name,
+  action,
+}) => {
   const { colors } = useTheme();
+  const { t } = useTranslate("Components.FriendActionButtons");
 
   return (
     <Container>
-      <ActionTitle>{name} está querendo ser seu amigo</ActionTitle>
+      <ActionTitle>
+        {name} {t("title")}
+      </ActionTitle>
       <ActionsContainer>
         <ActionButtonContainer>
           <ActionButton onPress={() => action("ACCEPT")} color={colors.primary}>
-            <ActionButtonText>Aceitar</ActionButtonText>
+            <ActionButtonText>{t("accept")}</ActionButtonText>
           </ActionButton>
         </ActionButtonContainer>
         <ActionButtonContainer>
           <ActionButton onPress={() => action("REJECT")} color={colors.red}>
-            <ActionButtonText>Recusar</ActionButtonText>
+            <ActionButtonText>{t("reject")}</ActionButtonText>
           </ActionButton>
         </ActionButtonContainer>
       </ActionsContainer>

@@ -43,6 +43,7 @@ import FriendActionButtons from "../../components/UserProfile/FriendActionButton
 import AddFriendButton from "../../components/UserProfile/AddFriendButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HeaderButton } from "../../components/Header/styles";
+import { useTranslate } from "../../hooks/useTranslate";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -55,6 +56,7 @@ const UserProfile: React.FC = () => {
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Profile")
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
@@ -187,7 +189,7 @@ const UserProfile: React.FC = () => {
                   onPress={openFriendsManager}
                 >
                   <FriendsNumber>{userInfos?.friendsAmount}</FriendsNumber>
-                  <FriendsTitle>Amigos</FriendsTitle>
+                  <FriendsTitle>{t("friends")}</FriendsTitle>
                 </FriendsContainer>
               </FriendsInfosContainer>
             )}
@@ -196,7 +198,7 @@ const UserProfile: React.FC = () => {
           <GroupsContainer>
             <GroupsTitle>
               <Feather name="users" size={25} color={colors.light_heading} />{" "}
-              Participando
+              {t("participating")}
             </GroupsTitle>
             {userInfos?.participating?.length > 0 && (
               <Groups>

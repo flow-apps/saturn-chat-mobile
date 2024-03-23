@@ -6,6 +6,16 @@ export const pt = {
     GroupInvite: {
       participants: "participantes",
       join: "Entrar"
+    },
+    FriendActionButtons: {
+      title: "está querendo ser seu amigo",
+      accept: "Aceitar",
+      reject: "Recusar"
+    },
+    AddFriendButton: {
+      friends: "Amigos",
+      requested: "Solicitação enviada",
+      request: "Adicionar aos amigos"
     }
   },
   OnBoarding: {
@@ -197,5 +207,9 @@ export const pt = {
       request_accept: "Solicitação aceita com sucesso!",
       request_reject: "Solicitação rejeitada com sucesso"
     }
+  },
+  Profile: {
+    friends: "Amigos",
+    participating: "Participando"
   }
 };
