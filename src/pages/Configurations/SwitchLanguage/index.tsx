@@ -8,7 +8,7 @@ const SwitchLanguage: React.FC = () => {
 
   return (
     <>
-      <Header title="Idiomas" />
+      <Header title={t("header_title")} />
       <Container>
         <Title>{t("title")}</Title>
         <Content>{t("subtitle")}</Content>

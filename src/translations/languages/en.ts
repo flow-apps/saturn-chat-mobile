@@ -214,7 +214,7 @@ export const en = {
   },
   EditProfile: {
     header_title: "Edit profile",
-    switch_avatar: "Switch avatar",
+    switch_avatar: "Change avatar",
     toasts: {
       updated: "User updated",
       update_avatar: "Updating avatar...",
@@ -240,4 +240,25 @@ export const en = {
     subtitle:
       "The application language is set using the device's default language.\n\nTo change the language, simply go to the device settings and change the language, and the application will automatically change the language.",
   },
+  SwitchPassword: {
+    header_title: "Change your password",
+    toasts: {
+      updated_pass: "Password changed successfully!",
+      incorrect_pass: "Incorrect old password!",
+      error_pass: "Error changing password!"
+    },
+    labels: {
+      current_password: "Old password",
+      new_password: {
+        label: "New password",
+        error: "The password does not meet security standards",
+        info: "Your password must contain: at least 8 characters (at least 1 capital letter), at least 1 number and at least 1 symbol"
+      },
+      confirm_pass: {
+        label: "Confirm new password",
+        error: "The passwords do not match"
+      }
+    },
+    done: "Change Password"
+  }
 };

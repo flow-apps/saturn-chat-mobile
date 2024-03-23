@@ -242,4 +242,25 @@ export const pt = {
     subtitle:
       "O idioma do aplicativo é definido através do idioma padrão do dispositivo.\n\nPara trocar o idioma, basta entrar nas configurações do dispositivo e alterar o idioma, que o aplicativo trocará o idioma automaticamente.",
   },
+  SwitchPassword: {
+    header_title: "Altere sua senha",
+    toasts: {
+      updated_pass: "Senha alterada com sucesso!",
+      incorrect_pass: "Senha atual incorreta!",
+      error_pass: "Erro ao alterar senha!"
+    },
+    labels: {
+      current_password: "Senha atual",
+      new_password: {
+        label: "Nova senha",
+        error: "A senha não segue os padrões segurança",
+        info: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo"
+      },
+      confirm_pass: {
+        label: "Confirme a nova senha",
+        error: "As senhas não combinam"
+      }
+    },
+    done: "Alterar senha"
+  }
 };

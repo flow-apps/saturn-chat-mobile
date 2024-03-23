@@ -14,58 +14,64 @@ const api = axios.create({
   },
 });
 
-// api.interceptors.request.use(async (config) => {
-//   try {
-//     const httpMetric = perf().newHttpMetric(
-//       String(config.url),
-//       config.method as FirebasePerformanceTypes.HttpMethod
-//     );
+api.interceptors.request.use(async (config) => {
+  if (__DEV__) return;
 
-//     // @ts-ignore
-//     config.metadata = { httpMetric };
+  try {
+    const httpMetric = perf().newHttpMetric(
+      String(config.url),
+      config.method as FirebasePerformanceTypes.HttpMethod
+    );
 
-//     await httpMetric.start();
-//   } finally {
-//     return config;
-//   }
-// });
+    // @ts-ignore
+    config.metadata = { httpMetric };
 
-// api.interceptors.response.use(
-//   async (response: AxiosResponse & { config: { metadata?: any } }) => {
-//     try {
-//       // const { httpMetric } = response.config.metadata as {
-//       //   httpMetric: FirebasePerformanceTypes.HttpMetric;
-//       // };
+    await httpMetric.start();
+  } finally {
+    return config;
+  }
+});
 
-//       // httpMetric.setHttpResponseCode(response.status);
-//       // httpMetric.setResponseContentType(response.headers["content-type"]);
-//       // await httpMetric.stop();
-//     } finally {
-//       return response;
-//     }
-//   },
+api.interceptors.response.use(
+  async (response: AxiosResponse & { config: { metadata?: any } }) => {
+    if (__DEV__) return;
 
-//   async (error) => {
-//     try {
-//       const { httpMetric } = error.config.metadata as {
-//         httpMetric: FirebasePerformanceTypes.HttpMetric;
-//       };
-//       httpMetric.setHttpResponseCode(error.response.status);
-//       httpMetric.setResponseContentType(error.response.headers["content-type"]);
-//       httpMetric.putAttribute("message", error.response.data.message);
-//       await httpMetric.stop();
-//     } finally {
-//       if (__DEV__) {
-//         SimpleToast.show(
-//           `Request failed (${error.response.status})`,
-//           SimpleToast.SHORT
-//         );
+    try {
+      const { httpMetric } = response.config.metadata as {
+        httpMetric: FirebasePerformanceTypes.HttpMetric;
+      };
 
-//         console.warn(error.response.data.message)
-//       }
-//       return Promise.reject(error);
-//     }
-//   }
-// );
+      httpMetric.setHttpResponseCode(response.status);
+      httpMetric.setResponseContentType(response.headers["content-type"]);
+      await httpMetric.stop();
+    } finally {
+      return response;
+    }
+  },
+
+  async (error) => {
+    try {
+      if (__DEV__) return;
+      
+      const { httpMetric } = error.config.metadata as {
+        httpMetric: FirebasePerformanceTypes.HttpMetric;
+      };
+      httpMetric.setHttpResponseCode(error.response.status);
+      httpMetric.setResponseContentType(error.response.headers["content-type"]);
+      httpMetric.putAttribute("message", error.response.data.message);
+      await httpMetric.stop();
+    } finally {
+      if (__DEV__) {
+        SimpleToast.show(
+          `Request failed (${error.response.status})`,
+          SimpleToast.SHORT
+        );
+
+        console.warn(error.response.data.message);
+      }
+      return Promise.reject(error);
+    }
+  }
+);
 
 export default api;

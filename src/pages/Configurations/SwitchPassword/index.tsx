@@ -15,6 +15,7 @@ import {
   FormContainer,
   InputContainer,
 } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const SwitchPassword: React.FC = () => {
   const passwordValidation =
@@ -28,6 +29,7 @@ const SwitchPassword: React.FC = () => {
   const [confirmPassError, setConfirmPassError] = useState(true);
 
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("SwitchPassword");
 
   const handleSetNewPassword = (value: string) => {
     setNewPass(value);
@@ -35,11 +37,9 @@ const SwitchPassword: React.FC = () => {
     if (!passwordValidation.test(value)) {
       setPassError(true);
     } else {
-      if (value !== confirmNewPass) 
-        setConfirmPassError(true);
-      else 
-        setConfirmPassError(false);
-        
+      if (value !== confirmNewPass) setConfirmPassError(true);
+      else setConfirmPassError(false);
+
       setPassError(false);
     }
   };
@@ -63,14 +63,14 @@ const SwitchPassword: React.FC = () => {
       })
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show("Senha alterada com sucesso!");
+          SimpleToast.show(t("toasts.updated_pass"));
           navigation.goBack();
         }
       })
       .catch((err) => {
         if (err.response.status === 403)
-          SimpleToast.show("Senha atual incorreta!");
-        else SimpleToast.show("Erro ao alterar senha!");
+          SimpleToast.show(t("toasts.incorrect_pass"));
+        else SimpleToast.show(t("toasts.error_pass"));
         setLoading(false);
       });
   };
@@ -79,13 +79,13 @@ const SwitchPassword: React.FC = () => {
 
   return (
     <>
-      <Header title="Altere sua senha" />
+      <Header title={t("header_title")} />
       <Container>
         <FormContainer>
           <InputContainer>
             <Input
               value={currentPass}
-              label="Senha atual"
+              label={t("labels.current_password")}
               textContentType="password"
               onChangeText={setCurrentPass}
               secureTextEntry
@@ -94,35 +94,32 @@ const SwitchPassword: React.FC = () => {
           <InputContainer>
             <Input
               value={newPass}
-              label="Nova senha"
+              label={t("labels.new_password.label")}
               textContentType="password"
               onChangeText={handleSetNewPassword}
               secureTextEntry
             />
             {passError && !!newPass && (
-              <FieldError>A senha não segue os padrões segurança</FieldError>
+              <FieldError>{t("labels.new_password.error")}</FieldError>
             )}
             <FieldInfoContainer>
-              <FieldInfo>
-                Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1
-                letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo
-              </FieldInfo>
+              <FieldInfo>{t("labels.new_password.info")}</FieldInfo>
             </FieldInfoContainer>
           </InputContainer>
           <InputContainer>
             <Input
               value={confirmNewPass}
-              label="Confirme a nova senha"
+              label={t("labels.confirm_pass.label")}
               textContentType="password"
               onChangeText={handleSetConfirmNewPassword}
               secureTextEntry
             />
             {confirmPassError && !!confirmNewPass && (
-              <FieldError>As senhas não combinam</FieldError>
+              <FieldError>{t("labels.confirm_pass.error")}</FieldError>
             )}
           </InputContainer>
           <Button
-            title="Alterar senha"
+            title={t("done")}
             enabled={!passError && !confirmPassError && !!currentPass}
             onPress={handleChangePass}
           />
