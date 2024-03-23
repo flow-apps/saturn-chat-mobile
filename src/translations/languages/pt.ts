@@ -107,6 +107,39 @@ export const pt = {
     title: "Mensagens diretas",
     subtitle:
       "Envie mensagens privadas aos seus amigos. Você só pode falar com pessoas da sua lista de amigos.",
-    empty_list_text: "Você não possui nenhum amigo. Adicione novos amigos."
+    empty_list_text: "Você não possui nenhum amigo. Adicione novos amigos.",
+  },
+  NewGroup: {
+    header_title: "Novo grupo",
+    avatar_select_label: "Escolha uma foto de perfil",
+    avatar_select_tip: "Recomendamos uma imagem de 600x600 e de no máximo 5MB",
+    avatar_selected: "🖼 Esta foto está perfeita!",
+    limit: {
+      title: "Você atingiu o limite de {{count}} grupos!",
+      subtitle:
+        "Esse limite é estipulado para que todos possam criar suas comunidades no Saturn Chat e também para evitar problemas chatos como spam.",
+      premium:
+        "Você também pode se tornar uma Star e criar até {{groups}} grupos com {{participants}} participantes em cada",
+    },
+    form: {
+      labels: {
+        name: {
+          label: "Nome do grupo",
+          placeholder: "máx. 100 caracteres",
+        },
+        desc: {
+          label: "Descreva seu grupo",
+          placeholder: "máx. 500 caracteres",
+        },
+        tags: {
+          label: "Tags do grupo",
+          placeholder: "separar por vírgula",
+        },
+        public: "Público",
+        private: "Privado",
+      },
+      create_group: "Criar grupo",
+    },
+    star: "Tornar-se Star",
   },
 };
