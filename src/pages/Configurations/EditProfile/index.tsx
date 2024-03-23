@@ -23,30 +23,32 @@ import {
   SwitchAvatarButton,
   SwitchAvatarButtonText,
 } from "./styles";
+import { useTranslate } from "../../../hooks/useTranslate";
 
 const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [newAvatar, setNewAvatar] = useState("");
   const [user, setUser] = useState<UserData>();
   const [name, setName] = useState("");
-  const [bio, setBio] = useState("")
+  const [bio, setBio] = useState("");
 
   const [isSendable, setIsSendable] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateUser } = useAuth();
+  const { t } = useTranslate("EditProfile");
 
   const handleSubmit = async () => {
     const newUser = await api.patch("/users/update", {
       name,
-      bio
+      bio,
     });
 
     if (newUser.status === 200) {
       await updateUser({
         user: newUser.data.user,
       });
-      SimpleToast.show("Usuário atualizado");
+      SimpleToast.show(t("toasts.updated"));
       navigation.goBack();
     }
   };
@@ -58,7 +60,7 @@ const EditProfile: React.FC = () => {
       const { granted } = await ImagePicker.requestCameraPermissionsAsync();
 
       if (!granted) {
-        return Alert.alert("Precisamos da permissão para acessar suas fotos!");
+        return Alert.alert(t("toasts.photo_permission"));
       }
     }
 
@@ -69,11 +71,11 @@ const EditProfile: React.FC = () => {
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
-      selectionLimit: 1
-    })
+      selectionLimit: 1,
+    });
 
     if (!photo.canceled) {
-      SimpleToast.show("Atualizando avatar...");
+      SimpleToast.show(t("toasts.update_avatar"));
       const uri = photo.assets[0].uri;
       const uriParts = uri.split(".");
       const fileType = uriParts.pop();
@@ -92,9 +94,9 @@ const EditProfile: React.FC = () => {
           },
         })
         .then(async (res) => {
-          await updateUser(res.data)
+          await updateUser(res.data);
           setNewAvatar(uri);
-          SimpleToast.show("Avatar atualizado");
+          SimpleToast.show(t("toasts.updated_avatar"));
         });
     }
   };
@@ -131,7 +133,7 @@ const EditProfile: React.FC = () => {
       if (res.status === 200) {
         setUser(res.data);
         setName(res.data.name);
-        setBio(res.data.bio)
+        setBio(res.data.bio);
       }
       setLoading(false);
     })();
@@ -143,7 +145,7 @@ const EditProfile: React.FC = () => {
 
   return (
     <>
-      <Header title="Editar perfil"  />
+      <Header title={t("header_title")} />
       <Container>
         <FormContainer>
           <AvatarContainer>
@@ -153,7 +155,7 @@ const EditProfile: React.FC = () => {
             >
               <SwitchAvatarButtonText>
                 <Feather name="camera" size={32} /> {"\n"}
-                Trocar avatar
+                {t("switch_avatar")}
               </SwitchAvatarButtonText>
             </SwitchAvatarButton>
             {renderAvatar()}
@@ -161,7 +163,8 @@ const EditProfile: React.FC = () => {
           <FieldsContainer>
             <FieldContainer>
               <Input
-                label="Nome"
+                label={t("labels.name.label")}
+                placeholder={t("labels.name.placeholder")}
                 value={name}
                 onChangeText={setName}
                 onTextInput={handleCheckFields}
@@ -170,8 +173,8 @@ const EditProfile: React.FC = () => {
             </FieldContainer>
             <FieldContainer>
               <Input
-                label="Biografia"
-                placeholder={"máx. 100 caracteres"}
+                label={t("labels.bio.label")}
+                placeholder={t("labels.bio.placeholder")}
                 value={bio}
                 onChangeText={setBio}
                 onTextInput={handleCheckFields}
@@ -182,7 +185,7 @@ const EditProfile: React.FC = () => {
           </FieldsContainer>
           <Button
             enabled={isSendable}
-            title="Concluir"
+            title={t("done")}
             onPress={handleSubmit}
           />
         </FormContainer>

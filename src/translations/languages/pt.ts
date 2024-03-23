@@ -211,5 +211,26 @@ export const pt = {
   Profile: {
     friends: "Amigos",
     participating: "Participando"
+  },
+  EditProfile: {
+    header_title: "Editar perfil",
+    switch_avatar: "Trocar avatar",
+    toasts: {
+      updated: "Usuário atualizado",
+      update_avatar: "Atualizando avatar...",
+      updated_avatar: "Avatar atualizado",
+      photo_permission: "Precisamos da permissão para acessar suas fotos para alterar seu avatar!"
+    },
+    labels: {
+      name: {
+        label: "Nome",
+        placeholder: "máx. 100 caractéres"
+      },
+      bio: {
+        label: "Recado",
+        placeholder: "máx. 100 caractéres"
+      }
+    },
+    done: "Concluir"
   }
 };

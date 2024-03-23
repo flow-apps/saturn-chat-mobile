@@ -212,4 +212,25 @@ export const en = {
     friends: "Friends",
     participating: "Participating",
   },
+  EditProfile: {
+    header_title: "Edit profile",
+    switch_avatar: "Switch avatar",
+    toasts: {
+      updated: "User updated",
+      update_avatar: "Updating avatar...",
+      updated_avatar: "Updated Avatar",
+      photo_permission: "We need permission to access your photos to change your avatar!"
+    },
+    labels: {
+      name: {
+        label: "Name",
+        placeholder: "max. 100 characters"
+      },
+      bio: {
+        label: "Message",
+        placeholder: "max. 100 characters"
+      }
+    },
+    done: "Done"
+  }
 };
