@@ -1,8 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import config from "../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import perf, { FirebasePerformanceTypes } from "@react-native-firebase/perf";
-import SimpleToast from "react-native-simple-toast";
 
 const token = AsyncStorage.getItem("@SaturnChat:token") || undefined;
 
@@ -13,65 +11,5 @@ const api = axios.create({
     authorization: token,
   },
 });
-
-api.interceptors.request.use(async (config) => {
-  if (__DEV__) return;
-
-  try {
-    const httpMetric = perf().newHttpMetric(
-      String(config.url),
-      config.method as FirebasePerformanceTypes.HttpMethod
-    );
-
-    // @ts-ignore
-    config.metadata = { httpMetric };
-
-    await httpMetric.start();
-  } finally {
-    return config;
-  }
-});
-
-api.interceptors.response.use(
-  async (response: AxiosResponse & { config: { metadata?: any } }) => {
-    if (__DEV__) return;
-
-    try {
-      const { httpMetric } = response.config.metadata as {
-        httpMetric: FirebasePerformanceTypes.HttpMetric;
-      };
-
-      httpMetric.setHttpResponseCode(response.status);
-      httpMetric.setResponseContentType(response.headers["content-type"]);
-      await httpMetric.stop();
-    } finally {
-      return response;
-    }
-  },
-
-  async (error) => {
-    try {
-      if (__DEV__) return;
-      
-      const { httpMetric } = error.config.metadata as {
-        httpMetric: FirebasePerformanceTypes.HttpMetric;
-      };
-      httpMetric.setHttpResponseCode(error.response.status);
-      httpMetric.setResponseContentType(error.response.headers["content-type"]);
-      httpMetric.putAttribute("message", error.response.data.message);
-      await httpMetric.stop();
-    } finally {
-      if (__DEV__) {
-        SimpleToast.show(
-          `Request failed (${error.response.status})`,
-          SimpleToast.SHORT
-        );
-
-        console.warn(error.response.data.message);
-      }
-      return Promise.reject(error);
-    }
-  }
-);
 
 export default api;
