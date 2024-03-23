@@ -26,6 +26,7 @@ import Banner from "../../components/Ads/Banner";
 import config from "../../config";
 import { useNotifications } from "../../contexts/notifications";
 import { LinkUtils } from "../../utils/link";
+import { useTranslate } from "../../hooks/useTranslate";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -36,6 +37,7 @@ const Configurations: React.FC = () => {
   const { toggleEnabledNotifications, enabled } = useNotifications();
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
+  const { t } = useTranslate("Settings");
 
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
@@ -67,35 +69,36 @@ const Configurations: React.FC = () => {
 
   return (
     <>
-      <Header title="Configurações" backButton={false} />
+      <Header title={t("header_title")} backButton={false} />
       <Container>
         <Alert
           visible={confirmSignOut}
-          title="😥 Quer mesmo sair?"
-          content="Ao sair você não receberá notificações de novas mensagens, convites e nada relacionado."
-          cancelButtonText="Cancelar"
-          okButtonText="Sair"
+          title={t("alerts.sign_out.title")}
+          content={t("alerts.sign_out.subtitle")}
+          cancelButtonText={t("alerts.sign_out.cancel_text")}
+          okButtonText={t("alerts.sign_out.ok_text")}
           cancelButtonAction={() => setConfirmSignOut(false)}
           okButtonAction={signOut}
         />
         <SectionsContainer>
           <Banner />
           <SectionContainer>
-            <SectionTitle>Geral</SectionTitle>
+            <SectionTitle>{t("general.title")}</SectionTitle>
             <ConfigsContainer>
               <ConfigContainer onPress={handleGoPurchasePremium}>
                 <ConfigTitle color={colors.secondary}>
-                  <Feather name="star" size={16} /> Seja uma Star
+                  <Feather name="star" size={16} /> {t("general.star")}
                 </ConfigTitle>
               </ConfigContainer>
               <ConfigContainer onPress={handleGoEditProfile}>
                 <ConfigTitle>
-                  <Feather name="edit" size={16} /> Editar perfil
+                  <Feather name="edit" size={16} /> {t("general.edit_profile")}
                 </ConfigTitle>
               </ConfigContainer>
               <ConfigContainer onPress={handleGoSwitchLanguage}>
                 <ConfigTitle>
-                  <MaterialCommunityIcons name="translate" size={17} /> Idiomas
+                  <MaterialCommunityIcons name="translate" size={17} />{" "}
+                  {t("general.languages")}
                 </ConfigTitle>
                 <CurrentValueText>{Localize.locale}</CurrentValueText>
               </ConfigContainer>
@@ -105,7 +108,7 @@ const Configurations: React.FC = () => {
                     name={currentThemeName === "dark" ? "moon" : "sun"}
                     size={16}
                   />{" "}
-                  Modo Escuro
+                  {t("general.dark_theme")}
                 </ConfigTitle>
                 <Switcher
                   currentValue={currentThemeName === "dark"}
@@ -115,7 +118,7 @@ const Configurations: React.FC = () => {
               <ConfigContainer>
                 <ConfigTitle>
                   <Feather name={enabled ? "bell" : "bell-off"} size={16} />{" "}
-                  Notificações
+                  {t("general.notifications")}
                 </ConfigTitle>
                 <Switcher
                   currentValue={enabled}
@@ -126,34 +129,34 @@ const Configurations: React.FC = () => {
           </SectionContainer>
 
           <SectionContainer>
-            <SectionTitle>Conta e privacidade</SectionTitle>
+            <SectionTitle>{t("account.title")}</SectionTitle>
             <ConfigsContainer>
               <ConfigContainer onPress={handleGoSwitchPassword}>
                 <ConfigTitle>
-                  <Feather name="lock" size={16} /> Alterar senha
+                  <Feather name="lock" size={16} /> {t("account.edit_password")}
                 </ConfigTitle>
               </ConfigContainer>
             </ConfigsContainer>
           </SectionContainer>
 
           <SectionContainer>
-            <SectionTitle>Sobre</SectionTitle>
+            <SectionTitle>{t("about.title")}</SectionTitle>
             <ConfigsContainer>
               <ConfigContainer onPress={handleGoPrivacyPolicie}>
                 <ConfigTitle>
-                  <Feather name="lock" size={16} /> Politicas de Privacidade
+                  <Feather name="lock" size={16} /> {t("about.privacy_policy")}
                 </ConfigTitle>
               </ConfigContainer>
               <ConfigContainer onPress={handleGoGuidelines}>
                 <ConfigTitle>
-                  <Feather name="info" size={16} /> Diretrizes da Comunidade
+                  <Feather name="info" size={16} /> {t("about.guidelines")}
                 </ConfigTitle>
               </ConfigContainer>
             </ConfigsContainer>
           </SectionContainer>
 
           <Button
-            title="Sair da conta"
+            title={t("sign_out")}
             bgColor={colors.red}
             onPress={handleSignOut}
           />

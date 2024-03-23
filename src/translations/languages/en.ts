@@ -138,6 +138,36 @@ export const en = {
       },
       create_group: "Create group",
     },
-    star: "Becoming a Star"
+    star: "Becoming a Star",
+  },
+  Settings: {
+    header_title: "Settings",
+    alerts: {
+      sign_out: {
+        title: "😥 Do you really want to leave your account?",
+        subtitle:
+          "When you sign out you will not receive notifications of new messages, invitations or anything related.",
+        ok_text: "Sign out",
+        cancel_text: "Cancel",
+      },
+    },
+    general: {
+      title: "General",
+      star: "Be a Star",
+      edit_profile: "Edit profile",
+      languages: "Languages",
+      dark_theme: "Dark Mode",
+      notifications: "Notifications",
+    },
+    account: {
+      title: "Account and privacy",
+      edit_password: "Change Password"
+    },
+    about: {
+      title: "About",
+      guidelines: "Community Guidelines",
+      privacy_policy: "Privacy Policy",
+    },
+    sign_out: "Sign out"
   },
 };

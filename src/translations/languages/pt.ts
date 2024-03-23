@@ -142,4 +142,34 @@ export const pt = {
     },
     star: "Tornar-se Star",
   },
+  Settings: {
+    header_title: "Configurações",
+    alerts: {
+      sign_out: {
+        title: "😥 Quer mesmo sair?",
+        subtitle:
+          "Ao sair você não receberá notificações de novas mensagens, convites e nada relacionado.",
+        ok_text: "Sair",
+        cancel_text: "Cancelar",
+      },
+    },
+    general: {
+      title: "Geral",
+      star: "Seja uma Star",
+      edit_profile: "Editar perfil",
+      languages: "Idiomas",
+      dark_theme: "Modo Escuro",
+      notifications: "Notificações",
+    },
+    account: {
+      title: "Conta e privacidade",
+      edit_password: "Alterar senha"
+    },
+    about: {
+      title: "Sobre",
+      guidelines: "Diretrizes da Comunidade",
+      privacy_policy: "Politica de Privacidade",
+    },
+    sign_out: "Sair da conta"
+  },
 };

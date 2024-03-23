@@ -303,7 +303,7 @@ const NewGroup: React.FC = () => {
                 <ButtonWrapper>
                   <Button
                     enabled={isSendable}
-                    title="Criar grupo"
+                    title={t("form.create_group")}
                     onPress={handleCreateGroup}
                   />
                 </ButtonWrapper>
