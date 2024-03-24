@@ -1,11 +1,11 @@
 import React from "react";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 
 import PDFViewer from "react-native-pdf";
 import { useRoute } from "@react-navigation/core";
 import { Container } from "./styles";
-import { LinkUtils } from "../../utils/link";
-import { HeaderButton } from "../../components/Header/styles";
+import { LinkUtils } from "@utils/link";
+import { HeaderButton } from "@components/Header/styles";
 import Feather from "@expo/vector-icons/Feather";
 import { FileService } from "../../services/file";
 

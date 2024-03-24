@@ -19,7 +19,7 @@ import {
 } from "@react-navigation/native";
 import { InviteData } from "../../../types/interfaces";
 import api from "../../services/api";
-import Loading from "../../components/Loading";
+import Loading from "@components/Loading";
 import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";
 import { useAuth } from "@contexts/auth";

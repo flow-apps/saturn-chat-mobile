@@ -6,11 +6,11 @@ import { MotiView } from "moti";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
 import { GroupData, UserData } from "../../../types/interfaces";
-import Banner from "../../components/Ads/Banner";
-import Group from "../../components/Group";
-import Header from "../../components/Header";
-import { HeaderButton } from "../../components/Header/styles";
-import Loading from "../../components/Loading";
+import Banner from "@components/Ads/Banner";
+import Group from "@components/Group";
+import Header from "@components/Header";
+import { HeaderButton } from "@components/Header/styles";
+import Loading from "@components/Loading";
 import api from "../../services/api";
 import {
   AdContainer,

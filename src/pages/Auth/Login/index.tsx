@@ -3,10 +3,10 @@ import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
 import { Keyboard } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import Button from "../../../components/Button";
-import Header from "../../../components/Header";
-import Input from "../../../components/Input";
-import Loading from "../../../components/Loading";
+import Button from "@components/Button";
+import Header from "@components/Header";
+import Input from "@components/Input";
+import Loading from "@components/Loading";
 import analytics from "@react-native-firebase/analytics";
 
 import { useAuth } from "@contexts/auth";

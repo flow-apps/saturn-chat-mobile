@@ -9,23 +9,23 @@ import {
   SectionsContainer,
   SectionTitle,
 } from "./styles";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import { useAuth } from "@contexts/auth";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Switcher from "../../components/Switcher";
+import Switcher from "@components/Switcher";
 import { useThemeController } from "@contexts/theme";
-import Button from "../../components/Button";
+import Button from "@components/Button";
 import { useTheme } from "styled-components";
-import Alert from "../../components/Alert";
+import Alert from "@components/Alert";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import * as Localize from "expo-localization";
-import Banner from "../../components/Ads/Banner";
+import Banner from "@components/Ads/Banner";
 import config from "../../config";
 import { useNotifications } from "@contexts/notifications";
-import { LinkUtils } from "../../utils/link";
+import { LinkUtils } from "@utils/link";
 import { useTranslate } from "../../hooks/useTranslate";
 
 const Configurations: React.FC = () => {

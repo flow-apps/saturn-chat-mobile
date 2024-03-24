@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import CachedImage from "../../components/CachedImage";
+import CachedImage from "@components/CachedImage";
 import fonts from "@styles/fonts";
 
 export const Container = styled.View`

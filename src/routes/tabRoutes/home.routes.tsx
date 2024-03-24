@@ -2,12 +2,12 @@ import React from "react";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "styled-components";
-import Configurations from "../../pages/Configurations";
-import Friends from "../../pages/Friends";
-import Home from "../../pages/Home";
-import NewGroup from "../../pages/NewGroup";
+import Configurations from "@pages/Configurations";
+import Friends from "@pages/Friends";
+import Home from "@pages/Home";
+import NewGroup from "@pages/NewGroup";
 import fonts from "@styles/fonts";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const tabRoutes = createBottomTabNavigator();
 

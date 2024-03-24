@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 import { darken, lighten } from "polished";
-import CachedImage from "../../components/CachedImage";
+import CachedImage from "@components/CachedImage";
 
 export const Container = styled.ScrollView.attrs({
   contentContainerStyle: {

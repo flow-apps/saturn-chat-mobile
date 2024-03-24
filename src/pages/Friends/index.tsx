@@ -4,16 +4,16 @@ import isNumber from "lodash/isNumber";
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { FriendData } from "../../../types/interfaces";
-import Banner from "../../components/Ads/Banner";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
+import Banner from "@components/Ads/Banner";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
 import { useAuth } from "@contexts/auth";
 import api from "../../services/api";
 import {
   getFriendAvatar,
   getFriendID,
   getFriendName,
-} from "../../utils/friends";
+} from "@utils/friends";
 
 import {
   AdContainer,

@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 import { darken } from "polished";
-import CachedImage from "../../components/CachedImage";
+import CachedImage from "@components/CachedImage";
 
 export const Container = styled.ScrollView`
   flex: 1;

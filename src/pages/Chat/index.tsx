@@ -25,17 +25,17 @@ import {
   ParticipantsData,
   UserData,
 } from "../../../types/interfaces";
-import { HeaderButton } from "../../components/Header/styles";
+import { HeaderButton } from "@components/Header/styles";
 import { useAuth } from "@contexts/auth";
 import uuid from "react-native-uuid";
 
 import * as MimeTypes from "react-native-mime-types";
 
 import FormData from "form-data";
-import Alert from "../../components/Alert";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
-import Message from "../../components/Chat/Message";
+import Alert from "@components/Alert";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
+import Message from "@components/Chat/Message";
 import api from "../../services/api";
 import {
   AudioButton,
@@ -51,10 +51,10 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
-import Typing from "../../components/Chat/Typing";
-import RecordingAudio from "../../components/Chat/RecordingAudio";
-import LoadingIndicator from "../../components/LoadingIndicator";
-import SelectedFiles from "../../components/Chat/SelectedFiles";
+import Typing from "@components/Chat/Typing";
+import RecordingAudio from "@components/Chat/RecordingAudio";
+import LoadingIndicator from "@components/LoadingIndicator";
+import SelectedFiles from "@components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
@@ -62,8 +62,8 @@ import analytics from "@react-native-firebase/analytics";
 import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
-import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
-import { ArrayUtils } from "../../utils/array";
+import CurrentReplyingMessage from "@components/Chat/CurrentReplyingMessage";
+import { ArrayUtils } from "@utils/array";
 import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
 

@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
 import { FriendData, InviteData } from "../../../types/interfaces";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
 import api from "../../services/api";
 import {
   Container,
@@ -14,12 +14,12 @@ import {
 } from "./styles";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import SimpleToast from "react-native-simple-toast";
-import FriendRequest from "../../components/InvitesManager/FriendRequest";
+import FriendRequest from "@components/InvitesManager/FriendRequest";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import orderBy from "lodash/orderBy";
 
-import GroupInvite from "../../components/InvitesManager/GroupInvite";
+import GroupInvite from "@components/InvitesManager/GroupInvite";
 import { useTranslate } from "../../hooks/useTranslate";
 
 interface Request extends FriendData, InviteData {

@@ -1,7 +1,7 @@
 import { OneSignal } from "react-native-onesignal";
 import { NotificationsTypes } from "../../types/enums";
 import { navigate } from "../routes/rootNavigation";
-import { LinkUtils } from "../utils/link";
+import { LinkUtils } from "@utils/link";
 
 interface NotificationDataType {
   type: string;

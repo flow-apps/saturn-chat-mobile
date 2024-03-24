@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import perf from "@react-native-firebase/perf";
 
 import {
@@ -34,15 +34,15 @@ import {
 } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
-import Button from "../../components/Button";
+import Button from "@components/Button";
 import * as ImagePicker from "expo-image-picker";
-import Switcher from "../../components/Switcher";
+import Switcher from "@components/Switcher";
 import api from "../../services/api";
 import { useNavigation } from "@react-navigation/core";
 import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
-import Loading from "../../components/Loading";
-import Banner from "../../components/Ads/Banner";
+import Loading from "@components/Loading";
+import Banner from "@components/Ads/Banner";
 import analytics from "@react-native-firebase/analytics";
 import { verifyBetweenValues } from "../../utils";
 import { UserData } from "../../../types/interfaces";

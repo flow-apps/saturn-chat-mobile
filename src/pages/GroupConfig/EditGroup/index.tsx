@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import Button from "../../../components/Button";
-import Header from "../../../components/Header";
-import Input from "../../../components/Input";
-import Loading from "../../../components/Loading";
-import Switcher from "../../../components/Switcher";
+import Button from "@components/Button";
+import Header from "@components/Header";
+import Input from "@components/Input";
+import Loading from "@components/Loading";
+import Switcher from "@components/Switcher";
 import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
 import api from "../../../services/api";

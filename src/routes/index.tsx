@@ -1,15 +1,15 @@
 import React, { useRef } from "react";
-import AppRoutes from "./app.routes";
+import AppRoutes from "@routes/app.routes";
 import {
   LinkingOptions,
   NavigationContainer,
   DarkTheme,
 } from "@react-navigation/native";
 import { useAuth } from "@contexts/auth";
-import { AuthRoutes } from "./auth.routes";
+import { AuthRoutes } from "@routes/auth.routes";
 import { navigationRef } from "./rootNavigation";
-import Loading from "../components/Loading";
-import config from "../config";
+import Loading from "@components/Loading";
+import config from "@configs";
 import * as Linking from "expo-linking";
 
 import analytics from "@react-native-firebase/analytics";

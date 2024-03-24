@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AnimatedLottieView from "lottie-react-native";
 import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import CachedImage from "../../components/CachedImage";
+import CachedImage from "@components/CachedImage";
 import fonts from "@styles/fonts";
 
 export const Container = styled(LinearGradient)`

@@ -2,10 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useMemo, useState } from "react";
 import SimpleToast from "react-native-simple-toast";
-import Button from "../../../components/Button";
-import Header from "../../../components/Header";
-import Input from "../../../components/Input";
-import Loading from "../../../components/Loading";
+import Button from "@components/Button";
+import Header from "@components/Header";
+import Input from "@components/Input";
+import Loading from "@components/Loading";
 import api from "../../../services/api";
 import {
   Container,

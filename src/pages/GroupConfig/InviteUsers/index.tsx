@@ -4,7 +4,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import Header from "../../../components/Header";
+import Header from "@components/Header";
 import { Feather } from "@expo/vector-icons";
 import {
   Container,
@@ -27,7 +27,7 @@ import {
   YourInviteSubtitle,
   YourInviteTitle,
 } from "./styles";
-import Loading from "../../../components/Loading";
+import Loading from "@components/Loading";
 import {
   useFocusEffect,
   useNavigation,
@@ -44,7 +44,7 @@ import {
   getFriendAvatar,
   getFriendID,
   getFriendName,
-} from "../../../utils/friends";
+} from "@utils/friends";
 import { FlatList } from "react-native";
 
 interface Friend extends FriendData {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "../../../components/Header";
+import Header from "@components/Header";
 import {
   Container,
   OptionInputWrapper,
@@ -17,7 +17,7 @@ import { useRoute } from "@react-navigation/native";
 import { ParticipantsData } from "../../../../types/interfaces";
 import { ParticipantRoles } from "../../../../types/enums";
 import api from "../../../services/api";
-import Loading from "../../../components/Loading";
+import Loading from "@components/Loading";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 const Participant: React.FC = () => {

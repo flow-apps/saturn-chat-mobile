@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 import LottieView from "lottie-react-native";
 import { memo } from "react";
-import CachedImage from "../../components/CachedImage";
+import CachedImage from "@components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import Feather from "@expo/vector-icons/Feather";
 
 import {
@@ -14,14 +14,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { GroupData, ParticipantsData } from "../../../types/interfaces";
 import { useEffect } from "react";
 import api from "../../services/api";
-import Loading from "../../components/Loading";
-import Banner from "../../components/Ads/Banner";
-import Alert from "../../components/Alert";
+import Loading from "@components/Loading";
+import Banner from "@components/Ads/Banner";
+import Alert from "@components/Alert";
 import {
   rolesForDeleteGroup,
   rolesForEditGroup,
   rolesForInvite,
-} from "../../utils/authorizedRoles";
+} from "@utils/authorizedRoles";
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BannerAdSize } from "react-native-google-mobile-ads";

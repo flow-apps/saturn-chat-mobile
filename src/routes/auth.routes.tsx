@@ -1,9 +1,9 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Home from "../pages/Auth/Home";
-import Register from "../pages/Auth/Register";
-import Login from "../pages/Auth/Login";
-import OnBoarding from "../pages/Auth/OnBoarding";
+import Home from "@pages/Auth/Home";
+import Register from "@pages/Auth/Register";
+import Login from "@pages/Auth/Login";
+import OnBoarding from "@pages/Auth/OnBoarding";
 import { useTheme } from "styled-components";
 
 const stack = createStackNavigator();

@@ -1,4 +1,4 @@
-import { ParticipantRoles } from "../../types/enums"
+import { ParticipantRoles } from "@type/enums"
 
 export const rolesForEditGroup = [
   ParticipantRoles.ADMIN,

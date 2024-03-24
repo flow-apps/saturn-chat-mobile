@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import ReactNative, { Dimensions, StatusBar } from "react-native";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
 import ImageZoom from "react-native-image-pan-zoom";
 import Feather from "@expo/vector-icons/Feather";
 import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
-import { HeaderButton } from "../../components/Header/styles";
+import { HeaderButton } from "@components/Header/styles";
 import { useCallback } from "react";
 import { useImageDimensions } from "@react-native-community/hooks/lib/useImageDimensions";
 import { FileService } from "../../services/file";

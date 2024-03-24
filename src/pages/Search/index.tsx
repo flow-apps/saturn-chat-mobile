@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import Feather from "@expo/vector-icons/Feather";
 
 import {

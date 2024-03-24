@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import Input from "../../../components/Input";
+import Input from "@components/Input";
 import fonts from "@styles/fonts";
 
 export const Container = styled.ScrollView`

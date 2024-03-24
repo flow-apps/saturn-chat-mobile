@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import Button from "../../../components/Button";
+import Button from "@components/Button";
 import {
   Container,
   ButtonContainer,

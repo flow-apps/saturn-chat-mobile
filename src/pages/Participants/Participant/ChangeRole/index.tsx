@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "styled-components";
-import Header from "../../../../components/Header";
-import Radio from "../../../../components/Radio";
+import Header from "@components/Header";
+import Radio from "@components/Radio";
 import {
   Container,
   ContentContainer,
@@ -19,7 +19,7 @@ import {
 
 import Feather from "@expo/vector-icons/Feather";
 import roles from "./roles";
-import Button from "../../../../components/Button";
+import Button from "@components/Button";
 import { useRoute } from "@react-navigation/core";
 import { ParticipantsData } from "../../../../../types/interfaces";
 import api from "../../../../services/api";

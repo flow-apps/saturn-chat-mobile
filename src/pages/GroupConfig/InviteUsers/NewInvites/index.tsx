@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Header from "../../../../components/Header";
-import Button from "../../../../components/Button";
+import Header from "@components/Header";
+import Button from "@components/Button";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Container,
@@ -30,8 +30,8 @@ import {
 } from "./styles";
 import Toast from "react-native-simple-toast";
 import * as Clipboard from "expo-clipboard";
-import Switcher from "../../../../components/Switcher";
-import Input from "../../../../components/Input";
+import Switcher from "@components/Switcher";
+import Input from "@components/Input";
 import { useTheme } from "styled-components";
 import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -39,7 +39,7 @@ import api from "../../../../services/api";
 
 import * as Localize from "expo-localization";
 import { InviteData } from "../../../../../types/interfaces";
-import { ConvertDate } from "../../../../utils/convertDate";
+import { ConvertDate } from "@utils/convertDate";
 import config from "../../../../config";
 import { AnimatePresence, MotiView } from "moti";
 

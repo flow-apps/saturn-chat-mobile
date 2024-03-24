@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import {
   Container,
   ParticipantsContainer,
@@ -21,14 +21,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import api from "../../services/api";
 import { useState } from "react";
-import Loading from "../../components/Loading";
-import { ConvertDate } from "../../utils/convertDate";
+import Loading from "@components/Loading";
+import { ConvertDate } from "@utils/convertDate";
 import { useCallback } from "react";
 import { useTheme } from "styled-components";
 import { ActivityIndicator } from "react-native";
-import Banner from "../../components/Ads/Banner";
+import Banner from "@components/Ads/Banner";
 import { AdBannerWrapper } from "../GroupInfos/styles";
-import PremiumName from "../../components/PremiumName";
+import PremiumName from "@components/PremiumName";
 import { ParticipantsData } from "../../../types/interfaces";
 import { useAuth } from "@contexts/auth";
 import { StackNavigationProp } from "@react-navigation/stack";

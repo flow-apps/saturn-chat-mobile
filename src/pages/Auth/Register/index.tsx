@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import Button from "../../../components/Button";
-import Header from "../../../components/Header";
-import Input from "../../../components/Input";
-import Loading from "../../../components/Loading";
+import Button from "@components/Button";
+import Header from "@components/Header";
+import Input from "@components/Input";
+import Loading from "@components/Loading";
 import formData from "form-data";
 
 import { Feather } from "@expo/vector-icons";

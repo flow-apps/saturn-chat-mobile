@@ -3,7 +3,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native";
 import { FriendData } from "../../../types/interfaces";
 import { useAuth } from "@contexts/auth";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import {
   Container,
   FriendsList,
@@ -17,10 +17,10 @@ import {
 
 import Feather from "@expo/vector-icons/Feather";
 import api from "../../services/api";
-import Loading from "../../components/Loading";
+import Loading from "@components/Loading";
 import { useTheme } from "styled-components";
-import Alert from "../../components/Alert";
-import { getFriendAvatar, getFriendName } from "../../utils/friends";
+import Alert from "@components/Alert";
+import { getFriendAvatar, getFriendName } from "@utils/friends";
 import { useTranslate } from "../../hooks/useTranslate";
 
 const FriendsManager: React.FC = () => {
