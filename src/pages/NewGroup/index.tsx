@@ -189,7 +189,7 @@ const NewGroup: React.FC = () => {
         <ReachedLimitContainer>
           <AnimationContainer>
             <Animation
-              source={require("../../assets/crying.json")}
+              source={require("@assets/crying.json")}
               autoPlay
               loop
             />

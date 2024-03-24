@@ -113,7 +113,7 @@ const EditProfile: React.FC = () => {
     } else {
       return (
         <AvatarImage
-          source={require("../../../assets/avatar-placeholder.png")}
+          source={require("@assets/avatar-placeholder.png")}
         />
       );
     }

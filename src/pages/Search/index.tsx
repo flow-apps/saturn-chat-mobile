@@ -133,7 +133,7 @@ const Search: React.FC = () => {
                     autoPlay
                     loop
                     speed={0.5}
-                    source={require("../../assets/search.json")}
+                    source={require("@assets/search.json")}
                   />
                   <NoResultText>
                     {loading ? t("loading.title") : t("title")}

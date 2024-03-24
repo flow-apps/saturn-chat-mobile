@@ -31,7 +31,7 @@ const Home: React.FC = () => {
       <Wrapper>
         <ImageWrapper>
           <HeroImage 
-            source={require("../../../assets/auth.json")}
+            source={require("@assets/auth.json")}
             loop={false}
             autoPlay
           />

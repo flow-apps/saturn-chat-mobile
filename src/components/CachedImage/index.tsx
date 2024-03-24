@@ -37,7 +37,7 @@ const CachedImage: React.FC<CachedImageProps> = ({
     />
   ) : (
     <Image
-      source={placeholder || require("../../assets/avatar-placeholder.png")}
+      source={placeholder || require("@assets/avatar-placeholder.png")}
       style={style}
       // @ts-ignore
       width={width || 0}

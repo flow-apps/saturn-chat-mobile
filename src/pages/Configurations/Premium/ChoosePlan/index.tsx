@@ -29,7 +29,7 @@ const ChoosePlan: React.FC = () => {
       <Container>
         <AnimationContainer>
           <Animation
-            source={require("../../../../assets/calendar.json")}
+            source={require("@assets/calendar.json")}
             speed={0.75}
             loop={false}
             autoPlay

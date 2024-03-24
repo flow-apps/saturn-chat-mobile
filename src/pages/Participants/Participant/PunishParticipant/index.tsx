@@ -67,7 +67,7 @@ const PunishParticipant: React.FC = () => {
           <PunishTitle>Tem certeza disso?</PunishTitle>
           <PunishAnimationWrapper>
             <PunishAnimation
-              source={require("../../../../assets/alert.json")}
+              source={require("@assets/alert.json")}
               loop={false}
               autoPlay
             />

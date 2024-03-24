@@ -73,7 +73,7 @@ const OnBoarding: React.FC = () => {
           backgroundColor: colors.background,
           image: (
             <BoardImage
-              source={require("../../../assets/group-chatting.json")}
+              source={require("@assets/group-chatting.json")}
               autoPlay
             />
           ),
@@ -84,7 +84,7 @@ const OnBoarding: React.FC = () => {
           backgroundColor: colors.background,
           image: (
             <BoardImage
-              source={require("../../../assets/message.json")}
+              source={require("@assets/message.json")}
               autoPlay
             />
           ),
@@ -95,7 +95,7 @@ const OnBoarding: React.FC = () => {
           backgroundColor: colors.background,
           image: (
             <BoardImage
-              source={require("../../../assets/lock.json")}
+              source={require("@assets/lock.json")}
               autoPlay
             />
           ),
@@ -106,7 +106,7 @@ const OnBoarding: React.FC = () => {
           backgroundColor: colors.background,
           image: (
             <BoardImage
-              source={require("../../../assets/star.json")}
+              source={require("@assets/star.json")}
               speed={0.75}
               autoPlay
             />

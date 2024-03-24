@@ -50,7 +50,7 @@ const Premium: React.FC = () => {
         <ContentWrapper>
           <StarContainer>
             <StarAnimation
-              source={require("../../../assets/star-2.json")}
+              source={require("@assets/star-2.json")}
               speed={0.7}
               autoPlay
             />

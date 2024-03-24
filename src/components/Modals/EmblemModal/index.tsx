@@ -46,7 +46,7 @@ const EmblemModal= ({ visible, close, premium }: EmblemProps) => {
           <ModalCardContainer>
             <ModalAnimationContainer>
               <ModalAnimation
-                source={require("../../../assets/star.json")}
+                source={require("@assets/star.json")}
                 loop={false}
                 autoPlay
               />

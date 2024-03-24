@@ -76,7 +76,7 @@ const Invite: React.FC = () => {
           <InviteContainer>
             <InviteAnimationContainer>
               <InviteAnimation
-                source={require("../../assets/crying.json")}
+                source={require("@assets/crying.json")}
                 autoPlay
                 autoSize
                 loop
