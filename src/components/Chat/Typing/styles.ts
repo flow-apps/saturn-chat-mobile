@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import LottieView from "lottie-react-native"
-import fonts from '../../../styles/fonts';
+import fonts from '@styles/fonts';
 import { Dimensions } from 'react-native';
 
 export const Container = styled.View`

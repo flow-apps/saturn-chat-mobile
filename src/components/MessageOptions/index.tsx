@@ -12,29 +12,9 @@ import {
   UserName,
 } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
-import { MessageData } from "../../../@types/interfaces";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import { TouchableOpacity, StatusBar } from "react-native";
-import { ParticipantRoles } from "../../../@types/enums";
-import { View } from "moti";
-
-export interface IOptions {
-  content: string;
-  action: () => unknown;
-  onlyOwner: boolean;
-  showInDM: boolean;
-  iconName?: keyof typeof Feather.glyphMap;
-  color?: string;
-  authorizedRoles: ParticipantRoles[] | string[];
-}
-
-interface IMessageOptionsProps {
-  visible: boolean;
-  message: MessageData;
-  options: IOptions[];
-  participant_role: ParticipantRoles;
-  close: () => void;
-}
+import { IMessageOptionsProps, IOptions } from "./types";
 
 const MessageOptions = ({
   visible,
@@ -100,17 +80,17 @@ const MessageOptions = ({
               <MessageAvatar uri={message.author?.avatar?.url} />
               <MessageInfos>
                 <UserName>{message.author.name}</UserName>
-                  <MessageText
-                    ellipsizeMode="tail"
-                    lineBreakMode="tail"
-                    numberOfLines={1}
-                    textBreakStrategy="highQuality"
-                  >
-                    {!!message.voice_message && "🎤 Mensagem de voz"}
-                    {message.files.length > 0 &&
-                      `(${message.files.length} arquivos) `}
-                    {!!message.message && message.message}
-                  </MessageText>
+                <MessageText
+                  ellipsizeMode="tail"
+                  lineBreakMode="tail"
+                  numberOfLines={1}
+                  textBreakStrategy="highQuality"
+                >
+                  {!!message.voice_message && "🎤 Mensagem de voz"}
+                  {message.files.length > 0 &&
+                    `(${message.files.length} arquivos) `}
+                  {!!message.message && message.message}
+                </MessageText>
               </MessageInfos>
             </MessageInfosContainer>
             <MessageOptionsModal>

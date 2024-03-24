@@ -24,9 +24,9 @@ import {
   MessageData,
   ParticipantsData,
   UserData,
-} from "../../../@types/interfaces";
+} from "../../../types/interfaces";
 import { HeaderButton } from "../../components/Header/styles";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import uuid from "react-native-uuid";
 
 import * as MimeTypes from "react-native-mime-types";
@@ -59,16 +59,16 @@ import { FileService, FileServiceErrors } from "../../services/file";
 import { RecordService } from "../../services/record";
 
 import analytics from "@react-native-firebase/analytics";
-import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
 import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
 import { ArrayUtils } from "../../utils/array";
-import { useWebsocket } from "../../contexts/websocket";
-import { useChat } from "../../contexts/chat";
+import { useWebsocket } from "@contexts/websocket";
+import { useChat } from "@contexts/chat";
 
 import FlashList from "@shopify/flash-list/dist/FlashList";
-import { useAds } from "../../contexts/ads";
+import { useAds } from "@contexts/ads";
 import { OneSignal } from "react-native-onesignal";
 import { TextInputRef, File } from "./types";
 import { useTranslate } from "../../hooks/useTranslate";

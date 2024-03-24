@@ -34,8 +34,8 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { FriendData, InviteData } from "../../../../@types/interfaces";
-import { useAuth } from "../../../contexts/auth";
+import { FriendData, InviteData } from "../../../../types/interfaces";
+import { useAuth } from "@contexts/auth";
 import api from "../../../services/api";
 
 import _ from "lodash";

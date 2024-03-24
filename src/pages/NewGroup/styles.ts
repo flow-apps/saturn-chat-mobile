@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import fonts from "../../styles/fonts";
+import fonts from "@styles/fonts";
 import Input from "../../components/Input";
 import AnimatedLottieView from "lottie-react-native";
 

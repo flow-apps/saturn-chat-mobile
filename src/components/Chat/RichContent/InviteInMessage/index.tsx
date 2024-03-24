@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useState } from "react";
 import SimpleToast from "react-native-simple-toast";
-import { InviteData } from "../../../../../@types/interfaces";
-import { useAuth } from "../../../../contexts/auth";
-import { ParticipantData } from "../../../../pages/Home";
-import api from "../../../../services/api";
-import LoadingIndicator from "../../../LoadingIndicator";
+import { InviteData } from "@type/interfaces";
+import { useAuth } from "@contexts/auth";
+import { ParticipantData } from "@pages/Home";
+import api from "@services/api";
+import LoadingIndicator from "@components/LoadingIndicator";
 
 import analytics from "@react-native-firebase/analytics";
 

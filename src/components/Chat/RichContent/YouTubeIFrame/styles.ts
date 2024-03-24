@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import Slider from "@react-native-community/slider";
-import fonts from "../../../../styles/fonts";
+import fonts from "@styles/fonts";
 import { MotiView } from "moti";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 

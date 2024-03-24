@@ -5,7 +5,7 @@ import {
   NavigationContainer,
   DarkTheme,
 } from "@react-navigation/native";
-import { useAuth } from "../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import { AuthRoutes } from "./auth.routes";
 import { navigationRef } from "./rootNavigation";
 import Loading from "../components/Loading";

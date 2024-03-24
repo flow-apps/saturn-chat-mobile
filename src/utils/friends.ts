@@ -1,4 +1,4 @@
-import { FriendData } from "../../@types/interfaces";
+import { FriendData } from "../../types/interfaces";
 
 export const getFriendID = (userID: string, friend: FriendData) => {
   return friend.received_by_id === userID

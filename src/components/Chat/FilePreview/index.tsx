@@ -4,8 +4,8 @@ import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
-import { convertBytesToMB } from "../../../utils/convertSize";
-import Alert from "../../Alert";
+import { convertBytesToMB } from "@utils/convertSize";
+import Alert from "@components/Alert";
 import FastImage from "react-native-fast-image";
 import * as MimeTypes from "react-native-mime-types";
 
@@ -22,11 +22,10 @@ import {
   FilePreviewContainer,
   FileSize,
 } from "./styles";
-import { LinkUtils } from "../../../utils/link";
 import { createThumbnail } from "react-native-create-thumbnail";
 import AudioPreview from "./AudioPreview";
-import { FileService } from "../../../services/file";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { FileService } from "@services/file";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface IFilePreviewProps {
   name: string;

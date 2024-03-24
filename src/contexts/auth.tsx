@@ -6,7 +6,7 @@ import websocket from "../configs/websocket";
 import * as auth from "../services/auth";
 
 import { Platform } from "react-native";
-import { UserData } from "../../@types/interfaces";
+import { UserData } from "../../types/interfaces";
 
 import analytics from "@react-native-firebase/analytics";
 import { OneSignal } from "../configs/notifications";

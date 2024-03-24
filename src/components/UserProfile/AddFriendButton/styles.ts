@@ -1,7 +1,7 @@
 import { DefaultTheme } from "styled-components";
-import { FriendsStates } from "../../../../@types/enums";
+import { FriendsStates } from "../../../../types/enums";
 import styled from "styled-components/native";
-import fonts from "../../../styles/fonts";
+import fonts from "@styles/fonts";
 
 const selectButtonBorderColor = (theme: DefaultTheme, state?: string) => {
   if (!state) {

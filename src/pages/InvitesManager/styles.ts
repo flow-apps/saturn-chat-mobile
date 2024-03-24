@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import fonts from "../../styles/fonts";
+import fonts from "@styles/fonts";
 
 export const Container = styled.View`
   background-color: ${(props) => props.theme.colors.background};

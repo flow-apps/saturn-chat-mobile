@@ -38,7 +38,7 @@ import { useEffect } from "react";
 import api from "../../../../services/api";
 
 import * as Localize from "expo-localization";
-import { InviteData } from "../../../../../@types/interfaces";
+import { InviteData } from "../../../../../types/interfaces";
 import { ConvertDate } from "../../../../utils/convertDate";
 import config from "../../../../config";
 import { AnimatePresence, MotiView } from "moti";

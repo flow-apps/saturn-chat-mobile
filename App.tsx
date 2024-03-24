@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Routes from "./src/routes";
+import Routes from "@routes/index";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
-import { AuthProvider } from "./src/contexts/auth";
-import { ThemeControllerProvider } from "./src/contexts/theme";
-import { NotificationsProvider } from "./src/contexts/notifications";
-import { AdsProvider } from "./src/contexts/ads";
-import { AudioPlayerProvider } from "./src/contexts/audioPlayer";
-import { FirebaseProvider } from "./src/contexts/firebase";
-import { RemoteConfigsProvider } from "./src/contexts/remoteConfigs";
-import { WebsocketProvider } from "./src/contexts/websocket";
+import { AuthProvider } from "@contexts/auth";
+import { ThemeControllerProvider } from "@contexts/theme";
+import { NotificationsProvider } from "@contexts/notifications";
+import { AdsProvider } from "@contexts/ads";
+import { AudioPlayerProvider } from "@contexts/audioPlayer";
+import { FirebaseProvider } from "@contexts/firebase";
+import { RemoteConfigsProvider } from "@contexts/remoteConfigs";
+import { WebsocketProvider } from "@contexts/websocket";
 
 import { useFonts } from "expo-font";
 
@@ -28,7 +28,7 @@ import {
   Poppins_300Light_Italic,
 } from "@expo-google-fonts/poppins";
 
-import { ChatProvider } from "./src/contexts/chat";
+import { ChatProvider } from "@contexts/chat";
 import {
   reloadAsync,
   fetchUpdateAsync,
@@ -36,7 +36,7 @@ import {
 } from "expo-updates";
 
 import * as Constants from "expo-constants";
-import { HomeProvider } from "./src/contexts/home";
+import { HomeProvider } from "@contexts/home";
 
 preventAutoHideAsync();
 

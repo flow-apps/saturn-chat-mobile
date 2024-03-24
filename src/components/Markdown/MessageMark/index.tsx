@@ -3,8 +3,8 @@ import Markdown, {
   MarkdownIt,
   RenderRules,
 } from "react-native-markdown-display";
-import { MessageData, UserData } from "../../../../@types/interfaces";
-import { MessageContent } from "../../Chat/Message/styles";
+import { MessageData, UserData } from "@type/interfaces";
+import { MessageContent } from "@components/Chat/Message/styles";
 import {
   MessageCodeBlock,
   MessageCodeBlockText,
@@ -83,5 +83,5 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
 };
 
 export default memo(MessageMark, (prev, next) => {
-  return prev.message.id === next.message.id
+  return prev.message.id === next.message.id;
 });

@@ -14,10 +14,10 @@ import {
 
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
-import { MessageData } from "../../../../@types/interfaces";
-import { millisToTime } from "../../../utils/format";
+import { MessageData } from "@type/interfaces";
+import { millisToTime } from "@utils/format";
 import { MotiView } from "moti";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface CurrentReplyingMessageProps {
   message: MessageData;

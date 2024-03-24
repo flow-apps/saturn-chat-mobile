@@ -11,7 +11,7 @@ import api from "../../../services/api";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
-import { GroupData } from "../../../../@types/interfaces";
+import { GroupData } from "../../../../types/interfaces";
 import {
   AvatarContainer,
   AvatarImage,

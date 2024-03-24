@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import { LinkData } from "../../../../../@types/interfaces";
+import { LinkData } from "@type/interfaces";
 import {
   Container,
   VideoIndicator,
@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import YouTubeIFrame, {
   IYouTubeIFrameRef,
-} from "../YouTubeIFrame";
+} from "@components/Chat/RichContent/YouTubeIFrame";
 import URLParse from "url-parse";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MotiView } from "moti";

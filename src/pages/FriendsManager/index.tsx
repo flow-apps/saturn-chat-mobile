@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native";
-import { FriendData } from "../../../@types/interfaces";
-import { useAuth } from "../../contexts/auth";
+import { FriendData } from "../../../types/interfaces";
+import { useAuth } from "@contexts/auth";
 import Header from "../../components/Header";
 import {
   Container,

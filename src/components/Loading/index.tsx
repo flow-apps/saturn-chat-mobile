@@ -1,5 +1,5 @@
 import React from "react";
-import loading from "../../assets/loading.json";
+import loading from "@assets/loading.json";
 import { AnimationView, Container, Lottie } from "./styles";
 
 const Loading: React.FC = () => {

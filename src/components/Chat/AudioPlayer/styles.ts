@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import fonts from "../../../styles/fonts";
+import fonts from "@styles/fonts";
 import Slider from "@react-native-community/slider"
 import { lighten } from "polished";
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AdBanner from "../../components/Ads/Banner";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/core";
-import { GroupData } from "../../../@types/interfaces";
+import { GroupData } from "../../../types/interfaces";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
@@ -37,7 +37,7 @@ import analytics from "@react-native-firebase/analytics";
 
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useAds } from "../../contexts/ads";
+import { useAds } from "@contexts/ads";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();

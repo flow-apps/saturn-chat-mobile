@@ -1,7 +1,7 @@
 import Feather from "@expo/vector-icons/Feather";
 import React from "react";
 import { useTheme } from "styled-components";
-import { InviteData } from "../../../../@types/interfaces";
+import { InviteData } from "@type/interfaces";
 
 interface GroupInviteProps {
   invite: InviteData;
@@ -23,7 +23,7 @@ import {
   GroupInviteInfosWrapper,
   GroupInviteParticipantsAmount,
 } from "./styles";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const GroupInvite: React.FC<GroupInviteProps> = ({
   invite,

@@ -45,8 +45,8 @@ import Loading from "../../components/Loading";
 import Banner from "../../components/Ads/Banner";
 import analytics from "@react-native-firebase/analytics";
 import { verifyBetweenValues } from "../../utils";
-import { UserData } from "../../../@types/interfaces";
-import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import { UserData } from "../../../types/interfaces";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "../../hooks/useTranslate";
 

@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { MotiView } from "moti";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
-import { GroupData, UserData } from "../../../@types/interfaces";
+import { GroupData, UserData } from "../../../types/interfaces";
 import Banner from "../../components/Ads/Banner";
 import Group from "../../components/Group";
 import Header from "../../components/Header";
@@ -34,8 +34,8 @@ import {
   QuickAccessTitle,
   TitleWrapper,
 } from "./styles";
-import { useRemoteConfigs } from "../../contexts/remoteConfigs";
-import { useHome } from "../../contexts/home";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
+import { useHome } from "@contexts/home";
 import configs from "../../config";
 import { useTranslate } from "../../hooks/useTranslate";
 

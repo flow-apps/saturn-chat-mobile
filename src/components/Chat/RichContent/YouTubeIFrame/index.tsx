@@ -13,10 +13,10 @@ import React, {
 } from "react";
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import { useTheme } from "styled-components";
-import { millisToTime } from "../../../../utils/format";
+import { millisToTime } from "@utils/format";
 import YouTubeVideoPlayer, {
   IYouTubeControllers,
-} from "../../../YouTube/YouTubeVideoPlayer";
+} from "@components/YouTube/YouTubeVideoPlayer";
 import {
   Container,
   YouTubeModal,
@@ -34,7 +34,7 @@ import {
   YouTubePlayerSeekBarContainer,
   YouTubeVideoTitle,
 } from "./styles";
-import { LinkUtils } from "../../../../utils/link";
+import { LinkUtils } from "@utils/link";
 
 interface IYouTubeIFrame {
   videoId: string;

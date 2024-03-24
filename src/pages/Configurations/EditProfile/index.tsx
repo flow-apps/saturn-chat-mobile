@@ -6,12 +6,12 @@ import * as ImagePicker from "expo-image-picker";
 import FormData from "form-data";
 import { Alert } from "react-native";
 import SimpleToast from "react-native-simple-toast";
-import { UserData } from "../../../../@types/interfaces";
+import { UserData } from "../../../../types/interfaces";
 import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 import Input from "../../../components/Input";
 import Loading from "../../../components/Loading";
-import { useAuth } from "../../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import api from "../../../services/api";
 import {
   AvatarContainer,

@@ -12,8 +12,9 @@ import {
   ReadMoreButton,
   ReadMoreText,
 } from "./styles";
-import { MessageData } from "../../../../@types/interfaces";
-import { millisToTime } from "../../../utils/format";
+import { MessageData } from "@type/interfaces";
+import { millisToTime } from "@utils/format";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface ReplyingMessageProps {
   replying_message: MessageData;
@@ -21,6 +22,8 @@ interface ReplyingMessageProps {
 
 const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
   const [readAll, setReadAll] = useState(false);
+
+  const {} = useTranslate("")
 
   const handleReadMore = () => {
     setReadAll((old) => !old);

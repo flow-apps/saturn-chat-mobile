@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
-import fonts from '../../../styles/fonts';
-
+import fonts from '@styles/fonts';
 
 export const ReplyingMessageContainer = styled.View`
   flex-direction: row;

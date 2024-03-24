@@ -1,5 +1,5 @@
 import React, { useMemo, memo } from "react";
-import { UserData } from "../../../../@types/interfaces";
+import { UserData } from "@type/interfaces";
 import {
   Container,
   TypingContainer,
@@ -15,8 +15,7 @@ type TypingProps = {
 };
 
 const Typing = ({ typingUsers }: TypingProps) => {
-  if (typingUsers.length <= 0) 
-    return <></>;
+  if (typingUsers.length <= 0) return <></>;
 
   const names = useMemo(
     () => typingUsers.map((user) => user.name),
@@ -29,7 +28,7 @@ const Typing = ({ typingUsers }: TypingProps) => {
       <TypingContainer>
         <TypingLeftSide>
           <TypingAnimation
-            source={require("../../../assets/typing.json")}
+            source={require("@assets/typing.json")}
             autoPlay
             loop
           />

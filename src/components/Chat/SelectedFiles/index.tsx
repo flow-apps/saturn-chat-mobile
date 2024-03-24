@@ -1,6 +1,6 @@
 import { DocumentResult } from "expo-document-picker";
 import React from "react";
-import SelectedFile from "../SelectedFile";
+import SelectedFile from "@components/Chat/SelectedFile";
 import {
   Files,
   FilesContainer,

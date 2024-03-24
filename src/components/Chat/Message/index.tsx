@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
 
-import config from "../../../config";
+import config from "@configs";
 import isSameMinute from "date-fns/isSameMinute";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
@@ -12,14 +12,14 @@ import {
   MessageData,
   ParticipantsData,
   UserData,
-} from "../../../../@types/interfaces";
+} from "@type/interfaces";
 
 import * as Clipboard from "expo-clipboard";
 
-import Alert from "../../Alert";
-import AudioPlayer from "../AudioPlayer";
-import FilePreview from "../FilePreview";
-import MessageOptions from "../../MessageOptions";
+import Alert from "@components/Alert";
+import AudioPlayer from "@components/Chat/AudioPlayer";
+import FilePreview from "@components/Chat/FilePreview";
+import MessageOptions from "@components/MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
@@ -28,25 +28,25 @@ import {
   MessageDate,
   MessageDateContainer,
 } from "./styles";
-import PremiumName from "../../PremiumName";
-import { ParticipantRoles, ParticipantStates } from "../../../../@types/enums";
-import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
-import MessageMark from "../../Markdown/MessageMark";
+import PremiumName from "@components/PremiumName";
+import { ParticipantRoles, ParticipantStates } from "@type/enums";
+import { rolesForDeleteMessage } from "@utils/authorizedRoles";
+import MessageMark from "@components/Markdown/MessageMark";
 import SimpleToast from "react-native-simple-toast";
 
-import { LinkUtils } from "../../../utils/link";
-import { useAuth } from "../../../contexts/auth";
+import { LinkUtils } from "@utils/link";
+import { useAuth } from "@contexts/auth";
 
 import isUndefined from "lodash/isUndefined";
 
-import ReplyingMessage from "../ReplyingMessage";
+import ReplyingMessage from "@components/Chat/ReplyingMessage";
 
 import URLParser from "url-parse";
-import InviteInMessage from "../RichContent/InviteInMessage";
-import LinkPreview from "../RichContent/LinkPreview";
-import { useChat } from "../../../contexts/chat";
+import InviteInMessage from "@components/Chat/RichContent/InviteInMessage";
+import LinkPreview from "@components/Chat/RichContent/LinkPreview";
+import { useChat } from "@contexts/chat";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface MessageProps {
   participant: ParticipantsData;

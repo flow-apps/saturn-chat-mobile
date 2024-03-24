@@ -8,13 +8,13 @@ import {
 } from "./styles";
 import { Platform } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import config from "../../../config";
-import secrets from "../../../../secrets.json";
+import config from "@configs";
+import secrets from "@secrets";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import analytics from "@react-native-firebase/analytics";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -67,10 +67,7 @@ const Banner = ({
         </RemoveBannerText>
       </RemoveBanner>
       <BannerContainer>
-        <BannerAd
-          unitId={adUnitID}
-          size={size}
-        />
+        <BannerAd unitId={adUnitID} size={size} />
       </BannerContainer>
     </Container>
   );

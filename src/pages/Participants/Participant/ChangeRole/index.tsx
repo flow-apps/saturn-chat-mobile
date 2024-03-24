@@ -21,7 +21,7 @@ import Feather from "@expo/vector-icons/Feather";
 import roles from "./roles";
 import Button from "../../../../components/Button";
 import { useRoute } from "@react-navigation/core";
-import { ParticipantsData } from "../../../../../@types/interfaces";
+import { ParticipantsData } from "../../../../../types/interfaces";
 import api from "../../../../services/api";
 import SimpleToast from "react-native-simple-toast";
 import { useNavigation } from "@react-navigation/native";

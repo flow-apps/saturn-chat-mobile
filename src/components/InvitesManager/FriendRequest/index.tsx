@@ -1,7 +1,7 @@
 import Feather from "@expo/vector-icons/Feather";
 import React from "react";
 import { useTheme } from "styled-components";
-import { FriendData } from "../../../../@types/interfaces";
+import { FriendData } from "@type/interfaces";
 
 interface FriendRequestProps {
   friend: FriendData;
@@ -20,7 +20,6 @@ import {
   FriendRequestRightContainer,
   FriendRequestActionButton,
 } from "./styles";
-import { useTranslate } from "../../../hooks/useTranslate";
 
 const FriendRequest: React.FC<FriendRequestProps> = ({
   friend,

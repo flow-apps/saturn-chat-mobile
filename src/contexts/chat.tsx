@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { MessageData, UserData } from "../../@types/interfaces";
+import { MessageData, UserData } from "../../types/interfaces";
 import { useAuth } from "./auth";
 import { useWebsocket } from "./websocket";
 import { getRoutes, navigate } from "../routes/rootNavigation";

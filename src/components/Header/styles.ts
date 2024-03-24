@@ -1,6 +1,6 @@
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import styled from "styled-components/native";
-import fonts from "../../styles/fonts";
+import fonts from "@styles/fonts";
 
 export const Container = styled.View<{ bgColor?: string }>`
   width: 100%;

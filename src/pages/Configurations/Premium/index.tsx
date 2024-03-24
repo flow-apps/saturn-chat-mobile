@@ -32,7 +32,7 @@ import {
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useRemoteConfigs } from "../../../contexts/remoteConfigs";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { useTranslate } from "../../../hooks/useTranslate";
 
 const Premium: React.FC = () => {

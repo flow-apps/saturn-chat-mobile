@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import fonts from "../../../styles/fonts";
+import fonts from "@styles/fonts";
 import FastImage from 'react-native-fast-image'
 import { lighten } from "polished"
 

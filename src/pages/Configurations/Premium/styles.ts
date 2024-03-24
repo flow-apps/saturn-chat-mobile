@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import fonts from '../../../styles/fonts';
+import fonts from '@styles/fonts';
 
 import LottieView from "lottie-react-native"
 import { RectButton } from 'react-native-gesture-handler';

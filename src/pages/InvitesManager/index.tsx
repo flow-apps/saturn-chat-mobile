@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
-import { FriendData, InviteData } from "../../../@types/interfaces";
+import { FriendData, InviteData } from "../../../types/interfaces";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import api from "../../services/api";

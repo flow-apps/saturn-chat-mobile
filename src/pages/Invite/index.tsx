@@ -17,12 +17,12 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { InviteData } from "../../../@types/interfaces";
+import { InviteData } from "../../../types/interfaces";
 import api from "../../services/api";
 import Loading from "../../components/Loading";
 import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import analytics from "@react-native-firebase/analytics";
 import { StackNavigationProp } from "@react-navigation/stack";
 

@@ -22,7 +22,7 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { Keyboard, TouchableWithoutFeedback, FlatList } from "react-native";
-import { GroupData } from "../../../@types/interfaces";
+import { GroupData } from "../../../types/interfaces";
 import api from "../../services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";

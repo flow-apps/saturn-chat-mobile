@@ -9,7 +9,7 @@ import Input from "../../../components/Input";
 import Loading from "../../../components/Loading";
 import analytics from "@react-native-firebase/analytics";
 
-import { useAuth } from "../../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import {
   Container,
   CreateAccountContainer,

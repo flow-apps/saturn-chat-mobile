@@ -6,16 +6,16 @@ import Header from "../../components/Header";
 import PremiumName from "../../components/PremiumName";
 import Loading from "../../components/Loading";
 import api from "../../services/api";
-import { useAds } from "../../contexts/ads";
+import { useAds } from "@contexts/ads";
 import { useTheme } from "styled-components";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { FriendData, UserData } from "../../../@types/interfaces";
-import { FriendsStates } from "../../../@types/enums";
+import { FriendData, UserData } from "../../../types/interfaces";
+import { FriendsStates } from "../../../types/enums";
 import { View } from "react-native";
 import {
   Container,

@@ -1,6 +1,6 @@
-import React from 'react';
-import Checkbox from 'react-native-paper/src/components/Checkbox';
-import { useTheme } from 'styled-components';
+import React from "react";
+import { Checkbox } from "react-native-paper";
+import { useTheme } from "styled-components";
 
 interface CheckboxProps {
   checked: boolean;
@@ -8,17 +8,16 @@ interface CheckboxProps {
 }
 
 const CheckBox = ({ checked, onChange }: CheckboxProps) => {
-
-  const { colors } = useTheme()
+  const { colors } = useTheme();
 
   return (
-    <Checkbox 
+    <Checkbox
       color={colors.secondary}
       status={checked ? "checked" : "unchecked"}
       uncheckedColor={colors.light_gray}
       onPress={onChange}
     />
-  )
-}
+  );
+};
 
 export default CheckBox;

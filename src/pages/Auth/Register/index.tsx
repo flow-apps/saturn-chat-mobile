@@ -10,7 +10,7 @@ import { Feather } from "@expo/vector-icons";
 import { Alert, Keyboard, KeyboardAvoidingView, Linking } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
-import { useAuth } from "../../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import {
   Avatar,
   ConsentText,
