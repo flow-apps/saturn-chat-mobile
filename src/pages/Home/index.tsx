@@ -197,7 +197,7 @@ const Home: React.FC = () => {
             ListEmptyComponent={() => (
               <GroupsListEmptyContainer>
                 <GroupsListEmptyAnimation
-                  source={require("../../assets/welcome.json")}
+                  source={require("@assets/welcome.json")}
                   speed={0.5}
                   autoPlay
                   loop={false}

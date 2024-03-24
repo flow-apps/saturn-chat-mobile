@@ -20,7 +20,7 @@ class FileService {
 
   private getCorrectURI(uri: string) {
     if (Platform.OS === "android") {
-      return encodeURI(`file://${uri}`);
+      return encodeURI(`${uri}`);
     }
 
     return uri;

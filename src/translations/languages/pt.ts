@@ -19,9 +19,9 @@ export const pt = {
     },
     Chat: {
       AudioPlayer: {},
-      ReplyingMessage: {
-        file_amount_one: "arquivo",
-        file_amount_other: "arquivos",
+      CurrentReplyingMessage: {
+        file_amount: "arquivo",
+        file_amount_plural: "arquivos",
         replying_text: "Você está respondendo:"
       },
       FilePreview: {
@@ -55,6 +55,14 @@ export const pt = {
       },
       RecordingAudio: {
         recording: "Gravando"
+      },
+      ReplyingMessage: {
+        read_more: "Ler mais",
+        read_less: "Ler menos",
+        replying: "Respondendo:",
+        voice_message: "Mensagem de voz",
+        files: "arquivo",
+        files_plural: "arquivos"
       }
     },
   },
@@ -153,7 +161,8 @@ export const pt = {
     },
     groups_list: {
       title: "Acessar os grupos",
-      subtitle: "Você está em {{count}} grupos",
+      subtitle: "Você está em {{count}} grupo",
+      subtitle_plural: "Você está em {{count}} grupos",
     },
   },
   Friends: {
@@ -235,7 +244,8 @@ export const pt = {
       title: "Buscando grupos...",
       subtitle: "Isso pode demorar um pouco",
     },
-    participants: "participantes",
+    participants: "participante",
+    participants_plural: "participantes",
   },
   InviteManager: {
     header_title: "Convites e soliticitações",

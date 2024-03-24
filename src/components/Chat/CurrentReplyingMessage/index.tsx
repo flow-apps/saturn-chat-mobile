@@ -29,7 +29,7 @@ const CurrentReplyingMessage = ({
   onRemoveReplying,
 }: CurrentReplyingMessageProps) => {
   const { colors } = useTheme();
-  const { t } = useTranslate("Components.Chat.ReplyingMessage");
+  const { t } = useTranslate("Components.Chat.CurrentReplyingMessage");
 
   const renderMessageContent = () => {
     if (message.voice_message) {

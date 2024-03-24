@@ -19,9 +19,9 @@ export const en = {
     },
     Chat: {
       AudioPlayer: {},
-      ReplyingMessage: {
-        file_amount_one: "file",
-        file_amount_other: "files",
+      CurrentReplyingMessage: {
+        file_amount: "file",
+        file_amount_plural: "files",
         replying_text: "You are replying:"
       },
       FilePreview: {},
@@ -46,6 +46,14 @@ export const en = {
       },
       RecordingAudio: {
         recording: "Recording"
+      },
+      ReplyingMessage: {
+        read_more: "Read more",
+        read_less: "Read less",
+        replying: "Replying:",
+        voice_message: "Voice message",
+        files: "file",
+        files_plural: "files"
       }
     },
   },
@@ -142,7 +150,8 @@ export const en = {
     },
     groups_list: {
       title: "Access groups",
-      subtitle: "You are in {{count}} groups",
+      subtitle: "You are in {{count}} group",
+      subtitle_plural: "You are in {{count}} groups",
     },
   },
   Friends: {
@@ -224,7 +233,8 @@ export const en = {
       title: "Searching for groups...",
       subtitle: "This may take a while",
     },
-    participants: "participants",
+    participants: "participant",
+    participants_plural: "participants",
   },
   InviteManager: {
     header_title: "Invitations and requests",

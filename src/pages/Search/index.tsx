@@ -180,7 +180,7 @@ const Search: React.FC = () => {
                         {item.description}
                       </GroupDesc>
                       <GroupParticipantsText>
-                        {item?.participantsAmount} {t("participants")}
+                        {item?.participantsAmount} {t("participants", { count: item?.participantsAmount })}
                       </GroupParticipantsText>
                     </GroupInfosContainer>
                   </GroupCard>

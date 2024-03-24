@@ -1,5 +1,5 @@
 const configs = {
-  API_URL: __DEV__ ? "http://192.168.0.101:3000" : "https://saturnchat.azurewebsites.net",
+  API_URL: __DEV__ ? "http://192.168.0.103:3000" : "https://saturnchat.azurewebsites.net",
   SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.app"],
   WEBSITE_URL: "https://saturn-chat.vercel.app",
   OFICIAL_GROUP_ID: "d10dfadb-08d1-4eb8-8a82-3a7b379604d3",

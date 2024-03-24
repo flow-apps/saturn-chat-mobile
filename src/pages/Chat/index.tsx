@@ -692,7 +692,7 @@ const Chat: React.FC = () => {
           {sendingFile && (
             <FileSendedProgressContainer>
               <FileSendedText>
-                <Feather name="upload" size={16} /> {sendedFileProgress}%
+                <Feather name="upload" size={16} /> {sendedFileProgress}%{" "}
                 {t("sent")}
               </FileSendedText>
               <ProgressBar
