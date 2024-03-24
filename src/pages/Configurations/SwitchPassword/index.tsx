@@ -6,7 +6,7 @@ import Button from "@components/Button";
 import Header from "@components/Header";
 import Input from "@components/Input";
 import Loading from "@components/Loading";
-import api from "../../../services/api";
+import api from "@services/api";
 import {
   Container,
   FieldError,
@@ -15,7 +15,7 @@ import {
   FormContainer,
   InputContainer,
 } from "./styles";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const SwitchPassword: React.FC = () => {
   const passwordValidation =

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { StatusBar, useColorScheme } from "react-native";
 import { ThemeProvider } from "styled-components/native";
-import { usePersistedState } from "../hooks/usePersistedState";
+import { usePersistedState } from "@hooks/usePersistedState";
 import nav from "react-native-system-navigation-bar";
 import dark from "../styles/themes/dark";
 import light from "../styles/themes/light";

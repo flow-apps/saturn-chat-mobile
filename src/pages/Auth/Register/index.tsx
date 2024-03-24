@@ -32,7 +32,7 @@ import {
 } from "./styles";
 import analytics from "@react-native-firebase/analytics";
 import config from "../../../config";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImagePicker.ImagePickerAsset>();

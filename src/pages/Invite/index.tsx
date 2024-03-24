@@ -17,8 +17,8 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { InviteData } from "../../../types/interfaces";
-import api from "../../services/api";
+import { InviteData } from "@type/interfaces";
+import api from "@services/api";
 import Loading from "@components/Loading";
 import { ParticipantData } from "../Home";
 import SimpleToast from "react-native-simple-toast";

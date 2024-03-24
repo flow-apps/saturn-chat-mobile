@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import AdBanner from "@components/Ads/Banner";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/core";
-import { GroupData } from "../../../types/interfaces";
+import { GroupData } from "@type/interfaces";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
-import api from "../../services/api";
+import api from "@services/api";
 import {
   AdBannerWrapper,
   Avatar,

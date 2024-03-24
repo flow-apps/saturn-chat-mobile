@@ -7,11 +7,11 @@ import Loading from "@components/Loading";
 import Switcher from "@components/Switcher";
 import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
-import api from "../../../services/api";
+import api from "@services/api";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
-import { GroupData } from "../../../../types/interfaces";
+import { GroupData } from "@type/interfaces";
 import {
   AvatarContainer,
   AvatarImage,

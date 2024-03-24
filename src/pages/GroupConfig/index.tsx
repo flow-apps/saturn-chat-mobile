@@ -11,9 +11,9 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { GroupData, ParticipantsData } from "../../../types/interfaces";
+import { GroupData, ParticipantsData } from "@type/interfaces";
 import { useEffect } from "react";
-import api from "../../services/api";
+import api from "@services/api";
 import Loading from "@components/Loading";
 import Banner from "@components/Ads/Banner";
 import Alert from "@components/Alert";

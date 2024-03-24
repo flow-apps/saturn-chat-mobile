@@ -12,7 +12,7 @@ import {
   Title,
   Wrapper,
 } from "./styles";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Home: React.FC = () => {
   const navigator = useNavigation<StackNavigationProp<any>>();

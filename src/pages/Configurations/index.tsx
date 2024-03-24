@@ -26,7 +26,7 @@ import Banner from "@components/Ads/Banner";
 import config from "../../config";
 import { useNotifications } from "@contexts/notifications";
 import { LinkUtils } from "@utils/link";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);

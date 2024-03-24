@@ -22,14 +22,14 @@ import {
 } from "./styles";
 import { useTheme } from "styled-components";
 import { Keyboard, TouchableWithoutFeedback, FlatList } from "react-native";
-import { GroupData } from "../../../types/interfaces";
-import api from "../../services/api";
+import { GroupData } from "@type/interfaces";
+import api from "@services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import analytics from "@react-native-firebase/analytics";
 import { MotiView } from "@motify/components";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);

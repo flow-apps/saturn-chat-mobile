@@ -19,7 +19,7 @@ import {
 } from "./styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
-import api from "../../services/api";
+import api from "@services/api";
 import { useState } from "react";
 import Loading from "@components/Loading";
 import { ConvertDate } from "@utils/convertDate";
@@ -29,7 +29,7 @@ import { ActivityIndicator } from "react-native";
 import Banner from "@components/Ads/Banner";
 import { AdBannerWrapper } from "../GroupInfos/styles";
 import PremiumName from "@components/PremiumName";
-import { ParticipantsData } from "../../../types/interfaces";
+import { ParticipantsData } from "@type/interfaces";
 import { useAuth } from "@contexts/auth";
 import { StackNavigationProp } from "@react-navigation/stack";
 

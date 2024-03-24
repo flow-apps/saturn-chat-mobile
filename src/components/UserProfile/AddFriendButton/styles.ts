@@ -1,5 +1,5 @@
 import { DefaultTheme } from "styled-components";
-import { FriendsStates } from "../../../../types/enums";
+import { FriendsStates } from "@type/enums";
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 

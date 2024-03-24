@@ -26,7 +26,7 @@ import {
   WelcomeTitle,
 } from "./styles";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");

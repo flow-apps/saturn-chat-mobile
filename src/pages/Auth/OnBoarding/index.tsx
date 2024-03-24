@@ -12,8 +12,8 @@ import {
   BoardTitle,
 } from "./styles";
 
-import { usePersistedState } from "../../../hooks/usePersistedState";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { usePersistedState } from "@hooks/usePersistedState";
+import { useTranslate } from "@hooks/useTranslate";
 
 const OnBoarding: React.FC = () => {
   const [hasBoarded, setHasBoarded] = usePersistedState<boolean>(

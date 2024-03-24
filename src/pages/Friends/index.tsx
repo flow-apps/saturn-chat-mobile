@@ -3,12 +3,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import isNumber from "lodash/isNumber";
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
-import { FriendData } from "../../../types/interfaces";
+import { FriendData } from "@type/interfaces";
 import Banner from "@components/Ads/Banner";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
 import { useAuth } from "@contexts/auth";
-import api from "../../services/api";
+import api from "@services/api";
 import {
   getFriendAvatar,
   getFriendID,
@@ -30,7 +30,7 @@ import {
   UnreadMessages,
   UnreadMessagesText,
 } from "./styles";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface OpenChatProps {
   id: string;

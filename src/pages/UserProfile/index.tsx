@@ -5,7 +5,7 @@ import Feather from "@expo/vector-icons/Feather";
 import Header from "@components/Header";
 import PremiumName from "@components/PremiumName";
 import Loading from "@components/Loading";
-import api from "../../services/api";
+import api from "@services/api";
 import { useAds } from "@contexts/ads";
 import { useTheme } from "styled-components";
 import { useAuth } from "@contexts/auth";
@@ -14,8 +14,8 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { FriendData, UserData } from "../../../types/interfaces";
-import { FriendsStates } from "../../../types/enums";
+import { FriendData, UserData } from "@type/interfaces";
+import { FriendsStates } from "@type/enums";
 import { View } from "react-native";
 import {
   Container,
@@ -43,7 +43,7 @@ import FriendActionButtons from "@components/UserProfile/FriendActionButtons";
 import AddFriendButton from "@components/UserProfile/AddFriendButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HeaderButton } from "@components/Header/styles";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);

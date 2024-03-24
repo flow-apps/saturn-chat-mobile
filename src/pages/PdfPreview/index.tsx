@@ -7,7 +7,7 @@ import { Container } from "./styles";
 import { LinkUtils } from "@utils/link";
 import { HeaderButton } from "@components/Header/styles";
 import Feather from "@expo/vector-icons/Feather";
-import { FileService } from "../../services/file";
+import { FileService } from "@services/file";
 
 const PdfPreview = () => {
   const linkUtils = new LinkUtils();

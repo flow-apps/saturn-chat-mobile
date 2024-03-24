@@ -16,7 +16,7 @@ import {
   ButtonText,
   ButtonsContainer,
 } from "./styles";
-import api from "../../../../services/api";
+import api from "@services/api";
 import Loading from "@components/Loading";
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";

@@ -35,10 +35,10 @@ import Input from "@components/Input";
 import { useTheme } from "styled-components";
 import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
-import api from "../../../../services/api";
+import api from "@services/api";
 
 import * as Localize from "expo-localization";
-import { InviteData } from "../../../../../types/interfaces";
+import { InviteData } from "@type/interfaces";
 import { ConvertDate } from "@utils/convertDate";
 import config from "../../../../config";
 import { AnimatePresence, MotiView } from "moti";

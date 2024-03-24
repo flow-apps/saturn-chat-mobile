@@ -9,7 +9,7 @@ import {
   ActionTitle,
   Container,
 } from "./styles";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface FriendActionButtonsProps {
   name?: string;

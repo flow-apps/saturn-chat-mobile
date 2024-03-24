@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Header from "@components/Header";
 import {
   Container,
-  OptionInputWrapper,
   OptionName,
   OptionNameWrapper,
   ParticipantOptionContainer,
@@ -14,9 +13,9 @@ import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { useRoute } from "@react-navigation/native";
-import { ParticipantsData } from "../../../../types/interfaces";
-import { ParticipantRoles } from "../../../../types/enums";
-import api from "../../../services/api";
+import { ParticipantsData } from "@type/interfaces";
+import { ParticipantRoles } from "@type/enums";
+import api from "@services/api";
 import Loading from "@components/Loading";
 import { StackNavigationProp } from "@react-navigation/stack";
 

@@ -5,13 +5,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { MotiView } from "moti";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
-import { GroupData, UserData } from "../../../types/interfaces";
+import { GroupData, UserData } from "@type/interfaces";
 import Banner from "@components/Ads/Banner";
 import Group from "@components/Group";
 import Header from "@components/Header";
 import { HeaderButton } from "@components/Header/styles";
 import Loading from "@components/Loading";
-import api from "../../services/api";
+import api from "@services/api";
 import {
   AdContainer,
   Container,
@@ -37,7 +37,7 @@ import {
 import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { useHome } from "@contexts/home";
 import configs from "../../config";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 export interface ParticipantData {
   id: string;

@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "@components/Header";
 import { Container, Content, Title } from "./styles";
-import { useTranslate } from "../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const SwitchLanguage: React.FC = () => {
   const { t } = useTranslate("SwitchLanguage");

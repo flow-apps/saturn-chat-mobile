@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
-import { FriendData, InviteData } from "../../../types/interfaces";
+import { FriendData, InviteData } from "@type/interfaces";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
-import api from "../../services/api";
+import api from "@services/api";
 import {
   Container,
   PresentationContainer,
@@ -20,7 +20,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import orderBy from "lodash/orderBy";
 
 import GroupInvite from "@components/InvitesManager/GroupInvite";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface Request extends FriendData, InviteData {
   type: "FRIEND_REQUEST" | "GROUP_INVITE";

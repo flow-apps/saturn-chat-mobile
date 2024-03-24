@@ -27,7 +27,7 @@ import SystemNavigationBar from "react-native-system-navigation-bar";
 import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
-import { FileService } from "../../services/file";
+import { FileService } from "@services/file";
 import { AVPlaybackStatus } from "expo-av/build/AV";
 import { ResizeMode } from "expo-av/build/Video.types";
 

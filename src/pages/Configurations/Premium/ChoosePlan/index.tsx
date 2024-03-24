@@ -17,7 +17,7 @@ import {
   PlansContainer,
   PlanTitle,
 } from "./styles";
-import { useTranslate } from "../../../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const ChoosePlan: React.FC = () => {
   const { colors } = useTheme();

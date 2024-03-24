@@ -24,7 +24,7 @@ import {
   MessageData,
   ParticipantsData,
   UserData,
-} from "../../../types/interfaces";
+} from "@type/interfaces";
 import { HeaderButton } from "@components/Header/styles";
 import { useAuth } from "@contexts/auth";
 import uuid from "react-native-uuid";
@@ -36,7 +36,7 @@ import Alert from "@components/Alert";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
-import api from "../../services/api";
+import api from "@services/api";
 import {
   AudioButton,
   AudioContainer,
@@ -55,8 +55,8 @@ import Typing from "@components/Chat/Typing";
 import RecordingAudio from "@components/Chat/RecordingAudio";
 import LoadingIndicator from "@components/LoadingIndicator";
 import SelectedFiles from "@components/Chat/SelectedFiles";
-import { FileService, FileServiceErrors } from "../../services/file";
-import { RecordService } from "../../services/record";
+import { FileService, FileServiceErrors } from "@services/file";
+import { RecordService } from "@services/record";
 
 import analytics from "@react-native-firebase/analytics";
 import { useRemoteConfigs } from "@contexts/remoteConfigs";
@@ -71,7 +71,7 @@ import FlashList from "@shopify/flash-list/dist/FlashList";
 import { useAds } from "@contexts/ads";
 import { OneSignal } from "react-native-onesignal";
 import { TextInputRef, File } from "./types";
-import { useTranslate } from "../../hooks/useTranslate";
+import { useTranslate } from "@hooks/useTranslate";
 
 const recordService = new RecordService();
 

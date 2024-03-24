@@ -1,5 +1,5 @@
 import { OneSignal } from "react-native-onesignal";
-import { NotificationsTypes } from "../../types/enums";
+import { NotificationsTypes } from "@type/enums";
 import { navigate } from "../routes/rootNavigation";
 import { LinkUtils } from "@utils/link";
 

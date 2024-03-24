@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FormData from "form-data";
-import api from "../services/api";
+import api from "@services/api";
 import websocket from "../configs/websocket";
-import * as auth from "../services/auth";
+import * as auth from "@services/auth";
 
 import { Platform } from "react-native";
-import { UserData } from "../../types/interfaces";
+import { UserData } from "@type/interfaces";
 
 import analytics from "@react-native-firebase/analytics";
 import { OneSignal } from "../configs/notifications";

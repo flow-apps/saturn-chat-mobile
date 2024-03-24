@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import * as Localize from "expo-localization";
 
-import api from "../services/api";
+import api from "@services/api";
 import secrets from "../../secrets.json";
 
 import { useAuth } from "./auth";
