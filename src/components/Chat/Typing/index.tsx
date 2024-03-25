@@ -9,12 +9,15 @@ import {
   TypingUsersText,
   TypingUsersContainer,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 type TypingProps = {
   typingUsers: UserData[];
 };
 
 const Typing = ({ typingUsers }: TypingProps) => {
+  const { t } = useTranslate("Components.Chat.Typing");
+
   if (typingUsers.length <= 0) return <></>;
 
   const names = useMemo(
@@ -36,9 +39,11 @@ const Typing = ({ typingUsers }: TypingProps) => {
         <TypingRightSide>
           <TypingUsersContainer>
             <TypingUsersText numberOfLines={1}>
-              {names.length < 5 ? joinedNames : "Varias pessoas"}{" "}
-              {names.length <= 1 && names.length < 5 ? "está " : "estão "}
-              digitando
+              {names.length < 5 ? joinedNames : t("many")}{" "}
+              {names.length <= 1 && names.length < 5
+                ? t("typing_user", { count: 1 })
+                : t("typing_user", { count: names.length })}
+              {t("typing")}
             </TypingUsersText>
           </TypingUsersContainer>
         </TypingRightSide>

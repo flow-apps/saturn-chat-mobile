@@ -19,12 +19,21 @@ export const en = {
     },
     Chat: {
       AudioPlayer: {},
+      FilePreview: {
+        alerts: {
+          download: {
+            title: "❗ Be very careful",
+            content: "Are you sure you want to download the file? Malicious files can damage your phone!\n\n📁 File name: {{name}}",
+            ok_text: "Download",
+            cancel_text: "Cancel" 
+          }
+        }
+      },
       CurrentReplyingMessage: {
         file_amount: "file",
         file_amount_plural: "files",
         replying_text: "You are replying:"
       },
-      FilePreview: {},
       Message: {
         toasts: {
           copied_message: "Copied message"
@@ -51,11 +60,41 @@ export const en = {
         read_more: "Read more",
         read_less: "Read less",
         replying: "Replying:",
-        voice_message: "Voice message",
+        voice_message: "🎤 Voice message",
         files: "file",
         files_plural: "files"
+      },
+      InviteInMessage: {
+        invalid_invite_title: "🚫 Invalid Invite",
+        invalid_invite_subtitle: "The invite may have expired, been deleted or reached the maximum number of uses!",
+        invite_title: "Invite to:",
+        no_desc: "No description",
+        joined_text: "You're already in!",
+        join_text: "Join the group",
+        toasts: {
+          joined: "You've joined the '{{name}}' group!",
+          error: "Unable to use invite"
+        }
+      },
+      LinkPreview: {
+        watch_text: "Toque aqui para assistir",
+        link_copied: "Link copied"
+      },
+      Typing: {
+        typing_user: "is ",
+        typing_user_plural: "are ",
+        typing: "typing",
+        many: "Many users"
       }
     },
+    Modals: {
+      EmblemModal: {
+        title: "Cool emblem, right?",
+        content: "It is given to very special people who support Saturn Chat with the Star plan.",
+        premium_text: "Do you want to have one like it? So come and be part of the constellation!",
+        be_star: "Get Star"
+      }
+    }
   },
   OnBoarding: {
     done: "Done",
@@ -200,7 +239,7 @@ export const en = {
       sign_out: {
         title: "😥 Do you really want to leave your account?",
         subtitle:
-          "When you sign out you will not receive notifications of new messages, invitations or anything related.",
+          "When you sign out you will not receive notifications of new messages, invites or anything related.",
         ok_text: "Sign out",
         cancel_text: "Cancel",
       },
@@ -237,14 +276,14 @@ export const en = {
     participants_plural: "participants",
   },
   InviteManager: {
-    header_title: "Invitations and requests",
+    header_title: "Invites and requests",
     subtitle:
-      "Manage your invitations and friend requests that you have received.",
+      "Manage your Invites and friend requests that you have received.",
     empty_text:
       "There are no group invites or friend requests. Come back later.",
     toasts: {
-      invite_accept: "Invitation accepted!",
-      invite_reject: "Invitation rejected :(",
+      invite_accept: "Invite accepted!",
+      invite_reject: "Invite rejected :(",
       request_accept: "Request accepted successfully!",
       request_reject: "Request successfully rejected",
     },
@@ -356,5 +395,6 @@ export const en = {
     type_message: "Type your message...",
     drop_send: "Drop to send",
     sent: "sent",
+    limit_char: "Limite de {{count}} caracteres atingido!"
   },
 };

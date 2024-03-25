@@ -30,7 +30,7 @@ export const pt = {
             title: "❗ Muito cuidado",
             content: "Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Nome do arquivo: {{name}}",
             ok_text: "Baixar",
-            cancel_text: "Não baixar" 
+            cancel_text: "Cancelar" 
           }
         }
       },
@@ -60,11 +60,41 @@ export const pt = {
         read_more: "Ler mais",
         read_less: "Ler menos",
         replying: "Respondendo:",
-        voice_message: "Mensagem de voz",
+        voice_message: "🎤 Mensagem de voz",
         files: "arquivo",
         files_plural: "arquivos"
+      },
+      InviteInMessage: {
+        invalid_invite_title: "🚫 Convite inválido",
+        invalid_invite_subtitle: " O convite pode ter expirado, ter sido apagado ou ter atingido o número máximo de usos!",
+        invite_title: "Convite para:",
+        no_desc: "Sem descrição",
+        joined_text: "Você já entrou!",
+        join_text: "Entrar no grupo",
+        toasts: {
+          joined: "Você entrou no grupo '{{name}}'!",
+          error: "Não foi possível usar o convite"
+        }
+      },
+      LinkPreview: {
+        watch_text: "Toque aqui para assistir",
+        link_copied: "Link copiado"
+      },
+      Typing: {
+        typing_user: "está ",
+        typing_user_plural: "estão ",
+        typing: "digitando",
+        many: "Vários usuários"
       }
     },
+    Modals: {
+      EmblemModal: {
+        title: "Emblema legal né?",
+        content: "Ele é dado a pessoas muito especiais que apoiam o Saturn Chat com o plano Star.",
+        premium_text: "Quer ter um igual? Então venha fazer parte da constelação!",
+        be_star: "Obter Star"
+      }
+    }
   },
   OnBoarding: {
     done: "Começar",
@@ -368,5 +398,6 @@ export const pt = {
     type_message: "Digite sua mensagem...",
     drop_send: "Solte para enviar",
     sent: "enviado",
+    limit_char: "Limite de {{count}} caracteres atingido!"
   },
 };

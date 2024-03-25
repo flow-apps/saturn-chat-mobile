@@ -29,6 +29,7 @@ import YouTubeIFrame, {
 import URLParse from "url-parse";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MotiView } from "moti";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface LinkPreviewProps {
   link: LinkData;
@@ -42,9 +43,11 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
     uri: link.image,
   });
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Components.Chat.LinkPreview");
+
   const copyLink = useCallback(async () => {
     await Clipboard.setStringAsync(link.link);
-    SimpleToast.show("Link copiado");
+    SimpleToast.show(t("link_copied"));
   }, [link]);
 
   const handlePreview = useCallback(() => {
@@ -73,7 +76,9 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
   return (
     <>
-      {!!videoId && <YouTubeIFrame ref={ytIFrameRef} title={link.title} videoId={videoId} />}
+      {!!videoId && (
+        <YouTubeIFrame ref={ytIFrameRef} title={link.title} videoId={videoId} />
+      )}
       <Container>
         {!!link.siteName && (
           <WebsiteNameContainer>
@@ -126,9 +131,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
                       size={35}
                       color="#fff"
                     />
-                    <VideoIndicatorText>
-                      Toque aqui para assistir
-                    </VideoIndicatorText>
+                    <VideoIndicatorText>{t("watch_text")}</VideoIndicatorText>
                   </VideoIndicator>
                 </MotiView>
               </VideoIndicatorContainer>
@@ -141,7 +144,5 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 };
 
 export default memo(LinkPreview, (prev, next) => {
-  return (
-    prev.link.link === next.link.link
-  );
+  return prev.link.link === next.link.link;
 });

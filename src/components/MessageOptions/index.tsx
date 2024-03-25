@@ -15,6 +15,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useAuth } from "@contexts/auth";
 import { TouchableOpacity, StatusBar } from "react-native";
 import { IMessageOptionsProps, IOptions } from "./types";
+import { useTranslate } from "@hooks/useTranslate";
 
 const MessageOptions = ({
   visible,
@@ -24,6 +25,7 @@ const MessageOptions = ({
   participant_role,
 }: IMessageOptionsProps) => {
   const { user } = useAuth();
+  const { t } = useTranslate("Components.Chat.ReplyingMessage");
   const handleExecAction = useCallback((action: () => any) => {
     close();
 
@@ -86,9 +88,11 @@ const MessageOptions = ({
                   numberOfLines={1}
                   textBreakStrategy="highQuality"
                 >
-                  {!!message.voice_message && "🎤 Mensagem de voz"}
+                  {!!message.voice_message && t("voice_message")}
                   {message.files.length > 0 &&
-                    `(${message.files.length} arquivos) `}
+                    `(${message.files.length} ${t("files", {
+                      count: message.files.length,
+                    })}) `}
                   {!!message.message && message.message}
                 </MessageText>
               </MessageInfos>

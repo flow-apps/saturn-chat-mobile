@@ -13,6 +13,7 @@ import {
   ModalContent,
   ModalTitle,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface EmblemProps {
   visible: boolean;
@@ -20,28 +21,25 @@ interface EmblemProps {
   premium: boolean;
 }
 
-const EmblemModal= ({ visible, close, premium }: EmblemProps) => {
+const EmblemModal = ({ visible, close, premium }: EmblemProps) => {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Components.Modals.EmblemModal");
 
   const handleGoPremium = () => {
-    close()
-    navigation.navigate("PurchasePremium")
-  }
+    close();
+    navigation.navigate("PurchasePremium");
+  };
 
   return (
-    <Container 
+    <Container
       visible={visible}
       onDismiss={close}
       onRequestClose={close}
-      animationType="fade" 
-      transparent 
+      animationType="fade"
+      transparent
       statusBarTranslucent
     >
-      <TouchableOpacity
-        style={{ flex: 1 }}
-        activeOpacity={1}
-        onPress={close}
-      >
+      <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={close}>
         <ModalContainer>
           <ModalCardContainer>
             <ModalAnimationContainer>
@@ -51,20 +49,15 @@ const EmblemModal= ({ visible, close, premium }: EmblemProps) => {
                 autoPlay
               />
             </ModalAnimationContainer>
-            <ModalTitle>Emblema legal né?</ModalTitle>
+            <ModalTitle>{t("title")}</ModalTitle>
             <ModalContent>
-              Ele é dado a pessoas muito especias que apoiam o Saturn Chat com o
-              plano Star. {!premium && "Quer ter um igual? Então venha fazer parte da constelação!"}
+              {t("subtitle")} {!premium && t("premium_text")}
             </ModalContent>
-            {
-              !premium && (
-                <ModalButton onPress={handleGoPremium}>
-                  <ModalButtonText>
-                    Obter Star
-                  </ModalButtonText>
-                </ModalButton>
-              ) 
-            }
+            {!premium && (
+              <ModalButton onPress={handleGoPremium}>
+                <ModalButtonText>{t("be_star")}</ModalButtonText>
+              </ModalButton>
+            )}
           </ModalCardContainer>
         </ModalContainer>
       </TouchableOpacity>

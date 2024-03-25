@@ -14,6 +14,7 @@ import {
 
 import * as Clipboard from "expo-clipboard";
 import SimpleToast from "react-native-simple-toast";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface MessageMarkProps {
   user: UserData;
@@ -22,6 +23,8 @@ interface MessageMarkProps {
 }
 
 const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
+  const { t } = useTranslate("Components.Chat.Message")
+  
   const markdownRules = MarkdownIt({
     linkify: true,
     typographer: true,
@@ -31,7 +34,7 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
 
   const copyLink = useCallback(async (url: string) => {
     await Clipboard.setStringAsync(url);
-    SimpleToast.show("Link copiado", SimpleToast.SHORT);
+    SimpleToast.show(t("copied_link"), SimpleToast.SHORT);
   }, []);
 
   const renderRules = useMemo(() => {

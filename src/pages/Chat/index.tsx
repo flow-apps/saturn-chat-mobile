@@ -361,7 +361,9 @@ const Chat: React.FC = () => {
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
-      return SimpleToast.show("Limite de 500 caracteres atingido!");
+      return SimpleToast.show(
+        t("limit_char", { count: userConfigs.messageLength })
+      );
     }
 
     if (newMessage.length > 0 && !isTypingMessage) {
