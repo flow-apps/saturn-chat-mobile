@@ -19,16 +19,16 @@ class FileService {
   }
 
   private getCorrectURI(uri: string) {
-    if (Platform.OS === "android") {
-      return encodeURI(`${uri}`);
-    }
+    // if (Platform.OS === "android" && !uri.startsWith("file://") || !uri.startsWith("file:///")) {
+    //   return encodeURI(`file://${uri}`);
+    // }
 
     return uri;
   }
 
   async get() {
     const file = await DocumentPicker.getDocumentAsync({
-      copyToCacheDirectory: true,
+      copyToCacheDirectory: false,
     });
 
     if (file.type === "success") {
@@ -64,14 +64,16 @@ class FileService {
 
   async downloadFile(url: string, fileName: string) {
     try {
-      const { dirs: { DownloadDir, DocumentDir } } = RNFB.fs;
+      const {
+        dirs: { DownloadDir, DocumentDir },
+      } = RNFB.fs;
       const directoryPath = Platform.select({
         ios: DocumentDir,
         android: DownloadDir,
       });
 
       const filePath = `${directoryPath}/${fileName}`;
-      const mimetype = MimeTypes.lookup(fileName) as string;      
+      const mimetype = MimeTypes.lookup(fileName) as string;
       const downloadConfig: RNFetchBlobConfig = Platform.select({
         ios: {
           fileCache: true,
@@ -90,15 +92,15 @@ class FileService {
             notification: true,
           },
         },
-      });      
+      });
 
-      SimpleToast.show("Iniciando download...")
+      SimpleToast.show("Iniciando download...");
       RNFB.config(downloadConfig as RNFetchBlobConfig)
         .fetch("GET", url)
         .then((res) => {
           SimpleToast.show("Download concluído!");
         })
-        .catch((error) => {          
+        .catch((error) => {
           SimpleToast.show("Falha no download");
         });
     } catch (error) {
