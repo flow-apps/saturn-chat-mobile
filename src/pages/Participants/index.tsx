@@ -32,6 +32,7 @@ import PremiumName from "@components/PremiumName";
 import { ParticipantsData } from "@type/interfaces";
 import { useAuth } from "@contexts/auth";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Participants: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
@@ -45,6 +46,8 @@ const Participants: React.FC = () => {
   const { id } = route.params as { id: string };
   const { colors } = useTheme();
   const { user } = useAuth();
+
+  const { t } = useTranslate("Participants");
 
   const convertDate = new ConvertDate();
 
@@ -121,16 +124,19 @@ const Participants: React.FC = () => {
               <PremiumName name={item.user.name} nameSize={16} />
               <JoinedDate>
                 {item.group.owner.id === item.user.id
-                  ? "Criou em "
-                  : "Entrou em "}
-                {convertDate.formatToDate(item.participating_since)}
+                  ? t("created", {
+                      date: convertDate.formatToDate(item.participating_since),
+                    })
+                  : t("joined", {
+                      date: convertDate.formatToDate(item.participating_since),
+                    })}
               </JoinedDate>
             </ParticipantInfosWrapper>
             <JoinedDateContainer></JoinedDateContainer>
           </Participant>
           {item.group.owner.id === item.user.id && (
             <OwnerTagContainer>
-              <OwnerTag>Dono</OwnerTag>
+              <OwnerTag>{t("owner")}</OwnerTag>
             </OwnerTagContainer>
           )}
         </ParticipantContainer>
@@ -142,11 +148,11 @@ const Participants: React.FC = () => {
 
   return (
     <>
-      <Header title={`${participants.length} Participantes`} />
+      <Header title={t("header_title", { count: participants.length })} />
       <Container>
         <ParticipantsContainer>
           <SectionContainer>
-            <SectionTitle>Todos os participantes</SectionTitle>
+            <SectionTitle>{t("title")}</SectionTitle>
             <ParticipantsList
               data={participants}
               renderItem={renderItem}

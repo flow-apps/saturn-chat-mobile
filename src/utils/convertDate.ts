@@ -2,7 +2,6 @@ import * as Localize from "expo-localization";
 import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
 import { convertToTimeZone } from "date-fns-timezone";
-
 class ConvertDate {
   timezone = Localize.getCalendars().shift().timeZone;
 

@@ -19,7 +19,7 @@ module.exports = function (api) {
             "@utils": "./src/utils",
             "@routes": "./src/routes",
             "@type": "./types",
-            "@services": "./src/services",  
+            "@services": "./src/services",
             "@styles": "./src/styles",
             "@secrets": "./secrets.json",
             "@configs": "./src/config.ts"

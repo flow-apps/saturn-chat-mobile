@@ -18,6 +18,7 @@ import { ParticipantRoles } from "@type/enums";
 import api from "@services/api";
 import Loading from "@components/Loading";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Participant: React.FC = () => {
   const { colors } = useTheme();
@@ -27,6 +28,8 @@ const Participant: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const [myRole, setMyRole] = useState("" as ParticipantRoles);
   const [loading, setLoading] = useState(false);
+
+  const { t } = useTranslate("Participant");
 
   useEffect(() => {
     (async () => {
@@ -78,14 +81,12 @@ const Participant: React.FC = () => {
       <Header title={participant.user.name} />
       <Container>
         <ParticipantOptionsContainer>
-          <ParticipantOptionsTitle>
-            Opções do participante
-          </ParticipantOptionsTitle>
+          <ParticipantOptionsTitle>{t("title")}</ParticipantOptionsTitle>
           <ParticipantOptions>
             <ParticipantOptionContainer onPress={handleGoUserProfile}>
               <OptionNameWrapper>
                 <OptionName>
-                  <Feather name="user" size={16} /> Ver perfil
+                  <Feather name="user" size={16} /> {t("view_profile")}
                 </OptionName>
               </OptionNameWrapper>
             </ParticipantOptionContainer>
@@ -95,7 +96,7 @@ const Participant: React.FC = () => {
                 <ParticipantOptionContainer onPress={handleGoChangeRole}>
                   <OptionNameWrapper>
                     <OptionName color={colors.primary}>
-                      <Feather name="user-plus" size={16} /> Alterar cargo
+                      <Feather name="user-plus" size={16} /> {t("change_role")}
                     </OptionName>
                   </OptionNameWrapper>
                 </ParticipantOptionContainer>
@@ -109,7 +110,7 @@ const Participant: React.FC = () => {
                   >
                     <OptionNameWrapper>
                       <OptionName color={colors.red}>
-                        <Feather name="user-x" size={16} /> Expulsar
+                        <Feather name="user-x" size={16} /> {t("kick")}
                         participante
                       </OptionName>
                     </OptionNameWrapper>
@@ -119,7 +120,7 @@ const Participant: React.FC = () => {
                   >
                     <OptionNameWrapper>
                       <OptionName color={colors.red}>
-                        <Feather name="slash" size={16} /> Banir participante
+                        <Feather name="slash" size={16} /> {t("ban")}
                       </OptionName>
                     </OptionNameWrapper>
                   </ParticipantOptionContainer>

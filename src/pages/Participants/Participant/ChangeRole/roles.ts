@@ -1,7 +1,7 @@
 export default {
   participant: {
     name: "Participante",
-    description: "Este cargo não da poderes especiais ao participante.",
+    description: "Este cargo não dá poderes especiais ao participante.",
     permissions: {
       create_invites: false,
       punish_members: false,

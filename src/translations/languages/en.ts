@@ -430,5 +430,29 @@ export const en = {
         exit_group: "Leave the group",
       }
     }
+  },
+  Participants: {
+    header_title: "{{count}} Participant",
+    header_title_plural: "{{count}} Participants",
+    title: "All participants",
+    created: "Created on {{date}}",
+    joined: "Joined on {{date}}",
+    owner: "Owner"
+  },
+  Participant: {
+    title: "Participant options",
+    view_profile: "View profile",
+    change_role: "Change role",
+    kick: "Kick",
+    ban: "Ban participant"
+  },
+  PunishParticipant: {
+    title: "Are you sure about that?",
+    desc_kick: "You are about to kick the participant \"{userName}\" from the group \"{groupName}\". Are you sure of your choice?",
+    desc_ban: "You are about to ban participant \"{userName}\" from the group \"{groupName}\". Are you sure of your choice?",
+    notify_text: "Notify participant of punishment",
+    confirm_text_kick: "Yes, kick out now!",
+    confirm_text_ban: "Yes, ban now!",
+    cancel_text: "No, I changed my mind"
   }
 };

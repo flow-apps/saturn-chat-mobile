@@ -433,5 +433,29 @@ export const pt = {
         exit_group: "Sair do grupo",
       }
     }
+  },
+  Participants: {
+    header_title: "{{count}} Participante",
+    header_title_plural: "{{count}} Participantes",
+    title: "Todos os participantes",
+    created: "Criou em {{date}}",
+    joined: "Entrou em {{date}}",
+    owner: "Dono"
+  },
+  Participant: {
+    title: "Opções do participante",
+    view_profile: "Ver perfil",
+    change_role: "Mudar cargo",
+    kick: "Expulsar",
+    ban: "Banir participante"
+  },
+  PunishParticipant: {
+    title: "Tem certeza disso?",
+    desc_kick: "Você está prestes a expulsar o participante \"{userName}\" do grupo \"{groupName}\". Você tem certeza da sua escolha?",
+    desc_ban: "Você está prestes a banir o participante \"{userName}\" do grupo \"{groupName}\". Você tem certeza da sua escolha?",
+    notify_text: "Notificar participante da punição",
+    confirm_text_kick: "Sim, expulsar agora!",
+    confirm_text_ban: "Sim, banir agora!",
+    cancel_text: "Não, mudei de ideia"
   }
 };

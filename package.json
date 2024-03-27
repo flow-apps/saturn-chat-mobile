@@ -1,5 +1,6 @@
 {
   "name": "saturn-chat",
+  "sideEffects": false,
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

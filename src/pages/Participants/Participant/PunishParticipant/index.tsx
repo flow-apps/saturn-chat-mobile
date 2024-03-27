@@ -20,11 +20,14 @@ import api from "@services/api";
 import Loading from "@components/Loading";
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";
+import { useTranslate } from "@hooks/useTranslate";
 
 const PunishParticipant: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { colors } = useTheme();
+  const { t } = useTranslate("PunishParticipant");
+
   const { type, participant } = route.params as {
     [key: string]: any;
   };
@@ -40,7 +43,7 @@ const PunishParticipant: React.FC = () => {
   };
 
   const handlePunish = async () => {
-    setLoading(true)
+    setLoading(true);
     await api
       .get(
         `/group/participant/${type}/${participant?.id}?group_id=${participant?.group.id}`
@@ -55,7 +58,7 @@ const PunishParticipant: React.FC = () => {
         SimpleToast.show("Erro ao punir usuário. Tente novamente.");
       });
 
-    setLoading(false)
+    setLoading(false);
   };
 
   if (loading) return <Loading />;
@@ -73,24 +76,27 @@ const PunishParticipant: React.FC = () => {
             />
           </PunishAnimationWrapper>
           <PunishDescription>
-            Você está prestes a {type === "kick" ? "expulsar" : "banir"} o
-            participante "{participant?.user.name}" do grupo "{participant?.group.name}". Você
-            tem certeza da sua escolha?
+            {t(type === "kick" ? "desc_kick" : "desc_ban", {
+              groupName: participant?.group.name,
+              userName: participant?.user.name,
+            })}
           </PunishDescription>
           <PunishNotifyContainer>
             <PunishNotifyInput>
               <CheckBox checked={notify} onChange={handleChangeNotify} />
-              <PunishLabel>Notificar participante da punição</PunishLabel>
+              <PunishLabel>{t("notify_text")}</PunishLabel>
             </PunishNotifyInput>
           </PunishNotifyContainer>
           <ButtonsContainer>
             <ButtonAction onPress={handlePunish}>
               <ButtonText>
-                Sim, {type === "kick" ? "expulsar" : "banir"} agora!
+                {type === "kick"
+                  ? t("confirm_text_kick")
+                  : t("confirm_text_ban")}
               </ButtonText>
             </ButtonAction>
             <ButtonAction onPress={handleGoBack} color={colors.red}>
-              <ButtonText>Não, mudei de ideia!</ButtonText>
+              <ButtonText>{t("cancel_text")}</ButtonText>
             </ButtonAction>
           </ButtonsContainer>
         </PunishContentContainer>
