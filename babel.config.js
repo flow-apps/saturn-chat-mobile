@@ -30,7 +30,7 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     env: {
       production: {
-        plugins: ["transform-remove-console"], //removing consoles.log from app during release (production) versions
+        plugins: ["transform-remove-console", 'react-native-paper/babel'], //removing consoles.log from app during release (production) versions
       },
     },
   };
