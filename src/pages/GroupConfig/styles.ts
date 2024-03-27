@@ -1,6 +1,6 @@
 import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import fonts from "../../styles/fonts";
+import fonts from "@styles/fonts";
 
 interface OptionTextProps {
   color?: string;

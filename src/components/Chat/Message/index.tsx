@@ -1,25 +1,19 @@
 import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
 
-import config from "../../../config";
-import isSameMinute from "date-fns/isSameMinute";
-import parseISO from "date-fns/parseISO";
-import format from "date-fns/format";
+import config from "@configs";
+import moment from "moment";
 
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
-import {
-  MessageData,
-  ParticipantsData,
-  UserData,
-} from "../../../../@types/interfaces";
+import { MessageData, ParticipantsData, UserData } from "@type/interfaces";
 
 import * as Clipboard from "expo-clipboard";
 
-import Alert from "../../Alert";
-import AudioPlayer from "../AudioPlayer";
-import FilePreview from "../FilePreview";
-import MessageOptions from "../../MessageOptions";
+import Alert from "@components/Alert";
+import AudioPlayer from "@components/Chat/AudioPlayer";
+import FilePreview from "@components/Chat/FilePreview";
+import MessageOptions from "@components/MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
@@ -28,24 +22,25 @@ import {
   MessageDate,
   MessageDateContainer,
 } from "./styles";
-import PremiumName from "../../PremiumName";
-import { ParticipantRoles, ParticipantStates } from "../../../../@types/enums";
-import { rolesForDeleteMessage } from "../../../utils/authorizedRoles";
-import MessageMark from "../../Markdown/MessageMark";
+import PremiumName from "@components/PremiumName";
+import { ParticipantRoles, ParticipantStates } from "@type/enums";
+import { rolesForDeleteMessage } from "@utils/authorizedRoles";
+import MessageMark from "@components/Markdown/MessageMark";
 import SimpleToast from "react-native-simple-toast";
 
-import { LinkUtils } from "../../../utils/link";
-import { useAuth } from "../../../contexts/auth";
+import { LinkUtils } from "@utils/link";
+import { useAuth } from "@contexts/auth";
 
 import isUndefined from "lodash/isUndefined";
 
-import ReplyingMessage from "../ReplyingMessage";
+import ReplyingMessage from "@components/Chat/ReplyingMessage";
 
 import URLParser from "url-parse";
-import InviteInMessage from "../RichContent/InviteInMessage";
-import LinkPreview from "../RichContent/LinkPreview";
-import { useChat } from "../../../contexts/chat";
+import InviteInMessage from "@components/Chat/RichContent/InviteInMessage";
+import LinkPreview from "@components/Chat/RichContent/LinkPreview";
+import { useChat } from "@contexts/chat";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -74,6 +69,7 @@ const Message = ({
 
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslate("Components.Chat.Message");
 
   const { handleDeleteMessage } = useChat();
 
@@ -86,31 +82,6 @@ const Message = ({
   const sended = useMemo(() => {
     return isUndefined(message?.sended) ? true : message.sended;
   }, [message]);
-
-  useEffect(() => {
-    (async () => {
-      const allLinks = linkUtils.getAllLinksFromText(message.message);
-
-      allLinks.map((link) => {
-        const { host, pathname } = new URLParser(link);
-        if (!config.SATURN_CHAT_DOMAINS.includes(host)) return;
-        if (!pathname) return;
-
-        const partsOfPath = pathname.split("/").filter(Boolean);
-
-        if (partsOfPath.includes("invite")) {
-          if (partsOfPath.length !== 2) return;
-
-          if (!hasInvite) {
-            setHasInvite(true);
-          }
-
-          const inviteID = partsOfPath.pop();
-          setInvitesData((old) => [...old, { id: inviteID }]);
-        }
-      });
-    })();
-  }, []);
 
   const handleGoParticipant = () => {
     navigation.navigate("Participant", { participant: message.participant });
@@ -132,7 +103,7 @@ const Message = ({
         </MessageAuthorContainer>
       );
     } else {
-      return <></>
+      return <></>;
     }
   }, [message, lastMessage]);
 
@@ -144,11 +115,10 @@ const Message = ({
         </MessageDateContainer>
       );
     } else {
-      const date = (date: string) => parseISO(date);
-      const same = isSameMinute(
-        date(message.created_at),
-        date(lastMessage.created_at)
-      );
+      const date = (date: string) => moment(date);
+      const same =
+        date(message.created_at).minutes() ===
+        date(lastMessage.created_at).minutes();
 
       if (!same) {
         return (
@@ -163,9 +133,9 @@ const Message = ({
   }, [message, lastMessage]);
 
   const formatHour = useCallback((date: string) => {
-    const isoDate = parseISO(date);
+    const isoDate = moment(date);
 
-    return format(isoDate, "dd/MM/yy, HH:mm");
+    return isoDate.format("DD/MM/yy, HH:mm");
   }, []);
 
   const deleteMessage = useCallback(async () => {
@@ -204,7 +174,7 @@ const Message = ({
 
   const handleCopyMessage = useCallback(async () => {
     await Clipboard.setStringAsync(message.message);
-    SimpleToast.show("Mensagem copiada");
+    SimpleToast.show(t("toasts.copied_message"));
   }, [message.message]);
 
   const renderVoiceMessage = useCallback(() => {
@@ -214,7 +184,7 @@ const Message = ({
   }, [message.voice_message]);
 
   const renderFiles = useCallback(() => {
-    if (message.files) {      
+    if (message.files) {
       return message.files.map((file) => {
         return (
           <FilePreview
@@ -260,11 +230,9 @@ const Message = ({
       return;
     }
 
-    if (direction === "left" && isRight)
-      return;
+    if (direction === "left" && isRight) return;
 
-    if (direction === "right" && !isRight)
-      return;
+    if (direction === "right" && !isRight) return;
 
     onReplyMessage(message);
   };
@@ -272,13 +240,41 @@ const Message = ({
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
 
+  useEffect(() => {
+    (async () => {
+      const allLinks = linkUtils.getAllLinksFromText(message.message);
+
+      allLinks.map((link) => {
+        const { host, pathname } = new URLParser(link);
+        if (!config.SATURN_CHAT_DOMAINS.includes(host)) return;
+        if (!pathname) return;
+
+        const partsOfPath = pathname.split("/").filter(Boolean);
+
+        if (partsOfPath.includes("invite")) {
+          if (partsOfPath.length !== 2) return;
+
+          if (!hasInvite) {
+            setHasInvite(true);
+          }
+
+          const inviteID = partsOfPath.pop();
+          setInvitesData((old) => [...old, { id: inviteID }]);
+        }
+      });
+    })();
+  }, []);
+
   return (
     <>
       <Alert
-        title="⚠ Cuidado, pode ser perigoso"
-        content={`Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo. \n\n${linkUrl}`}
-        cancelButtonText="Não"
-        okButtonText="Acessar"
+        title={t("alerts.open_link.title")}
+        content={t("alerts.open_link.content", {
+          url: linkUrl,
+          interpolation: { escapeValue: false },
+        })}
+        cancelButtonText={t("alerts.open_link.cancel_text")}
+        okButtonText={t("alerts.open_link.ok_text")}
         cancelButtonAction={closeLink}
         okButtonAction={openLink}
         visible={showLinkAlert}
@@ -308,7 +304,7 @@ const Message = ({
               options={[
                 {
                   iconName: "corner-up-right",
-                  content: "Responder",
+                  content: t("options.reply"),
                   action: replyMessage,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
@@ -316,7 +312,7 @@ const Message = ({
                 },
                 {
                   iconName: "copy",
-                  content: "Copiar",
+                  content: t("options.copy"),
                   action: handleCopyMessage,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
@@ -324,7 +320,7 @@ const Message = ({
                 },
                 {
                   iconName: "user",
-                  content: "Opções do participante",
+                  content: t("options.part_opt"),
                   action: handleGoParticipant,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
@@ -332,7 +328,7 @@ const Message = ({
                 },
                 {
                   iconName: "trash-2",
-                  content: "Excluir",
+                  content: t("options.delete"),
                   action: deleteMessage,
                   color: colors.red,
                   onlyOwner: true,

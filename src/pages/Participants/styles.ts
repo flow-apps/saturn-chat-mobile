@@ -1,8 +1,8 @@
 import { FlatList } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import fonts from "../../styles/fonts";
-import { ParticipantsData } from "../../../@types/interfaces";
-import CachedImage from "../../components/CachedImage";
+import fonts from "@styles/fonts";
+import { ParticipantsData } from "@type/interfaces";
+import CachedImage from "@components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;

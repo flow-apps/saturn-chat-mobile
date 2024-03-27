@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { PremiumNameProps } from '.';
-import fonts from '../../styles/fonts';
+import fonts from '@styles/fonts';
 
 interface EmblemProps {
   isPremium: boolean;

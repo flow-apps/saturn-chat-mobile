@@ -1,21 +1,21 @@
 import React, { useState, useCallback } from "react";
-import AdBanner from "../../components/Ads/Banner";
-import Group from "../../components/Group";
+import AdBanner from "@components/Ads/Banner";
+import Group from "@components/Group";
 import Feather from "@expo/vector-icons/Feather";
-import Header from "../../components/Header";
-import PremiumName from "../../components/PremiumName";
-import Loading from "../../components/Loading";
-import api from "../../services/api";
-import { useAds } from "../../contexts/ads";
+import Header from "@components/Header";
+import PremiumName from "@components/PremiumName";
+import Loading from "@components/Loading";
+import api from "@services/api";
+import { useAds } from "@contexts/ads";
 import { useTheme } from "styled-components";
-import { useAuth } from "../../contexts/auth";
+import { useAuth } from "@contexts/auth";
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { FriendData, UserData } from "../../../@types/interfaces";
-import { FriendsStates } from "../../../@types/enums";
+import { FriendData, UserData } from "@type/interfaces";
+import { FriendsStates } from "@type/enums";
 import { View } from "react-native";
 import {
   Container,
@@ -39,10 +39,11 @@ import {
 } from "./styles";
 
 import isNull from "lodash/isNull";
-import FriendActionButtons from "../../components/UserProfile/FriendActionButtons";
-import AddFriendButton from "../../components/UserProfile/AddFriendButton";
+import FriendActionButtons from "@components/UserProfile/FriendActionButtons";
+import AddFriendButton from "@components/UserProfile/AddFriendButton";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { HeaderButton } from "../../components/Header/styles";
+import { HeaderButton } from "@components/Header/styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -55,6 +56,7 @@ const UserProfile: React.FC = () => {
   const { user } = useAuth();
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("Profile")
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
@@ -187,7 +189,7 @@ const UserProfile: React.FC = () => {
                   onPress={openFriendsManager}
                 >
                   <FriendsNumber>{userInfos?.friendsAmount}</FriendsNumber>
-                  <FriendsTitle>Amigos</FriendsTitle>
+                  <FriendsTitle>{t("friends")}</FriendsTitle>
                 </FriendsContainer>
               </FriendsInfosContainer>
             )}
@@ -196,7 +198,7 @@ const UserProfile: React.FC = () => {
           <GroupsContainer>
             <GroupsTitle>
               <Feather name="users" size={25} color={colors.light_heading} />{" "}
-              Participando
+              {t("participating")}
             </GroupsTitle>
             {userInfos?.participating?.length > 0 && (
               <Groups>

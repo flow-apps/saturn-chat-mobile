@@ -1,10 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
-import Header from "../../../components/Header";
+import React, { useCallback, useState } from "react";
+import Header from "@components/Header";
 import { Feather } from "@expo/vector-icons";
 import {
   Container,
@@ -27,25 +22,22 @@ import {
   YourInviteSubtitle,
   YourInviteTitle,
 } from "./styles";
-import Loading from "../../../components/Loading";
+import Loading from "@components/Loading";
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { FriendData, InviteData } from "../../../../@types/interfaces";
-import { useAuth } from "../../../contexts/auth";
-import api from "../../../services/api";
+import { FriendData, InviteData } from "@type/interfaces";
+import { useAuth } from "@contexts/auth";
+import api from "@services/api";
 
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 import SimpleToast from "react-native-simple-toast";
-import {
-  getFriendAvatar,
-  getFriendID,
-  getFriendName,
-} from "../../../utils/friends";
+import { getFriendAvatar, getFriendID, getFriendName } from "@utils/friends";
 import { FlatList } from "react-native";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface Friend extends FriendData {
   invited: boolean;
@@ -58,6 +50,7 @@ const InviteUsers: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id } = route.params as { id: string };
+  const { t } = useTranslate("InviteUsers");
 
   useFocusEffect(
     useCallback(() => {
@@ -67,7 +60,8 @@ const InviteUsers: React.FC = () => {
 
         if (res.status === 200) {
           const data = res.data as Friend[];
-          const sorted = _.sortBy(data, { invited: false });
+          const sorted = sortBy(data, { invited: false });
+
           setRequests(sorted);
         }
 
@@ -80,31 +74,33 @@ const InviteUsers: React.FC = () => {
     navigation.navigate("NewInvites", { id });
 
   const handleInviteFriend = async (user_id: string) => {
-    const res = await api.post(
-      `/friends/groups/invite?user_id=${user_id}&group_id=${id}`
-    );
+    await api
+      .post(`/friends/groups/invite?user_id=${user_id}&group_id=${id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          const invite = res.data as InviteData;
+          const newFriendsList = requests.map((friend) => {
+            if (invite.friend_id === friend.id) {
+              friend.invited = true;
+            }
+            return friend;
+          });
 
-    if (res.status === 200) {
-      const invite = res.data as InviteData;
-      const newFriendsList = requests.map((friend) => {
-        if (invite.friend_id === friend.id) {
-          friend.invited = true;
+          setRequests(newFriendsList);
+          SimpleToast.show(t("toasts.success"));
         }
-        return friend;
+      })
+      .catch((err) => {
+        console.log(err);
+        SimpleToast.show(t("toasts.error"));
       });
-
-      setRequests(newFriendsList);
-      SimpleToast.show("Convite enviado com sucesso!");
-    } else {
-      SimpleToast.show("Não foi possível convidar seu amigo!");
-    }
   };
 
   if (loading) return <Loading />;
 
   return (
     <>
-      <Header title="Convidar" />
+      <Header title={t("header_invite")} />
       <Container>
         <FriendsListContainer>
           <FlatList
@@ -112,37 +108,31 @@ const InviteUsers: React.FC = () => {
             keyExtractor={(item) => item.id}
             ListEmptyComponent={() => (
               <EmptyListContainer>
-                <EmptyListTitle>
-                  Não há amigos para convidar. Tente compartilhar um convite
-                  através de links.
-                </EmptyListTitle>
+                <EmptyListTitle>{t("empty_title")}</EmptyListTitle>
               </EmptyListContainer>
             )}
             ListHeaderComponent={() => (
               <>
                 <YourInviteContainer>
                   <YourInviteTitle>
-                    <Feather name="user-plus" size={18} /> Convite do grupo
+                    <Feather name="user-plus" size={18} /> {t("title")}
                   </YourInviteTitle>
-                  <YourInviteSubtitle>
-                    Crie e gerencie todos os convites do grupo através do nosso
-                    gerenciador de convites
-                  </YourInviteSubtitle>
+                  <YourInviteSubtitle>{t("subtitle")}</YourInviteSubtitle>
                   <NewInviteContainer>
                     <NewInviteButton onPress={handleGoCreateNewInvite}>
                       <NewInviteButtonText>
-                        <Feather name="plus" size={16} /> Gerenciar convites
+                        <Feather name="plus" size={16} /> {t("new_invite_text")}
                       </NewInviteButtonText>
                     </NewInviteButton>
                   </NewInviteContainer>
                 </YourInviteContainer>
                 <InviteFriendsContainer>
                   <InviteFriendsTitle>
-                    <Feather name="user-check" size={20} /> Convide seus amigos
+                    <Feather name="user-check" size={20} />{" "}
+                    {t("friends_invite_title")}
                   </InviteFriendsTitle>
                   <InviteFriendsSubtitle>
-                    Somente amigos que não estão no grupo aparecem aqui. Eles
-                    precisarão aceitar o convite para entrar.
+                    {t("friends_invite_subtitle")}
                   </InviteFriendsSubtitle>
                 </InviteFriendsContainer>
               </>
@@ -154,11 +144,7 @@ const InviteUsers: React.FC = () => {
               return (
                 <FriendContainer>
                   <FriendWrapper>
-                    <FriendAvatar
-                      source={{
-                        uri: getFriendAvatar(user.id, item),
-                      }}
-                    />
+                    <FriendAvatar uri={getFriendAvatar(user.id, item)} />
                     <FriendName>{friendName}</FriendName>
                   </FriendWrapper>
                   <FriendInviteButton
@@ -166,7 +152,7 @@ const InviteUsers: React.FC = () => {
                     disabled={item.invited}
                   >
                     <FriendInviteButtonText>
-                      {item.invited ? "Convidado" : "Convidar"}
+                      {t(item.invited ? "invited" : "invite")}
                     </FriendInviteButtonText>
                   </FriendInviteButton>
                 </FriendContainer>

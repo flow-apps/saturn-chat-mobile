@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native";
-import { FriendData } from "../../../@types/interfaces";
-import { useAuth } from "../../contexts/auth";
-import Header from "../../components/Header";
+import { FriendData } from "@type/interfaces";
+import { useAuth } from "@contexts/auth";
+import Header from "@components/Header";
 import {
   Container,
   FriendsList,
@@ -16,11 +16,12 @@ import {
 } from "./styles";
 
 import Feather from "@expo/vector-icons/Feather";
-import api from "../../services/api";
-import Loading from "../../components/Loading";
+import api from "@services/api";
+import Loading from "@components/Loading";
 import { useTheme } from "styled-components";
-import Alert from "../../components/Alert";
-import { getFriendAvatar, getFriendName } from "../../utils/friends";
+import Alert from "@components/Alert";
+import { getFriendAvatar, getFriendName } from "@utils/friends";
+import { useTranslate } from "@hooks/useTranslate";
 
 const FriendsManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,7 @@ const FriendsManager: React.FC = () => {
 
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslate("FriendsManager");
 
   useFocusEffect(
     useCallback(() => {
@@ -77,15 +79,14 @@ const FriendsManager: React.FC = () => {
     <>
       <Alert
         visible={showUnfriendAlert}
-        title="⚠️ Deseja desfazer a amizade?"
-        content={`Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.`}
-        okButtonText="Desfazer amizade"
-        cancelButtonText="Cancelar"
+        title={t("alerts.unfriend.title")}
+        content={t("alerts.unfriend.content")}
+        okButtonText={t("alerts.unfriend.ok_text")}
         okButtonAction={removeFriend}
         cancelButtonAction={closeUnfriendAlert}
       />
       <Container>
-        <Header title="Gerenciar amigos" />
+        <Header title={t("header_title")} />
         <FriendsList>
           <FlatList
             data={friends}

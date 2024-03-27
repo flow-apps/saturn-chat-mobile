@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useState } from "react";
 import SimpleToast from "react-native-simple-toast";
-import { InviteData } from "../../../../../@types/interfaces";
-import { useAuth } from "../../../../contexts/auth";
-import { ParticipantData } from "../../../../pages/Home";
-import api from "../../../../services/api";
-import LoadingIndicator from "../../../LoadingIndicator";
+import { InviteData } from "@type/interfaces";
+import { useAuth } from "@contexts/auth";
+import { ParticipantData } from "@pages/Home";
+import api from "@services/api";
+import LoadingIndicator from "@components/LoadingIndicator";
 
 import analytics from "@react-native-firebase/analytics";
 
@@ -20,6 +20,7 @@ import {
   GroupRightSideContainer,
   InviteTitle,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface InviteInMessageProps {
   inviteID: string;
@@ -31,6 +32,7 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
   const [participating, setParticipating] = useState(false);
 
   const { user } = useAuth();
+  const { t } = useTranslate("Components.Chat.InviteInMessage");
 
   useEffect(() => {
     (async () => {
@@ -66,12 +68,12 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             group_id: data.group_id,
           });
 
-          SimpleToast.show(`Você entrou no grupo '${data.group.name}'!`);
+          SimpleToast.show(t("toasts.joined", { name: data.group.name }));
           setParticipating(true);
         }
       })
       .catch((err) => {
-        SimpleToast.show("Erro ao usar o convite");
+        SimpleToast.show(t("toasts.error"));
       });
   };
 
@@ -87,11 +89,8 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
     return (
       <Container>
         <GroupRightSideContainer>
-          <GroupName>🚫 Convite inválido</GroupName>
-          <GroupDescription>
-            O convite pode ter expirado, apagado ou ter atingido o número máximo
-            de usos!
-          </GroupDescription>
+          <GroupName>{t("invalid_invite_title")}</GroupName>
+          <GroupDescription>{t("invalid_invite_subtitle")}</GroupDescription>
         </GroupRightSideContainer>
       </Container>
     );
@@ -100,7 +99,7 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
   return (
     <>
       <Container>
-        <InviteTitle>Convite para:</InviteTitle>
+        <InviteTitle>{t("invite_title")}</InviteTitle>
         <GroupContainer>
           <GroupRightSideContainer>
             <GroupAvatar uri={invite?.group?.group_avatar?.url} />
@@ -110,13 +109,13 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
               {invite.group.name}
             </GroupName>
             <GroupDescription numberOfLines={2}>
-              {invite.group.description || "Sem descrição"}
+              {invite.group.description || t("no_desc")}
             </GroupDescription>
           </GroupLeftSideContainer>
         </GroupContainer>
         <AcceptInviteButton onPress={handleJoin} enabled={!participating}>
           <AcceptInviteText>
-            {participating ? "Você já entrou!" : "Entrar no grupo"}
+            {participating ? t("joined_text") : t("join_text")}
           </AcceptInviteText>
         </AcceptInviteButton>
       </Container>

@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import fonts from '../../../styles/fonts';
+import fonts from '@styles/fonts';
 import { MessageContent } from '../../Chat/Message/styles';
 
 export const MessageCodeBlock = styled.View`

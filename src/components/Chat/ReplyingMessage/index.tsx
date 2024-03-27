@@ -12,8 +12,9 @@ import {
   ReadMoreButton,
   ReadMoreText,
 } from "./styles";
-import { MessageData } from "../../../../@types/interfaces";
-import { millisToTime } from "../../../utils/format";
+import { MessageData } from "@type/interfaces";
+import { millisToTime } from "@utils/format";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface ReplyingMessageProps {
   replying_message: MessageData;
@@ -21,6 +22,8 @@ interface ReplyingMessageProps {
 
 const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
   const [readAll, setReadAll] = useState(false);
+
+  const { t } = useTranslate("Components.Chat.ReplyingMessage");
 
   const handleReadMore = () => {
     setReadAll((old) => !old);
@@ -33,13 +36,15 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
       if (message) {
         return (
           <ReplyingMessageContent numberOfLines={readAll ? undefined : 2}>
-            <Feather name="file" /> ({files.length} arquivos) {message}
+            <Feather name="file" /> ({files.length}{" "}
+            {t("files", { count: files.length })}) {message}
           </ReplyingMessageContent>
         );
       } else {
         return (
           <ReplyingMessageContent>
-            <Feather name="file" /> {files.length} arquivos
+            <Feather name="file" /> {files.length}{" "}
+            {t("files", { count: files.length })}
           </ReplyingMessageContent>
         );
       }
@@ -48,7 +53,7 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
     if (voice_message) {
       return (
         <ReplyingMessageContent>
-          <Feather name="mic" /> Mensagem de voz (
+          <Feather name="mic" /> {t("voice_message")} (
           {millisToTime(voice_message.duration)})
         </ReplyingMessageContent>
       );
@@ -65,7 +70,7 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
     <Container>
       <ReplyingTitleContainer>
         <ReplyingTitle>
-          <Feather name="corner-up-right" /> Respondendo:
+          <Feather name="corner-up-right" /> {t("replying")}
         </ReplyingTitle>
       </ReplyingTitleContainer>
       <ReplyingMessageWrapper>
@@ -79,7 +84,7 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
           {replying_message.message.length > 72 && (
             <ReadMoreButton onPress={handleReadMore}>
               <ReadMoreText>
-                {readAll ? "[Ler menos]" : "[Ler mais]"}
+                {readAll ? `[${t("read_less")}]` : `[${t("read_more")}]`}
               </ReadMoreText>
             </ReadMoreButton>
           )}

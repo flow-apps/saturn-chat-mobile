@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Container, EmblemContainer, Name, NameContainer } from "./styles";
 import { useTheme } from "styled-components";
-import fonts from "../../styles/fonts";
-import EmblemModal from "../Modals/EmblemModal";
+import fonts from "@styles/fonts";
+import EmblemModal from "@components/Modals/EmblemModal";
 import { MotiView } from "moti";
 
 export interface PremiumNameProps {

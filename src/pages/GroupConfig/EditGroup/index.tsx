@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import Button from "../../../components/Button";
-import Header from "../../../components/Header";
-import Input from "../../../components/Input";
-import Loading from "../../../components/Loading";
-import Switcher from "../../../components/Switcher";
+import Button from "@components/Button";
+import Header from "@components/Header";
+import Input from "@components/Input";
+import Loading from "@components/Loading";
+import Switcher from "@components/Switcher";
 import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
-import api from "../../../services/api";
+import api from "@services/api";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
-import { GroupData } from "../../../../@types/interfaces";
+import { GroupData } from "@type/interfaces";
 import {
   AvatarContainer,
   AvatarImage,
@@ -25,6 +25,7 @@ import {
   TextArea,
 } from "./styles";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "@hooks/useTranslate";
 
 const EditGroup: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -38,10 +39,12 @@ const EditGroup: React.FC = () => {
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("EditGroup");
+
   const { id } = route.params as any;
 
   const handleIsPublic = (value: boolean) => {
-    handleCheckFields()
+    handleCheckFields();
     setIsPublicGroup(value);
   };
 
@@ -56,7 +59,7 @@ const EditGroup: React.FC = () => {
         tags,
       })
       .then(() => {
-        SimpleToast.show("Grupo editado com sucesso!");
+        SimpleToast.show(t("toasts.success"));
         navigation.goBack();
       });
     setLoading(false);
@@ -69,7 +72,7 @@ const EditGroup: React.FC = () => {
       const { granted } = await ImagePicker.requestCameraPermissionsAsync();
 
       if (!granted) {
-        return Alert.alert("Precisamos da permissão para acessar suas fotos!");
+        return Alert.alert(t("toasts.avatar_permission"));
       }
     }
 
@@ -80,11 +83,11 @@ const EditGroup: React.FC = () => {
       allowsMultipleSelection: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
-      selectionLimit: 1
+      selectionLimit: 1,
     });
 
     if (!photo.canceled) {
-      SimpleToast.show("Atualizando avatar...");
+      SimpleToast.show(t("toasts.updating"));
       const uri = photo.assets[0].uri;
       const uriParts = uri.split(".");
       const fileType = uriParts.pop();
@@ -104,7 +107,7 @@ const EditGroup: React.FC = () => {
         })
         .then(() => {
           setNewAvatar(uri);
-          SimpleToast.show("Avatar atualizado");
+          SimpleToast.show(t("toasts.updated"));
         });
     }
   };
@@ -119,21 +122,15 @@ const EditGroup: React.FC = () => {
     if (avatar) {
       return <AvatarImage source={{ uri: avatar.url }} />;
     } else {
-      return (
-        <AvatarImage
-          source={require("../../../assets/avatar-placeholder.png")}
-        />
-      );
+      return <AvatarImage source={require("@assets/avatar-placeholder.png")} />;
     }
   };
 
   const handleCheckFields = () => {
+    const nameValue = name.trim().length;
+    const descValue = description.trim().length;
 
-    const nameValue = name.trim().length
-    const descValue = description.trim().length
-
-    if (!(nameValue >= 1) || !(nameValue <= 100))
-      return setIsSendable(false);
+    if (!(nameValue >= 1) || !(nameValue <= 100)) return setIsSendable(false);
     else if (!(descValue >= 0) || !(descValue <= 500))
       return setIsSendable(false);
     else return setIsSendable(true);
@@ -160,7 +157,7 @@ const EditGroup: React.FC = () => {
 
   return (
     <>
-      <Header title="Editar grupo" />
+      <Header title={t("header_title")} />
       <Container>
         <FormContainer>
           <AvatarContainer>
@@ -170,14 +167,14 @@ const EditGroup: React.FC = () => {
             >
               <SwitchAvatarButtonText>
                 <Feather name="camera" size={32} /> {"\n"}
-                Trocar avatar
+                {t("switch_avatar")}
               </SwitchAvatarButtonText>
             </SwitchAvatarButton>
             {renderAvatar()}
           </AvatarContainer>
           <FieldContainer>
             <Input
-              placeholder="Nome"
+              label={t("inputs.name")}
               value={name}
               onChangeText={setName}
               onTextInput={handleCheckFields}
@@ -186,7 +183,7 @@ const EditGroup: React.FC = () => {
           <FieldContainer>
             <TextArea
               multiline
-              placeholder="Descrição"
+              label={t("inputs.desc")}
               value={description}
               onChangeText={setDescription}
               onTextInput={handleCheckFields}
@@ -195,7 +192,7 @@ const EditGroup: React.FC = () => {
           <FieldContainer>
             <TextArea
               multiline
-              placeholder="Tags"
+              label="Tags"
               value={tags}
               onChangeText={setTags}
               onTextInput={handleCheckFields}
@@ -204,7 +201,7 @@ const EditGroup: React.FC = () => {
           <FieldContainer>
             <SwitcherContainer>
               <SwitcherText>
-                <Feather name="users" size={25} /> Tornar público
+                <Feather name="users" size={25} /> {t("inputs.public")}
               </SwitcherText>
               <Switcher
                 currentValue={isPublicGroup}
@@ -214,7 +211,7 @@ const EditGroup: React.FC = () => {
           </FieldContainer>
           <Button
             enabled={isSendable}
-            title="Concluir"
+            title={t("done")}
             onPress={handleSubmit}
           />
         </FormContainer>

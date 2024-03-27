@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Header from "../../../../components/Header";
-import Button from "../../../../components/Button";
+import Header from "@components/Header";
+import Button from "@components/Button";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Container,
@@ -30,18 +30,18 @@ import {
 } from "./styles";
 import Toast from "react-native-simple-toast";
 import * as Clipboard from "expo-clipboard";
-import Switcher from "../../../../components/Switcher";
-import Input from "../../../../components/Input";
+import Switcher from "@components/Switcher";
 import { useTheme } from "styled-components";
 import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
-import api from "../../../../services/api";
+import api from "@services/api";
 
 import * as Localize from "expo-localization";
-import { InviteData } from "../../../../../@types/interfaces";
-import { ConvertDate } from "../../../../utils/convertDate";
+import { InviteData } from "@type/interfaces";
+import { DateUtils } from "@utils/date";
 import config from "../../../../config";
 import { AnimatePresence, MotiView } from "moti";
+import { useTranslate } from "@hooks/useTranslate";
 
 const NewInvites: React.FC = () => {
   const [invites, setInvites] = useState<InviteData[]>([]);
@@ -49,8 +49,9 @@ const NewInvites: React.FC = () => {
   const [unlimitedUsages, setUnlimitedUsages] = useState(false);
   const [usages, setUsages] = useState(1);
   const [expireIn, setExpireIn] = useState(1);
+  const { t } = useTranslate("NewInvites");
 
-  const convertDate = new ConvertDate();
+  const convertDate = new DateUtils();
   const route = useRoute();
   const { id } = route.params as { id: string };
 
@@ -98,19 +99,17 @@ const NewInvites: React.FC = () => {
 
   return (
     <>
-      <Header title="Criar convites" />
+      <Header title={t("header_title")} />
       <Container>
         <CreateInviteLinkContainer>
-          <CreateInviteLinkTitle>Gerar convite</CreateInviteLinkTitle>
-          <CreateInviteLinkSubtitle>
-            Você pode gerar convites com essas configurações:
-          </CreateInviteLinkSubtitle>
+          <CreateInviteLinkTitle>{t("title")}</CreateInviteLinkTitle>
+          <CreateInviteLinkSubtitle>{t("subtitle")}</CreateInviteLinkSubtitle>
           <CreateInviteLinkWrapper>
             <CreateInviteLinkConfigs>
               <CreateInviteLinkConfigInline>
                 <CreateInviteLinkOptionLabel>
                   <CreateInviteLinkOptionText>
-                    Convite permanente
+                    {t("permanent")}
                   </CreateInviteLinkOptionText>
                 </CreateInviteLinkOptionLabel>
                 <Switcher
@@ -121,7 +120,7 @@ const NewInvites: React.FC = () => {
               <CreateInviteLinkConfigInline>
                 <CreateInviteLinkOptionLabel>
                   <CreateInviteLinkOptionText>
-                    Usos ilimitados
+                    {t("usage_unlimited")}
                   </CreateInviteLinkOptionText>
                 </CreateInviteLinkOptionLabel>
                 <Switcher
@@ -142,7 +141,7 @@ const NewInvites: React.FC = () => {
                     <CreateInviteLinkConfig>
                       <CreateInviteLinkOptionLabel>
                         <CreateInviteLinkOptionText>
-                          Usar no máximo {String(usages).padStart(3, "0")} vezes
+                          {t("usage", { count: usages })}
                         </CreateInviteLinkOptionText>
                       </CreateInviteLinkOptionLabel>
                       <AmountUsagesSlider
@@ -172,7 +171,7 @@ const NewInvites: React.FC = () => {
                     <CreateInviteLinkConfig>
                       <CreateInviteLinkOptionLabel>
                         <CreateInviteLinkOptionText>
-                          Expirar em {String(expireIn).padStart(2, "0")} dias
+                          {t("expire", { count: expireIn })}
                         </CreateInviteLinkOptionText>
                       </CreateInviteLinkOptionLabel>
                       <CreateInviteLinkOptionScroll>
@@ -183,7 +182,7 @@ const NewInvites: React.FC = () => {
                             onPress={() => setExpireIn(value)}
                           >
                             <CreateInviteLinkOptionCardText>
-                              {String(value).padStart(2, "0")} Dias
+                              {String(value).padStart(2, "0")} {t("day")}
                             </CreateInviteLinkOptionCardText>
                           </CreateInviteLinkOptionCard>
                         ))}
@@ -193,11 +192,11 @@ const NewInvites: React.FC = () => {
                 )}
               </AnimatePresence>
             </CreateInviteLinkConfigs>
-            <Button title="Gerar" onPress={handleCreateInvite} />
+            <Button title={t("generate")} onPress={handleCreateInvite} />
           </CreateInviteLinkWrapper>
         </CreateInviteLinkContainer>
         <YourInvitesContainer>
-          <YourInvitesTitle>Convites ativos</YourInvitesTitle>
+          <YourInvitesTitle>{t("active_invites")}</YourInvitesTitle>
           <YourInvitesList>
             {invites.map((invite, index) => (
               <InviteContainer key={index}>
@@ -214,7 +213,7 @@ const NewInvites: React.FC = () => {
                     {invite.invite_code}
                   </InviteLink>
                   <InviteDuration>
-                    <Feather name="clock" size={14} /> Expira em:{" "}
+                    <Feather name="clock" size={14} /> {t("expire_in")}{" "}
                     {invite.is_permanent ? (
                       <MaterialCommunityIcons name="infinity" size={14} />
                     ) : (
@@ -222,7 +221,7 @@ const NewInvites: React.FC = () => {
                     )}
                   </InviteDuration>
                   <InviteUsage>
-                    Foi usado {invite.usage_amount} vezes de {""}
+                    {t("usage_amount", { count: invite.usage_amount })}{" "}
                     {invite.is_unlimited_usage ? (
                       <MaterialCommunityIcons name="infinity" size={14} />
                     ) : (

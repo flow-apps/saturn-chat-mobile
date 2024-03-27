@@ -3,8 +3,8 @@ import Markdown, {
   MarkdownIt,
   RenderRules,
 } from "react-native-markdown-display";
-import { MessageData, UserData } from "../../../../@types/interfaces";
-import { MessageContent } from "../../Chat/Message/styles";
+import { MessageData, UserData } from "@type/interfaces";
+import { MessageContent } from "@components/Chat/Message/styles";
 import {
   MessageCodeBlock,
   MessageCodeBlockText,
@@ -14,6 +14,7 @@ import {
 
 import * as Clipboard from "expo-clipboard";
 import SimpleToast from "react-native-simple-toast";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface MessageMarkProps {
   user: UserData;
@@ -22,6 +23,8 @@ interface MessageMarkProps {
 }
 
 const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
+  const { t } = useTranslate("Components.Chat.LinkPreview")
+  
   const markdownRules = MarkdownIt({
     linkify: true,
     typographer: true,
@@ -31,7 +34,7 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
 
   const copyLink = useCallback(async (url: string) => {
     await Clipboard.setStringAsync(url);
-    SimpleToast.show("Link copiado", SimpleToast.SHORT);
+    SimpleToast.show(t("link_copied"), SimpleToast.SHORT);
   }, []);
 
   const renderRules = useMemo(() => {
@@ -83,5 +86,5 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
 };
 
 export default memo(MessageMark, (prev, next) => {
-  return prev.message.id === next.message.id
+  return prev.message.id === next.message.id;
 });

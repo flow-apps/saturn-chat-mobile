@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import AdBanner from "../../components/Ads/Banner";
+import AdBanner from "@components/Ads/Banner";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/core";
-import { GroupData } from "../../../@types/interfaces";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
-import api from "../../services/api";
+import { GroupData } from "@type/interfaces";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
+import api from "@services/api";
 import {
   AdBannerWrapper,
   Avatar,
@@ -37,7 +37,8 @@ import analytics from "@react-native-firebase/analytics";
 
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useAds } from "../../contexts/ads";
+import { useAds } from "@contexts/ads";
+import { useTranslate } from "@hooks/useTranslate";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -45,15 +46,16 @@ const GroupInfos: React.FC = () => {
   const [isParticipating, setIsParticipating] = useState(false);
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { Interstitial } = useAds()
+  const { Interstitial } = useAds();
+  const { t } = useTranslate("GroupInfos");
   const { id } = useRoute().params as { id: string };
 
   useEffect(() => {
     async function getGroup() {
       if (Interstitial.loaded) {
-        await Interstitial.show()
+        await Interstitial.show();
       }
-      
+
       if (group) return;
 
       setLoading(true);
@@ -86,7 +88,7 @@ const GroupInfos: React.FC = () => {
         });
         return navigation.navigate("Chat", { id });
       })
-      .catch(() => SimpleToast.show("Erro ao entrar no grupo!"));
+      .catch(() => SimpleToast.show(t("toasts.error")));
   }
 
   const handleGoAvatar = () => {
@@ -127,7 +129,7 @@ const GroupInfos: React.FC = () => {
                       name={isParticipating ? "user-check" : "user-plus"}
                       size={16}
                     />{" "}
-                    {isParticipating ? "Participando" : "Participar"}
+                    {t(isParticipating ? "joined" : "join")}
                   </JoinGroupButtonText>
                 </JoinGroupButton>
               </JoinGroupContainer>
@@ -136,12 +138,12 @@ const GroupInfos: React.FC = () => {
                   <ParticipantsNumber>
                     {String(group?.participantsAmount).padStart(2, "0")}
                   </ParticipantsNumber>
-                  <ParticipantsTitle>Participantes</ParticipantsTitle>
+                  <ParticipantsTitle>{t("participants")}</ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>
               <GroupTagsContainer>
                 <GroupTagsTitle>
-                  <Feather name="tag" size={20} /> Tags do grupo
+                  <Feather name="tag" size={20} /> {t("tags")}
                 </GroupTagsTitle>
                 <GroupTagsScroll>
                   {group.tags &&
@@ -153,7 +155,7 @@ const GroupInfos: React.FC = () => {
                 </GroupTagsScroll>
               </GroupTagsContainer>
               <GroupDescContainer>
-                <GroupDescTitle>Descrição</GroupDescTitle>
+                <GroupDescTitle>{t("desc")}</GroupDescTitle>
                 <GroupDesc>{group.description}</GroupDesc>
               </GroupDescContainer>
               <AdBannerWrapper>

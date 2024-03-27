@@ -1,5 +1,5 @@
 import React, { useMemo, memo } from "react";
-import { UserData } from "../../../../@types/interfaces";
+import { UserData } from "@type/interfaces";
 import {
   Container,
   TypingContainer,
@@ -9,14 +9,16 @@ import {
   TypingUsersText,
   TypingUsersContainer,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 type TypingProps = {
   typingUsers: UserData[];
 };
 
 const Typing = ({ typingUsers }: TypingProps) => {
-  if (typingUsers.length <= 0) 
-    return <></>;
+  const { t } = useTranslate("Components.Chat.Typing");
+
+  if (typingUsers.length <= 0) return <></>;
 
   const names = useMemo(
     () => typingUsers.map((user) => user.name),
@@ -29,7 +31,7 @@ const Typing = ({ typingUsers }: TypingProps) => {
       <TypingContainer>
         <TypingLeftSide>
           <TypingAnimation
-            source={require("../../../assets/typing.json")}
+            source={require("@assets/typing.json")}
             autoPlay
             loop
           />
@@ -37,9 +39,11 @@ const Typing = ({ typingUsers }: TypingProps) => {
         <TypingRightSide>
           <TypingUsersContainer>
             <TypingUsersText numberOfLines={1}>
-              {names.length < 5 ? joinedNames : "Varias pessoas"}{" "}
-              {names.length <= 1 && names.length < 5 ? "está " : "estão "}
-              digitando
+              {names.length < 5 ? joinedNames : t("many")}{" "}
+              {names.length <= 1 && names.length < 5
+                ? t("typing_user", { count: 1 })
+                : t("typing_user", { count: names.length })}
+              {t("typing")}
             </TypingUsersText>
           </TypingUsersContainer>
         </TypingRightSide>

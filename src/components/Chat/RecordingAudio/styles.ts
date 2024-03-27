@@ -1,6 +1,6 @@
 import styled from "styled-components/native"
 import { FilesContainer } from "../../Chat/SelectedFiles/styles";
-import fonts from "../../../styles/fonts";
+import fonts from "@styles/fonts";
 
 export const RecordingAudioContainer = styled(FilesContainer)`
   height: 40px;

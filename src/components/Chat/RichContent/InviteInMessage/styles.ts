@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import fonts from "../../../../styles/fonts";
+import fonts from "@styles/fonts";
 import CachedImage from "../../../CachedImage";
 import { RectButton } from "react-native-gesture-handler";
 import AnimatedLottieView from "lottie-react-native";

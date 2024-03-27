@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
-import { YTService } from "../../../services/yt";
+import { YTService } from "@services/yt";
 
 import { Container, VideoPlayerContainer } from "./styles";
 

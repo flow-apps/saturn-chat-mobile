@@ -8,7 +8,3 @@ export function verifyBetweenValues(
 
   return value > min && value < max
 }
-
-export function convertSecondsToMs(seconds: number) {
-  return seconds * 1000;
-}

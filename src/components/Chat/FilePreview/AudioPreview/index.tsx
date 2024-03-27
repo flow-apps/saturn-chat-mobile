@@ -11,8 +11,8 @@ import {
   Container,
 } from "./styles";
 import { useTheme } from "styled-components";
-import { millisToTime } from "../../../../utils/format";
-import { useAudioPlayer } from "../../../../contexts/audioPlayer";
+import { millisToTime } from "@utils/format";
+import { useAudioPlayer } from "@contexts/audioPlayer";
 import { SoundObject } from "expo-av/build/Audio";
 
 interface AudioPreviewProps {

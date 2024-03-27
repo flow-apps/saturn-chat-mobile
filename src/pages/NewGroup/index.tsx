@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 import perf from "@react-native-firebase/perf";
 
 import {
@@ -34,20 +34,21 @@ import {
 } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
-import Button from "../../components/Button";
+import Button from "@components/Button";
 import * as ImagePicker from "expo-image-picker";
-import Switcher from "../../components/Switcher";
-import api from "../../services/api";
+import Switcher from "@components/Switcher";
+import api from "@services/api";
 import { useNavigation } from "@react-navigation/core";
 import FormData from "form-data";
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
-import Loading from "../../components/Loading";
-import Banner from "../../components/Ads/Banner";
+import Loading from "@components/Loading";
+import Banner from "@components/Ads/Banner";
 import analytics from "@react-native-firebase/analytics";
 import { verifyBetweenValues } from "../../utils";
-import { UserData } from "../../../@types/interfaces";
-import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import { UserData } from "@type/interfaces";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "@hooks/useTranslate";
 
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false);
@@ -66,6 +67,7 @@ const NewGroup: React.FC = () => {
   const { userConfigs, allConfigs } = useRemoteConfigs();
   const premium = false;
   const navigator = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("NewGroup");
 
   const amountGroups = useMemo(() => {
     if (!user.groups) return 0;
@@ -168,7 +170,7 @@ const NewGroup: React.FC = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
 
-    if (!photo.cancelled) {
+    if (!photo.canceled) {
       // @ts-ignore
       setGroupPhotoPreview(photo.uri);
 
@@ -187,29 +189,27 @@ const NewGroup: React.FC = () => {
         <ReachedLimitContainer>
           <AnimationContainer>
             <Animation
-              source={require("../../assets/crying.json")}
+              source={require("@assets/crying.json")}
               autoPlay
               loop
             />
           </AnimationContainer>
           <ReachedLimitTitle>
-            Você atingiu o limite de {userConfigs.amountGroups} grupos!
+            {t("limit.title", { count: userConfigs.amountGroups })}
           </ReachedLimitTitle>
           <ReachedLimitDescription>
-            Esse limite é estipulado para que todos possam criar suas
-            comunidades no Saturn Chat e também para evitar problemas chatos
-            como spam.
+            {t("limit.subtitle")}
           </ReachedLimitDescription>
           {!premium && (
             <ReachedLimitStarContainer>
               <ReachedLimitStarDescription>
-                Você também pode se tornar uma Star e criar até{" "}
-                {allConfigs.premium_max_groups} grupos com{" "}
-                {allConfigs.premium_max_participants} participantes em cada
-                grupo.
+                {t("limit.premium", {
+                  groups: allConfigs.premium_max_groups,
+                  participants: allConfigs.premium_max_participants,
+                })}
               </ReachedLimitStarDescription>
               <Button
-                title="Tornar-se Star"
+                title={t("star")}
                 bgColor={colors.secondary}
                 onPress={handleGoPremium}
               />
@@ -222,7 +222,7 @@ const NewGroup: React.FC = () => {
 
   return (
     <>
-      <Header title="Novo grupo" backButton={false} />
+      <Header title={t("header_title")} backButton={false} />
       <Container>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View>
@@ -244,12 +244,11 @@ const NewGroup: React.FC = () => {
               </SelectGroupPhoto>
               <SelectGroupPhotoTitle>
                 {!groupPhotoPreview
-                  ? "🖼 Escolha uma foto legal"
-                  : "🌟 Essa foto está perfeita!"}
+                  ? t("avatar_select_label")
+                  : t("avatar_selected")}
               </SelectGroupPhotoTitle>
               <SelectGroupPhotoSubtitle>
-                {!groupPhotoPreview &&
-                  "Recomendamos uma imagem de 600x600 e de no máximo 5MB"}
+                {!groupPhotoPreview && t("avatar_select_tip")}
               </SelectGroupPhotoSubtitle>
             </SelectGroupPhotoContainer>
             <Form>
@@ -257,8 +256,8 @@ const NewGroup: React.FC = () => {
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
               >
                 <FormInput
-                  label="Nome do grupo"
-                  placeholder="máx. 100 caracteres"
+                  label={t("form.labels.name.label")}
+                  placeholder={t("form.labels.name.placeholder")}
                   maxLength={100}
                   selectionColor={colors.secondary}
                   returnKeyType="go"
@@ -267,31 +266,34 @@ const NewGroup: React.FC = () => {
                   onTextInput={handleCheckFields}
                 />
                 <TextArea
-                  label="Descreva seu grupo"
+                  label={t("form.labels.desc.label")}
                   multiline
                   selectionColor={colors.secondary}
-                  placeholder="máx. 500 caracteres"
+                  placeholder={t("form.labels.desc.placeholder")}
                   maxLength={500}
                   value={description}
                   onChangeText={setDescription}
                   onTextInput={handleCheckFields}
                 />
                 <TextArea
-                  label="Tags do grupo"
+                  label={t("form.labels.tags.label")}
                   multiline
                   selectionColor={colors.secondary}
-                  placeholder="separe por vírgula"
+                  placeholder={t("form.labels.tags.placeholder")}
                   value={tags}
                   onChangeText={setTags}
                 />
                 <SwitcherContainer>
                   <SwitcherText>
                     <Feather
-                      name="users"
+                      name={isPublicGroup ? "unlock" : "lock"}
                       size={30}
                       color={colors.light_heading}
-                    />{" "}
-                    Tornar público
+                    />
+                    {"  "}
+                    {isPublicGroup
+                      ? t("form.labels.public")
+                      : t("form.labels.private")}
                   </SwitcherText>
                   <Switcher
                     onChangeValue={handleSetPublic}
@@ -301,7 +303,7 @@ const NewGroup: React.FC = () => {
                 <ButtonWrapper>
                   <Button
                     enabled={isSendable}
-                    title="Criar grupo"
+                    title={t("form.create_group")}
                     onPress={handleCreateGroup}
                   />
                 </ButtonWrapper>

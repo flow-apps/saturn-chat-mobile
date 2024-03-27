@@ -24,20 +24,19 @@ import {
   MessageData,
   ParticipantsData,
   UserData,
-} from "../../../@types/interfaces";
-import { HeaderButton } from "../../components/Header/styles";
-import { useAuth } from "../../contexts/auth";
+} from "@type/interfaces";
+import { HeaderButton } from "@components/Header/styles";
+import { useAuth } from "@contexts/auth";
 import uuid from "react-native-uuid";
 
-import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
 
 import FormData from "form-data";
-import Alert from "../../components/Alert";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
-import Message from "../../components/Chat/Message";
-import api from "../../services/api";
+import Alert from "@components/Alert";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
+import Message from "@components/Chat/Message";
+import api from "@services/api";
 import {
   AudioButton,
   AudioContainer,
@@ -52,34 +51,27 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
-import Typing from "../../components/Chat/Typing";
-import RecordingAudio from "../../components/Chat/RecordingAudio";
-import LoadingIndicator from "../../components/LoadingIndicator";
-import SelectedFiles from "../../components/Chat/SelectedFiles";
-import { FileService, FileServiceErrors } from "../../services/file";
-import { RecordService } from "../../services/record";
+import Typing from "@components/Chat/Typing";
+import RecordingAudio from "@components/Chat/RecordingAudio";
+import LoadingIndicator from "@components/LoadingIndicator";
+import SelectedFiles from "@components/Chat/SelectedFiles";
+import { FileService, FileServiceErrors } from "@services/file";
+import { RecordService } from "@services/record";
 
 import analytics from "@react-native-firebase/analytics";
-import { useRemoteConfigs } from "../../contexts/remoteConfigs";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { AnimatePresence, MotiView } from "moti";
 import SimpleToast from "react-native-simple-toast";
-import CurrentReplyingMessage from "../../components/Chat/CurrentReplyingMessage";
-import { ArrayUtils } from "../../utils/array";
-import { useWebsocket } from "../../contexts/websocket";
-import { useChat } from "../../contexts/chat";
+import CurrentReplyingMessage from "@components/Chat/CurrentReplyingMessage";
+import { ArrayUtils } from "@utils/array";
+import { useWebsocket } from "@contexts/websocket";
+import { useChat } from "@contexts/chat";
 
 import FlashList from "@shopify/flash-list/dist/FlashList";
-import { useAds } from "../../contexts/ads";
+import { useAds } from "@contexts/ads";
 import { OneSignal } from "react-native-onesignal";
-
-interface File {
-  file: DocumentPicker.DocumentResult;
-  type: string;
-}
-
-interface TextInputRef extends TextInput {
-  value: string;
-}
+import { TextInputRef, File } from "./types";
+import { useTranslate } from "@hooks/useTranslate";
 
 const recordService = new RecordService();
 
@@ -144,6 +136,7 @@ const Chat: React.FC = () => {
   } = useChat();
 
   const appState = useAppState();
+  const { t } = useTranslate("Chat");
 
   const configureSocketListeners = useCallback(() => {
     onSendedUserMessage(({ msg, localReference }) => {
@@ -240,7 +233,7 @@ const Chat: React.FC = () => {
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          SimpleToast.show("Enviando mensagem de voz...");
+          SimpleToast.show(t("toasts.sending_voice"));
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
@@ -368,7 +361,9 @@ const Chat: React.FC = () => {
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
-      return SimpleToast.show("Limite de 500 caracteres atingido!");
+      return SimpleToast.show(
+        t("limit_char", { count: userConfigs.messageLength })
+      );
     }
 
     if (newMessage.length > 0 && !isTypingMessage) {
@@ -616,23 +611,25 @@ const Chat: React.FC = () => {
   return (
     <>
       <Alert
-        title="😱 Que coisa pesada!"
-        content={`Eu não consigo carregar algo tão pesado, tente algo de até ${userConfigs.fileUpload}MB!`}
+        title={t("alerts.file_size.title")}
+        content={t("alerts.file_size.content", {
+          amount: userConfigs.fileUpload,
+        })}
         okButtonAction={disableLargeFile}
         extraButtonAction={handleGoStar}
-        extraButtonText="Obter plano Star"
+        extraButtonText={t("alerts.file_size.extra_button_text")}
         extraButton
         visible={largeFile}
       />
       <Alert
-        title="🤔 Já vi isso antes"
-        content="Você já escolheu este arquivo para ser enviado!"
+        title={t("alerts.same_file.title")}
+        content={t("alerts.same_file.subtitle")}
         okButtonAction={disableIsSelectedFile}
         visible={isSelectedFile}
       />
       <Alert
-        title="🙂 Por favor"
-        content="Eu preciso de permissão para usar seu microfone, assim eu poderei gravar áudios"
+        title={t("alerts.mic_perm.title")}
+        content={t("alerts.mic_perm.subtitle")}
         okButtonAction={disableAudioPermission}
         visible={audioPermission}
       />
@@ -697,8 +694,8 @@ const Chat: React.FC = () => {
           {sendingFile && (
             <FileSendedProgressContainer>
               <FileSendedText>
-                <Feather name="upload" size={16} /> {sendedFileProgress}%
-                enviado
+                <Feather name="upload" size={16} /> {sendedFileProgress}%{" "}
+                {t("sent")}
               </FileSendedText>
               <ProgressBar
                 progress={sendedFileProgress / 100}
@@ -725,9 +722,7 @@ const Chat: React.FC = () => {
               placeholderTextColor={colors.dark_heading}
               onChangeText={handleSetMessage}
               maxLength={userConfigs?.messageLength || 500}
-              placeholder={
-                recordingAudio ? "Solte para enviar" : "Digite sua mensagem..."
-              }
+              placeholder={recordingAudio ? t("drop_send") : t("type_message")}
             />
             <OptionsContainer>
               <OptionsButton onPress={handleFileSelector}>

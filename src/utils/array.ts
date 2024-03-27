@@ -1,11 +1,12 @@
-import _ from "lodash";
+import compact from "lodash/compact";
+import union from "lodash/union";
 
 type TFinder<P> = (value: P, index: number) => boolean;
 type TIterator<P> = (item: P, index: number) => Promise<any> | any;
 
 class ArrayUtils {
   compact(array: any[]) {
-    return _.compact(array);
+    return compact(array);
   }
 
   union(oldArray: any[], newArray: any[]) {
@@ -14,7 +15,7 @@ class ArrayUtils {
       ...this.compact(newArray),
     ];
 
-    const unionArray = _.union(compactedArrays);
+    const unionArray = union(compactedArrays);
 
     return unionArray;
   }

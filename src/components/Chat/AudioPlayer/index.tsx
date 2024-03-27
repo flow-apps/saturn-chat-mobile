@@ -11,9 +11,9 @@ import {
 } from "./styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTheme } from "styled-components";
-import { millisToTime } from "../../../utils/format";
-import { AudioData } from "../../../../@types/interfaces";
-import { useAudioPlayer } from "../../../contexts/audioPlayer";
+import { millisToTime } from "@utils/format";
+import { AudioData } from "@type/interfaces";
+import { useAudioPlayer } from "@contexts/audioPlayer";
 import { SoundObject } from "expo-av/build/Audio";
 
 interface IAudioPlayer {

@@ -8,12 +8,13 @@ import {
 } from "./styles";
 import { Platform } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import config from "../../../config";
-import secrets from "../../../../secrets.json";
+import config from "@configs";
+import secrets from "@secrets";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import analytics from "@react-native-firebase/analytics";
+import { useTranslate } from "@hooks/useTranslate";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -21,8 +22,12 @@ type BannerProps = {
   size?: BannerAdSize;
 };
 
-const Banner = ({ isPremium = false, rotate, size = BannerAdSize.BANNER }: BannerProps) => {
-  const { name } = useRoute()
+const Banner = ({
+  isPremium = false,
+  rotate,
+  size = BannerAdSize.BANNER,
+}: BannerProps) => {
+  const { name } = useRoute();
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
     android: secrets.AdsID.productionKeys.banner.android,
@@ -31,15 +36,16 @@ const Banner = ({ isPremium = false, rotate, size = BannerAdSize.BANNER }: Banne
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
 
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const handleGoPremium = async () => {
-    navigation.navigate("PurchasePremium")
-    await analytics().logEvent("RemoveBannerAD", {
-      requested_in: name
-    })
-  }
+  const { t } = useTranslate("Components.Ads");
 
-  if (isPremium) 
-    return <></>;
+  const handleGoPremium = async () => {
+    navigation.navigate("PurchasePremium");
+    await analytics().logEvent("RemoveBannerAD", {
+      requested_in: name,
+    });
+  };
+
+  if (isPremium) return <></>;
 
   return (
     <Container
@@ -51,23 +57,17 @@ const Banner = ({ isPremium = false, rotate, size = BannerAdSize.BANNER }: Banne
       }}
       transition={{
         type: "timing",
-        duration: 1200
+        duration: 1200,
       }}
       style={{ transform: [{ rotate: rotate ? "180deg" : "0deg" }] }}
     >
       <RemoveBanner onPress={handleGoPremium}>
         <RemoveBannerText>
-          <Feather name="info" /> Remover anúncio
+          <Feather name="info" /> {t("remove_ad")}
         </RemoveBannerText>
       </RemoveBanner>
       <BannerContainer>
-        <BannerAd
-          unitId={adUnitID}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: false,
-          }}
-          size={size}
-        />
+        <BannerAd unitId={adUnitID} size={size} />
       </BannerContainer>
     </Container>
   );

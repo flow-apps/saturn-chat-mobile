@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { FlatList } from "react-native";
-import { FriendData, InviteData } from "../../../@types/interfaces";
-import Header from "../../components/Header";
-import Loading from "../../components/Loading";
-import api from "../../services/api";
+import { FriendData, InviteData } from "@type/interfaces";
+import Header from "@components/Header";
+import Loading from "@components/Loading";
+import api from "@services/api";
 import {
   Container,
   PresentationContainer,
@@ -14,12 +14,13 @@ import {
 } from "./styles";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import SimpleToast from "react-native-simple-toast";
-import FriendRequest from "../../components/InvitesManager/FriendRequest";
+import FriendRequest from "@components/InvitesManager/FriendRequest";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import orderBy from "lodash/orderBy";
 
-import GroupInvite from "../../components/InvitesManager/GroupInvite";
+import GroupInvite from "@components/InvitesManager/GroupInvite";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface Request extends FriendData, InviteData {
   type: "FRIEND_REQUEST" | "GROUP_INVITE";
@@ -30,16 +31,17 @@ const InvitesManager: React.FC = () => {
   const [requests, setRequests] = useState<Request[]>([]);
 
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { t } = useTranslate("InviteManager");
 
   useFocusEffect(
     useCallback(() => {
       (async () => {
         setLoading(true);
         const res = await api.get("/invites/requests");
-        const data = res.data;        
+        const data = res.data;
 
         if (res.status === 200) {
-          const sorted = orderBy(data, ["created_at"], "desc");          
+          const sorted = orderBy(data, ["created_at"], "desc");
           setRequests(sorted.filter(Boolean));
         }
 
@@ -63,8 +65,8 @@ const InvitesManager: React.FC = () => {
     if (res.status === 200) {
       SimpleToast.show(
         action === "ACCEPT"
-          ? "Amigo aceito com sucesso!"
-          : "Amigo rejeitado com sucesso!"
+          ? t("toasts.request_accept")
+          : t("toasts.request_reject")
       );
 
       const newRequests = requests.filter((friend) => friend.id !== friendId);
@@ -81,13 +83,13 @@ const InvitesManager: React.FC = () => {
       const res = await api.get(`/inv/join/${inviteID}`);
 
       if (res.status === 200) {
-        SimpleToast.show("Convite aceito!");
+        SimpleToast.show(t("toasts.invite_accept"));
       }
     } else {
       const res = await api.delete(`/invites/${inviteID}`);
 
       if (res.status === 204) {
-        SimpleToast.show("Convite recusado!");
+        SimpleToast.show(t("toasts.invite_reject"));
       }
     }
 
@@ -101,26 +103,20 @@ const InvitesManager: React.FC = () => {
 
   return (
     <>
-      <Header title="Convites e solicitações" />
+      <Header title={t("header_title")} />
       <Container>
         <FlatList
           data={requests}
           keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={() => (
             <PresentationContainer>
-              <PresentationTitle>Convites e solicitações</PresentationTitle>
-              <PresentationSubtitle>
-                Gerencie seus convites e solicitações de amizade que você
-                recebeu.
-              </PresentationSubtitle>
+              <PresentationTitle>{t("header_title")}</PresentationTitle>
+              <PresentationSubtitle>{t("subtitle")}</PresentationSubtitle>
             </PresentationContainer>
           )}
           ListEmptyComponent={() => (
             <EmptyListContainer>
-              <EmptyListTitle>
-                Não há convites para grupos nem solicitações de amizade. Volte
-                mais tarde.
-              </EmptyListTitle>
+              <EmptyListTitle>{t("empty_text")}</EmptyListTitle>
             </EmptyListContainer>
           )}
           renderItem={({ item }) => {

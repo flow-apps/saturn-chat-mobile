@@ -2,16 +2,18 @@ import React from "react";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "styled-components";
-import Configurations from "../../pages/Configurations";
-import Friends from "../../pages/Friends";
-import Home from "../../pages/Home";
-import NewGroup from "../../pages/NewGroup";
-import fonts from "../../styles/fonts";
+import Configurations from "@pages/Configurations";
+import Friends from "@pages/Friends";
+import Home from "@pages/Home";
+import NewGroup from "@pages/NewGroup";
+import fonts from "@styles/fonts";
+import { useTranslate } from "@hooks/useTranslate";
 
 const tabRoutes = createBottomTabNavigator();
 
 const HomeRoutes = () => {
   const { colors } = useTheme();
+  const { t } = useTranslate("TabBar")
 
   return (
     <tabRoutes.Navigator
@@ -46,7 +48,7 @@ const HomeRoutes = () => {
         component={Home}
         name="GroupsChat"
         options={{
-          title: "Grupos",
+          title: t("groups"),
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="groups" size={size + 6} color={color} />
           ),
@@ -57,7 +59,7 @@ const HomeRoutes = () => {
         component={Friends}
         name="Friends"
         options={{
-          title: "Amigos",
+          title: t("friends"),
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="people" size={size + 6} color={color} />
           ),
@@ -69,7 +71,7 @@ const HomeRoutes = () => {
         component={NewGroup}
         name="NewGroup"
         options={{
-          title: "Novo Grupo",
+          title: t("new_group"),
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="plus-circle" size={size} color={color} />
           ),
@@ -80,7 +82,7 @@ const HomeRoutes = () => {
         component={Configurations}
         name="UserConfigs"
         options={{
-          title: "Configurações",
+          title: t("settings"),
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="cog" size={size} color={color} />
           ),

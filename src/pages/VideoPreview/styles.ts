@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import { Video } from "expo-av";
-import fonts from "../../styles/fonts";
+import fonts from "@styles/fonts";
 import Slider from "@react-native-community/slider";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { MotiView } from "moti";
