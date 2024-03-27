@@ -23,7 +23,7 @@ interface MessageMarkProps {
 }
 
 const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
-  const { t } = useTranslate("Components.Chat.Message")
+  const { t } = useTranslate("Components.Chat.LinkPreview")
   
   const markdownRules = MarkdownIt({
     linkify: true,
@@ -34,7 +34,7 @@ const MessageMark = ({ user, message, onPressLink }: MessageMarkProps) => {
 
   const copyLink = useCallback(async (url: string) => {
     await Clipboard.setStringAsync(url);
-    SimpleToast.show(t("copied_link"), SimpleToast.SHORT);
+    SimpleToast.show(t("link_copied"), SimpleToast.SHORT);
   }, []);
 
   const renderRules = useMemo(() => {

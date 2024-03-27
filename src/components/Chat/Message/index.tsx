@@ -117,7 +117,8 @@ const Message = ({
     } else {
       const date = (date: string) => moment(date);
       const same =
-        date(message.created_at).minutes() === date(lastMessage.created_at).minutes();
+        date(message.created_at).minutes() ===
+        date(lastMessage.created_at).minutes();
 
       if (!same) {
         return (
@@ -134,7 +135,7 @@ const Message = ({
   const formatHour = useCallback((date: string) => {
     const isoDate = moment(date);
 
-    return isoDate.format("dd/MM/yy, HH:mm");
+    return isoDate.format("DD/MM/yy, HH:mm");
   }, []);
 
   const deleteMessage = useCallback(async () => {
@@ -268,7 +269,10 @@ const Message = ({
     <>
       <Alert
         title={t("alerts.open_link.title")}
-        content={t("alerts.open_link.content", { url: linkUrl })}
+        content={t("alerts.open_link.content", {
+          url: linkUrl,
+          interpolation: { escapeValue: false },
+        })}
         cancelButtonText={t("alerts.open_link.cancel_text")}
         okButtonText={t("alerts.open_link.ok_text")}
         cancelButtonAction={closeLink}

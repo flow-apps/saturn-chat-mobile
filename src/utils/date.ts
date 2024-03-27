@@ -14,7 +14,7 @@ class DateUtils {
     const isoDate = moment(date);
     const tzDate = isoDate.tz(tz || this.timezone);
 
-    return tzDate.format(withHours ? "dd/MM/yy, HH:mm" : "dd/MM/yy");
+    return tzDate.format(withHours ? "DD/MM/yy, HH:mm" : "DD/MM/yy");
   }
 
   formatToHour(date: string) {
