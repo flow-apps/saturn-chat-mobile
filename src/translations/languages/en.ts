@@ -465,8 +465,8 @@ export const en = {
     cancel_text: "No, I changed my mind",
     toasts: {
       success: "User successfully punished!",
-      error: "Unable to punish user. Please try again."
-    }
+      error: "Unable to punish user. Please try again.",
+    },
   },
   ChangeRole: {
     header_title: "Change role",
@@ -501,33 +501,36 @@ export const en = {
     },
     toasts: {
       success: "User role successfully changed",
-      error: "Error changing role. Try again."
-    }
+      error: "Error changing role. Try again.",
+    },
   },
   FriendsManager: {
     alerts: {
       unfriend: {
         title: "⚠️ Do you want to unfriend?",
-        content: "If you remove this user from your friends list, you will no longer be able to send and receive direct messages from this user. All messages between you will be deleted for both of you.",
-        ok_text: "Unfriend"
-      }
+        content:
+          "If you remove this user from your friends list, you will no longer be able to send and receive direct messages from this user. All messages between you will be deleted for both of you.",
+        ok_text: "Unfriend",
+      },
     },
-    header_title: "Manage friends"
+    header_title: "Manage friends",
   },
   InviteUsers: {
     header_title: "Invite",
-    empty_title: "There are no friends to invite. Try sharing an invitation via links.",
+    empty_title:
+      "There are no friends to invite. Try sharing an invitation via links.",
     title: "Group invites",
     subtitle: "Create and manage all group invites through our invites manager",
     new_invite_text: "Manage invites",
     friends_invite_title: "Invite your friends",
-    friends_invite_subtitle: "Only friends who are not in the group appear here. They will need to accept the invites to join.",
+    friends_invite_subtitle:
+      "Only friends who are not in the group appear here. They will need to accept the invites to join.",
     invite: "Invite",
     invited: "Invited",
     toasts: {
       success: "Invitation sent successfully!",
-      error: "Unable to invite your friend!"
-    }
+      error: "Unable to invite your friend!",
+    },
   },
   NewInvites: {
     header_title: "Create invites",
@@ -550,18 +553,19 @@ export const en = {
   EditGroup: {
     toasts: {
       success: "Group edited successfully!",
-      avatar_permission: "We need permission to access your photos to update your avatar!",
+      avatar_permission:
+        "We need permission to access your photos to update your avatar!",
       updating: "Updating avatar...",
-      updated: "Updated Avatar"
+      updated: "Updated Avatar",
     },
     header_title: "Edit group",
     switch_avatar: "Change avatar",
     inputs: {
       name: "Name",
       desc: "Description",
-      public: "Turn public"
+      public: "Turn public",
     },
-    done: "Done"
+    done: "Done",
   },
   GroupInfos: {
     join: "Join",
@@ -571,7 +575,7 @@ export const en = {
     tags: "Group tags",
     desc: "Description",
     toasts: {
-      error: "Unable to join group!"
-    }
-  }
+      error: "Unable to join group!",
+    },
+  },
 };
