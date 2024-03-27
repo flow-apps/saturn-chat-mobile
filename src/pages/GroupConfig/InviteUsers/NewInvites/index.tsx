@@ -31,7 +31,6 @@ import {
 import Toast from "react-native-simple-toast";
 import * as Clipboard from "expo-clipboard";
 import Switcher from "@components/Switcher";
-import Input from "@components/Input";
 import { useTheme } from "styled-components";
 import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";

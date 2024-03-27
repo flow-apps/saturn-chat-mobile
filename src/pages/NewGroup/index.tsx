@@ -170,7 +170,7 @@ const NewGroup: React.FC = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
 
-    if (!photo.cancelled) {
+    if (!photo.canceled) {
       // @ts-ignore
       setGroupPhotoPreview(photo.uri);
 
