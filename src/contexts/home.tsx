@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useEffect, useState } from "react";
 import { useWebsocket } from "./websocket";
-import { secondsToMilliseconds } from "date-fns";
+import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
 
 interface HomeContext {
   hasInvites: boolean;

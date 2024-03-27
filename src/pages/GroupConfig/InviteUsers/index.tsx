@@ -38,7 +38,7 @@ import { FriendData, InviteData } from "@type/interfaces";
 import { useAuth } from "@contexts/auth";
 import api from "@services/api";
 
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 import SimpleToast from "react-native-simple-toast";
 import {
   getFriendAvatar,
@@ -67,7 +67,7 @@ const InviteUsers: React.FC = () => {
 
         if (res.status === 200) {
           const data = res.data as Friend[];
-          const sorted = _.sortBy(data, { invited: false });
+          const sorted = sortBy(data, { invited: false });
           setRequests(sorted);
         }
 

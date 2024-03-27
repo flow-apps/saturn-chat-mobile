@@ -6,9 +6,9 @@ import React, {
   useState,
 } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { minutesToMilliseconds } from "date-fns";
+import minutesToMilliseconds from "date-fns/minutesToMilliseconds";
 
-import appConfigs from "../config"
+import appConfigs from "../config";
 
 interface RemoteConfigContextProps {
   allConfigs: Configs;
@@ -51,7 +51,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       await remoteConfig().setConfigSettings({
         minimumFetchIntervalMillis: minutesToMilliseconds(5),
         fetchTimeMillis: minutesToMilliseconds(1),
-      })
+      });
 
       await remoteConfig().setDefaults({
         api_url: appConfigs.API_URL,
@@ -64,12 +64,12 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
         default_max_message_length: 500,
         premium_max_message_length: 5000,
         ad_multiple_in_chat: 7,
-        ad_multiple_in_home: 5
-      })
+        ad_multiple_in_home: 5,
+      });
 
-      await remoteConfig().fetchAndActivate()
-      await updateUserConfigs()
-    })()
+      await remoteConfig().fetchAndActivate();
+      await updateUserConfigs();
+    })();
   }, []);
 
   const updateUserConfigs = useCallback(async () => {
@@ -81,7 +81,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       configs[key] = entry.asString();
     });
 
-    setAllConfigs(configs)
+    setAllConfigs(configs);
 
     // For premium users
     if (false) {

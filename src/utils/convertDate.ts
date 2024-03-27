@@ -1,5 +1,6 @@
 import * as Localize from "expo-localization";
-import { format, parseISO } from "date-fns";
+import format from "date-fns/format";
+import parseISO from "date-fns/parseISO";
 import { convertToTimeZone } from "date-fns-timezone";
 
 class ConvertDate {
@@ -15,7 +16,7 @@ class ConvertDate {
     const isoDate = parseISO(date);
     const tzDate = convertToTimeZone(isoDate, {
       timeZone: tz || Localize.getCalendars().shift().timeZone,
-    });    
+    });
 
     return format(tzDate, withHours ? "dd/MM/yy, HH:mm" : "dd/MM/yy");
   }

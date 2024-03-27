@@ -1,7 +1,7 @@
 import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
-import { isUndefined } from "lodash"
+import isUndefined from "lodash/isUndefined"
 
 interface ButtonProps {
   textColor?: string;
