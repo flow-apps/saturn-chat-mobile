@@ -40,11 +40,7 @@ import api from "@services/api";
 
 import sortBy from "lodash/sortBy";
 import SimpleToast from "react-native-simple-toast";
-import {
-  getFriendAvatar,
-  getFriendID,
-  getFriendName,
-} from "@utils/friends";
+import { getFriendAvatar, getFriendID, getFriendName } from "@utils/friends";
 import { FlatList } from "react-native";
 
 interface Friend extends FriendData {
@@ -67,7 +63,8 @@ const InviteUsers: React.FC = () => {
 
         if (res.status === 200) {
           const data = res.data as Friend[];
-          const sorted = sortBy(data, { invited: false });
+          const sorted = sortBy(data, { invited: false });          
+
           setRequests(sorted);
         }
 
@@ -80,24 +77,26 @@ const InviteUsers: React.FC = () => {
     navigation.navigate("NewInvites", { id });
 
   const handleInviteFriend = async (user_id: string) => {
-    const res = await api.post(
-      `/friends/groups/invite?user_id=${user_id}&group_id=${id}`
-    );
+    await api
+      .post(`/friends/groups/invite?user_id=${user_id}&group_id=${id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          const invite = res.data as InviteData;
+          const newFriendsList = requests.map((friend) => {
+            if (invite.friend_id === friend.id) {
+              friend.invited = true;
+            }
+            return friend;
+          });
 
-    if (res.status === 200) {
-      const invite = res.data as InviteData;
-      const newFriendsList = requests.map((friend) => {
-        if (invite.friend_id === friend.id) {
-          friend.invited = true;
+          setRequests(newFriendsList);
+          SimpleToast.show("Convite enviado com sucesso!");
         }
-        return friend;
+      })
+      .catch((err) => {
+        console.log(err);
+        SimpleToast.show("Não foi possível convidar seu amigo!");
       });
-
-      setRequests(newFriendsList);
-      SimpleToast.show("Convite enviado com sucesso!");
-    } else {
-      SimpleToast.show("Não foi possível convidar seu amigo!");
-    }
   };
 
   if (loading) return <Loading />;
@@ -154,11 +153,7 @@ const InviteUsers: React.FC = () => {
               return (
                 <FriendContainer>
                   <FriendWrapper>
-                    <FriendAvatar
-                      source={{
-                        uri: getFriendAvatar(user.id, item),
-                      }}
-                    />
+                    <FriendAvatar uri={getFriendAvatar(user.id, item)} />
                     <FriendName>{friendName}</FriendName>
                   </FriendWrapper>
                   <FriendInviteButton

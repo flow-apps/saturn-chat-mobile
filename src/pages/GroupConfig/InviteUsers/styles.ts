@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
+import CachedImage from "@components/CachedImage";
 
 export const Container = styled.View`
   flex: 1;
@@ -83,7 +84,7 @@ export const FriendContainer = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 
 export const FriendWrapper = styled.View`
@@ -91,7 +92,7 @@ export const FriendWrapper = styled.View`
   align-items: center;
 `;
 
-export const FriendAvatar = styled.Image`
+export const FriendAvatar = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
