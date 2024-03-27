@@ -3214,11 +3214,6 @@ command-exists@^1.2.4, command-exists@^1.2.8:
   resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.9.tgz#c50725af3808c8ab0260fd60b01fbfa25b954f69"
   integrity sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==
 
-commander@2.19.0:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
-  integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
-
 commander@^2.11.0:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
@@ -3464,24 +3459,6 @@ dag-map@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/dag-map/-/dag-map-1.0.2.tgz#e8379f041000ed561fc515475c1ed2c85eece8d7"
   integrity sha512-+LSAiGFwQ9dRnRdOeaj7g47ZFJcOUPukAP8J3A3fuZ1g9Y44BG+P1sgApjLXTQPOzC4+7S9Wr8kXsfpINM4jpw==
-
-date-fns-timezone@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/date-fns-timezone/-/date-fns-timezone-0.1.4.tgz#bc9fac78aae9a7bdb847f3ab4ce6d14f9fb9a55f"
-  integrity sha512-npnZn1eIeHV8A3Hqw86mn6CjH+qMe0TSCs4anpD4Rouf+mE9eIJuaHviIpNmGL9GiDmcUoiaKdkX5ihf+yZQZA==
-  dependencies:
-    date-fns "^1.29.0"
-    timezone-support "^1.5.5"
-
-date-fns@^1.29.0:
-  version "1.30.1"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
-  integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
-
-date-fns@^2.29.1:
-  version "2.29.3"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
-  integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
 
 dayjs@^1.8.15:
   version "1.11.7"
@@ -6041,6 +6018,18 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+moment-timezone@^0.5.45:
+  version "0.5.45"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.45.tgz#cb685acd56bac10e69d93c536366eb65aa6bcf5c"
+  integrity sha512-HIWmqA86KcmCAhnMAN0wuDOARV/525R2+lOLotuGFzn4HO+FH+/645z2wx0Dt3iDv6/p61SIvKnDstISainhLQ==
+  dependencies:
+    moment "^2.29.4"
+
+moment@^2.29.4, moment@^2.30.1:
+  version "2.30.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
+
 moti@^0.18.0:
   version "0.18.0"
   resolved "https://registry.yarnpkg.com/moti/-/moti-0.18.0.tgz#46837ed21c72d04399a5ca3b0cf76f99fe17d54b"
@@ -6798,10 +6787,10 @@ react-native-blob-util@^0.16.2:
     base-64 "0.1.0"
     glob "^7.2.3"
 
-react-native-bundle-visualizer@^3.1.1:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-bundle-visualizer/-/react-native-bundle-visualizer-3.1.2.tgz#9692d30dea4791bcf812f8d1d4a22d154644c441"
-  integrity sha512-kF95u0JgjuBMNbuyvGrv73VA74ogR6+nLwgk/gwlyUOKd+c+zYSmzjKTTI0sHOKNzVSDcIleml//BHsjpjmj9A==
+react-native-bundle-visualizer@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-bundle-visualizer/-/react-native-bundle-visualizer-3.1.3.tgz#afac782d0170b002cd74a0ce111c4f6dd6e15f52"
+  integrity sha512-FPnrQS3t/WM67S3fBdaQ0pvkpk/ZJOC4nZpiQCHTpjNZTUmbO5vQ4QbAlOpSayHp5n3nu1Ml/KIJaC6R5cwVng==
   dependencies:
     chalk "^4.1.2"
     execa "^5.1.1"
@@ -8088,13 +8077,6 @@ through@2:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
-
-timezone-support@^1.5.5:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/timezone-support/-/timezone-support-1.8.1.tgz#0a8c04d0614be6fccdd2280aaad5072fa5d31e5f"
-  integrity sha512-+pKzxoUe4PZXaQcswceJlA+69oRyyu1uivnYKdpsC7eGzZiuvTLbU4WYPqTKslEsoSvjN8k/u/6qNfGikBB/wA==
-  dependencies:
-    commander "2.19.0"
 
 tinycolor2@^1.4.1:
   version "1.5.2"

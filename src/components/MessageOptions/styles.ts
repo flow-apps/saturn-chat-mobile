@@ -1,8 +1,7 @@
-import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 import CachedImage from "../CachedImage";
-import { darken, lighten } from "polished";
+import lighten from "polished/lib/color/lighten";
 
 interface OptionTextProps {
   color?: string;

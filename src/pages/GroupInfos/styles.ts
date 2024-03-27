@@ -1,12 +1,13 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
-import { darken, lighten } from "polished";
+import lighten from "polished/lib/color/lighten";
+import darken from "polished/lib/color/darken";
 import CachedImage from "@components/CachedImage";
 
 export const Container = styled.ScrollView.attrs({
   contentContainerStyle: {
-    paddingBottom: 15
-  }
+    paddingBottom: 15,
+  },
 })`
   flex: 1;
   background-color: ${(props) => props.theme.colors.background};
@@ -33,7 +34,7 @@ export const AvatarContainer = styled.TouchableOpacity`
   position: relative;
   top: -90px;
   z-index: 5;
-`
+`;
 
 export const Avatar = styled(CachedImage)`
   width: 180px;
@@ -136,7 +137,7 @@ export const ParticipantsInfosContainer = styled.View`
 
 export const ParticipantsContainer = styled.View`
   width: 100%;
-  background-color: ${props => darken(0.085, props.theme.colors.shape)};
+  background-color: ${(props) => darken(0.085, props.theme.colors.shape)};
   padding: 10px;
   margin-top: 10px;
 `;
@@ -158,4 +159,4 @@ export const ParticipantsTitle = styled.Text`
 
 export const AdBannerWrapper = styled.View`
   margin: 10px 0px;
-`
+`;

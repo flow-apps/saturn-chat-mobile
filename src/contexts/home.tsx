@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useEffect, useState } from "react";
 import { useWebsocket } from "./websocket";
-import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
+import { DateUtils } from "@utils/date";
 
 interface HomeContext {
   hasInvites: boolean;
@@ -8,6 +8,7 @@ interface HomeContext {
 }
 
 const HomeContext = createContext<HomeContext>({} as HomeContext);
+const { convertToMillis } = new DateUtils()
 
 const HomeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -41,7 +42,7 @@ const HomeProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const interval = setInterval(() => {
       handleCheckInvites();
-    }, secondsToMilliseconds(30));
+    }, convertToMillis(30, "SECONDS"));
 
     return () => {
       clearInterval(interval);

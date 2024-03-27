@@ -1,18 +1,12 @@
 import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
 
 import config from "@configs";
-import isSameMinute from "date-fns/isSameMinute";
-import parseISO from "date-fns/parseISO";
-import format from "date-fns/format";
+import moment from "moment";
 
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
-import {
-  MessageData,
-  ParticipantsData,
-  UserData,
-} from "@type/interfaces";
+import { MessageData, ParticipantsData, UserData } from "@type/interfaces";
 
 import * as Clipboard from "expo-clipboard";
 
@@ -121,11 +115,9 @@ const Message = ({
         </MessageDateContainer>
       );
     } else {
-      const date = (date: string) => parseISO(date);
-      const same = isSameMinute(
-        date(message.created_at),
-        date(lastMessage.created_at)
-      );
+      const date = (date: string) => moment(date);
+      const same =
+        date(message.created_at).minutes() === date(lastMessage.created_at).minutes();
 
       if (!same) {
         return (
@@ -140,9 +132,9 @@ const Message = ({
   }, [message, lastMessage]);
 
   const formatHour = useCallback((date: string) => {
-    const isoDate = parseISO(date);
+    const isoDate = moment(date);
 
-    return format(isoDate, "dd/MM/yy, HH:mm");
+    return isoDate.format("dd/MM/yy, HH:mm");
   }, []);
 
   const deleteMessage = useCallback(async () => {

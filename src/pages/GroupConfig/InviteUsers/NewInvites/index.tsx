@@ -38,7 +38,7 @@ import api from "@services/api";
 
 import * as Localize from "expo-localization";
 import { InviteData } from "@type/interfaces";
-import { ConvertDate } from "@utils/convertDate";
+import { DateUtils } from "@utils/date";
 import config from "../../../../config";
 import { AnimatePresence, MotiView } from "moti";
 
@@ -49,7 +49,7 @@ const NewInvites: React.FC = () => {
   const [usages, setUsages] = useState(1);
   const [expireIn, setExpireIn] = useState(1);
 
-  const convertDate = new ConvertDate();
+  const convertDate = new DateUtils();
   const route = useRoute();
   const { id } = route.params as { id: string };
 

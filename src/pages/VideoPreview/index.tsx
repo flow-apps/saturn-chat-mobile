@@ -24,14 +24,16 @@ import { millisToTime } from "@utils/format";
 import { MotiView } from "@motify/components";
 import { AnimatePresence } from "moti";
 import SystemNavigationBar from "react-native-system-navigation-bar";
-import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { FileService } from "@services/file";
 import { AVPlaybackStatus } from "expo-av/build/AV";
 import { ResizeMode } from "expo-av/build/Video.types";
+import { DateUtils } from "@utils/date";
 
-const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(3);
+const { convertToMillis } = new DateUtils();
+const TIME_FOR_HIDE_CONTROLS = convertToMillis(3, "SECONDS");
+
 
 const VideoPreview: React.FC = () => {
   const [play, setPlay] = useState(true);

@@ -22,7 +22,7 @@ import { useEffect } from "react";
 import api from "@services/api";
 import { useState } from "react";
 import Loading from "@components/Loading";
-import { ConvertDate } from "@utils/convertDate";
+import { DateUtils } from "@utils/date";
 import { useCallback } from "react";
 import { useTheme } from "styled-components";
 import { ActivityIndicator } from "react-native";
@@ -49,7 +49,7 @@ const Participants: React.FC = () => {
 
   const { t } = useTranslate("Participants");
 
-  const convertDate = new ConvertDate();
+  const convertDate = new DateUtils();
 
   useEffect(() => {
     (async () => {

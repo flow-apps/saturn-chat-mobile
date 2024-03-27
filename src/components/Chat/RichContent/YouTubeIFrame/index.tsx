@@ -1,7 +1,6 @@
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import secondsToMilliseconds from "date-fns/secondsToMilliseconds";
 import { AnimatePresence, MotiView } from "moti";
 import React, {
   forwardRef,
@@ -35,6 +34,7 @@ import {
   YouTubeVideoTitle,
 } from "./styles";
 import { LinkUtils } from "@utils/link";
+import { DateUtils } from "@utils/date"
 
 interface IYouTubeIFrame {
   videoId: string;
@@ -45,7 +45,8 @@ export interface IYouTubeIFrameRef {
   openYouTubeIFrameModal: () => void;
 }
 
-const TIME_FOR_HIDE_CONTROLS = secondsToMilliseconds(3);
+const { convertToMillis } = new DateUtils()
+const TIME_FOR_HIDE_CONTROLS = convertToMillis(3, "SECONDS");
 
 const YouTubeIFrame: React.ForwardRefRenderFunction<
   IYouTubeIFrameRef,

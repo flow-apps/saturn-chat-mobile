@@ -2,7 +2,7 @@ import React, { memo } from "react";
 
 import { Image, Cache } from "./styles";
 import { ImageProps, ImageSourcePropType, StyleProp } from "react-native";
-import { SvgCssUri } from "react-native-svg";
+import { SvgCssUri } from "react-native-svg/src/css";
 
 interface CachedImageProps {
   uri: string | null | undefined;

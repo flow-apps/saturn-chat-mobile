@@ -6,9 +6,9 @@ import React, {
   useState,
 } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import minutesToMilliseconds from "date-fns/minutesToMilliseconds";
 
 import appConfigs from "../config";
+import { DateUtils } from "@utils/date";
 
 interface RemoteConfigContextProps {
   allConfigs: Configs;
@@ -37,6 +37,7 @@ interface UserConfigs {
 }
 
 const RemoteConfigsContext = createContext({} as RemoteConfigContextProps);
+const { convertToMillis } = new DateUtils()
 
 const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -49,8 +50,8 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       await remoteConfig().setConfigSettings({
-        minimumFetchIntervalMillis: minutesToMilliseconds(5),
-        fetchTimeMillis: minutesToMilliseconds(1),
+        minimumFetchIntervalMillis: convertToMillis(5, "MINUTES"),
+        fetchTimeMillis: convertToMillis(1, "MINUTES"),
       });
 
       await remoteConfig().setDefaults({

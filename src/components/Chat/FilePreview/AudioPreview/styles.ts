@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 
 import Slider from "@react-native-community/slider";
-import { darken, lighten } from "polished";
+import darken from "polished/lib/color/darken";
 
 export const Container = styled.View`
   background-color: ${({ theme }) => darken(0.03, theme.colors.shape)};

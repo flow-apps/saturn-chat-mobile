@@ -1,4 +1,4 @@
-import { darken, lighten } from 'polished';
+import darken from "polished/lib/color/darken";
 import styled from 'styled-components/native';
 import fonts from '@styles/fonts';
 

@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 import FastImage from 'react-native-fast-image'
-import { lighten } from "polished"
+import lighten from "polished/lib/color/lighten"
 
 export const Container = styled.View`
   min-width: 100%;
