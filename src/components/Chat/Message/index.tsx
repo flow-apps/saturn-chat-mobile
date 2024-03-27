@@ -276,7 +276,7 @@ const Message = ({
     <>
       <Alert
         title={t("alerts.open_link.title")}
-        content={t("alerts.open_link_content", { url: linkUrl })}
+        content={t("alerts.open_link.content", { url: linkUrl })}
         cancelButtonText={t("alerts.open_link.cancel_text")}
         okButtonText={t("alerts.open_link.ok_text")}
         cancelButtonAction={closeLink}

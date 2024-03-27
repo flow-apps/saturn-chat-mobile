@@ -94,6 +94,9 @@ export const en = {
         premium_text: "Do you want to have one like it? So come and be part of the constellation!",
         be_star: "Get Star"
       }
+    },
+    Alert: {
+      cancel: "Cancel"
     }
   },
   OnBoarding: {
@@ -397,4 +400,35 @@ export const en = {
     sent: "sent",
     limit_char: "Limite de {{count}} caracteres atingido!"
   },
+  GroupConfig: {
+    header_group_title: "Group options",
+    header_chat_title: "Chat options",
+    alerts: {
+      delete_group: {
+        title: "⚠ Be careful, this is dangerous!",
+        content: "This action is IRREVERSIBLE! By deleting the \"{{name}}\" group you will also be deleting all messages, files and anything else you are keeping in that group!",
+        ok_text: "Delete",
+        cancel_text: "Cancel"
+      },
+      exit_group: {
+        title: "😥 Are you sure you want to leave?",
+        content: "When leaving the group, your messages will be maintained, however, you will not receive notifications of new messages and will need to be invited to rejoin the group (if it is private)!",
+        ok_text: "Leave"
+      }
+    },
+    options: {
+      general: {
+        title: "General",
+        participants: "Participants",
+        invite_users: "Invite users",
+        edit_group: "Edit group",
+        details: "View details"
+      },
+      danger_zone: {
+        title: "Danger zone",
+        delete_group: "Delete group",
+        exit_group: "Leave the group",
+      }
+    }
+  }
 };

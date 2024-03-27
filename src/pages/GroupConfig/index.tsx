@@ -25,6 +25,7 @@ import {
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BannerAdSize } from "react-native-google-mobile-ads";
+import { useTranslate } from "@hooks/useTranslate";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -40,6 +41,7 @@ const GroupConfig: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { colors } = useTheme();
   const { id } = route.params as { id: string };
+  const { t } = useTranslate("GroupConfig");
 
   useEffect(() => {
     (async () => {
@@ -102,22 +104,26 @@ const GroupConfig: React.FC = () => {
   return (
     <>
       <Header
-        title={`Opções do ${group.type === "GROUP" ? "grupo" : "chat"}`}
+        title={
+          group.type === "GROUP"
+            ? t("header_group_title")
+            : t("header_chat_title")
+        }
       />
       <Alert
         visible={showDeleteGroupAlert}
-        title="⚠ Cuidado, isso é perigoso!"
-        content={`Essa ação é IRREVERSÍVEL! Ao apagar o grupo "${group.name}" você também estará apagando todas as mensagens, arquivos e qualquer outra coisa que esteja mantendo nesse grupo!`}
-        okButtonText="Apagar"
-        cancelButtonText="Cancelar"
+        title={t("alerts.delete_group.title")}
+        content={t("alerts.delete_group.content", { name: group.name })}
+        okButtonText={t("alerts.delete_group.ok_text")}
+        cancelButtonText={t("alerts.delete_group.cancel_text")}
         cancelButtonAction={() => setShowDeleteGroupAlert(false)}
         okButtonAction={deleteGroup}
       />
       <Alert
         visible={showExitGroupAlert}
-        title="😥 Tem certeza que quer ir embora?"
-        content={`Ao sair do grupo, suas mensagens serão mantidas, porém, você não receberá notificações de novas mensagens e precisará ser convidado(a) para entrar novamente ao grupo (caso seja privado)!`}
-        okButtonText="Sair"
+        title={t("alerts.exit_group.title")}
+        content={t("alerts.exit_group.content")}
+        okButtonText={t("alerts.exit_group.ok_text")}
         okButtonAction={exitGroup}
         cancelButtonAction={() => setShowExitGroup(false)}
       />
@@ -125,10 +131,11 @@ const GroupConfig: React.FC = () => {
         <OptionsContainer>
           {group.type === "GROUP" && (
             <>
-              <SectionTitle>Gerais</SectionTitle>
+              <SectionTitle>{t("options.general.title")}</SectionTitle>
               <OptionContainer onPress={handleGoParticipants}>
                 <OptionText color={colors.secondary}>
-                  <Feather name="users" size={25} /> Participantes
+                  <Feather name="users" size={25} />{" "}
+                  {t("options.general.participants")}
                 </OptionText>
               </OptionContainer>
               <OptionContainer
@@ -136,7 +143,8 @@ const GroupConfig: React.FC = () => {
                 onPress={handleGoInviteUsers}
               >
                 <OptionText color={colors.primary}>
-                  <Feather name="user-plus" size={25} /> Convidar usuários
+                  <Feather name="user-plus" size={25} />{" "}
+                  {t("options.general.invite_users")}
                 </OptionText>
               </OptionContainer>
               <OptionContainer
@@ -144,12 +152,14 @@ const GroupConfig: React.FC = () => {
                 onPress={handleGoEditGroup}
               >
                 <OptionText>
-                  <Feather name="edit-3" size={25} /> Editar grupo
+                  <Feather name="edit-3" size={25} />{" "}
+                  {t("options.general.edit_group")}
                 </OptionText>
               </OptionContainer>
               <OptionContainer onPress={handleGoGroupInfos}>
                 <OptionText>
-                  <Feather name="file" size={25} /> Ver detalhes
+                  <Feather name="file" size={25} />{" "}
+                  {t("options.general.details")}
                 </OptionText>
               </OptionContainer>
             </>
@@ -166,10 +176,13 @@ const GroupConfig: React.FC = () => {
           {rolesForDeleteGroup.includes(participant.role) &&
             group.type === "GROUP" && (
               <>
-                <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
+                <SectionTitle color={colors.red}>
+                  {t("options.danger_zone.title")}
+                </SectionTitle>
                 <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>
                   <OptionText color={colors.red}>
-                    <Feather name="trash" size={25} /> Apagar grupo
+                    <Feather name="trash" size={25} />{" "}
+                    {t("options.danger_zone.delete_group")}
                   </OptionText>
                 </OptionContainer>
               </>
@@ -177,10 +190,13 @@ const GroupConfig: React.FC = () => {
           {!rolesForDeleteGroup.includes(participant.role) &&
             group.type === "GROUP" && (
               <>
-                <SectionTitle color={colors.red}>Zona de perigo</SectionTitle>
+                <SectionTitle color={colors.red}>
+                  {t("options.danger_zone.title")}
+                </SectionTitle>
                 <OptionContainer onPress={() => setShowExitGroup(true)}>
                   <OptionText color={colors.red}>
-                    <Feather name="log-out" size={25} /> Sair do grupo
+                    <Feather name="log-out" size={25} />{" "}
+                    {t("options.danger_zone.exit_group")}
                   </OptionText>
                 </OptionContainer>
               </>

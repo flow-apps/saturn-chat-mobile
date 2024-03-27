@@ -15,6 +15,7 @@ import {
   AlertExtraButtonText,
 } from "./styles";
 import { TouchableWithoutFeedback } from "react-native";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface AlertProps {
   title: string;
@@ -41,6 +42,9 @@ const Alert = ({
   extraButtonAction,
   visible,
 }: AlertProps) => {
+
+  const { t } = useTranslate("Components.Alert")
+
   const handleOkButton = useCallback(() => {
     if (okButtonAction) {
       return okButtonAction();
@@ -84,7 +88,7 @@ const Alert = ({
               {cancelButtonAction ? (
                 <AlertCancelButton onPress={handleCancelButton}>
                   <AlertCancelButtonText>
-                    {cancelButtonText ? cancelButtonText : "Cancelar"}
+                    {cancelButtonText ? cancelButtonText : t("cancel")}
                   </AlertCancelButtonText>
                 </AlertCancelButton>
               ) : (

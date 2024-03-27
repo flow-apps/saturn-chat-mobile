@@ -178,7 +178,7 @@ const FilePreview = ({
       <Container>
         <Alert
           title={t("alerts.download.title")}
-          content={t("alerts.download.title", { name: original_name })}
+          content={t("alerts.download.content", { name: original_name })}
           visible={downloadWarning}
           cancelButtonText={t("alerts.download.cancel_text")}
           okButtonText={t("alerts.download.ok_text")}
