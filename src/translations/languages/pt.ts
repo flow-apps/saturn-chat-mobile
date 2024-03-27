@@ -71,6 +71,7 @@ export const pt = {
         invalid_invite_subtitle:
           " O convite pode ter expirado, ter sido apagado ou ter atingido o número máximo de usos!",
         invite_title: "Convite para:",
+        invite_screen_title: "Você foi convidado(a) para o grupo:",
         no_desc: "Sem descrição",
         joined_text: "Você já entrou!",
         join_text: "Entrar no grupo",

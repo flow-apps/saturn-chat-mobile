@@ -25,6 +25,7 @@ import SimpleToast from "react-native-simple-toast";
 import { useAuth } from "@contexts/auth";
 import analytics from "@react-native-firebase/analytics";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "@hooks/useTranslate";
 
 const Invite: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,8 @@ const Invite: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const params = route.params as { inviteID: string };
   const inviteID = params.inviteID;
+
+  const { t } = useTranslate("Components.Chat.InviteInMessage");
 
   useFocusEffect(
     useCallback(() => {
@@ -82,10 +85,9 @@ const Invite: React.FC = () => {
                 loop
               />
             </InviteAnimationContainer>
-            <InviteGroupName>Convite inválido</InviteGroupName>
+            <InviteGroupName>{t("invalid_invite_title")}</InviteGroupName>
             <InviteInvalidReason>
-              O convite pode ter sido expirado, apagado ou ter atingido seu
-              número máximo de usos. Peça outro.
+              {t("invalid_invite_subtitle")}
             </InviteInvalidReason>
           </InviteContainer>
         </Container>
@@ -108,7 +110,7 @@ const Invite: React.FC = () => {
         }
       })
       .catch((err) => {
-        SimpleToast.show("Erro ao usar o convite");
+        SimpleToast.show(t("toasts.error"));
       });
   };
 
@@ -121,12 +123,12 @@ const Invite: React.FC = () => {
         end={{ x: 0.5, y: 0.5 }}
       >
         <InviteContainer>
-          <InviteTitle>Você foi convidado(a) para o grupo:</InviteTitle>
+          <InviteTitle>{t("invite_screen_title")}</InviteTitle>
           <InviteAvatarImage uri={invite.group.group_avatar?.url} />
           <InviteGroupName>{invite?.group.name}</InviteGroupName>
           <AcceptInviteButton onPress={handleJoin} enabled={!participating}>
             <AcceptInviteText>
-              {participating ? "Você já entrou" : "Aceitar convite"}
+              {participating ? t("joined_text") : t("join_text")}
             </AcceptInviteText>
           </AcceptInviteButton>
         </InviteContainer>

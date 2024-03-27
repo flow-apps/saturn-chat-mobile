@@ -71,6 +71,7 @@ export const en = {
         invalid_invite_subtitle:
           "The invite may have expired, been deleted or reached the maximum number of uses!",
         invite_title: "Invite to:",
+        invite_screen_title: "You have been invited to the group:",
         no_desc: "No description",
         joined_text: "You're already in!",
         join_text: "Join the group",
