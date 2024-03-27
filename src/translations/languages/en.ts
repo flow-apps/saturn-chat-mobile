@@ -562,5 +562,16 @@ export const en = {
       public: "Turn public"
     },
     done: "Done"
+  },
+  GroupInfos: {
+    join: "Join",
+    joined: "Joined",
+    participants: "Participant",
+    participants_plural: "Participants",
+    tags: "Group tags",
+    desc: "Description",
+    toasts: {
+      error: "Unable to join group!"
+    }
   }
 };

@@ -566,5 +566,16 @@ export const pt = {
       public: "Tornar público"
     },
     done: "Concluir"
+  },
+  GroupInfos: {
+    join: "Participar",
+    joined: "Participando",
+    participants: "Participante",
+    participants_plural: "Participantes",
+    tags: "Tags do grupo",
+    desc: "Descrição",
+    toasts: {
+      error: "Não foi possível entrar no grupo!"
+    }
   }
 };
