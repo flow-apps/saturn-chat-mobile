@@ -50,12 +50,12 @@ const PunishParticipant: React.FC = () => {
       )
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show("Usuário punido com sucesso!");
+          SimpleToast.show(t("toasts.success"));
           navigation.navigate("Chat", { id: participant?.group.id });
         }
       })
       .catch(() => {
-        SimpleToast.show("Erro ao punir usuário. Tente novamente.");
+        SimpleToast.show(t("toasts.error"));
       });
 
     setLoading(false);
@@ -67,7 +67,7 @@ const PunishParticipant: React.FC = () => {
     <>
       <Container>
         <PunishContentContainer>
-          <PunishTitle>Tem certeza disso?</PunishTitle>
+          <PunishTitle>{t("title")}</PunishTitle>
           <PunishAnimationWrapper>
             <PunishAnimation
               source={require("@assets/alert.json")}

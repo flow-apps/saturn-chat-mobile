@@ -456,13 +456,17 @@ export const en = {
   PunishParticipant: {
     title: "Are you sure about that?",
     desc_kick:
-      'You are about to kick the participant "{userName}" from the group "{groupName}". Are you sure of your choice?',
+      'You are about to kick the participant "{{userName}}" from the group "{{groupName}}". Are you sure of your choice?',
     desc_ban:
-      'You are about to ban participant "{userName}" from the group "{groupName}". Are you sure of your choice?',
+      'You are about to ban participant "{{userName}}" from the group "{{groupName}}". Are you sure of your choice?',
     notify_text: "Notify participant of punishment",
     confirm_text_kick: "Yes, kick out now!",
     confirm_text_ban: "Yes, ban now!",
     cancel_text: "No, I changed my mind",
+    toasts: {
+      success: "User successfully punished!",
+      error: "Unable to punish user. Please try again."
+    }
   },
   ChangeRole: {
     header_title: "Change role",
@@ -500,4 +504,63 @@ export const en = {
       error: "Error changing role. Try again."
     }
   },
+  FriendsManager: {
+    alerts: {
+      unfriend: {
+        title: "⚠️ Do you want to unfriend?",
+        content: "If you remove this user from your friends list, you will no longer be able to send and receive direct messages from this user. All messages between you will be deleted for both of you.",
+        ok_text: "Unfriend"
+      }
+    },
+    header_title: "Manage friends"
+  },
+  InviteUsers: {
+    header_title: "Invite",
+    empty_title: "There are no friends to invite. Try sharing an invitation via links.",
+    title: "Group invites",
+    subtitle: "Create and manage all group invites through our invites manager",
+    new_invite_text: "Manage invites",
+    friends_invite_title: "Invite your friends",
+    friends_invite_subtitle: "Only friends who are not in the group appear here. They will need to accept the invites to join.",
+    invite: "Invite",
+    invited: "Invited",
+    toasts: {
+      success: "Invitation sent successfully!",
+      error: "Unable to invite your friend!"
+    }
+  },
+  NewInvites: {
+    header_title: "Create invites",
+    title: "Generate invite",
+    subtitle: "You can generate invite with these settings:",
+    permanent: "Permanent invite",
+    usage_unlimited: "Unlimited uses",
+    usage: "Use a maximum of {{count}} time",
+    usage_plural: "Use a maximum of {{count}} times",
+    expire: "Expire in {{count}} day",
+    expire_plural: "Expire in {{count}} days",
+    day: "Day",
+    day_plural: "Days",
+    active_invites: "Active invites",
+    generate: "Generate",
+    expire_in: "Expire in ",
+    usage_amount: "{{count}} time of ",
+    usage_amount_plural: "{{count}} times of ",
+  },
+  EditGroup: {
+    toasts: {
+      success: "Group edited successfully!",
+      avatar_permission: "We need permission to access your photos to update your avatar!",
+      updating: "Updating avatar...",
+      updated: "Updated Avatar"
+    },
+    header_title: "Edit group",
+    switch_avatar: "Change avatar",
+    inputs: {
+      name: "Name",
+      desc: "Description",
+      public: "Turn public"
+    },
+    done: "Done"
+  }
 };

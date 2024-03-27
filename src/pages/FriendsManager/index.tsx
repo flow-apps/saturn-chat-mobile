@@ -31,7 +31,7 @@ const FriendsManager: React.FC = () => {
 
   const { user } = useAuth();
   const { colors } = useTheme();
-  const { t } = useTranslate("")
+  const { t } = useTranslate("FriendsManager");
 
   useFocusEffect(
     useCallback(() => {
@@ -79,15 +79,14 @@ const FriendsManager: React.FC = () => {
     <>
       <Alert
         visible={showUnfriendAlert}
-        title="⚠️ Deseja desfazer a amizade?"
-        content={`Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.`}
-        okButtonText="Desfazer amizade"
-        cancelButtonText="Cancelar"
+        title={t("alerts.unfriend.title")}
+        content={t("alerts.unfriend.content")}
+        okButtonText={t("alerts.unfriend.ok_text")}
         okButtonAction={removeFriend}
         cancelButtonAction={closeUnfriendAlert}
       />
       <Container>
-        <Header title="Gerenciar amigos" />
+        <Header title={t("header_title")} />
         <FriendsList>
           <FlatList
             data={friends}

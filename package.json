@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "bundle-visualizer": "react-native-bundle-visualizer --platform android --only-mapped --expo true --reset-cache",
     "build:apk": "cd android && ./gradlew assembleRelease",
-    "build:aab": "expo build:android -t app-bundle"
+    "build:aab": "cd android && ./gradlew bundleRelease"
   },
   "resolutions": {
     "@types/react": "^18.0.8",

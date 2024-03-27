@@ -111,7 +111,6 @@ const Participant: React.FC = () => {
                     <OptionNameWrapper>
                       <OptionName color={colors.red}>
                         <Feather name="user-x" size={16} /> {t("kick")}
-                        participante
                       </OptionName>
                     </OptionNameWrapper>
                   </ParticipantOptionContainer>

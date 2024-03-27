@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { useCallback, useState } from "react";
 import Header from "@components/Header";
 import { Feather } from "@expo/vector-icons";
 import {
@@ -42,6 +37,7 @@ import sortBy from "lodash/sortBy";
 import SimpleToast from "react-native-simple-toast";
 import { getFriendAvatar, getFriendID, getFriendName } from "@utils/friends";
 import { FlatList } from "react-native";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface Friend extends FriendData {
   invited: boolean;
@@ -54,6 +50,7 @@ const InviteUsers: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id } = route.params as { id: string };
+  const { t } = useTranslate("InviteUsers");
 
   useFocusEffect(
     useCallback(() => {
@@ -63,7 +60,7 @@ const InviteUsers: React.FC = () => {
 
         if (res.status === 200) {
           const data = res.data as Friend[];
-          const sorted = sortBy(data, { invited: false });          
+          const sorted = sortBy(data, { invited: false });
 
           setRequests(sorted);
         }
@@ -90,12 +87,12 @@ const InviteUsers: React.FC = () => {
           });
 
           setRequests(newFriendsList);
-          SimpleToast.show("Convite enviado com sucesso!");
+          SimpleToast.show(t("toasts.success"));
         }
       })
       .catch((err) => {
         console.log(err);
-        SimpleToast.show("Não foi possível convidar seu amigo!");
+        SimpleToast.show(t("toasts.error"));
       });
   };
 
@@ -103,7 +100,7 @@ const InviteUsers: React.FC = () => {
 
   return (
     <>
-      <Header title="Convidar" />
+      <Header title={t("header_invite")} />
       <Container>
         <FriendsListContainer>
           <FlatList
@@ -111,37 +108,31 @@ const InviteUsers: React.FC = () => {
             keyExtractor={(item) => item.id}
             ListEmptyComponent={() => (
               <EmptyListContainer>
-                <EmptyListTitle>
-                  Não há amigos para convidar. Tente compartilhar um convite
-                  através de links.
-                </EmptyListTitle>
+                <EmptyListTitle>{t("empty_title")}</EmptyListTitle>
               </EmptyListContainer>
             )}
             ListHeaderComponent={() => (
               <>
                 <YourInviteContainer>
                   <YourInviteTitle>
-                    <Feather name="user-plus" size={18} /> Convite do grupo
+                    <Feather name="user-plus" size={18} /> {t("title")}
                   </YourInviteTitle>
-                  <YourInviteSubtitle>
-                    Crie e gerencie todos os convites do grupo através do nosso
-                    gerenciador de convites
-                  </YourInviteSubtitle>
+                  <YourInviteSubtitle>{t("subtitle")}</YourInviteSubtitle>
                   <NewInviteContainer>
                     <NewInviteButton onPress={handleGoCreateNewInvite}>
                       <NewInviteButtonText>
-                        <Feather name="plus" size={16} /> Gerenciar convites
+                        <Feather name="plus" size={16} /> {t("new_invite_text")}
                       </NewInviteButtonText>
                     </NewInviteButton>
                   </NewInviteContainer>
                 </YourInviteContainer>
                 <InviteFriendsContainer>
                   <InviteFriendsTitle>
-                    <Feather name="user-check" size={20} /> Convide seus amigos
+                    <Feather name="user-check" size={20} />{" "}
+                    {t("friends_invite_title")}
                   </InviteFriendsTitle>
                   <InviteFriendsSubtitle>
-                    Somente amigos que não estão no grupo aparecem aqui. Eles
-                    precisarão aceitar o convite para entrar.
+                    {t("friends_invite_subtitle")}
                   </InviteFriendsSubtitle>
                 </InviteFriendsContainer>
               </>
@@ -161,7 +152,7 @@ const InviteUsers: React.FC = () => {
                     disabled={item.invited}
                   >
                     <FriendInviteButtonText>
-                      {item.invited ? "Convidado" : "Convidar"}
+                      {t(item.invited ? "invited" : "invite")}
                     </FriendInviteButtonText>
                   </FriendInviteButton>
                 </FriendContainer>

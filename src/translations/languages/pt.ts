@@ -460,13 +460,17 @@ export const pt = {
   PunishParticipant: {
     title: "Tem certeza disso?",
     desc_kick:
-      'Você está prestes a expulsar o participante "{userName}" do grupo "{groupName}". Você tem certeza da sua escolha?',
+      'Você está prestes a expulsar o participante "{{userName}}" do grupo "{{groupName}}". Você tem certeza da sua escolha?',
     desc_ban:
-      'Você está prestes a banir o participante "{userName}" do grupo "{groupName}". Você tem certeza da sua escolha?',
+      'Você está prestes a banir o participante "{{userName}}" do grupo "{{groupName}}". Você tem certeza da sua escolha?',
     notify_text: "Notificar participante da punição",
     confirm_text_kick: "Sim, expulsar agora!",
     confirm_text_ban: "Sim, banir agora!",
     cancel_text: "Não, mudei de ideia",
+    toasts: {
+      success: "Usuário punido com sucesso!",
+      error: "Não foi possível punir o usuário. Tente novamente."
+    }
   },
   ChangeRole: {
     header_title: "Alterar cargo",
@@ -504,4 +508,63 @@ export const pt = {
       error: "Erro ao alterar cargo. Tente novamente."
     }
   },
+  FriendsManager: {
+    alerts: {
+      unfriend: {
+        title: "⚠️ Deseja desfazer a amizade?",
+        content: "Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.",
+        ok_text: "Desfazer amizade"
+      }
+    },
+    header_title: "Gerenciar amigos"
+  },
+  InviteUsers: {
+    header_title: "Convidar",
+    empty_title: "Não há amigos para convidar. Tente compartilhar um convite através de links.",
+    title: "Convite do grupo",
+    subtitle: "Crie e gerencie todos os convites do grupo através do nosso gerenciador de convites",
+    new_invite_text: "Gerenciar convites",
+    friends_invite_title: "Convide seus amigos",
+    friends_invite_subtitle: "Somente amigos que não estão no grupo aparecem aqui. Eles precisarão aceitar o convite para entrar.",
+    invite: "Convidar",
+    invited: "Convidado",
+    toasts: {
+      success: "Convite enviado com sucesso!",
+      error: "Não foi possível convidar seu amigo!"
+    }
+  },
+  NewInvites: {
+    header_title: "Criar convites",
+    title: "Gerar convite",
+    subtitle: "Você pode gerar convites com essas configurações:",
+    permanent: "Convite permanente",
+    usage_unlimited: "Usos ilimitados",
+    usage: "Usar no máximo {{count}} vez",
+    usage_plural: "Usar no máximo {{count}} vezes",
+    expire: "Expirar em {{count}} dia",
+    expire_plural: "Expirar em {{count}} dias",
+    day: "Dia",
+    day_plural: "Dias",
+    active_invites: "Convites ativos",
+    generate: "Gerar",
+    expire_in: "Expirar em ",
+    usage_amount: "Foi usado {{count}} vez de ",
+    usage_amount_plural: "Foi usado {{count}} vezes de ",
+  },
+  EditGroup: {
+    toasts: {
+      success: "Grupo editado com sucesso!",
+      avatar_permission: "Precisamos da permissão para acessar suas fotos!",
+      updating: "Atualizando avatar...",
+      updated: "Avatar atualizado"
+    },
+    header_title: "Editar grupo",
+    switch_avatar: "Trocar avatar",
+    inputs: {
+      name: "Nome",
+      desc: "Descrição",
+      public: "Tornar público"
+    },
+    done: "Concluir"
+  }
 };
