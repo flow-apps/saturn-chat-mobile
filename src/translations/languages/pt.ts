@@ -22,39 +22,41 @@ export const pt = {
       CurrentReplyingMessage: {
         file_amount: "arquivo",
         file_amount_plural: "arquivos",
-        replying_text: "Você está respondendo:"
+        replying_text: "Você está respondendo:",
       },
       FilePreview: {
         alerts: {
           download: {
             title: "❗ Muito cuidado",
-            content: "Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Nome do arquivo: {{name}}",
+            content:
+              "Tem certeza que quer baixar o arquivo? Arquivos maliciosos podem danificar seu telefone!\n\n📁 Nome do arquivo: {{name}}",
             ok_text: "Baixar",
-            cancel_text: "Cancelar" 
-          }
-        }
+            cancel_text: "Cancelar",
+          },
+        },
       },
       Message: {
         toasts: {
-          copied_message: "Mensagem copiada"
+          copied_message: "Mensagem copiada",
         },
         alerts: {
           open_link: {
             title: "⚠ Cuidado, pode ser perigoso",
-            content: "Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo.\n\n{{url}}",
+            content:
+              "Tem certeza que quer acessar este link? Não podemos garantir sua segurança ao acessá-lo.\n\n{{url}}",
             ok_text: "Acessar",
-            cancel_text: "Não"
-          }
+            cancel_text: "Não",
+          },
         },
         options: {
           reply: "Responder",
           copy: "Copiar",
           part_opt: "Opções do participante",
-          delete: "Excluir"
-        }
+          delete: "Excluir",
+        },
       },
       RecordingAudio: {
-        recording: "Gravando"
+        recording: "Gravando",
       },
       ReplyingMessage: {
         read_more: "Ler mais",
@@ -62,42 +64,45 @@ export const pt = {
         replying: "Respondendo:",
         voice_message: "🎤 Mensagem de voz",
         files: "arquivo",
-        files_plural: "arquivos"
+        files_plural: "arquivos",
       },
       InviteInMessage: {
         invalid_invite_title: "🚫 Convite inválido",
-        invalid_invite_subtitle: " O convite pode ter expirado, ter sido apagado ou ter atingido o número máximo de usos!",
+        invalid_invite_subtitle:
+          " O convite pode ter expirado, ter sido apagado ou ter atingido o número máximo de usos!",
         invite_title: "Convite para:",
         no_desc: "Sem descrição",
         joined_text: "Você já entrou!",
         join_text: "Entrar no grupo",
         toasts: {
           joined: "Você entrou no grupo '{{name}}'!",
-          error: "Não foi possível usar o convite"
-        }
+          error: "Não foi possível usar o convite",
+        },
       },
       LinkPreview: {
         watch_text: "Toque aqui para assistir",
-        link_copied: "Link copiado"
+        link_copied: "Link copiado",
       },
       Typing: {
         typing_user: "está ",
         typing_user_plural: "estão ",
         typing: "digitando",
-        many: "Vários usuários"
-      }
+        many: "Vários usuários",
+      },
     },
     Modals: {
       EmblemModal: {
         title: "Emblema legal né?",
-        content: "Ele é dado a pessoas muito especiais que apoiam o Saturn Chat com o plano Star.",
-        premium_text: "Quer ter um igual? Então venha fazer parte da constelação!",
-        be_star: "Obter Star"
-      }
+        content:
+          "Ele é dado a pessoas muito especiais que apoiam o Saturn Chat com o plano Star.",
+        premium_text:
+          "Quer ter um igual? Então venha fazer parte da constelação!",
+        be_star: "Obter Star",
+      },
     },
     Alert: {
-      cancel: "Cancelar"
-    }
+      cancel: "Cancelar",
+    },
   },
   OnBoarding: {
     done: "Começar",
@@ -401,7 +406,7 @@ export const pt = {
     type_message: "Digite sua mensagem...",
     drop_send: "Solte para enviar",
     sent: "enviado",
-    limit_char: "Limite de {{count}} caracteres atingido!"
+    limit_char: "Limite de {{count}} caracteres atingido!",
   },
   GroupConfig: {
     header_group_title: "Opções do grupo",
@@ -409,15 +414,17 @@ export const pt = {
     alerts: {
       delete_group: {
         title: "⚠ Cuidado, isso é perigoso!",
-        content: "Essa ação é IRREVERSÍVEL! Ao apagar o grupo \"{{name}}\" você também estará apagando todas as mensagens, arquivos e qualquer outra coisa que esteja mantendo nesse grupo!",
+        content:
+          'Essa ação é IRREVERSÍVEL! Ao apagar o grupo "{{name}}" você também estará apagando todas as mensagens, arquivos e qualquer outra coisa que esteja mantendo nesse grupo!',
         ok_text: "Apagar",
-        cancel_text: "Cancelar"
+        cancel_text: "Cancelar",
       },
       exit_group: {
         title: "😥 Tem certeza que quer ir embora?",
-        content: "Ao sair do grupo, suas mensagens serão mantidas, porém, você não receberá notificações de novas mensagens e precisará ser convidado(a) para entrar novamente ao grupo (caso seja privado)!",
-        ok_text: "Sair"
-      }
+        content:
+          "Ao sair do grupo, suas mensagens serão mantidas, porém, você não receberá notificações de novas mensagens e precisará ser convidado(a) para entrar novamente ao grupo (caso seja privado)!",
+        ok_text: "Sair",
+      },
     },
     options: {
       general: {
@@ -425,14 +432,14 @@ export const pt = {
         participants: "Participantes",
         invite_users: "Convidar usuários",
         edit_group: "Editar grupo",
-        details: "Ver detalhes"
+        details: "Ver detalhes",
       },
       danger_zone: {
         title: "Zona de perigo",
         delete_group: "Apagar grupo",
         exit_group: "Sair do grupo",
-      }
-    }
+      },
+    },
   },
   Participants: {
     header_title: "{{count}} Participante",
@@ -440,22 +447,60 @@ export const pt = {
     title: "Todos os participantes",
     created: "Criou em {{date}}",
     joined: "Entrou em {{date}}",
-    owner: "Dono"
+    owner: "Dono",
   },
   Participant: {
     title: "Opções do participante",
     view_profile: "Ver perfil",
     change_role: "Mudar cargo",
     kick: "Expulsar",
-    ban: "Banir participante"
+    ban: "Banir participante",
   },
   PunishParticipant: {
     title: "Tem certeza disso?",
-    desc_kick: "Você está prestes a expulsar o participante \"{userName}\" do grupo \"{groupName}\". Você tem certeza da sua escolha?",
-    desc_ban: "Você está prestes a banir o participante \"{userName}\" do grupo \"{groupName}\". Você tem certeza da sua escolha?",
+    desc_kick:
+      'Você está prestes a expulsar o participante "{userName}" do grupo "{groupName}". Você tem certeza da sua escolha?',
+    desc_ban:
+      'Você está prestes a banir o participante "{userName}" do grupo "{groupName}". Você tem certeza da sua escolha?',
     notify_text: "Notificar participante da punição",
     confirm_text_kick: "Sim, expulsar agora!",
     confirm_text_ban: "Sim, banir agora!",
-    cancel_text: "Não, mudei de ideia"
-  }
+    cancel_text: "Não, mudei de ideia",
+  },
+  ChangeRole: {
+    header_title: "Alterar cargo",
+    title: "Cargos",
+    subtitle:
+      "Membros com cargos especiais podem ter controle em diversos recursos (como de gerenciamento de cargos e convites, edição do grupo, etc) do grupo. Dê cargos importantes para pessoas em que confia.",
+    roles: {
+      participant: {
+        name: "Participante",
+        desc: "Este cargo não dá poderes especiais ao participante."
+      },
+      mod: {
+        name: "Moderador",
+        desc: "Os moderadores são os que cuidam da segurança do grupo."
+      },
+      manager: {
+        name: "Gerente",
+        desc: "Os gerentes ajudam a gerenciar o grupo e a trazer novos usuários."
+      },
+      admin: {
+        name: "Administrador",
+        desc: "Permite que o participante tenha os mesmos poderes do dono do grupo."
+      }
+    },
+    permissions: {
+      create_invites: "Criar convites para convidar novos usuários",
+      punish_members: "Punir participantes bagunceiros",
+      manage_roles: "Gerenciar cargos",
+      manage_messages: "Gerenciar mensagens (como apagar elas)",
+      edit_group: "Editar informações do grupo (nome, avatar, descrição)",
+      delete_group: "Apagar o grupo",
+    },
+    toasts: {
+      success: "Cargo do usuário alterado com sucesso",
+      error: "Erro ao alterar cargo. Tente novamente."
+    }
+  },
 };

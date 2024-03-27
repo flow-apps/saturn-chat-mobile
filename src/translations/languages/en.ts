@@ -23,38 +23,40 @@ export const en = {
         alerts: {
           download: {
             title: "❗ Be very careful",
-            content: "Are you sure you want to download the file? Malicious files can damage your phone!\n\n📁 File name: {{name}}",
+            content:
+              "Are you sure you want to download the file? Malicious files can damage your phone!\n\n📁 File name: {{name}}",
             ok_text: "Download",
-            cancel_text: "Cancel" 
-          }
-        }
+            cancel_text: "Cancel",
+          },
+        },
       },
       CurrentReplyingMessage: {
         file_amount: "file",
         file_amount_plural: "files",
-        replying_text: "You are replying:"
+        replying_text: "You are replying:",
       },
       Message: {
         toasts: {
-          copied_message: "Copied message"
+          copied_message: "Copied message",
         },
         alerts: {
           open_link: {
             title: "⚠ Be careful, it can be dangerous",
-            content: "Are you sure you want to access this link? We cannot guarantee your security when accessing it.\n\n{{url}}",
+            content:
+              "Are you sure you want to access this link? We cannot guarantee your security when accessing it.\n\n{{url}}",
             ok_text: "Access",
-            cancel_text: "No"
-          }
+            cancel_text: "No",
+          },
         },
         options: {
           reply: "Reply",
           copy: "Copy",
           part_opt: "Participant Options",
-          delete: "Delete"
-        }
+          delete: "Delete",
+        },
       },
       RecordingAudio: {
-        recording: "Recording"
+        recording: "Recording",
       },
       ReplyingMessage: {
         read_more: "Read more",
@@ -62,42 +64,45 @@ export const en = {
         replying: "Replying:",
         voice_message: "🎤 Voice message",
         files: "file",
-        files_plural: "files"
+        files_plural: "files",
       },
       InviteInMessage: {
         invalid_invite_title: "🚫 Invalid Invite",
-        invalid_invite_subtitle: "The invite may have expired, been deleted or reached the maximum number of uses!",
+        invalid_invite_subtitle:
+          "The invite may have expired, been deleted or reached the maximum number of uses!",
         invite_title: "Invite to:",
         no_desc: "No description",
         joined_text: "You're already in!",
         join_text: "Join the group",
         toasts: {
           joined: "You've joined the '{{name}}' group!",
-          error: "Unable to use invite"
-        }
+          error: "Unable to use invite",
+        },
       },
       LinkPreview: {
         watch_text: "Toque aqui para assistir",
-        link_copied: "Link copied"
+        link_copied: "Link copied",
       },
       Typing: {
         typing_user: "is ",
         typing_user_plural: "are ",
         typing: "typing",
-        many: "Many users"
-      }
+        many: "Many users",
+      },
     },
     Modals: {
       EmblemModal: {
         title: "Cool emblem, right?",
-        content: "It is given to very special people who support Saturn Chat with the Star plan.",
-        premium_text: "Do you want to have one like it? So come and be part of the constellation!",
-        be_star: "Get Star"
-      }
+        content:
+          "It is given to very special people who support Saturn Chat with the Star plan.",
+        premium_text:
+          "Do you want to have one like it? So come and be part of the constellation!",
+        be_star: "Get Star",
+      },
     },
     Alert: {
-      cancel: "Cancel"
-    }
+      cancel: "Cancel",
+    },
   },
   OnBoarding: {
     done: "Done",
@@ -280,8 +285,7 @@ export const en = {
   },
   InviteManager: {
     header_title: "Invites and requests",
-    subtitle:
-      "Manage your Invites and friend requests that you have received.",
+    subtitle: "Manage your Invites and friend requests that you have received.",
     empty_text:
       "There are no group invites or friend requests. Come back later.",
     toasts: {
@@ -398,7 +402,7 @@ export const en = {
     type_message: "Type your message...",
     drop_send: "Drop to send",
     sent: "sent",
-    limit_char: "Limite de {{count}} caracteres atingido!"
+    limit_char: "Limite de {{count}} caracteres atingido!",
   },
   GroupConfig: {
     header_group_title: "Group options",
@@ -406,15 +410,17 @@ export const en = {
     alerts: {
       delete_group: {
         title: "⚠ Be careful, this is dangerous!",
-        content: "This action is IRREVERSIBLE! By deleting the \"{{name}}\" group you will also be deleting all messages, files and anything else you are keeping in that group!",
+        content:
+          'This action is IRREVERSIBLE! By deleting the "{{name}}" group you will also be deleting all messages, files and anything else you are keeping in that group!',
         ok_text: "Delete",
-        cancel_text: "Cancel"
+        cancel_text: "Cancel",
       },
       exit_group: {
         title: "😥 Are you sure you want to leave?",
-        content: "When leaving the group, your messages will be maintained, however, you will not receive notifications of new messages and will need to be invited to rejoin the group (if it is private)!",
-        ok_text: "Leave"
-      }
+        content:
+          "When leaving the group, your messages will be maintained, however, you will not receive notifications of new messages and will need to be invited to rejoin the group (if it is private)!",
+        ok_text: "Leave",
+      },
     },
     options: {
       general: {
@@ -422,14 +428,14 @@ export const en = {
         participants: "Participants",
         invite_users: "Invite users",
         edit_group: "Edit group",
-        details: "View details"
+        details: "View details",
       },
       danger_zone: {
         title: "Danger zone",
         delete_group: "Delete group",
         exit_group: "Leave the group",
-      }
-    }
+      },
+    },
   },
   Participants: {
     header_title: "{{count}} Participant",
@@ -437,22 +443,60 @@ export const en = {
     title: "All participants",
     created: "Created on {{date}}",
     joined: "Joined on {{date}}",
-    owner: "Owner"
+    owner: "Owner",
   },
   Participant: {
     title: "Participant options",
     view_profile: "View profile",
     change_role: "Change role",
     kick: "Kick",
-    ban: "Ban participant"
+    ban: "Ban participant",
   },
   PunishParticipant: {
     title: "Are you sure about that?",
-    desc_kick: "You are about to kick the participant \"{userName}\" from the group \"{groupName}\". Are you sure of your choice?",
-    desc_ban: "You are about to ban participant \"{userName}\" from the group \"{groupName}\". Are you sure of your choice?",
+    desc_kick:
+      'You are about to kick the participant "{userName}" from the group "{groupName}". Are you sure of your choice?',
+    desc_ban:
+      'You are about to ban participant "{userName}" from the group "{groupName}". Are you sure of your choice?',
     notify_text: "Notify participant of punishment",
     confirm_text_kick: "Yes, kick out now!",
     confirm_text_ban: "Yes, ban now!",
-    cancel_text: "No, I changed my mind"
-  }
+    cancel_text: "No, I changed my mind",
+  },
+  ChangeRole: {
+    header_title: "Change role",
+    title: "Roles",
+    subtitle:
+      "Members with special roles can have control over various resources (such as managing roles and invites, group editing, etc.) of the group. Give important roles to people you trust.",
+    roles: {
+      participant: {
+        name: "Participant",
+        desc: "This role does not give the participant special powers.",
+      },
+      mod: {
+        name: "Moderator",
+        desc: "Moderators are those who take care of the group's security.",
+      },
+      manager: {
+        name: "Manager",
+        desc: "Managers help manage the group and bring in new users.",
+      },
+      admin: {
+        name: "Administrador",
+        desc: "Allows the participant to have the same powers as the group owner.",
+      },
+    },
+    permissions: {
+      create_invites: "Create invites to invite new users",
+      punish_members: "Punish messy participants",
+      manage_roles: "Manage roles",
+      manage_messages: "Manage messages (how to delete them)",
+      edit_group: "Edit group information (name, avatar, description)",
+      delete_group: "Delete group",
+    },
+    toasts: {
+      success: "User role successfully changed",
+      error: "Error changing role. Try again."
+    }
+  },
 };

@@ -26,6 +26,7 @@ import api from "@services/api";
 import SimpleToast from "react-native-simple-toast";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useTranslate } from "@hooks/useTranslate";
 
 type Roles = "participant" | "mod" | "admin";
 
@@ -38,7 +39,7 @@ const ChangeRole: React.FC = () => {
   const { colors } = useTheme();
   const [role, setRole] = useState<Roles>(
     participant.role.toLocaleLowerCase() as Roles
-  );  
+  );
   const { name, description, permissions } = roles[role];
   const {
     create_invites,
@@ -49,27 +50,29 @@ const ChangeRole: React.FC = () => {
     punish_members,
   } = permissions;
 
+  const { t } = useTranslate("ChangeRole");
+
   const rolesData = [
     {
-      name: "Participante",
+      name: t("roles.participant.name"),
       radioValue: "participant",
       color: colors.black,
       icon: "user",
     },
     {
-      name: "Moderador",
+      name: t("roles.mod.name"),
       radioValue: "mod",
       color: colors.primary,
       icon: "shield",
     },
     {
-      name: "Gerente",
+      name: t("roles.manager.name"),
       radioValue: "manager",
       color: colors.green,
       icon: "command",
     },
     {
-      name: "Administrador",
+      name: t("roles.admin.name"),
       radioValue: "admin",
       color: colors.red,
       icon: "zap",
@@ -80,7 +83,7 @@ const ChangeRole: React.FC = () => {
     setRole(selectedRole);
   };
 
-  const handleSetRole = async () => {    
+  const handleSetRole = async () => {
     await api
       .post(
         `/group/participant/role/set/${
@@ -89,26 +92,22 @@ const ChangeRole: React.FC = () => {
       )
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show("Cargo do usuário alterado com sucesso");
+          SimpleToast.show(t("toasts.success"));
           navigation.navigate("Chat", { id: participant.group.id });
         }
       })
-      .catch(res => {        
-        SimpleToast.show("Erro ao alterar cargo. Tente novamente.");
+      .catch((res) => {
+        SimpleToast.show(t("toasts.error"));
       });
   };
 
   return (
     <>
-      <Header title="Alterar cargo"  />
+      <Header title={t("change_role")} />
       <Container>
         <ContentContainer>
-          <ContentTitle>Cargos</ContentTitle>
-          <ContentDescription>
-            Membros com cargos especiais podem ter controle em diversos recursos
-            (como de gerenciamento de cargos e convites, edição do grupo, etc)
-            do grupo. Dê cargos importantes para pessoas em que confia.
-          </ContentDescription>
+          <ContentTitle>{t("title")}</ContentTitle>
+          <ContentDescription>{t("subtitle")}</ContentDescription>
         </ContentContainer>
         <RolesContainer>
           {rolesData.map((r, index) => (
@@ -130,28 +129,28 @@ const ChangeRole: React.FC = () => {
           <RoleDescription>{description}</RoleDescription>
           <RolePermissionsContainer>
             <RolePermission>
-              <Feather name={create_invites ? "check" : "x"} size={16} /> Criar
-              convites para convidar novos usuários
+              <Feather name={create_invites ? "check" : "x"} size={16} />{" "}
+              {t("permissions.create_invites")}
             </RolePermission>
             <RolePermission>
-              <Feather name={punish_members ? "check" : "x"} size={16} /> Punir
-              participantes bagunceiros
+              <Feather name={punish_members ? "check" : "x"} size={16} />{" "}
+              {t("permissions.punish_members")}
             </RolePermission>
             <RolePermission>
               <Feather name={manage_roles ? "check" : "x"} size={16} />{" "}
-              Gerenciar cargos
+              {t("permissions.manage_roles")}
             </RolePermission>
             <RolePermission>
               <Feather name={manage_messages ? "check" : "x"} size={16} />{" "}
-              Gerenciar mensagens (como apagar elas)
+              {t("permissions.manage_messages")}
             </RolePermission>
             <RolePermission>
-              <Feather name={edit_group ? "check" : "x"} size={16} /> Editar
-              informações do grupo (nome, avatar, descrição)
+              <Feather name={edit_group ? "check" : "x"} size={16} />{" "}
+              {t("permissions.edit_group")}
             </RolePermission>
             <RolePermission>
-              <Feather name={delete_group ? "check" : "x"} size={16} /> Apagar o
-              grupo
+              <Feather name={delete_group ? "check" : "x"} size={16} />{" "}
+              {t("permissions.delete_group")}
             </RolePermission>
           </RolePermissionsContainer>
         </RoleInfoContainer>
