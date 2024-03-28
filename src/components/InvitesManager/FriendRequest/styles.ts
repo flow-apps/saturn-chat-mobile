@@ -6,6 +6,7 @@ export const FriendRequestContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 15px;
 `;
 
 export const FriendRequestLeftContainer = styled.View`

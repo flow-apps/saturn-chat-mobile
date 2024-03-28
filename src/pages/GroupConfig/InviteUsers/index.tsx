@@ -100,7 +100,7 @@ const InviteUsers: React.FC = () => {
 
   return (
     <>
-      <Header title={t("header_invite")} />
+      <Header title={t("header_title")} />
       <Container>
         <FriendsListContainer>
           <FlatList

@@ -6,6 +6,7 @@ export const GroupInviteContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 15px;
 `;
 
 export const GroupInviteLeftContainer = styled.View`
