@@ -65,7 +65,7 @@ const Premium: React.FC = () => {
             <Subtitle>{t("subtitle")}</Subtitle>
           </SubtitleWrapper>
           <BuyWrapper>
-            <BuyBonusText>{t("free_month")}</BuyBonusText>
+            {/* <BuyBonusText>{t("free_month")}</BuyBonusText> */}
             <BuyButton onPress={handleGoChoosePlan}>
               <BuyButtonText>
                 <Feather name="star" size={18} />{" "}

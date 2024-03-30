@@ -96,3 +96,27 @@ export const PlanBuyButtonText = styled.Text`
   font-family: ${fonts.text};
   color: #fff;
 `;
+
+export const BuyFinishedContainer = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
+  padding: 0px 15px;
+  justify-content: center;
+`;
+
+export const BuyFinishedAnimation = styled(Animation)`
+  margin: 15px 0px;
+`;
+
+export const BuyFinishedTitle = styled.Text`
+  text-align: center;
+  font-size: 20px;
+  font-family: ${fonts.heading};
+  color: ${props => props.theme.colors.secondary};
+`;
+export const BuyFinishedSubtitle = styled.Text`
+  font-family: ${fonts.text};
+  color: ${props => props.theme.colors.black};
+  font-size: 16px;
+  margin-top: 15px;
+`;

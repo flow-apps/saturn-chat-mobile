@@ -57,7 +57,7 @@ const ManagePremium: React.FC = () => {
               <ManagePremiumInfoText>Pago</ManagePremiumInfoText>
             </ManagePremiumInfoWrapper>
             <ManagePremiumInfoWrapper>
-              <ManagePremiumInfoLabel>Data de aquisição</ManagePremiumInfoLabel>
+              <ManagePremiumInfoLabel>Data da aquisição</ManagePremiumInfoLabel>
               <ManagePremiumInfoText>09/12/2024</ManagePremiumInfoText>
             </ManagePremiumInfoWrapper>
             <ManagePremiumInfoWrapper>

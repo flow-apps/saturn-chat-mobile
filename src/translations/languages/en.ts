@@ -373,7 +373,7 @@ export const en = {
     header_title: "Choose your plan",
     title: "We are almost there!",
     subtitle:
-      "Now you must choose which plan you want, being able to choose between monthly, quarterly or annual plans.\n\nRemember, if it's your first subscription you get 1 month free!",
+      "Now you must choose which plan you want, being able to choose between monthly, quarterly or annual plans.",
     monthly: "Monthly",
     quarterly: "Quarterly",
     yearly: "Yearly",

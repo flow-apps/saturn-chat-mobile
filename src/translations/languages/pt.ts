@@ -377,7 +377,7 @@ export const pt = {
     header_title: "Escolha seu plano",
     title: "Estamos quase lá!",
     subtitle:
-      "Agora você deve escolher qual plano você quer, podendo escolher entre os planos mensais, trimestrais ou anuais.\n\nLembre-se, se for sua primeira assinatura você ganha 1 mês grátis!",
+      "Agora você deve escolher qual plano você quer, podendo escolher entre os planos mensais, trimestrais ou anuais.",
     monthly: "Mensal",
     quarterly: "Trimestral",
     yearly: "Anual",
