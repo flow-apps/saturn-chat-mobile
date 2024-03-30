@@ -14,13 +14,13 @@ export const AlertTitle = styled.Text`
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.black};
   font-size: 18px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 
 export const AlertContent = styled.Text`
   color: ${(props) => props.theme.colors.black};
   font-family: ${fonts.text};
-  font-size: 16px;
+  font-size: 14px;
 `;
 
 export const AlertModal = styled.View`
@@ -36,7 +36,7 @@ export const AlertModal = styled.View`
 export const AlertButtonsContainer = styled.View`
   flex-direction: row-reverse;
   justify-content: flex-end;
-  margin-top: 10px;
+  margin-top: 20px;
 `;
 
 export const AlertOkButton = styled.TouchableOpacity`
@@ -44,8 +44,8 @@ export const AlertOkButton = styled.TouchableOpacity`
 `;
 
 export const AlertOkButtonText = styled.Text`
-  font-family: ${fonts.heading};
-  font-size: 16px;
+  font-family: ${fonts["text-bold"]};
+  font-size: 14px;
   color: ${(props) => props.theme.colors.primary};
 `;
 

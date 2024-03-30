@@ -25,6 +25,7 @@ import SwitchPassword from "@pages/Configurations/SwitchPassword";
 import InvitesManager from "@pages/InvitesManager";
 import FriendsManager from "@pages/FriendsManager";
 import { useTheme } from "styled-components";
+import ManagePremium from "@pages/Configurations/ManagePremium";
 
 const StackRoutes = createStackNavigator();
 
@@ -42,6 +43,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="FriendsManager" component={FriendsManager} />
       <StackRoutes.Screen name="InvitesManager" component={InvitesManager} />
       <StackRoutes.Screen name="PurchasePremium" component={Premium} />
+      <StackRoutes.Screen name="ManagePremium" component={ManagePremium} />
       <StackRoutes.Screen name="ChoosePlan" component={ChoosePlan} />
       <StackRoutes.Screen name="EditProfile" component={EditProfile} />
       <StackRoutes.Screen name="SwitchLanguage" component={SwitchLanguage} />

@@ -44,7 +44,7 @@ const Configurations: React.FC = () => {
   }, []);
 
   const handleGoPurchasePremium = useCallback(() => {
-    navigation.navigate("PurchasePremium");
+    navigation.navigate("ManagePremium");
   }, []);
 
   const handleGoEditProfile = useCallback(() => {

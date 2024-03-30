@@ -14,6 +14,7 @@ import configs from "@config";
 interface PurchasesContextProps {
   handleBuySubscription: (sku: string, offerToken: string) => any;
   subscriptions: Subscription[];
+  buySubFinished: boolean;
 }
 
 const PurchasesContext = createContext<PurchasesContextProps>(
@@ -23,7 +24,7 @@ const PurchasesContext = createContext<PurchasesContextProps>(
 const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [subFinished, setSubFinished] = useState(false);
+  const [buySubFinished, setBuySubFinished] = useState(false);
   const {
     currentPurchase,
     subscriptions,
@@ -85,7 +86,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
 
           // TODO: envia requisição ao servidor registrando assinatura
 
-          setSubFinished(true);
+          setBuySubFinished(true);
         }
       } catch (error) {
         if (error instanceof PurchaseError) {
@@ -100,7 +101,9 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [finishTransaction, currentPurchase]);
 
   return (
-    <PurchasesContext.Provider value={{ handleBuySubscription, subscriptions }}>
+    <PurchasesContext.Provider
+      value={{ handleBuySubscription, subscriptions, buySubFinished }}
+    >
       {children}
     </PurchasesContext.Provider>
   );
