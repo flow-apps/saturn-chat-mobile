@@ -38,6 +38,7 @@ import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { useHome } from "@contexts/home";
 import configs from "../../config";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePurchases } from "@contexts/purchases";
 
 export interface ParticipantData {
   id: string;
@@ -56,6 +57,7 @@ const Home: React.FC = () => {
   const { allConfigs } = useRemoteConfigs();
   const { colors } = useTheme();
   const { hasInvites, handleCheckInvites } = useHome();
+  const {  } = usePurchases()
   const { t } = useTranslate("Home");
 
   const navigation = useNavigation<StackNavigationProp<any>>();

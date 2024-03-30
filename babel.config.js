@@ -22,7 +22,7 @@ module.exports = function (api) {
             "@services": "./src/services",
             "@styles": "./src/styles",
             "@secrets": "./secrets.json",
-            "@configs": "./src/config.ts"
+            "@config": "./src/config.ts"
           },
         },
       ],

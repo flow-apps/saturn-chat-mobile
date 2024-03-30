@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "@configs";
+import config from "@config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const token = AsyncStorage.getItem("@SaturnChat:token") || undefined;

@@ -37,10 +37,12 @@ import {
 
 import * as Constants from "expo-constants";
 import { HomeProvider } from "@contexts/home";
+import { PurchasesProvider } from "@contexts/purchases";
+import { withIAPContext } from "react-native-iap"
 
 preventAutoHideAsync();
 
-export default function App() {
+function App() {
   const [ready, setReady] = useState(false);
   const [fontLoaded] = useFonts({
     Poppins_300Light_Italic,
@@ -92,23 +94,27 @@ export default function App() {
     <ThemeControllerProvider>
       <FirebaseProvider>
         <AuthProvider>
-          <WebsocketProvider>
-            <NotificationsProvider>
-              <AdsProvider>
-                <ChatProvider>
-                  <AudioPlayerProvider>
-                    <RemoteConfigsProvider>
-                      <HomeProvider>
-                        <Routes />
-                      </HomeProvider>
-                    </RemoteConfigsProvider>
-                  </AudioPlayerProvider>
-                </ChatProvider>
-              </AdsProvider>
-            </NotificationsProvider>
-          </WebsocketProvider>
+          <PurchasesProvider>
+            <WebsocketProvider>
+              <NotificationsProvider>
+                <AdsProvider>
+                  <ChatProvider>
+                    <AudioPlayerProvider>
+                      <RemoteConfigsProvider>
+                        <HomeProvider>
+                          <Routes />
+                        </HomeProvider>
+                      </RemoteConfigsProvider>
+                    </AudioPlayerProvider>
+                  </ChatProvider>
+                </AdsProvider>
+              </NotificationsProvider>
+            </WebsocketProvider>
+          </PurchasesProvider>
         </AuthProvider>
       </FirebaseProvider>
     </ThemeControllerProvider>
   );
 }
+
+export default withIAPContext(App)

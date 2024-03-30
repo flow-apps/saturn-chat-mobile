@@ -9,7 +9,7 @@ import { useAuth } from "@contexts/auth";
 import { AuthRoutes } from "@routes/auth.routes";
 import { navigationRef } from "./rootNavigation";
 import Loading from "@components/Loading";
-import config from "@configs";
+import config from "@config";
 import * as Linking from "expo-linking";
 
 import analytics from "@react-native-firebase/analytics";

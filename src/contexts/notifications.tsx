@@ -8,14 +8,14 @@ import React, {
 import * as Localize from "expo-localization";
 
 import api from "@services/api";
-import secrets from "../../secrets.json";
+import secrets from "@secrets";
 
 import { useAuth } from "./auth";
 import { Platform } from "react-native";
 import {
   configureNotificationsHandlers,
   OneSignal,
-} from "../configs/notifications";
+} from "@configs/notifications";
 
 interface NotificationsContextProps {
   enabled: boolean;

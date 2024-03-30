@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
 
-import config from "@configs";
+import config from "@config";
 import moment from "moment";
 
 import { useNavigation } from "@react-navigation/native";

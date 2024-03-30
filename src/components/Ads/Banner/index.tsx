@@ -8,7 +8,7 @@ import {
 } from "./styles";
 import { Platform } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import config from "@configs";
+import config from "@config";
 import secrets from "@secrets";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";

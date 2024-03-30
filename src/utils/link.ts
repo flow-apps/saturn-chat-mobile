@@ -4,7 +4,7 @@ import { ArrayUtils } from "./array";
 import URLParse from "url-parse";
 import SimpleToast from "react-native-simple-toast";
 import RNBrowser from "react-native-inappbrowser-reborn";
-import config from "@configs";
+import config from "@config";
 
 class LinkUtils {
   isSaturnChatLink(url: string) {
