@@ -11,6 +11,11 @@ import {
 } from "react-native-iap";
 import configs from "@config";
 import api from "@services/api";
+import { usePremium } from "./premium";
+import { useAuth } from "./auth";
+import { PaymentState, PurchaseType } from "@type/enums";
+import { UserData } from "@type/interfaces";
+import { SubscriptionPeriod } from "react-native-iap/lib/typescript/types/appleSk2";
 
 interface PurchasesContextProps {
   handleBuySubscription: (
@@ -25,6 +30,7 @@ interface PurchasesContextProps {
   purchaseError: boolean;
   loadingPurchase: boolean;
   currentPlanSelected: PlanPeriods;
+  userSubscription: UserSubscription | null;
 }
 
 const PurchasesContext = createContext<PurchasesContextProps>(
@@ -32,6 +38,25 @@ const PurchasesContext = createContext<PurchasesContextProps>(
 );
 
 type PlanPeriods = "MONTHLY" | "QUARTERLY" | "YEARLY";
+
+export interface UserSubscription {
+  id: string;
+  auto_renewing: boolean;
+  cancel_reason: number;
+  expiry_in: number;
+  hasSubscription: boolean;
+  isActive: boolean;
+  package_name: string;
+  payment_state: PaymentState;
+  purchase_token: string;
+  purchase_type: number;
+  resume_in: number | null;
+  started_at: number;
+  subscription_id: string;
+  subscription_period: SubscriptionPeriod;
+  user: UserData;
+  user_id: string;
+}
 
 const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -43,6 +68,9 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentPlanSelected, setCurrentPlanSelected] = useState<
     PlanPeriods | undefined
   >();
+  const [userSubscription, setUserSubscription] = useState<UserSubscription>(null);
+
+  const { signed } = useAuth();
   const {
     currentPurchase,
     subscriptions,
@@ -90,6 +118,14 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     setCurrentPlanSelected(undefined);
   };
 
+  const handleGetUserSubscription = async () => {
+    const res = await api.get("/subscriptions");
+
+    if (res.data && res.data.hasSubscription) {
+      setUserSubscription(res.data);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -110,6 +146,12 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    if (!signed) return;
+
+    handleGetUserSubscription();
+  }, [signed]);
+
+  useEffect(() => {
     const checkCurrentPurchase = async () => {
       try {
         if (currentPurchase?.productId) {
@@ -123,17 +165,18 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
               purchase_token: currentPurchase.purchaseToken,
               product_id: currentPurchase.productId,
               package_name: currentPurchase.packageNameAndroid,
+              period: currentPlanSelected
             })
             .then((res) => {
-              console.log(res.data);
+              setUserSubscription(res.data);
               setPurchaseSuccess(true);
               setPurchaseError(false);
               setBuySubFinished(true);
+              setLoadingPurchase(false);
             })
             .catch((error) => {
               console.log(error);
             });
-
         }
       } catch (error) {
         if (error instanceof PurchaseError) {
@@ -144,13 +187,12 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
         setPurchaseError(true);
         setPurchaseSuccess(false);
         setBuySubFinished(true);
-      } finally {
         setLoadingPurchase(false);
       }
     };
 
     checkCurrentPurchase();
-  }, [finishTransaction, currentPurchase]);
+  }, [currentPurchase]);
 
   useEffect(() => {
     if (currentPurchaseError) {
@@ -172,6 +214,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
         buySubFinished,
         purchaseSuccess,
         purchaseError,
+        userSubscription,
       }}
     >
       {children}

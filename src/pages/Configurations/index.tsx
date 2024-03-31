@@ -27,6 +27,7 @@ import config from "../../config";
 import { useNotifications } from "@contexts/notifications";
 import { LinkUtils } from "@utils/link";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePurchases } from "@contexts/purchases";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -38,13 +39,20 @@ const Configurations: React.FC = () => {
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const { t } = useTranslate("Settings");
+  const { userSubscription } = usePurchases();
 
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
   }, []);
 
   const handleGoPurchasePremium = useCallback(() => {
-    navigation.navigate("PurchasePremium");
+    navigation.navigate(
+      userSubscription &&
+        userSubscription.hasSubscription &&
+        userSubscription.isActive
+        ? "ManagePremium"
+        : "PurchasePremium"
+    );
   }, []);
 
   const handleGoEditProfile = useCallback(() => {
@@ -87,7 +95,14 @@ const Configurations: React.FC = () => {
             <ConfigsContainer>
               <ConfigContainer onPress={handleGoPurchasePremium}>
                 <ConfigTitle color={colors.secondary}>
-                  <Feather name="star" size={16} /> {t("general.star")}
+                  <Feather name="star" size={16} />{" "}
+                  {t(
+                    userSubscription &&
+                      userSubscription.hasSubscription &&
+                      userSubscription.isActive
+                      ? "general.manage_star"
+                      : "general.star"
+                  )}
                 </ConfigTitle>
               </ConfigContainer>
               <ConfigContainer onPress={handleGoEditProfile}>

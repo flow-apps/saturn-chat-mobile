@@ -18,56 +18,76 @@ import Header from "@components/Header";
 import Button from "@components/Button";
 import { useTheme } from "styled-components";
 import Alert from "@components/Alert";
+import { usePurchases } from "@contexts/purchases";
+import { DateUtils } from "@utils/date";
+import { PaymentState } from "@type/enums";
+import { useTranslate } from "@hooks/useTranslate";
 
 const ManagePremium: React.FC = () => {
-  const { colors } = useTheme();
   const [cancelPlanAlert, setCancelPlanAlert] = useState(false);
+
+  const dateUtils = new DateUtils();
+  const { t } = useTranslate("ManagePremium");
+  const { colors } = useTheme();
+  const { userSubscription } = usePurchases();
+
+  const getPaymentStatus = () => {
+    return t(`payments.${userSubscription?.payment_state}`);
+  };
 
   return (
     <>
-      <Header title="Gerenciar plano Star" />
+      <Header title={t("header_title")} />
       <Alert
         visible={cancelPlanAlert}
-        title="❗ Tem certeza disso?"
-        content="Ao cancelar sua assinatura você perde TODOS os beneficios concedidos pelo plano. Além disso, você NÃO RECEBERÁ O REEMBOLSO DO MÊS JÁ PAGO (mas poderá utilizar os benefícios até a data de renovação)."
-        okButtonText="Manter plano"
-        cancelButtonText="Cancelar plano"
+        title={t("alerts.cancel_plan.title")}
+        content={t("alerts.cancel_plan.content")}
+        okButtonText={t("alerts.cancel_plan.ok_text")}
+        cancelButtonText={t("alerts.cancel_plan.cancel_text")}
         cancelButtonAction={() => {}}
         okButtonAction={() => setCancelPlanAlert(false)}
       />
       <Container>
-        <ManagePremiumTitle>Gerencie seu plano Star</ManagePremiumTitle>
-        <ManagePremiumSubtitle>
-          Aqui você vê detalhes sobre seu plano como a data de renovação do
-          plano, o status de pagamento. Você também pode cancelar sua assinatura
-          a qualquer momento por aqui.
-        </ManagePremiumSubtitle>
+        <ManagePremiumTitle>{t("title")}</ManagePremiumTitle>
+        <ManagePremiumSubtitle>{t("subtitle")}</ManagePremiumSubtitle>
         <ManagePremiumCardContainer>
           <ManagePremiumCardPeriodContainer>
             <ManagePremiumCardPeriodLabel>
-              Plano da assinatura:
+              {t("plan_labels.plan")}
             </ManagePremiumCardPeriodLabel>
-            <ManagePremiumCardPeriod>Mensal</ManagePremiumCardPeriod>
+            <ManagePremiumCardPeriod>
+              {t(`periods.${userSubscription.subscription_period}`)}
+            </ManagePremiumCardPeriod>
           </ManagePremiumCardPeriodContainer>
           <ManagePremiumInfosContainer>
             <ManagePremiumInfoWrapper>
               <ManagePremiumInfoLabel>
-                Status da assinatura
+                {t("plan_labels.status")}
               </ManagePremiumInfoLabel>
-              <ManagePremiumInfoText>Pago</ManagePremiumInfoText>
+              <ManagePremiumInfoText>
+                {getPaymentStatus()}
+              </ManagePremiumInfoText>
             </ManagePremiumInfoWrapper>
             <ManagePremiumInfoWrapper>
-              <ManagePremiumInfoLabel>Data da aquisição</ManagePremiumInfoLabel>
-              <ManagePremiumInfoText>09/12/2024</ManagePremiumInfoText>
+              <ManagePremiumInfoLabel>
+                {t("plan_labels.start")}
+              </ManagePremiumInfoLabel>
+              <ManagePremiumInfoText>
+                {dateUtils.formatToDate(userSubscription?.started_at, true)}
+              </ManagePremiumInfoText>
             </ManagePremiumInfoWrapper>
             <ManagePremiumInfoWrapper>
-              <ManagePremiumInfoLabel>Data de renovação</ManagePremiumInfoLabel>
-              <ManagePremiumInfoText>09/01/2025</ManagePremiumInfoText>
+              <ManagePremiumInfoLabel>
+                {t("plan_labels.expire")}
+              </ManagePremiumInfoLabel>
+              <ManagePremiumInfoText>
+                {dateUtils.formatToDate(userSubscription?.expiry_in, true)}
+              </ManagePremiumInfoText>
             </ManagePremiumInfoWrapper>
           </ManagePremiumInfosContainer>
           <ManagePremiumCancelPlanContainer>
             <Button
-              title="Cancelar assinatura"
+              title={t("cancel_text")}
               bgColor={colors.red}
               onPress={() => setCancelPlanAlert(true)}
             />

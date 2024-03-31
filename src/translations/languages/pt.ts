@@ -258,6 +258,7 @@ export const pt = {
     general: {
       title: "Geral",
       star: "Seja uma Star",
+      manage_star: "Gerenciar plano Star",
       edit_profile: "Editar perfil",
       languages: "Idiomas",
       dark_theme: "Modo Escuro",
@@ -372,6 +373,37 @@ export const pt = {
       6: "Apoia o desenvolvimento do aplicativo e a trazer muitas novidades de maneira rápida ❤",
       7: "Exporte as mensagens de seus grupos em formato CSV.",
     },
+  },
+  ManagePremium: {
+    header_title: "Gerenciar plano Star",
+    alerts: {
+      cancel_plan: {
+        title: "❗ Tem certeza disso?",
+        content: "Ao cancelar sua assinatura você perde TODOS os beneficios concedidos pelo plano. Além disso, você NÃO RECEBERÁ O REEMBOLSO DO MÊS JÁ PAGO (mas poderá utilizar os benefícios até a data de renovação).",
+        ok_text: "Manter plano",
+        cancel_text: "Cancelar plano"
+      }
+    },
+    title: "Gerencie seu plano Star",
+    subtitle: "Aqui você vê detalhes sobre seu plano como a data de renovação do plano, o status de pagamento. Você também pode cancelar sua assinatura a qualquer momento por aqui.",
+    plan_labels: {
+      plan: "Plano da assinatura:",
+      status: "Status da assinatura",
+      start: "Data da aquisição",
+      expire: "Data de renovação",
+    },
+    payments: {
+      0: "Pendente",
+      1: "Pago",
+      2: "Teste",
+      3: "Plano atualizado"
+    },
+    periods: {
+      0: "Mensal",
+      1: "Trimestral",
+      2: "Anual"
+    },
+    cancel_text: "Cancelar assinatura" 
   },
   ChoosePlan: {
     header_title: "Escolha seu plano",

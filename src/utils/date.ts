@@ -10,7 +10,7 @@ class DateUtils {
     }
   }
 
-  formatToDate(date: string, withHours?: boolean, tz?: string) {
+  formatToDate(date: string | number, withHours?: boolean, tz?: string) {
     const isoDate = moment(date);
     const tzDate = isoDate.tz(tz || this.timezone);
 

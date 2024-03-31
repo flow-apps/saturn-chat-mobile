@@ -256,6 +256,7 @@ export const en = {
     general: {
       title: "General",
       star: "Be a Star",
+      manage_star: "Manage Star plan",
       edit_profile: "Edit profile",
       languages: "Languages",
       dark_theme: "Dark Mode",
@@ -368,6 +369,37 @@ export const en = {
       6: "Supports app development and brings many features quickly ❤",
       7: "Export your group messages in CSV format.",
     },
+  },
+  ManagePremium: {
+    header_title: "Manage Star plan",
+    alerts: {
+      cancel_plan: {
+        title: "❗ Are you sure about this?",
+        content: "When you cancel your subscription you lose ALL benefits granted by the plan. Furthermore, you WILL NOT RECEIVE A REFUND FOR THE MONTH ALREADY PAID (but you will be able to use the benefits until the renewal date).",
+        ok_text: "Keep plan",
+        cancel_text: "Cancel plan"
+      }
+    },
+    title: "Manage your Star plan",
+    subtitle: "Here you see details about your plan such as plan renewal date, payment status. You can also cancel your subscription at any time here.",
+    plan_labels: {
+      plan: "Subscription plan:",
+      status: "Subscription status",
+      start: "Acquisition date",
+      expire: "Renewal date",
+    },
+    payments: {
+      0: "Pendent",
+      1: "Paid",
+      2: "Test",
+      3: "Updated plan"
+    },
+    periods: {
+      0: "Monthly",
+      1: "Quartely",
+      2: "Yearly"
+    },
+    cancel_text: "Cancel subscription" 
   },
   ChoosePlan: {
     header_title: "Choose your plan",
