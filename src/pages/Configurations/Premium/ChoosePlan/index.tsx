@@ -36,7 +36,7 @@ const ChoosePlan: React.FC = () => {
     purchaseSuccess,
     purchaseError,
     clearStates,
-    loadingPurchase
+    loadingPurchase,
   } = usePurchases();
   const { t } = useTranslate("ChoosePlan");
 
@@ -93,7 +93,7 @@ const ChoosePlan: React.FC = () => {
   }
 
   if (loadingPurchase) {
-    return <Loading />
+    return <Loading />;
   }
 
   return (
@@ -120,7 +120,11 @@ const ChoosePlan: React.FC = () => {
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
-                handleBuySubscription("star_plan", planTokens.monthly)
+                handleBuySubscription(
+                  "star_plan",
+                  planTokens.monthly,
+                  "MONTHLY"
+                )
               }
             >
               <PlanBuyButtonText>{t("button_text")}</PlanBuyButtonText>
@@ -137,7 +141,11 @@ const ChoosePlan: React.FC = () => {
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
-                handleBuySubscription("star_plan", planTokens.quarterly)
+                handleBuySubscription(
+                  "star_plan",
+                  planTokens.quarterly,
+                  "QUARTERLY"
+                )
               }
             >
               <PlanBuyButtonText>{t("button_text")}</PlanBuyButtonText>
@@ -155,7 +163,7 @@ const ChoosePlan: React.FC = () => {
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
-                handleBuySubscription("star_plan", planTokens.yearly)
+                handleBuySubscription("star_plan", planTokens.yearly, "YEARLY")
               }
             >
               <PlanBuyButtonText>{t("button_text")}</PlanBuyButtonText>

@@ -44,6 +44,7 @@ import AddFriendButton from "@components/UserProfile/AddFriendButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HeaderButton } from "@components/Header/styles";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -54,6 +55,8 @@ const UserProfile: React.FC = () => {
   const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
+  const { isPremium } = usePremium()
+
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("Profile")
@@ -66,7 +69,7 @@ const UserProfile: React.FC = () => {
         setLoading(true);
         const res = await api.get(`/users?user_id=${id}`);
 
-        if (Interstitial.loaded) {
+        if (Interstitial.loaded && !isPremium) {
           await Interstitial.show();
         }
 

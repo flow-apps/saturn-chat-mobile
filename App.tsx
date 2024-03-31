@@ -38,7 +38,8 @@ import {
 import * as Constants from "expo-constants";
 import { HomeProvider } from "@contexts/home";
 import { PurchasesProvider } from "@contexts/purchases";
-import { withIAPContext } from "react-native-iap"
+import { withIAPContext } from "react-native-iap";
+import { PremiumProvider } from "@contexts/premium";
 
 preventAutoHideAsync();
 
@@ -95,21 +96,23 @@ function App() {
       <FirebaseProvider>
         <AuthProvider>
           <PurchasesProvider>
-            <WebsocketProvider>
-              <NotificationsProvider>
-                <AdsProvider>
-                  <ChatProvider>
-                    <AudioPlayerProvider>
-                      <RemoteConfigsProvider>
-                        <HomeProvider>
-                          <Routes />
-                        </HomeProvider>
-                      </RemoteConfigsProvider>
-                    </AudioPlayerProvider>
-                  </ChatProvider>
-                </AdsProvider>
-              </NotificationsProvider>
-            </WebsocketProvider>
+            <PremiumProvider>
+              <WebsocketProvider>
+                <NotificationsProvider>
+                  <AdsProvider>
+                    <ChatProvider>
+                      <AudioPlayerProvider>
+                        <RemoteConfigsProvider>
+                          <HomeProvider>
+                            <Routes />
+                          </HomeProvider>
+                        </RemoteConfigsProvider>
+                      </AudioPlayerProvider>
+                    </ChatProvider>
+                  </AdsProvider>
+                </NotificationsProvider>
+              </WebsocketProvider>
+            </PremiumProvider>
           </PurchasesProvider>
         </AuthProvider>
       </FirebaseProvider>
@@ -117,4 +120,4 @@ function App() {
   );
 }
 
-export default withIAPContext(App)
+export default withIAPContext(App);

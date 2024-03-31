@@ -72,6 +72,7 @@ import { useAds } from "@contexts/ads";
 import { OneSignal } from "react-native-onesignal";
 import { TextInputRef, File } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 const recordService = new RecordService();
 
@@ -89,6 +90,7 @@ const Chat: React.FC = () => {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
+  const { isPremium } = usePremium()
 
   const [adShowed, setAdShowed] = useState(false);
   const [isTypingMessage, setIsTypingMessage] = useState(false);
@@ -570,7 +572,7 @@ const Chat: React.FC = () => {
     (async () => {
       setLoading(true);
 
-      if (Interstitial.loaded && !adShowed) {
+      if (Interstitial.loaded && !adShowed && !isPremium) {
         await Interstitial.show();
         setAdShowed(true);
       }

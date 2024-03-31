@@ -51,7 +51,7 @@ const EmblemModal = ({ visible, close, premium }: EmblemProps) => {
             </ModalAnimationContainer>
             <ModalTitle>{t("title")}</ModalTitle>
             <ModalContent>
-              {t("subtitle")} {!premium && t("premium_text")}
+              {t("content")} {!premium && t("premium_text")}
             </ModalContent>
             {!premium && (
               <ModalButton onPress={handleGoPremium}>

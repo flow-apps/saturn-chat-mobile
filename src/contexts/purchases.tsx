@@ -10,20 +10,28 @@ import {
   useIAP,
 } from "react-native-iap";
 import configs from "@config";
+import api from "@services/api";
 
 interface PurchasesContextProps {
-  handleBuySubscription: (sku: string, offerToken: string) => any;
+  handleBuySubscription: (
+    sku: string,
+    offerToken: string,
+    period: PlanPeriods
+  ) => any;
   clearStates: () => any;
   subscriptions: Subscription[];
   buySubFinished: boolean;
   purchaseSuccess: boolean;
   purchaseError: boolean;
   loadingPurchase: boolean;
+  currentPlanSelected: PlanPeriods;
 }
 
 const PurchasesContext = createContext<PurchasesContextProps>(
   {} as PurchasesContextProps
 );
+
+type PlanPeriods = "MONTHLY" | "QUARTERLY" | "YEARLY";
 
 const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -32,6 +40,9 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState(false);
   const [loadingPurchase, setLoadingPurchase] = useState(false);
+  const [currentPlanSelected, setCurrentPlanSelected] = useState<
+    PlanPeriods | undefined
+  >();
   const {
     currentPurchase,
     subscriptions,
@@ -47,9 +58,14 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const handleBuySubscription = async (sku: string, offerToken: string) => {
+  const handleBuySubscription = async (
+    sku: string,
+    offerToken: string,
+    period: PlanPeriods
+  ) => {
     try {
-      setLoadingPurchase(true)
+      setLoadingPurchase(true);
+      setCurrentPlanSelected(period);
       await requestSubscription({
         sku,
         ...(offerToken && {
@@ -62,7 +78,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       } else {
         console.log({ message: "handleBuySubscription", error });
       }
-      setLoadingPurchase(false)
+      setLoadingPurchase(false);
     }
   };
 
@@ -71,6 +87,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     setPurchaseError(false);
     setPurchaseSuccess(false);
     setLoadingPurchase(false);
+    setCurrentPlanSelected(undefined);
   };
 
   useEffect(() => {
@@ -98,16 +115,25 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
         if (currentPurchase?.productId) {
           await finishTransaction({
             purchase: currentPurchase,
-            isConsumable: false,
+            isConsumable: Platform.OS === "ios",
           });
 
-          console.log(currentPurchase);
+          await api
+            .post("/subscriptions", {
+              purchase_token: currentPurchase.purchaseToken,
+              product_id: currentPurchase.productId,
+              package_name: currentPurchase.packageNameAndroid,
+            })
+            .then((res) => {
+              console.log(res.data);
+              setPurchaseSuccess(true);
+              setPurchaseError(false);
+              setBuySubFinished(true);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
 
-          // TODO: envia requisição ao servidor registrando assinatura
-
-          setPurchaseSuccess(true);
-          setPurchaseError(false);
-          setBuySubFinished(true);
         }
       } catch (error) {
         if (error instanceof PurchaseError) {
@@ -119,7 +145,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
         setPurchaseSuccess(false);
         setBuySubFinished(true);
       } finally {
-        setLoadingPurchase(false)
+        setLoadingPurchase(false);
       }
     };
 
@@ -131,7 +157,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       setPurchaseError(true);
       setPurchaseSuccess(false);
       setBuySubFinished(true);
-      setLoadingPurchase(false)
+      setLoadingPurchase(false);
     }
   }, [currentPurchaseError]);
 
@@ -140,6 +166,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         handleBuySubscription,
         clearStates,
+        currentPlanSelected,
         loadingPurchase,
         subscriptions,
         buySubFinished,

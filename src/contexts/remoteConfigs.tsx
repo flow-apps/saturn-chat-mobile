@@ -9,6 +9,7 @@ import remoteConfig from "@react-native-firebase/remote-config";
 
 import appConfigs from "../config";
 import { DateUtils } from "@utils/date";
+import { usePremium } from "./premium";
 
 interface RemoteConfigContextProps {
   allConfigs: Configs;
@@ -37,7 +38,7 @@ interface UserConfigs {
 }
 
 const RemoteConfigsContext = createContext({} as RemoteConfigContextProps);
-const { convertToMillis } = new DateUtils()
+const { convertToMillis } = new DateUtils();
 
 const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -46,6 +47,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userConfigs, setUserConfigs] = useState<UserConfigs>(
     {} as UserConfigs
   );
+  const { isPremium } = usePremium();
 
   useEffect(() => {
     (async () => {
@@ -85,7 +87,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
     setAllConfigs(configs);
 
     // For premium users
-    if (false) {
+    if (isPremium) {
       return setUserConfigs({
         fileUpload: parseFloat(configs.premium_file_upload),
         amountGroups: parseInt(configs.premium_max_groups),

@@ -15,6 +15,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import analytics from "@react-native-firebase/analytics";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -22,11 +23,7 @@ type BannerProps = {
   size?: BannerAdSize;
 };
 
-const Banner = ({
-  isPremium = false,
-  rotate,
-  size = BannerAdSize.BANNER,
-}: BannerProps) => {
+const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const { name } = useRoute();
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
@@ -36,6 +33,9 @@ const Banner = ({
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
 
   const navigation = useNavigation<StackNavigationProp<any>>();
+
+  const { isPremium } = usePremium();
+
   const { t } = useTranslate("Components.Ads");
 
   const handleGoPremium = async () => {

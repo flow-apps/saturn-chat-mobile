@@ -39,6 +39,7 @@ import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useAds } from "@contexts/ads";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -49,10 +50,11 @@ const GroupInfos: React.FC = () => {
   const { Interstitial } = useAds();
   const { t } = useTranslate("GroupInfos");
   const { id } = useRoute().params as { id: string };
+  const { isPremium } = usePremium();
 
   useEffect(() => {
     async function getGroup() {
-      if (Interstitial.loaded) {
+      if (Interstitial.loaded && !isPremium) {
         await Interstitial.show();
       }
 
