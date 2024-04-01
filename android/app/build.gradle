@@ -162,8 +162,8 @@ android {
         applicationId "com.flowapps.saturnchat"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20
-        versionName "0.0.20"
+        versionCode 21
+        versionName "0.0.21"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         missingDimensionStrategy "store", "play"
 
