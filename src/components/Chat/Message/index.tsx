@@ -41,6 +41,7 @@ import LinkPreview from "@components/Chat/RichContent/LinkPreview";
 import { useChat } from "@contexts/chat";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -69,6 +70,7 @@ const Message = ({
 
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { isPremium } = usePremium()
   const { t } = useTranslate("Components.Chat.Message");
 
   const { handleDeleteMessage } = useChat();
@@ -99,6 +101,7 @@ const Message = ({
             name={message.author.name}
             nameSize={12}
             color={colors.light_heading}
+            hasPremium={message.author?.id === user.id ? isPremium : false}
           />
         </MessageAuthorContainer>
       );

@@ -55,11 +55,11 @@ const UserProfile: React.FC = () => {
   const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { isPremium } = usePremium()
 
   const route = useRoute() as { params?: { id: string } };
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { t } = useTranslate("Profile")
+  const { t } = useTranslate("Profile");
+  const { isPremium } = usePremium();
 
   const id = route.params && route.params?.id ? route.params?.id : user?.id;
 
@@ -145,8 +145,8 @@ const UserProfile: React.FC = () => {
   };
 
   const handleGoEditProfile = () => {
-    navigation.navigate("EditProfile")
-  }
+    navigation.navigate("EditProfile");
+  };
 
   if (loading) return <Loading />;
 
@@ -178,6 +178,7 @@ const UserProfile: React.FC = () => {
                 nameSize={22}
                 color={colors.light_heading}
                 align="center"
+                hasPremium={userInfos.id === user.id ? isPremium : false}
               />
             </BasicInfos>
             {!isNull(userInfos?.bio) && userInfos?.bio.length && (

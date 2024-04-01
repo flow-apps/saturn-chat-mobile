@@ -33,6 +33,7 @@ import { ParticipantsData } from "@type/interfaces";
 import { useAuth } from "@contexts/auth";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 const Participants: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
@@ -46,6 +47,7 @@ const Participants: React.FC = () => {
   const { id } = route.params as { id: string };
   const { colors } = useTheme();
   const { user } = useAuth();
+  const { isPremium } = usePremium();
 
   const { t } = useTranslate("Participants");
 
@@ -121,7 +123,11 @@ const Participants: React.FC = () => {
               />
             </ParticipantAvatarContainer>
             <ParticipantInfosWrapper>
-              <PremiumName name={item.user.name} nameSize={16} />
+              <PremiumName
+                name={item.user.name}
+                nameSize={16}
+                hasPremium={item.user.id === user.id ? isPremium : false}
+              />
               <JoinedDate>
                 {item.group.owner.id === item.user.id
                   ? t("created", {

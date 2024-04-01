@@ -37,7 +37,7 @@ const PremiumName = ({
   return (
     <>
       <EmblemModal
-        premium={hasPremium || isPremium}
+        premium={isPremium}
         close={() => setShowEmblemDetails(false)}
         visible={showEmblemDetails}
       />
@@ -59,10 +59,7 @@ const PremiumName = ({
             loop: true,
           }}
         >
-          <EmblemContainer
-            onPress={handleEmblemDetails}
-            isPremium={hasPremium || isPremium || false}
-          >
+          <EmblemContainer onPress={handleEmblemDetails} isPremium={hasPremium}>
             <FontAwesome
               name="star"
               size={emblemSize || (nameSize || 16) + 4}

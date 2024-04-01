@@ -46,6 +46,7 @@ export interface UserSubscription {
   expiry_in: number;
   hasSubscription: boolean;
   isActive: boolean;
+  isPaused: boolean;
   package_name: string;
   payment_state: PaymentState;
   purchase_token: string;
@@ -68,7 +69,8 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentPlanSelected, setCurrentPlanSelected] = useState<
     PlanPeriods | undefined
   >();
-  const [userSubscription, setUserSubscription] = useState<UserSubscription>(null);
+  const [userSubscription, setUserSubscription] =
+    useState<UserSubscription>(null);
 
   const { signed } = useAuth();
   const {
@@ -165,10 +167,15 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
               purchase_token: currentPurchase.purchaseToken,
               product_id: currentPurchase.productId,
               package_name: currentPurchase.packageNameAndroid,
-              period: currentPlanSelected
+              period: currentPlanSelected,
             })
             .then((res) => {
-              setUserSubscription(res.data);
+              setUserSubscription({
+                ...res.data,
+                hasSubscription: true,
+                isPaused: !!res.data.resume_in,
+                isActive: true,
+              });
               setPurchaseSuccess(true);
               setPurchaseError(false);
               setBuySubFinished(true);
