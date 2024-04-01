@@ -387,6 +387,7 @@ export const en = {
       status: "Subscription status",
       start: "Acquisition date",
       expire: "Renewal date",
+      resume: "Resume date"
     },
     payments: {
       0: "Pendent",

@@ -391,12 +391,13 @@ export const pt = {
       status: "Status da assinatura",
       start: "Data da aquisição",
       expire: "Data de renovação",
+      resume: "Data de retorno"
     },
     payments: {
       0: "Pendente",
       1: "Pago",
       2: "Teste",
-      3: "Plano atualizado"
+      3: "Plano atualizado",
     },
     periods: {
       0: "Mensal",

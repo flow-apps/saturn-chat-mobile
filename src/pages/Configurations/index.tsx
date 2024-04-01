@@ -49,7 +49,7 @@ const Configurations: React.FC = () => {
     navigation.navigate(
       userSubscription &&
         userSubscription.hasSubscription &&
-        userSubscription.isActive
+        (userSubscription.isActive || userSubscription.isPaused)
         ? "ManagePremium"
         : "PurchasePremium"
     );
@@ -99,7 +99,7 @@ const Configurations: React.FC = () => {
                   {t(
                     userSubscription &&
                       userSubscription.hasSubscription &&
-                      userSubscription.isActive
+                      (userSubscription.isActive || userSubscription.isPaused)
                       ? "general.manage_star"
                       : "general.star"
                   )}

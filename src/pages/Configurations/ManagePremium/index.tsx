@@ -77,12 +77,25 @@ const ManagePremium: React.FC = () => {
               </ManagePremiumInfoText>
             </ManagePremiumInfoWrapper>
             <ManagePremiumInfoWrapper>
-              <ManagePremiumInfoLabel>
-                {t("plan_labels.expire")}
-              </ManagePremiumInfoLabel>
-              <ManagePremiumInfoText>
-                {dateUtils.formatToDate(userSubscription?.expiry_in, true)}
-              </ManagePremiumInfoText>
+              {!userSubscription.isPaused ? (
+                <>
+                  <ManagePremiumInfoLabel>
+                    {t("plan_labels.expire")}
+                  </ManagePremiumInfoLabel>
+                  <ManagePremiumInfoText>
+                    {dateUtils.formatToDate(userSubscription?.expiry_in, true)}
+                  </ManagePremiumInfoText>
+                </>
+              ) : (
+                <>
+                  <ManagePremiumInfoLabel>
+                    {t("plan_labels.resume")}
+                  </ManagePremiumInfoLabel>
+                  <ManagePremiumInfoText>
+                    {dateUtils.formatToDate(userSubscription?.resume_in, true)}
+                  </ManagePremiumInfoText>
+                </>
+              )}
             </ManagePremiumInfoWrapper>
           </ManagePremiumInfosContainer>
           <ManagePremiumCancelPlanContainer>
