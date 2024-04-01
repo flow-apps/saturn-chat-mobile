@@ -9,6 +9,7 @@ export interface UserData {
   friendsAmount?: number;
   participating?: ParticipantsData[];
   created_at: string;
+  isPremium: boolean;
   avatar: {
     name: string;
     url: string;

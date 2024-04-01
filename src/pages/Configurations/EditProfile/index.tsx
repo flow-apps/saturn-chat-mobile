@@ -111,17 +111,13 @@ const EditProfile: React.FC = () => {
     if (avatar) {
       return <AvatarImage source={{ uri: avatar.url }} />;
     } else {
-      return (
-        <AvatarImage
-          source={require("@assets/avatar-placeholder.png")}
-        />
-      );
+      return <AvatarImage source={require("@assets/avatar-placeholder.png")} />;
     }
   };
 
   const handleCheckFields = () => {
-    if (name === user?.name) setIsSendable(false);
-    if (name === user?.bio) setIsSendable(false);
+    if (!name.length || name === user?.name) setIsSendable(false);
+    if (bio === user?.bio) setIsSendable(false);
     else return setIsSendable(true);
   };
 

@@ -126,7 +126,7 @@ const Participants: React.FC = () => {
               <PremiumName
                 name={item.user.name}
                 nameSize={16}
-                hasPremium={item.user.id === user.id ? isPremium : false}
+                hasPremium={item.user.id === user.id ? isPremium : item.user.isPremium}
               />
               <JoinedDate>
                 {item.group.owner.id === item.user.id

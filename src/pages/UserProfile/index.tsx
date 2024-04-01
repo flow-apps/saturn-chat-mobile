@@ -178,7 +178,9 @@ const UserProfile: React.FC = () => {
                 nameSize={22}
                 color={colors.light_heading}
                 align="center"
-                hasPremium={userInfos.id === user.id ? isPremium : false}
+                hasPremium={
+                  userInfos.id === user.id ? isPremium : userInfos.isPremium
+                }
               />
             </BasicInfos>
             {!isNull(userInfos?.bio) && userInfos?.bio.length && (

@@ -27,9 +27,7 @@ const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
       .then((res) => res.data)
       .catch((error) => console.log(error));
 
-    console.log(res);
-
-    setIsPremium(res.isActive);
+    if (res.isActive !== isPremium) setIsPremium(res.isActive);
   };
 
   useEffect(() => {
@@ -38,7 +36,7 @@ const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
     const interval = setInterval(async () => {
       await handleGetPremium();
     }, dateUtils.convertToMillis(30, "SECONDS"));
-    
+
     handleGetPremium();
 
     return () => {

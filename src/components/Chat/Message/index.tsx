@@ -101,7 +101,7 @@ const Message = ({
             name={message.author.name}
             nameSize={12}
             color={colors.light_heading}
-            hasPremium={message.author?.id === user.id ? isPremium : false}
+            hasPremium={message.author?.id === user.id ? isPremium : message.author.isPremium}
           />
         </MessageAuthorContainer>
       );
