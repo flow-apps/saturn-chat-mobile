@@ -28,6 +28,8 @@ import {
   JoinGroupButton,
   JoinGroupButtonText,
   JoinGroupContainer,
+  NotAcceptingParticipantsContainer,
+  NotAcceptingParticipantsText,
   ParticipantsContainer,
   ParticipantsInfosContainer,
   ParticipantsNumber,
@@ -121,19 +123,27 @@ const GroupInfos: React.FC = () => {
             <BasicInfos>
               <GroupName>{group.name}</GroupName>
               <JoinGroupContainer>
-                <JoinGroupButton
-                  participating={isParticipating}
-                  disabled={isParticipating}
-                  onPress={handleJoinGroup}
-                >
-                  <JoinGroupButtonText participating={isParticipating}>
-                    <Feather
-                      name={isParticipating ? "user-check" : "user-plus"}
-                      size={16}
-                    />{" "}
-                    {t(isParticipating ? "joined" : "join")}
-                  </JoinGroupButtonText>
-                </JoinGroupButton>
+                {group.acceptingParticipants || isParticipating ? (
+                  <JoinGroupButton
+                    participating={isParticipating}
+                    disabled={isParticipating}
+                    onPress={handleJoinGroup}
+                  >
+                    <JoinGroupButtonText participating={isParticipating}>
+                      <Feather
+                        name={isParticipating ? "user-check" : "user-plus"}
+                        size={16}
+                      />{" "}
+                      {t(isParticipating ? "joined" : "join")}
+                    </JoinGroupButtonText>
+                  </JoinGroupButton>
+                ) : (
+                  <NotAcceptingParticipantsContainer>
+                    <NotAcceptingParticipantsText>
+                      {t("accepting_participants_text")}
+                    </NotAcceptingParticipantsText>
+                  </NotAcceptingParticipantsContainer>
+                )}
               </JoinGroupContainer>
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>

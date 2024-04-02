@@ -607,6 +607,7 @@ export const pt = {
     participants_plural: "Participantes",
     tags: "Tags do grupo",
     desc: "Descrição",
+    accepting_participants_text: "Este grupo atingiu o número máximo de participantes",
     toasts: {
       error: "Não foi possível entrar no grupo!"
     }

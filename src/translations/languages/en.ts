@@ -607,6 +607,7 @@ export const en = {
     participants_plural: "Participants",
     tags: "Group tags",
     desc: "Description",
+    accepting_participants_text: "This group has reached the maximum number of participants",
     toasts: {
       error: "Unable to join group!",
     },

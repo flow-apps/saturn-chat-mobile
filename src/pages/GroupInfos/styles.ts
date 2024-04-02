@@ -160,3 +160,13 @@ export const ParticipantsTitle = styled.Text`
 export const AdBannerWrapper = styled.View`
   margin: 10px 0px;
 `;
+
+export const NotAcceptingParticipantsContainer = styled.View`
+  margin: 0px 10px;
+`;
+
+export const NotAcceptingParticipantsText = styled.Text`
+  text-align: center;
+  color: ${(props) => props.theme.colors.secondary};
+  font-family: ${fonts.text};
+`;

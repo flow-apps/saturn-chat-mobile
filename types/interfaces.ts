@@ -43,6 +43,7 @@ export interface GroupData {
   owner: UserData;
   participantsAmount?: number;
   unreadMessagesAmount?: number;
+  acceptingParticipants?: boolean;
   created_at: string;
 }
 
