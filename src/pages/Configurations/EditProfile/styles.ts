@@ -41,7 +41,9 @@ export const SwitchAvatarButtonText = styled.Text`
   font-family: ${fonts.text};
 `
 
-export const FormContainer = styled.View``
+export const FormContainer = styled.View`
+  margin-bottom: 15px;
+`
 
 export const FieldsContainer = styled.View`
   margin-bottom: 15px;

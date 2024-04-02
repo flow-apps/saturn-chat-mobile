@@ -70,3 +70,6 @@ export const AudioContainer = styled.View``;
 
 export const AudioButton = styled.Pressable``;
 
+export const AdBannerWrapper = styled.View`
+  padding: 10px;
+`;

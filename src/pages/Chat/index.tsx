@@ -38,6 +38,7 @@ import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
 import api from "@services/api";
 import {
+  AdBannerWrapper,
   AudioButton,
   AudioContainer,
   Container,
@@ -73,6 +74,8 @@ import { OneSignal } from "react-native-onesignal";
 import { TextInputRef, File } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
+import Banner from "@components/Ads/Banner";
+import { BannerAdSize } from "react-native-google-mobile-ads";
 
 const recordService = new RecordService();
 
@@ -652,6 +655,10 @@ const Chat: React.FC = () => {
           </HeaderButton>
         )}
       </Header>
+      <AdBannerWrapper>
+        <Banner />
+      </AdBannerWrapper>
+
       <Container>
         <Typing typingUsers={typingUsers} />
         <MessageContainer>

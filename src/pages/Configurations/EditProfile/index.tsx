@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import FormData from "form-data";
-import { Alert } from "react-native";
+import { Alert, KeyboardAvoidingView } from "react-native";
 import SimpleToast from "react-native-simple-toast";
 import { UserData } from "@type/interfaces";
 import Button from "@components/Button";
@@ -24,6 +24,8 @@ import {
   SwitchAvatarButtonText,
 } from "./styles";
 import { useTranslate } from "@hooks/useTranslate";
+import Banner from "@components/Ads/Banner";
+import { BannerAdSize } from "react-native-google-mobile-ads";
 
 const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -185,6 +187,7 @@ const EditProfile: React.FC = () => {
             onPress={handleSubmit}
           />
         </FormContainer>
+        <Banner size={BannerAdSize.BANNER} />
       </Container>
     </>
   );
