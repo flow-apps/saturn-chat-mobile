@@ -73,4 +73,6 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   );
 };
 
-export default memo(Banner);
+export default memo(Banner, (prev, next) => {
+  return prev.isPremium === next.isPremium;
+});

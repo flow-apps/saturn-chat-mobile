@@ -74,7 +74,7 @@ const UserProfile: React.FC = () => {
         }
 
         if (res.status === 200) {
-          setUserInfos(res.data);
+          setUserInfos(res.data);          
 
           if (res.data.friend) {
             setFriendInfos(res.data.friend);

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
+import * as Constants from "expo-constants";
 
 import {
   initConnection,
@@ -141,7 +142,10 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Erro ao conectar na Play Store", error.message);
       }
     };
-    init();
+
+    if (Constants.default.isDevice) {
+      init();
+    }
     return () => {
       endConnection();
     };

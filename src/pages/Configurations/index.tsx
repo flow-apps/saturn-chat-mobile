@@ -53,7 +53,7 @@ const Configurations: React.FC = () => {
         ? "ManagePremium"
         : "PurchasePremium"
     );
-  }, []);
+  }, [userSubscription]);
 
   const handleGoEditProfile = useCallback(() => {
     navigation.navigate("EditProfile");
