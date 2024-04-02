@@ -75,6 +75,24 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
     })();
   }, []);
 
+  useEffect(() => {
+    if (isPremium) {
+      setUserConfigs({
+        fileUpload: Number(allConfigs.premium_file_upload),
+        amountGroups: Number(allConfigs.premium_max_groups),
+        amountParticipants: Number(allConfigs.premium_max_participants),
+        messageLength: Number(allConfigs.premium_max_message_length),
+      });
+    } else {
+      setUserConfigs({
+        fileUpload: Number(allConfigs.default_file_upload),
+        amountGroups: Number(allConfigs.default_max_groups),
+        amountParticipants: Number(allConfigs.default_max_participants),
+        messageLength: Number(allConfigs.default_max_message_length),
+      });
+    }
+  }, [isPremium]);
+
   const updateUserConfigs = useCallback(async () => {
     const values = remoteConfig().getAll();
     const configs = {} as Configs;
@@ -89,10 +107,10 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
     // For premium users
     if (isPremium) {
       return setUserConfigs({
-        fileUpload: parseFloat(configs.premium_file_upload),
-        amountGroups: parseInt(configs.premium_max_groups),
-        amountParticipants: parseInt(configs.premium_max_participants),
-        messageLength: parseInt(configs.premium_max_message_length),
+        fileUpload: Number(configs.premium_file_upload),
+        amountGroups: Number(configs.premium_max_groups),
+        amountParticipants: Number(configs.premium_max_participants),
+        messageLength: Number(configs.premium_max_message_length),
       });
     }
 

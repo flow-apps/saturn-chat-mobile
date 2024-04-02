@@ -90,7 +90,7 @@ const Chat: React.FC = () => {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
-  const { isPremium } = usePremium()
+  const { isPremium } = usePremium();
 
   const [adShowed, setAdShowed] = useState(false);
   const [isTypingMessage, setIsTypingMessage] = useState(false);

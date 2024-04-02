@@ -15,7 +15,7 @@ const PremiumContext = createContext<PremiumContextProps>(
 const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { purchaseSuccess } = usePurchases();
+  const { purchaseSuccess, userSubscription } = usePurchases();
   const { signed } = useAuth();
   const dateUtils = new DateUtils();
 
@@ -43,6 +43,12 @@ const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
       clearInterval(interval);
     };
   }, [signed]);
+
+  useEffect(() => {
+    if (userSubscription.isActive === isPremium) return;
+
+    setIsPremium(userSubscription.isActive);
+  }, [userSubscription]);
 
   useEffect(() => {
     if (purchaseSuccess) {
