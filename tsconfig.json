@@ -1,4 +1,22 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "removeComments": true,
+    "baseUrl": "./",
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@configs/*": ["./src/configs/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@type/*": ["./types/*"],
+      "@services/*": ["./src/services/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@secrets": ["./secrets.json"],
+      "@config": ["./src/config.ts"]
+    },
+  },
   "extends": "expo/tsconfig.base"
 }

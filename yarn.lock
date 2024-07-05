@@ -7195,10 +7195,10 @@ react-native-google-mobile-ads@^8.2.1:
     "@iabtcf/core" "^1.5.3"
     use-deep-compare-effect "^1.8.1"
 
-react-native-iap@^11.0.0-rc.7:
-  version "11.0.7"
-  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-11.0.7.tgz#7ea6f9be88f8b51317be6a0fa0b1a9d7efbf8215"
-  integrity sha512-DxBFSZyhflwKedUkGFwddSIRoCJ6NrOJshGH0boXBndRw288LqD0zZi1P8f6amZ2hi1FZ2t5tU6ONwMKKD3LUA==
+react-native-iap@^12.15.1:
+  version "12.15.1"
+  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-12.15.1.tgz#0eae574e950be3b5c2d5be1cde1712ccd5f86b53"
+  integrity sha512-NhGqXJb76BnDbbtXIsnRcal/4IWcfXn7sNjoqXoDXfZQkLHPw0WYG1E4S8U0kIV3khw0MZcUcNQbH0UzPVjokQ==
 
 react-native-image-pan-zoom@^2.1.12:
   version "2.1.12"

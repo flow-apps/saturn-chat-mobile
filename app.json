@@ -1,7 +1,54 @@
 {
   "expo": {
-    "name": "saturn-chat",
-    "slug": "saturn-chat",
-    "version": "1.0.0"
+    "name": "Saturn Chat",
+    "slug": "SaturnChat",
+    "version": "0.0.15",
+    "runtimeVersion": "0.0.15",
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "scheme": "saturnchat",
+    "ios": {
+      "bundleIdentifier": "com.flowapps.saturnchat",
+      "googleServicesFile": "./ios/saturnchat/GoogleService-Info.plist",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-5955119850349278~4502310341"
+      }
+    },
+    "android": {
+      "jsEngine": "hermes",
+      "googleServicesFile": "./android/app/google-services.json",
+      "package": "com.flowapps.saturnchat",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0088FF"
+      },
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-5955119850349278~6592119770"
+      }
+    },
+    "experiments": {
+      "turboModules": true
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/perf",
+      "@react-native-firebase/crashlytics",
+      "expo-font",
+      "expo-localization"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5702d402-a17b-417c-ad01-ac3ddd0446cc"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5702d402-a17b-417c-ad01-ac3ddd0446cc",
+      "checkAutomatically": "ON_LOAD"
+    }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-5955119850349278~6592119770"
   }
 }

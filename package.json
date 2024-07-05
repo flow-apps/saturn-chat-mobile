@@ -73,7 +73,7 @@
     "react-native-fast-image": "^8.5.11",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-google-mobile-ads": "^8.2.1",
-    "react-native-iap": "^11.0.0-rc.7",
+    "react-native-iap": "^12.15.1",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-iphone-x-helper": "^1.3.1",
