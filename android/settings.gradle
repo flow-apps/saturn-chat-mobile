@@ -1,4 +1,4 @@
-rootProject.name = 'saturnchatexpo51'
+rootProject.name = 'saturnchat'
 
 dependencyResolutionManagement {
   versionCatalogs {

@@ -83,9 +83,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.saturnchatexpo51"
+    namespace "com.flowapps.saturnchat"
     defaultConfig {
-        applicationId "com.saturnchatexpo51"
+        applicationId "com.flowapps.saturnchat"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

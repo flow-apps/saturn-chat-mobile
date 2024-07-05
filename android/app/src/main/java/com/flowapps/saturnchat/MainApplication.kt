@@ -1,4 +1,4 @@
-package com.saturnchatexpo51
+package com.flowapps.saturnchat
 
 import android.app.Application
 import android.content.res.Configuration
