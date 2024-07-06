@@ -52,38 +52,41 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
 
   return (
     <AnimatePresence>
-        <Container
-          from={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          transition={{
-            type: "timing",
-            duration: 1200,
-          }}
-          style={{
-            transform: [
-              {
-                rotate: rotate ? "180deg" : "0deg",
-              },
-            ],
-          }}
-        >
-          <RemoveBanner onPress={handleGoPremium}>
-            <RemoveBannerText>
-              <Feather name="info" /> {t("remove_ad")}
-            </RemoveBannerText>
-          </RemoveBanner>
-          <BannerContainer>
-            <BannerAd
-              unitId={adUnitID}
-              size={size}
-              onAdOpened={() => setShow(true)}
-            />
-          </BannerContainer>
-        </Container>
+      <Container
+        from={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        transition={{
+          type: "timing",
+          duration: 1200,
+        }}
+        style={{
+          transform: [
+            {
+              rotate: rotate ? "180deg" : "0deg",
+            },
+          ],
+        }}
+      >
+        <RemoveBanner onPress={handleGoPremium}>
+          <RemoveBannerText>
+            <Feather name="info" /> {t("remove_ad")}
+          </RemoveBannerText>
+        </RemoveBanner>
+        <BannerContainer>
+          <BannerAd
+            unitId={adUnitID}
+            size={size}
+            onAdOpened={() => setShow(true)}
+            onAdFailedToLoad={(error) => {
+              console.log("Erro ao carregar AD: ", error);
+            }}
+          />
+        </BannerContainer>
+      </Container>
     </AnimatePresence>
   );
 };
