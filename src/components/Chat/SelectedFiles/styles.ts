@@ -1,6 +1,6 @@
 import styled from "styled-components/native"
 import { FlatList } from "react-native"
-import { MotiView } from "@motify/components";
+import { MotiView } from "moti";
 
 export const FilesContainer = styled(MotiView)`
 position: relative;

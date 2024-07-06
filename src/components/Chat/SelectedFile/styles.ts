@@ -1,4 +1,4 @@
-import { MotiView } from "@motify/components";
+import { MotiView } from "moti";
 import styled from "styled-components/native"
 
 export const File = styled(MotiView)`

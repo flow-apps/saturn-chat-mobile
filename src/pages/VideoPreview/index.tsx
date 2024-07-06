@@ -21,7 +21,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "styled-components";
 import Video from "expo-av/build/Video";
 import { millisToTime } from "@utils/format";
-import { MotiView } from "@motify/components";
+import { MotiView } from "moti";
 import { AnimatePresence } from "moti";
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import Feather from "@expo/vector-icons/Feather";

@@ -27,7 +27,7 @@ import api from "@services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import analytics from "@react-native-firebase/analytics";
-import { MotiView } from "@motify/components";
+import { MotiView } from "moti";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 
