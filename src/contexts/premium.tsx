@@ -22,12 +22,12 @@ const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPremium, setIsPremium] = useState(false);
 
   const handleGetPremium = async () => {
-    const res = await api
+    await api
       .get("/subscriptions/validate")
-      .then((res) => res.data)
+      .then(({ data }) => {
+        if (data.isActive !== isPremium) setIsPremium(data.isActive);
+      })
       .catch((error) => console.log(error));
-
-    if (res.isActive !== isPremium) setIsPremium(res.isActive);
   };
 
   useEffect(() => {
@@ -45,8 +45,7 @@ const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [signed]);
 
   useEffect(() => {
-    if (!userSubscription) 
-      return;
+    if (!userSubscription) return;
 
     setIsPremium(userSubscription.isActive);
   }, [userSubscription]);

@@ -89,7 +89,6 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-
     namespace "com.flowapps.saturnchat"
 
     // packagingOptions {
@@ -111,6 +110,7 @@ android {
         versionName "0.1.25"
         missingDimensionStrategy "store", "play"
     }
+    
     signingConfigs {
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {

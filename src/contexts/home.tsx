@@ -19,8 +19,6 @@ const HomeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleCheckInvites = () => {
     if (!socket) return;
-
-    console.log("Atualizando lista de convites");
     
     socket.emit("check_has_invites");
   };

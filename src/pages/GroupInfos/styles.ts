@@ -137,7 +137,6 @@ export const ParticipantsInfosContainer = styled.View`
 
 export const ParticipantsContainer = styled.View`
   width: 100%;
-  background-color: ${(props) => props.theme.colors.shape};
   padding: 10px;
   margin-top: 10px;
 `;
