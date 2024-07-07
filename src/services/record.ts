@@ -64,7 +64,7 @@ class RecordService {
       await audio.stopAndUnloadAsync();
 
       if (audio._finalDurationMillis <= 1200) {
-        return Toast.show("Grave uma mensagem maior que 1 segundo");
+        return Toast.show("Grave uma mensagem maior que 1 segundo",Toast.SHORT);
       }
 
       const uri = audio.getURI();
@@ -77,10 +77,13 @@ class RecordService {
       const duration = audio._finalDurationMillis;
       const audioInfos = await FileSystem.getInfoAsync(uri);
 
+      if (!audioInfos.exists)
+        return;
+      
       return await onRecordFinish({
-        audioInfos,
         duration,
         audioURI: uri,
+        audioInfos,
         extension: extension || "unknown",
       });
     } catch (error) {

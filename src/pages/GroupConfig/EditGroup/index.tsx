@@ -59,7 +59,7 @@ const EditGroup: React.FC = () => {
         tags,
       })
       .then(() => {
-        SimpleToast.show(t("toasts.success"));
+        SimpleToast.show(t("toasts.success"),SimpleToast.SHORT);
         navigation.goBack();
       });
     setLoading(false);
@@ -87,7 +87,7 @@ const EditGroup: React.FC = () => {
     });
 
     if (!photo.canceled) {
-      SimpleToast.show(t("toasts.updating"));
+      SimpleToast.show(t("toasts.updating"),SimpleToast.SHORT);
       const uri = photo.assets[0].uri;
       const uriParts = uri.split(".");
       const fileType = uriParts.pop();
@@ -107,7 +107,7 @@ const EditGroup: React.FC = () => {
         })
         .then(() => {
           setNewAvatar(uri);
-          SimpleToast.show(t("toasts.updated"));
+          SimpleToast.show(t("toasts.updated"),SimpleToast.SHORT);
         });
     }
   };

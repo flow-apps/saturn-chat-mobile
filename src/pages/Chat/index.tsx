@@ -238,7 +238,7 @@ const Chat: React.FC = () => {
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          SimpleToast.show(t("toasts.sending_voice"));
+          SimpleToast.show(t("toasts.sending_voice"),SimpleToast.SHORT);
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
@@ -301,8 +301,6 @@ const Chat: React.FC = () => {
     const fileRes = await fileService.get();
 
     if (!fileRes.error) {
-      if (fileRes.selectedFile?.file.type !== "success") return;
-
       const newFile = fileRes.selectedFile;
       const isSelected = arrayUtils.has(files, (f) => {
         if (f.file?.type === "cancel") {
@@ -333,8 +331,6 @@ const Chat: React.FC = () => {
 
   const removeFile = (position: number) => {
     const file = arrayUtils.findFirst(files, (f, index) => index === position);
-
-    if (file?.file.type !== "success") return;
 
     const fileSize = Math.trunc(file.file.size / 1000 / 1000);
     const filteredFiles = files.filter((f, index) => index !== position);
@@ -367,7 +363,8 @@ const Chat: React.FC = () => {
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
       return SimpleToast.show(
-        t("limit_char", { count: userConfigs.messageLength })
+        t("limit_char", { count: userConfigs.messageLength }),
+        SimpleToast.SHORT
       );
     }
 
@@ -628,13 +625,13 @@ const Chat: React.FC = () => {
       />
       <Alert
         title={t("alerts.same_file.title")}
-        content={t("alerts.same_file.subtitle")}
+        content={t("alerts.same_file.content")}
         okButtonAction={disableIsSelectedFile}
         visible={isSelectedFile}
       />
       <Alert
         title={t("alerts.mic_perm.title")}
-        content={t("alerts.mic_perm.subtitle")}
+        content={t("alerts.mic_perm.content")}
         okButtonAction={disableAudioPermission}
         visible={audioPermission}
       />

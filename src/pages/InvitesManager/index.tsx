@@ -66,7 +66,8 @@ const InvitesManager: React.FC = () => {
       SimpleToast.show(
         action === "ACCEPT"
           ? t("toasts.request_accept")
-          : t("toasts.request_reject")
+          : t("toasts.request_reject"),
+        5
       );
 
       const newRequests = requests.filter((friend) => friend.id !== friendId);
@@ -83,13 +84,13 @@ const InvitesManager: React.FC = () => {
       const res = await api.get(`/inv/join/${inviteID}`);
 
       if (res.status === 200) {
-        SimpleToast.show(t("toasts.invite_accept"));
+        SimpleToast.show(t("toasts.invite_accept"),SimpleToast.SHORT);
       }
     } else {
       const res = await api.delete(`/invites/${inviteID}`);
 
       if (res.status === 204) {
-        SimpleToast.show(t("toasts.invite_reject"));
+        SimpleToast.show(t("toasts.invite_reject"),SimpleToast.SHORT);
       }
     }
 

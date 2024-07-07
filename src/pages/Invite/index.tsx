@@ -110,7 +110,7 @@ const Invite: React.FC = () => {
         }
       })
       .catch((err) => {
-        SimpleToast.show(t("toasts.error"));
+        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
       });
   };
 

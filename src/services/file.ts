@@ -31,10 +31,12 @@ class FileService {
       copyToCacheDirectory: false,
     });
 
-    if (file.type === "success") {
-      const fileSize = file.size / 1024 / 1024;
+
+    if (!file.canceled) {
+      const selectedFile = file.assets[0]
+      const fileSize = selectedFile.size / 1024 / 1024;
       const usageSize = this.filesSizeUsed + fileSize;
-      const type = MimeTypes.lookup(file.name).split("/")[0] as string;
+      const type = MimeTypes.lookup(selectedFile.name).split("/")[0] as string;
       if (fileSize > this.sizeLimit || usageSize > this.sizeLimit) {
         return {
           error: true,
@@ -42,7 +44,7 @@ class FileService {
         };
       }
 
-      file.uri = this.getCorrectURI(file.uri);
+      selectedFile.uri = this.getCorrectURI(selectedFile.uri);
 
       return {
         error: false,
@@ -50,7 +52,7 @@ class FileService {
         usageSize,
         fileSize,
         selectedFile: {
-          file,
+          file: selectedFile,
           type,
         },
       };
@@ -94,17 +96,17 @@ class FileService {
         },
       });
 
-      SimpleToast.show("Iniciando download...");
+      SimpleToast.show("Iniciando download...",SimpleToast.SHORT);
       RNFB.config(downloadConfig as RNFetchBlobConfig)
         .fetch("GET", url)
         .then((res) => {
-          SimpleToast.show("Download concluído!");
+          SimpleToast.show("Download concluído!",SimpleToast.SHORT);
         })
         .catch((error) => {
-          SimpleToast.show("Falha no download");
+          SimpleToast.show("Falha no download",SimpleToast.SHORT);
         });
     } catch (error) {
-      SimpleToast.show("Falha no download");
+      SimpleToast.show("Falha no download",SimpleToast.SHORT);
     }
   }
 }

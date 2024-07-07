@@ -87,12 +87,12 @@ const InviteUsers: React.FC = () => {
           });
 
           setRequests(newFriendsList);
-          SimpleToast.show(t("toasts.success"));
+          SimpleToast.show(t("toasts.success"),SimpleToast.SHORT);
         }
       })
       .catch((err) => {
         console.log(err);
-        SimpleToast.show(t("toasts.error"));
+        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
       });
   };
 

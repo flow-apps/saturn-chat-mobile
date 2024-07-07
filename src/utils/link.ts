@@ -60,7 +60,7 @@ class LinkUtils {
         if (await Linking.canOpenURL(url)) {
           return await Linking.openURL(url);
         } else {
-          SimpleToast.show("Não é possível abrir o link");
+          SimpleToast.show("Não é possível abrir o link",SimpleToast.SHORT);
           return;
         }
       }

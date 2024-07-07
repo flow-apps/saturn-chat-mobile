@@ -63,14 +63,14 @@ const SwitchPassword: React.FC = () => {
       })
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show(t("toasts.updated_pass"));
+          SimpleToast.show(t("toasts.updated_pass"),SimpleToast.SHORT);
           navigation.goBack();
         }
       })
       .catch((err) => {
         if (err.response.status === 403)
-          SimpleToast.show(t("toasts.incorrect_pass"));
-        else SimpleToast.show(t("toasts.error_pass"));
+          SimpleToast.show(t("toasts.incorrect_pass"),SimpleToast.SHORT);
+        else SimpleToast.show(t("toasts.error_pass"),SimpleToast.SHORT);
         setLoading(false);
       });
   };

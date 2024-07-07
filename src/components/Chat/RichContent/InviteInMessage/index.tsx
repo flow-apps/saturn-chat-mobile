@@ -68,12 +68,12 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             group_id: data.group_id,
           });
 
-          SimpleToast.show(t("toasts.joined", { name: data.group.name }));
+          SimpleToast.show(t("toasts.joined", { name: data.group.name }),SimpleToast.SHORT);
           setParticipating(true);
         }
       })
       .catch((err) => {
-        SimpleToast.show(t("toasts.error"));
+        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
       });
   };
 

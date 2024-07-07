@@ -47,7 +47,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
   const copyLink = useCallback(async () => {
     await Clipboard.setStringAsync(link.link);
-    SimpleToast.show(t("link_copied"));
+    SimpleToast.show(t("link_copied"),SimpleToast.SHORT);
   }, [link]);
 
   const handlePreview = useCallback(() => {

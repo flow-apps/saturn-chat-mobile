@@ -50,12 +50,12 @@ const PunishParticipant: React.FC = () => {
       )
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show(t("toasts.success"));
+          SimpleToast.show(t("toasts.success"),SimpleToast.SHORT);
           navigation.navigate("Chat", { id: participant?.group.id });
         }
       })
       .catch(() => {
-        SimpleToast.show(t("toasts.error"));
+        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
       });
 
     setLoading(false);

@@ -50,7 +50,7 @@ const EditProfile: React.FC = () => {
       await updateUser({
         user: newUser.data.user,
       });
-      SimpleToast.show(t("toasts.updated"));
+      SimpleToast.show(t("toasts.updated"),SimpleToast.SHORT);
       navigation.goBack();
     }
   };
@@ -77,7 +77,7 @@ const EditProfile: React.FC = () => {
     });
 
     if (!photo.canceled) {
-      SimpleToast.show(t("toasts.update_avatar"));
+      SimpleToast.show(t("toasts.update_avatar"),SimpleToast.SHORT);
       const uri = photo.assets[0].uri;
       const uriParts = uri.split(".");
       const fileType = uriParts.pop();
@@ -98,7 +98,7 @@ const EditProfile: React.FC = () => {
         .then(async (res) => {
           await updateUser(res.data);
           setNewAvatar(uri);
-          SimpleToast.show(t("toasts.updated_avatar"));
+          SimpleToast.show(t("toasts.updated_avatar"),SimpleToast.SHORT);
         });
     }
   };

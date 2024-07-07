@@ -92,7 +92,7 @@ const GroupInfos: React.FC = () => {
         });
         return navigation.navigate("Chat", { id });
       })
-      .catch(() => SimpleToast.show(t("toasts.error")));
+      .catch(() => SimpleToast.show(t("toasts.error"), 5));
   }
 
   const handleGoAvatar = () => {

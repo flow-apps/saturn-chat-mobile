@@ -177,7 +177,7 @@ const Message = ({
 
   const handleCopyMessage = useCallback(async () => {
     await Clipboard.setStringAsync(message.message);
-    SimpleToast.show(t("toasts.copied_message"));
+    SimpleToast.show(t("toasts.copied_message"),SimpleToast.SHORT);
   }, [message.message]);
 
   const renderVoiceMessage = useCallback(() => {
