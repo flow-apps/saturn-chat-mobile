@@ -26,6 +26,7 @@ import { usePurchases } from "@contexts/purchases";
 import Button from "@components/Button";
 import { navigate } from "@routes/rootNavigation";
 import Loading from "@components/Loading";
+import { SubscriptionPlatform } from "react-native-iap";
 
 const ChoosePlan: React.FC = () => {
   const { colors } = useTheme();
@@ -44,9 +45,11 @@ const ChoosePlan: React.FC = () => {
     let tokens = {};
 
     subscriptions.map((sub) => {
-      sub.subscriptionOfferDetails.map((offer) => {
-        tokens[offer.offerTags[0]] = offer.offerToken;
-      });
+      if (sub.platform === SubscriptionPlatform.android) {
+        sub.subscriptionOfferDetails.map((offer) => {
+          tokens[offer.offerTags[0]] = offer.offerToken;
+        });
+      }
     });
 
     return tokens as { [key: string]: string };

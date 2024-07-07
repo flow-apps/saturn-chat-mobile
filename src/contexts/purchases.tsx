@@ -16,7 +16,7 @@ import { usePremium } from "./premium";
 import { useAuth } from "./auth";
 import { PaymentState, PurchaseType } from "@type/enums";
 import { UserData } from "@type/interfaces";
-import { SubscriptionPeriod } from "react-native-iap/lib/typescript/types/appleSk2";
+import { SubscriptionPeriod } from "react-native-iap/lib/typescript/src/types/appleSk2";
 
 interface PurchasesContextProps {
   handleBuySubscription: (

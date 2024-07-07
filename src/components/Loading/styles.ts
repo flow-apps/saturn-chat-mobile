@@ -16,4 +16,7 @@ export const AnimationView = styled.View`
   height: 100px;
 `;
 
-export const Lottie = styled(LottieView)``;
+export const Lottie = styled(LottieView)`
+  width: 100%;
+  height: 100%;
+`;

@@ -17,11 +17,13 @@ export const AnimationContainer = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
+  width: 350px;
+  height: 350px;
 `;
 
 export const Animation = styled(LottieView)`
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
 `;
 
 export const AnimationTitle = styled.Text`
@@ -105,7 +107,9 @@ export const BuyFinishedContainer = styled.View`
 `;
 
 export const BuyFinishedAnimation = styled(Animation)`
-  margin: 15px 0px;
+  width: 300px;
+  height: 300px;
+margin: 0 auto;
 `;
 
 export const BuyFinishedTitle = styled.Text`
