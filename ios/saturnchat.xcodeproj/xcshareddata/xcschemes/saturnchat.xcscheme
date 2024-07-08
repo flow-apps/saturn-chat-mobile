@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "saturnchatexpo51.app"
-               BlueprintName = "saturnchatexpo51"
-               ReferencedContainer = "container:saturnchatexpo51.xcodeproj">
+               BuildableName = "saturnchat.app"
+               BlueprintName = "saturnchat"
+               ReferencedContainer = "container:saturnchat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "saturnchatexpo51Tests.xctest"
-               BlueprintName = "saturnchatexpo51Tests"
-               ReferencedContainer = "container:saturnchatexpo51.xcodeproj">
+               BuildableName = "saturnchatTests.xctest"
+               BlueprintName = "saturnchatTests"
+               ReferencedContainer = "container:saturnchat.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "saturnchatexpo51.app"
-            BlueprintName = "saturnchatexpo51"
-            ReferencedContainer = "container:saturnchatexpo51.xcodeproj">
+            BuildableName = "saturnchat.app"
+            BlueprintName = "saturnchat"
+            ReferencedContainer = "container:saturnchat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "saturnchatexpo51.app"
-            BlueprintName = "saturnchatexpo51"
-            ReferencedContainer = "container:saturnchatexpo51.xcodeproj">
+            BuildableName = "saturnchat.app"
+            BlueprintName = "saturnchat"
+            ReferencedContainer = "container:saturnchat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
