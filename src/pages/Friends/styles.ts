@@ -47,6 +47,7 @@ export const FriendAvatar = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
+  margin-right: 10px;
 `;
 
 export const FriendName = styled(PremiumName)`

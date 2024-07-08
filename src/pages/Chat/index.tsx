@@ -238,13 +238,12 @@ const Chat: React.FC = () => {
       await recordService.finish({
         audio: recordingAudio,
         async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          SimpleToast.show(t("toasts.sending_voice"),SimpleToast.SHORT);
+          SimpleToast.show(t("toasts.sending_voice"), SimpleToast.SHORT);
 
           const audioData = new FormData();
           const localReference = uuid.v4() as string;
 
           audioData.append("duration", duration);
-          audioData.append("size", audioInfos.size);
           audioData.append("attachment", {
             uri: audioURI,
             name: `attachment_audio${extension}`,
@@ -261,7 +260,7 @@ const Chat: React.FC = () => {
               voice_message: {
                 name: `attachment_audio_${localReference}${extension}`,
                 duration,
-                size: Number(audioInfos.size),
+                size: 0,
                 url: audioInfos.uri,
               },
               files: [],
@@ -303,10 +302,6 @@ const Chat: React.FC = () => {
     if (!fileRes.error) {
       const newFile = fileRes.selectedFile;
       const isSelected = arrayUtils.has(files, (f) => {
-        if (f.file?.type === "cancel") {
-          return false;
-        }
-
         return (
           f.file.uri === newFile.file.uri || f.file?.name === newFile.file.name
         );
@@ -423,17 +418,14 @@ const Chat: React.FC = () => {
         group,
         message,
         participant,
-        files: files.map((file) => {
-          if (file.file.type !== "success") return {} as FileData;
-          return {
-            id: file.file.name,
-            original_name: file.file.name,
-            name: file.file.name,
-            size: file.file.file?.size || 0,
-            type: file.type,
-            url: file.file.uri,
-          };
-        }),
+        files: files.map((file) => ({
+          id: file.file.name,
+          original_name: file.file.name,
+          name: file.file.name,
+          size: file.file.file?.size || 0,
+          type: file.type,
+          url: file.file.uri,
+        })),
         sended: false,
         localReference,
         reply_to: replyingMessage,
@@ -465,22 +457,21 @@ const Chat: React.FC = () => {
       const trace = perf().newTrace("send_message_with_files");
 
       arrayUtils.iterator(files, (file) => {
-        if (file.file.type === "success") {
-          const type = MimeTypes.lookup(file.file.name);
+        const type = MimeTypes.lookup(file.file.name);
 
-          filesData.append("attachment", {
-            name: file.file.name,
-            uri: file.file.uri,
-            type,
-          });
-        }
+        filesData.append("attachment", {
+          name: file.file.name,
+          uri: file.file.uri,
+          type,
+        });
       });
 
       filesData.append("message", message);
       if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
 
       await trace.start();
-      api
+
+      await api
         .post(`messages/SendAttachment/${id}?type=files`, filesData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -492,6 +483,7 @@ const Chat: React.FC = () => {
         })
         .then((res) => {
           if (res.status === 200) {
+
             handleSendMessage({
               message_id: res.data.message_id,
               withFiles: true,
@@ -509,6 +501,7 @@ const Chat: React.FC = () => {
       setFiles([]);
       setSendingFile(false);
       setSendedFileProgress(0);
+      setFilesSizeUsed(0);
     }
 
     if (message) {
@@ -572,7 +565,7 @@ const Chat: React.FC = () => {
     (async () => {
       setLoading(true);
 
-      if (Interstitial.loaded && !adShowed && !isPremium) {
+      if (Interstitial.loaded && !adShowed && !isPremium && !__DEV__) {
         await Interstitial.show();
         setAdShowed(true);
       }
