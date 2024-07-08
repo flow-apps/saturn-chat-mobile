@@ -10,6 +10,7 @@ import { HeaderButton } from "@components/Header/styles";
 import { useCallback } from "react";
 import { useImageDimensions } from "@react-native-community/hooks/lib/useImageDimensions";
 import { FileService } from "@services/file";
+import * as MimeTypes from "react-native-mime-types";
 
 const ImagePreview = () => {
   const fileService = new FileService();

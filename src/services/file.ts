@@ -76,6 +76,11 @@ class FileService {
 
       const filePath = `${directoryPath}/${fileName}`;
       const mimetype = MimeTypes.lookup(fileName) as string;
+      
+      if (!mimetype) {
+        return SimpleToast.show("Arquivo não disponível para download", SimpleToast.SHORT)
+      }
+
       const downloadConfig: RNFetchBlobConfig = Platform.select({
         ios: {
           fileCache: true,
@@ -87,7 +92,7 @@ class FileService {
           path: filePath,
           addAndroidDownloads: {
             useDownloadManager: true,
-            mime: mimetype,
+            mime: String(mimetype),
             title: fileName,
             path: filePath,
             mediaScannable: true,
