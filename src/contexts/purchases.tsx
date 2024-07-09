@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
-import * as Constants from "expo-constants";
+import * as Device from 'expo-device';
 
 import {
   initConnection,
@@ -12,9 +12,8 @@ import {
 } from "react-native-iap";
 import configs from "@config";
 import api from "@services/api";
-import { usePremium } from "./premium";
 import { useAuth } from "./auth";
-import { PaymentState, PurchaseType } from "@type/enums";
+import { PaymentState } from "@type/enums";
 import { UserData } from "@type/interfaces";
 import { SubscriptionPeriod } from "react-native-iap/lib/typescript/src/types/appleSk2";
 
@@ -89,7 +88,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const handleBuySubscription =   async (
+  const handleBuySubscription = async (
     sku: string,
     offerToken: string,
     period: PlanPeriods
@@ -132,9 +131,13 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const init = async () => {
       try {
-        await initConnection().then((connected) => {
-          if (connected) fetchSubscriptions();
-        });
+        await initConnection()
+          .then(async (connected) => {
+            if (connected) {
+              await fetchSubscriptions();
+            }
+          })
+          .catch((error) => console.log(error));
         if (Platform.OS === "android") {
           flushFailedPurchasesCachedAsPendingAndroid();
         }
@@ -143,9 +146,9 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
-    if (Constants.default.isDevice) {
+    if (Device.isDevice)
       init();
-    }
+
     return () => {
       endConnection();
     };

@@ -14,10 +14,9 @@ export const Container = styled.ScrollView`
 `;
 
 export const AnimationContainer = styled.View`
-  width: 100%;
   align-items: center;
   justify-content: center;
-  width: 350px;
+  width: 100%;
   height: 350px;
 `;
 
@@ -40,6 +39,7 @@ export const Description = styled.Text`
   font-size: 15px;
   font-family: ${fonts.text};
   color: ${(props) => props.theme.colors.light_heading};
+  text-align: center;
 `;
 export const PlansContainer = styled.View`
   flex: 1;
