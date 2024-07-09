@@ -9,7 +9,9 @@
     "web": "expo start --web",
     "bundle-visualizer": "react-native-bundle-visualizer --platform android --only-mapped --expo true --reset-cache",
     "build:apk": "cd android && ./gradlew assembleRelease",
-    "build:aab": "cd android && ./gradlew bundleRelease"
+    "build:aab": "cd android && ./gradlew bundleRelease",
+    "build:clean": "cd android && ./gradlew clean",
+    "build:stop": "cd android && ./gradlew --stop"
   },
   "resolutions": {
     "@expo/config-plugins": "~8.0.0"

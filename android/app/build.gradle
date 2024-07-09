@@ -95,6 +95,10 @@ android {
 
     namespace "com.flowapps.saturnchat"
 
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     defaultConfig {
         applicationId "com.flowapps.saturnchat"
         minSdkVersion rootProject.ext.minSdkVersion

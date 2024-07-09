@@ -20,15 +20,15 @@ const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     (async () => {
-      if (user) {
+      if (user && !__DEV__) {
         await analytics().setUserId(user.id)
         await crashlytics().setUserId(String(user?.id));
         await crashlytics().setAttributes(user as {});
       }
 
-      await analytics().setAnalyticsCollectionEnabled(__DEV__);
-      await crashlytics().setCrashlyticsCollectionEnabled(__DEV__);
-      await performance().setPerformanceCollectionEnabled(__DEV__);
+      await analytics().setAnalyticsCollectionEnabled(!__DEV__);
+      await crashlytics().setCrashlyticsCollectionEnabled(!__DEV__);
+      performance().dataCollectionEnabled = !__DEV__;
     })();
   }, []);
 
