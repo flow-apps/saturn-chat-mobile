@@ -65,6 +65,10 @@ react {
     // hermesFlags = ["-O", "-output-source-map"]
 }
 
+ext {
+    hermesEnabled = (findProperty('expo.jsEngine') ?: "hermes") == "hermes"
+}
+
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */

@@ -16,7 +16,6 @@ export const Container = styled.ScrollView`
 export const AnimationContainer = styled.View`
   width: 100%;
   align-items: center;
-  justify-content: center;
   width: 350px;
   height: 350px;
 `;
