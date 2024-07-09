@@ -89,7 +89,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const handleBuySubscription = async (
+  const handleBuySubscription =   async (
     sku: string,
     offerToken: string,
     period: PlanPeriods
