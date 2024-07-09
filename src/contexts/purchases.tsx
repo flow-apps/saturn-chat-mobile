@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
-import * as Device from 'expo-device';
+import * as Device from "expo-device";
 
 import {
   initConnection,
@@ -23,6 +23,7 @@ interface PurchasesContextProps {
     offerToken: string,
     period: PlanPeriods
   ) => any;
+  handleGetUserSubscription: () => Promise<void>;
   clearStates: () => any;
   subscriptions: Subscription[];
   buySubFinished: boolean;
@@ -121,11 +122,12 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handleGetUserSubscription = async () => {
-    const res = await api.get("/subscriptions");
-
-    if (res.data && res.data.hasSubscription) {
-      setUserSubscription(res.data);
-    }
+    await api
+      .get("/subscriptions")
+      .then((res) => {
+        setUserSubscription(res.data);
+      })
+      .catch((error) => console.log("Erro ao buscar Subscription", error));
   };
 
   useEffect(() => {
@@ -146,8 +148,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
-    if (Device.isDevice)
-      init();
+    if (Device.isDevice) init();
 
     return () => {
       endConnection();
@@ -157,7 +158,9 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!signed) return;
 
-    handleGetUserSubscription();
+    (async () => {
+      await handleGetUserSubscription();
+    })();
   }, [signed]);
 
   useEffect(() => {
@@ -221,6 +224,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     <PurchasesContext.Provider
       value={{
         handleBuySubscription,
+        handleGetUserSubscription,
         clearStates,
         currentPlanSelected,
         loadingPurchase,

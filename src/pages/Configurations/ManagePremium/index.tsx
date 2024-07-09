@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Container,
@@ -22,6 +22,7 @@ import { usePurchases } from "@contexts/purchases";
 import { DateUtils } from "@utils/date";
 import { PaymentState } from "@type/enums";
 import { useTranslate } from "@hooks/useTranslate";
+import Loading from "@components/Loading";
 
 const ManagePremium: React.FC = () => {
   const [cancelPlanAlert, setCancelPlanAlert] = useState(false);
@@ -29,11 +30,18 @@ const ManagePremium: React.FC = () => {
   const dateUtils = new DateUtils();
   const { t } = useTranslate("ManagePremium");
   const { colors } = useTheme();
-  const { userSubscription } = usePurchases();
+  const { userSubscription, handleGetUserSubscription } = usePurchases();
 
   const getPaymentStatus = () => {
     return t(`payments.${userSubscription?.payment_state}`);
   };
+
+  useEffect(() => {
+    handleGetUserSubscription();
+  }, []);
+
+  if (!userSubscription)
+    return <Loading />
 
   return (
     <>

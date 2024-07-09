@@ -28,6 +28,7 @@ import { useNotifications } from "@contexts/notifications";
 import { LinkUtils } from "@utils/link";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePurchases } from "@contexts/purchases";
+import { usePremium } from "@contexts/premium";
 
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -39,17 +40,16 @@ const Configurations: React.FC = () => {
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const { t } = useTranslate("Settings");
-  const { userSubscription } = usePurchases();
+  const { userSubscription, handleGetUserSubscription } = usePurchases();
+  const { isPremium } = usePremium();
 
   const showManageSub = useMemo(() => {
-    if (userSubscription && userSubscription.hasSubscription) {
-      if (userSubscription.isActive || userSubscription.isPaused) {
-        return true;
-      }
+    if (isPremium) {
+      return true;
     }
 
     return false;
-  }, [userSubscription]);
+  }, [isPremium]);
 
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
