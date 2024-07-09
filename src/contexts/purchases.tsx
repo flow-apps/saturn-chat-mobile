@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
-import * as Constants from "expo-constants";
+import * as Device from "expo-device";
 
 import {
   initConnection,
@@ -12,9 +12,8 @@ import {
 } from "react-native-iap";
 import configs from "@config";
 import api from "@services/api";
-import { usePremium } from "./premium";
 import { useAuth } from "./auth";
-import { PaymentState, PurchaseType } from "@type/enums";
+import { PaymentState } from "@type/enums";
 import { UserData } from "@type/interfaces";
 import { SubscriptionPeriod } from "react-native-iap/lib/typescript/src/types/appleSk2";
 
@@ -24,6 +23,7 @@ interface PurchasesContextProps {
     offerToken: string,
     period: PlanPeriods
   ) => any;
+  handleGetUserSubscription: () => Promise<void>;
   clearStates: () => any;
   subscriptions: Subscription[];
   buySubFinished: boolean;
@@ -89,7 +89,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const handleBuySubscription =   async (
+  const handleBuySubscription = async (
     sku: string,
     offerToken: string,
     period: PlanPeriods
@@ -122,19 +122,24 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handleGetUserSubscription = async () => {
-    const res = await api.get("/subscriptions");
-
-    if (res.data && res.data.hasSubscription) {
-      setUserSubscription(res.data);
-    }
+    await api
+      .get("/subscriptions")
+      .then((res) => {
+        setUserSubscription(res.data);
+      })
+      .catch((error) => console.log("Erro ao buscar Subscription", error));
   };
 
   useEffect(() => {
     const init = async () => {
       try {
-        await initConnection().then((connected) => {
-          if (connected) fetchSubscriptions();
-        });
+        await initConnection()
+          .then(async (connected) => {
+            if (connected) {
+              await fetchSubscriptions();
+            }
+          })
+          .catch((error) => console.log(error));
         if (Platform.OS === "android") {
           flushFailedPurchasesCachedAsPendingAndroid();
         }
@@ -143,9 +148,8 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
-    if (Constants.default.isDevice) {
-      init();
-    }
+    if (Device.isDevice) init();
+
     return () => {
       endConnection();
     };
@@ -154,7 +158,9 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!signed) return;
 
-    handleGetUserSubscription();
+    (async () => {
+      await handleGetUserSubscription();
+    })();
   }, [signed]);
 
   useEffect(() => {
@@ -218,6 +224,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     <PurchasesContext.Provider
       value={{
         handleBuySubscription,
+        handleGetUserSubscription,
         clearStates,
         currentPlanSelected,
         loadingPurchase,

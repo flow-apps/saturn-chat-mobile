@@ -42,7 +42,7 @@ const ChoosePlan: React.FC = () => {
   const { t } = useTranslate("ChoosePlan");
 
   const planTokens = useMemo(() => {
-    let tokens = {};
+    let tokens = {};    
 
     subscriptions.map((sub) => {
       if (sub.platform === SubscriptionPlatform.android) {

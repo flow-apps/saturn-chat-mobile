@@ -45,7 +45,7 @@ const PremiumProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [signed]);
 
   useEffect(() => {
-    if (!userSubscription) return;
+    if (!userSubscription) return;    
 
     setIsPremium(userSubscription.isActive);
   }, [userSubscription]);
