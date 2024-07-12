@@ -11,7 +11,9 @@
     "build:apk": "cd android && ./gradlew assembleRelease",
     "build:aab": "cd android && ./gradlew bundleRelease",
     "build:clean": "cd android && ./gradlew clean",
-    "build:stop": "cd android && ./gradlew --stop"
+    "build:stop": "cd android && ./gradlew --stop",
+    "open-emulator:pixel5": "emulator -avd Pixel_5_API_34",
+    "open-emulator:pixel4": "emulator -avd Pixel_4_API_30"
   },
   "resolutions": {
     "@expo/config-plugins": "~8.0.0"
