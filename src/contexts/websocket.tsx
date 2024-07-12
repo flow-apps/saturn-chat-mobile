@@ -23,7 +23,7 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
 
     }
-
+    
     if (socket && socket.connected)
       return;
 
