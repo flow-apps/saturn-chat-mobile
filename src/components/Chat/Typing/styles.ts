@@ -22,6 +22,7 @@ export const TypingLeftSide = styled.View`
 export const TypingRightSide = styled.View`
   align-items: center;
   justify-content: center;
+  margin-left: 10px;
 `
 
 export const TypingAnimation = styled(LottieView)`

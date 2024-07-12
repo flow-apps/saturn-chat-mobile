@@ -27,7 +27,10 @@ export const PunishAnimationWrapper = styled.View`
   margin: -15px 0px;
 `;
 
-export const PunishAnimation = styled(AnimatedLottieView)``;
+export const PunishAnimation = styled(AnimatedLottieView)`
+  width: 100%;
+  height: 100%;
+`;
 
 export const PunishDescription = styled.Text`
   text-align: center;

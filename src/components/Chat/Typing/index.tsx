@@ -18,13 +18,14 @@ type TypingProps = {
 const Typing = ({ typingUsers }: TypingProps) => {
   const { t } = useTranslate("Components.Chat.Typing");
 
-  if (typingUsers.length <= 0) return <></>;
-
   const names = useMemo(
     () => typingUsers.map((user) => user.name),
     [typingUsers]
   );
   const joinedNames = useMemo(() => names.join(", "), [names]);
+
+  if (typingUsers.length <= 0) 
+    return null;
 
   return (
     <Container>
