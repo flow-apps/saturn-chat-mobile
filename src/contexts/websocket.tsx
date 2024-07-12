@@ -23,18 +23,20 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
       return
     };
 
-    console.log("Conectando ao Socket");
-    
-    const createdSocket = io(config.API_URL, {
-      ...websocketConfig,
-      query: {
-        token,
-      },
-    });
-    createdSocket.compress(true);
-    createdSocket.connect()
-
-    setSocket(createdSocket);
+    if (!socket || !socket.connected) {
+      console.log("Conectando ao Socket");
+      
+      const createdSocket = io(config.API_URL, {
+        ...websocketConfig,
+        query: {
+          token,
+        },
+      });
+      createdSocket.compress(true);
+      createdSocket.connect()
+  
+      setSocket(createdSocket);
+    }
 
     return () => {
       if (socket && socket.connected) {
