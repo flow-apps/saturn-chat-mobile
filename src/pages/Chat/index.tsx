@@ -403,7 +403,13 @@ const Chat: React.FC = () => {
   };
 
   const handleMessageSubmit = async () => {
-    const message = messageInputRef.current.value || "";
+    const messageRefValue = messageInputRef.current.value
+    const message = messageRefValue.slice(0) || "";
+
+    if (messageRefValue) {
+      messageInputRef.current.clear();
+      messageInputRef.current.value = "";
+    }
 
     if (files.length === 0 && !message) return;
 
@@ -502,11 +508,6 @@ const Chat: React.FC = () => {
       setSendingFile(false);
       setSendedFileProgress(0);
       setFilesSizeUsed(0);
-    }
-
-    if (message) {
-      messageInputRef.current.clear();
-      messageInputRef.current.value = "";
     }
 
     if (replyingMessage) {

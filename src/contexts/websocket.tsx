@@ -19,24 +19,30 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (!signed || !token) {
-      setSocket(null)
-      return
-    };
+      setSocket(null);
+      return;
 
-    if (!socket || !socket.connected) {
-      console.log("Conectando ao Socket");
-      
-      const createdSocket = io(config.API_URL, {
-        ...websocketConfig,
-        query: {
-          token,
-        },
-      });
-      createdSocket.compress(true);
-      createdSocket.connect()
-  
-      setSocket(createdSocket);
     }
+
+    if (socket && socket.connected)
+      return;
+
+    console.log("Conectando ao Socket");
+
+    const createdSocket = io(config.API_URL, {
+      ...websocketConfig,
+      query: {
+        token,
+      },
+    });
+    createdSocket.compress(true);
+    createdSocket.connect();
+
+    createdSocket.on("connect", () => {
+      console.log("Socket conectado com sucesso");
+      
+      setSocket(createdSocket);
+    })
 
     return () => {
       if (socket && socket.connected) {

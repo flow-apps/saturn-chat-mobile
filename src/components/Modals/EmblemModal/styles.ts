@@ -25,7 +25,10 @@ export const ModalAnimationContainer = styled.View`
   height: 200px;
 `
 
-export const ModalAnimation = styled(AnimatedLottieView)``
+export const ModalAnimation = styled(AnimatedLottieView)`
+  width: 100%;
+  height: 100%;
+`
 
 export const ModalTitle = styled.Text`
   text-align: center;
