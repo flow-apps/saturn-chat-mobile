@@ -14,6 +14,7 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<Socket>(null);
+  const [connecting, setConnecting] = useState(false);
 
   const { token, signed } = useAuth();
 
@@ -21,13 +22,14 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!signed || !token) {
       setSocket(null);
       return;
-
     }
     
-    if (socket && socket.connected)
+    if (socket && socket.connected || connecting)
       return;
 
     console.log("Conectando ao Socket");
+    setConnecting(true);
+
 
     const createdSocket = io(config.API_URL, {
       ...websocketConfig,
@@ -42,6 +44,7 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log("Socket conectado com sucesso");
       
       setSocket(createdSocket);
+      setConnecting(false);
     })
 
     return () => {

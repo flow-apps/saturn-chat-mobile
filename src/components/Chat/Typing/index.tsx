@@ -18,17 +18,10 @@ type TypingProps = {
 const Typing = ({ typingUsers }: TypingProps) => {
   const { t } = useTranslate("Components.Chat.Typing");
 
-  const names = useMemo(
-    () => {
-      // Remove all duplicate names
-      return [...new Set(typingUsers.map((user) => user.name))];
-    },
-    [typingUsers]
-  );
-  const joinedNames = useMemo(() => names.join(", "), [names]);
+  if (typingUsers.length <= 0) return null;
 
-  if (typingUsers.length <= 0) 
-    return null;
+  const names = [...new Set(typingUsers.map((user) => user.name))];
+  const joinedNames = names.join(", ");
 
   return (
     <Container>
