@@ -14,46 +14,54 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<Socket>(null);
-  const [connecting, setConnecting] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
 
-  const { token, signed } = useAuth();
+  const { token } = useAuth();
 
   useEffect(() => {
-    if (!signed || !token) {
-      setSocket(null);
+    if (!token) {
+      if (socket) {
+        socket.offAny();
+        socket.disconnect();
+        setSocket(null);
+      }
       return;
     }
-    
-    if (socket && socket.connected || connecting)
-      return;
 
-    console.log("Conectando ao Socket");
-    setConnecting(true);
+    if (socket && socket.connected) {
+      return; // Ignorar conexão se já estiver conectado
+    }
 
+    if (isConnecting) return;
 
+    setIsConnecting(true);
+
+    console.log("Criando novo socket e conectando ao servidor");
     const createdSocket = io(config.API_URL, {
       ...websocketConfig,
-      query: {
-        token,
-      },
+      query: { token },
     });
-    createdSocket.compress(true);
-    createdSocket.connect();
+
+    setSocket(createdSocket);
 
     createdSocket.on("connect", () => {
       console.log("Socket conectado com sucesso");
-      
-      setSocket(createdSocket);
-      setConnecting(false);
-    })
+      setIsConnecting(false);
+    });
+
+    createdSocket.on("connect_error", (error) =>
+      console.error("Connection Error:", error)
+    );
+
+    createdSocket.on("disconnect", (error) => console.log(error));
+    createdSocket.on("error", (error) => console.log(error));
 
     return () => {
-      if (socket && socket.connected) {
-        socket.offAny();
-        socket.disconnect();
-      }
+      createdSocket.offAny();
+      createdSocket.disconnect();
+      setSocket(null);
     };
-  }, [signed, token]);
+  }, [token]);
 
   return (
     <WebsocketContext.Provider

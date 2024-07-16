@@ -36,10 +36,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loginError, setLoginError] = useState(false);
   const [registerError, setRegisterError] = useState(false);
 
-  useEffect(() => {
-    loadStorageData();
-  }, []);
-
   const loadStorageData = async () => {
     setLoadingData(true);
     const storageUser = await AsyncStorage.getItem("@SaturnChat:user");
@@ -51,8 +47,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       api.defaults.headers["authorization"] = headerToken;
       websocket.query.token = headerToken;
-      setUser(parsedUser);
       setToken(headerToken);
+      setUser(parsedUser);
 
       OneSignal.login(parsedUser.id);
     }
@@ -134,6 +130,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     );
   };
+  
+  useEffect(() => {
+    loadStorageData();
+  }, []);
 
   return (
     <AuthContext.Provider

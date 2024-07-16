@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -39,6 +39,7 @@ import { useHome } from "@contexts/home";
 import configs from "../../config";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePurchases } from "@contexts/purchases";
+import { useWebsocket } from "@contexts/websocket";
 
 export interface ParticipantData {
   id: string;
@@ -57,7 +58,6 @@ const Home: React.FC = () => {
   const { allConfigs } = useRemoteConfigs();
   const { colors } = useTheme();
   const { hasInvites, handleCheckInvites } = useHome();
-  const {  } = usePurchases()
   const { t } = useTranslate("Home");
 
   const navigation = useNavigation<StackNavigationProp<any>>();
