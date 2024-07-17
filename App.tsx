@@ -33,6 +33,7 @@ import {
   reloadAsync,
   fetchUpdateAsync,
   checkForUpdateAsync,
+  isEnabled
 } from "expo-updates";
 
 import * as Constants from "expo-constants";
@@ -59,7 +60,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      if (__DEV__ || Constants.default.debugMode) {
+      if (__DEV__ || Constants.default.debugMode || !isEnabled) {
         setReady(true);
         return;
       }
