@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 
 const configs = {
-  API_URL: !__DEV__
+  API_URL: __DEV__
     ? "http://192.168.0.104:3000"
     : "https://saturnchat.azurewebsites.net",
   SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.app"],
