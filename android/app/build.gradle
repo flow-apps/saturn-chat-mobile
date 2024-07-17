@@ -103,8 +103,8 @@ android {
         applicationId "com.flowapps.saturnchat"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 31
-        versionName "0.1.7"
+        versionCode 32
+        versionName "0.1.8"
         missingDimensionStrategy "store", "play"
     }
     
