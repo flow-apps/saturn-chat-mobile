@@ -29,23 +29,17 @@ import {
 } from "@expo-google-fonts/poppins";
 
 import { ChatProvider } from "@contexts/chat";
-import {
-  reloadAsync,
-  fetchUpdateAsync,
-  checkForUpdateAsync,
-  isEnabled
-} from "expo-updates";
 
-import * as Constants from "expo-constants";
 import { HomeProvider } from "@contexts/home";
 import { PurchasesProvider } from "@contexts/purchases";
 import { withIAPContext } from "react-native-iap";
 import { PremiumProvider } from "@contexts/premium";
+import { LogLevel, OneSignal } from "react-native-onesignal";
+import secrets from "./secrets.json"
 
 preventAutoHideAsync();
 
 function App() {
-  const [ready, setReady] = useState(false);
   const [fontLoaded] = useFonts({
     Poppins_300Light_Italic,
     Poppins_400Regular,
@@ -58,35 +52,10 @@ function App() {
     FiraCode_500Medium,
   });
 
-  useEffect(() => {
-    (async () => {
-      if (__DEV__ || Constants.default.debugMode || !isEnabled) {
-        setReady(true);
-        return;
-      }
+  OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.None);
+  OneSignal.initialize(secrets.OneSignalAppID);
 
-      const { isAvailable } = await checkForUpdateAsync()
-        .then((result) => result)
-        .catch(() => {
-          return { isAvailable: false };
-        });
-
-      if (isAvailable) {
-        await fetchUpdateAsync().then(async (value) => {
-          if (value.isNew) {
-            await reloadAsync();
-            return;
-          } else {
-            setReady(true);
-          }
-        });
-      } else {
-        setReady(true);
-      }
-    })();
-  }, []);
-
-  if (!fontLoaded || !ready) {
+  if (!fontLoaded) {
     return null;
   }
 

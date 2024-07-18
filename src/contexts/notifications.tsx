@@ -51,8 +51,6 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   const registerOneSignal = async () => {
     if (!signed) return;
 
-    OneSignal.initialize(secrets.OneSignalAppID);
-
     if (await OneSignal.Notifications.canRequestPermission()) {
       const hasPermission = await OneSignal.Notifications.requestPermission(
         true
