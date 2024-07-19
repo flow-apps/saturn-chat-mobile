@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { FriendData, InviteData } from "@type/interfaces";
 import Header from "@components/Header";
@@ -21,6 +21,7 @@ import orderBy from "lodash/orderBy";
 
 import GroupInvite from "@components/InvitesManager/GroupInvite";
 import { useTranslate } from "@hooks/useTranslate";
+import { useHome } from "@contexts/home";
 
 interface Request extends FriendData, InviteData {
   type: "FRIEND_REQUEST" | "GROUP_INVITE";
@@ -32,6 +33,7 @@ const InvitesManager: React.FC = () => {
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("InviteManager");
+  const { setHasInvites } = useHome();
 
   useFocusEffect(
     useCallback(() => {
@@ -84,13 +86,13 @@ const InvitesManager: React.FC = () => {
       const res = await api.get(`/inv/join/${inviteID}`);
 
       if (res.status === 200) {
-        SimpleToast.show(t("toasts.invite_accept"),SimpleToast.SHORT);
+        SimpleToast.show(t("toasts.invite_accept"), SimpleToast.SHORT);
       }
     } else {
       const res = await api.delete(`/invites/${inviteID}`);
 
       if (res.status === 204) {
-        SimpleToast.show(t("toasts.invite_reject"),SimpleToast.SHORT);
+        SimpleToast.show(t("toasts.invite_reject"), SimpleToast.SHORT);
       }
     }
 
@@ -99,6 +101,12 @@ const InvitesManager: React.FC = () => {
       .filter((request) => request.id !== inviteID);
     setRequests(filteredRequests);
   };
+
+  useEffect(() => {
+    if (requests.length <= 0) {
+      setHasInvites(false);
+    }
+  }, [requests]);
 
   if (loading) return <Loading />;
 

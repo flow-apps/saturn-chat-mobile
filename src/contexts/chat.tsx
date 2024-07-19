@@ -202,7 +202,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    if (socket?.connected) {
+    if (socket) {
       socket.on("deleted_group", () => {
         const historyRoutes = getRoutes();
         const inChatScreen = historyRoutes

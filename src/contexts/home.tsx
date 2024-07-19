@@ -5,6 +5,7 @@ import { DateUtils } from "@utils/date";
 interface HomeContext {
   hasInvites: boolean;
   handleCheckInvites: () => void;
+  setHasInvites: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const HomeContext = createContext<HomeContext>({} as HomeContext);
@@ -50,7 +51,7 @@ const HomeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [socket]);
 
   return (
-    <HomeContext.Provider value={{ hasInvites, handleCheckInvites }}>
+    <HomeContext.Provider value={{ hasInvites, setHasInvites, handleCheckInvites }}>
       {children}
     </HomeContext.Provider>
   );

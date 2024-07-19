@@ -4,6 +4,7 @@ const websocketConfig: ManagerOptions = {
   path: "/socket.io/",
   withCredentials: true,
   transports: ["websocket"],
+  upgrade: false,
   // @ts-ignore
   jsonp: false,
   query: {
