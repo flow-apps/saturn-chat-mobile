@@ -66,6 +66,12 @@ class FileService {
 
   async downloadFile(url: string, fileName: string) {
     try {
+
+      if (["https", "http"].includes(url?.split("//")?.shift())) {
+        SimpleToast.show("Invalid image file", SimpleToast.SHORT);
+        return;
+      }
+
       const {
         dirs: { DownloadDir, DocumentDir },
       } = RNFB.fs;

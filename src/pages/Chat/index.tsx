@@ -404,7 +404,7 @@ const Chat: React.FC = () => {
 
   const handleMessageSubmit = async () => {
     const messageRefValue = messageInputRef.current.value
-    const message = messageRefValue.slice(0) || "";
+    const message = messageRefValue?.slice(0) || "";
 
     if (messageRefValue) {
       messageInputRef.current.clear();
