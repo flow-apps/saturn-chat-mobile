@@ -29,3 +29,5 @@ Esse é o repositório da versão Mobile do app, onde fica todo o código refere
 **Que bom que você quer ajudar!!** Caso encontre qualquer bug ou queira simplesmente dar um sugestão, basta **abrir um issue**.
 
 Agora caso você seja uma pessoa que gosta de por a **mão na massa** basta fazer um *PR* (Pull Request) aplicando sua solução. Nós analisaremos e se tudo estiver certo aplicaremos sua solução no projeto.
+
+Lembrando que, **OPEN-SOURCE** é diferente de **CÓDIGO-LIVRE**. Isso significa que, ele não pode see copiado, vendido, usado em outros projetos. Ele é aberto para maior confiabilidade dos usuários e para apoio da comunidade ao projeto.
