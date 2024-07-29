@@ -338,7 +338,7 @@ const Chat: React.FC = () => {
     if (fetching || fetchedAll) return;
 
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=30`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -539,20 +539,23 @@ const Chat: React.FC = () => {
   const disableAudioPermission = () => setAudioPermission(false);
 
   useEffect(() => {
-    if (appState === "active") {
-      setLoading(true);
-      handleJoinRoom(id);
-      if (page > 0) {
-        setPage(0);
+    (async () => {
+      if (appState === "active") {
+        setLoading(true);
+        handleJoinRoom(id);
+        if (page > 0) {
+          setPage(0);
+        }
+  
+        if (fetchedAll) {
+          setFetchedAll(false);
+        }
+  
+        await fetchOldMessages();
+        setLoading(false);
       }
+    })()
 
-      if (fetchedAll) {
-        setFetchedAll(false);
-      }
-
-      fetchOldMessages();
-      setLoading(false);
-    }
     return () => {
       if (socket) {
         socket.emit("leave_chat");
@@ -660,8 +663,8 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={30 * 130}
-            estimatedItemSize={120}
+            drawDistance={25 * 130}
+            estimatedItemSize={130}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={fetchOldMessages}
