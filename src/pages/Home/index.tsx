@@ -38,8 +38,7 @@ import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { useHome } from "@contexts/home";
 import configs from "../../config";
 import { useTranslate } from "@hooks/useTranslate";
-import { usePurchases } from "@contexts/purchases";
-import { useWebsocket } from "@contexts/websocket";
+import { ParticipantStates } from "@type/enums";
 
 export interface ParticipantData {
   id: string;
@@ -48,6 +47,7 @@ export interface ParticipantData {
   participating_since: string;
   user: UserData;
   group: GroupData;
+  state: ParticipantStates;
 }
 
 const Home: React.FC = () => {

@@ -155,7 +155,7 @@ export const pt = {
         password: {
           label: "Digite uma senha",
           error: "A senha não segue os padrões segurança",
-          infos:
+          info:
             "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
         },
         password_again: {

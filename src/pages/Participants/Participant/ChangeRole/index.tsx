@@ -103,7 +103,7 @@ const ChangeRole: React.FC = () => {
 
   return (
     <>
-      <Header title={t("change_role")} />
+      <Header title={t("header_title")} />
       <Container>
         <ContentContainer>
           <ContentTitle>{t("title")}</ContentTitle>

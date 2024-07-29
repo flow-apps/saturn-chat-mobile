@@ -21,6 +21,7 @@ import {
   InviteTitle,
 } from "./styles";
 import { useTranslate } from "@hooks/useTranslate";
+import { ParticipantStates } from "@type/enums";
 
 interface InviteInMessageProps {
   inviteID: string;
@@ -41,12 +42,17 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
         .get(`/invites/${inviteID}?user_id=${user?.id}`)
         .then((res) => {
           if (res.status === 200) {
-            if (res.data.participant.state === "JOINED") {
-              setParticipating(true);
-            } else {
-              setParticipating(false);
-            }
             setInvite(res.data.invite);
+
+            const participant = res.data?.participant as ParticipantData;
+
+            if (!participant) {
+              return setParticipating(false);
+            }
+
+            if (participant.state === ParticipantStates.JOINED) {
+              setParticipating(true);
+            }
           }
         })
         .catch(() => setInvite(null))
@@ -68,12 +74,15 @@ const InviteInMessage: React.FC<InviteInMessageProps> = ({ inviteID }) => {
             group_id: data.group_id,
           });
 
-          SimpleToast.show(t("toasts.joined", { name: data.group.name }),SimpleToast.SHORT);
+          SimpleToast.show(
+            t("toasts.joined", { name: data.group.name }),
+            SimpleToast.SHORT
+          );
           setParticipating(true);
         }
       })
       .catch((err) => {
-        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
+        SimpleToast.show(t("toasts.error"), SimpleToast.SHORT);
       });
   };
 
