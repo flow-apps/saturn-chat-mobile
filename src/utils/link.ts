@@ -35,6 +35,21 @@ class LinkUtils {
     );
   }
 
+  isInviteLink(host: string, pathname: string) {
+    if (!config.SATURN_CHAT_DOMAINS.includes(host)) return;
+    if (!pathname) return;
+
+    const partsOfPath = pathname.split("/").filter(Boolean);
+
+    if (partsOfPath.includes("invite")) {
+      if (partsOfPath.length !== 2) return;
+
+      return { isInvite: true, inviteID: partsOfPath.pop() };
+    }
+
+    return { isInvite: false };
+  }
+
   async openLink(url: string) {
     const isSaturnChatLink = this.isSaturnChatLink(url);
 
@@ -60,7 +75,7 @@ class LinkUtils {
         if (await Linking.canOpenURL(url)) {
           return await Linking.openURL(url);
         } else {
-          SimpleToast.show("Não é possível abrir o link",SimpleToast.SHORT);
+          SimpleToast.show("Não é possível abrir o link", SimpleToast.SHORT);
           return;
         }
       }

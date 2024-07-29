@@ -70,13 +70,14 @@ const Message = ({
 
   const { user } = useAuth();
   const { colors } = useTheme();
-  const { isPremium } = usePremium()
+  const { isPremium } = usePremium();
   const { t } = useTranslate("Components.Chat.Message");
 
   const { handleDeleteMessage } = useChat();
 
   const linkUtils = new LinkUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
+
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
   }, [message, user]);
@@ -101,7 +102,11 @@ const Message = ({
             name={message.author.name}
             nameSize={12}
             color={colors.light_heading}
-            hasPremium={message.author?.id === user.id ? isPremium : message.author.isPremium}
+            hasPremium={
+              message.author?.id === user.id
+                ? isPremium
+                : message.author.isPremium
+            }
           />
         </MessageAuthorContainer>
       );
@@ -177,7 +182,7 @@ const Message = ({
 
   const handleCopyMessage = useCallback(async () => {
     await Clipboard.setStringAsync(message.message);
-    SimpleToast.show(t("toasts.copied_message"),SimpleToast.SHORT);
+    SimpleToast.show(t("toasts.copied_message"), SimpleToast.SHORT);
   }, [message.message]);
 
   const renderVoiceMessage = useCallback(() => {
@@ -204,7 +209,7 @@ const Message = ({
   }, [message.files, deleted]);
 
   const renderInvites = useCallback(() => {
-    if (!hasInvite) return <></>;
+    if (!hasInvite || !message.links) return <></>;
 
     return (
       <>
@@ -213,19 +218,27 @@ const Message = ({
         ))}
       </>
     );
-  }, [hasInvite, invitesData]);
+  }, [hasInvite, invitesData, message.links]);
 
   const renderLinks = useCallback(() => {
     if (!message.links) return <></>;
 
     return (
       <>
-        {message.links.map((link, index) => (
-          <LinkPreview link={link} openLink={alertLink} />
-        ))}
+        {message.links.map((link, index) => {
+          if (hasInvite) {
+            const { host, pathname } = new URLParser(link.link);
+            const { isInvite } = linkUtils.isInviteLink(host, pathname);
+            if (isInvite) {
+              return <></>;
+            }
+          }
+
+          return <LinkPreview link={link} openLink={alertLink} />;
+        })}
       </>
     );
-  }, [message.links]);
+  }, [message.links, hasInvite]);
 
   const replyMessage = (direction?: "right" | "left") => {
     if (!direction) {
@@ -249,19 +262,13 @@ const Message = ({
 
       allLinks.map((link) => {
         const { host, pathname } = new URLParser(link);
-        if (!config.SATURN_CHAT_DOMAINS.includes(host)) return;
-        if (!pathname) return;
+        const { isInvite, inviteID } = linkUtils.isInviteLink(host, pathname);
 
-        const partsOfPath = pathname.split("/").filter(Boolean);
-
-        if (partsOfPath.includes("invite")) {
-          if (partsOfPath.length !== 2) return;
-
+        if (isInvite) {
           if (!hasInvite) {
             setHasInvite(true);
           }
 
-          const inviteID = partsOfPath.pop();
           setInvitesData((old) => [...old, { id: inviteID }]);
         }
       });
