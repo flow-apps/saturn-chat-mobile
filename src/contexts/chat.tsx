@@ -56,6 +56,7 @@ interface DeleteMessageResult {
 
 interface IChatContext {
   currentGroupId: string;
+  connected: boolean;
   handleJoinRoom: (groupId: string) => void;
   handleSetReadMessage: (messageId: string) => void;
   handleSetTyping: (data: IHandleSetTyping) => void;
@@ -266,6 +267,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         onNewUserTyping,
         onDeletedUserTyping,
         onDeleteUserMessage,
+        connected,
       }}
     >
       {children}

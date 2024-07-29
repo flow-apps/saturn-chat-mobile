@@ -138,6 +138,7 @@ const Chat: React.FC = () => {
     onNewUserTyping,
     onDeletedUserTyping,
     onDeleteUserMessage,
+    connected,
   } = useChat();
 
   const appState = useAppState();
@@ -403,7 +404,7 @@ const Chat: React.FC = () => {
   };
 
   const handleMessageSubmit = async () => {
-    const messageRefValue = messageInputRef.current.value
+    const messageRefValue = messageInputRef.current.value;
     const message = messageRefValue?.slice(0) || "";
 
     if (messageRefValue) {
@@ -489,7 +490,6 @@ const Chat: React.FC = () => {
         })
         .then((res) => {
           if (res.status === 200) {
-
             handleSendMessage({
               message_id: res.data.message_id,
               withFiles: true,
@@ -602,7 +602,7 @@ const Chat: React.FC = () => {
     })();
   }, []);
 
-  if (loading || !socket) return <Loading />;
+  if (loading || !socket || !connected) return <Loading />;
 
   return (
     <>
