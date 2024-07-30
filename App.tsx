@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Routes from "@routes/index";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
@@ -35,7 +35,11 @@ import { PurchasesProvider } from "@contexts/purchases";
 import { withIAPContext } from "react-native-iap";
 import { PremiumProvider } from "@contexts/premium";
 import { LogLevel, OneSignal } from "react-native-onesignal";
-import secrets from "./secrets.json"
+import secrets from "./secrets.json";
+
+import { isDevice } from "expo-device";
+import * as Updates from "expo-updates";
+import { Alert } from "react-native";
 
 preventAutoHideAsync();
 
@@ -54,6 +58,30 @@ function App() {
 
   OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.None);
   OneSignal.initialize(secrets.OneSignalAppID);
+
+  const configureExpoUpdates = async () => {
+    try {
+      if (!isDevice || __DEV__) {
+        return;
+      }
+
+      const { isAvailable: hasNewUpdate } = await Updates.checkForUpdateAsync();
+
+      if (hasNewUpdate) {
+        await Updates.fetchUpdateAsync().then(() => {
+          Alert.alert("Nova atualização baixada");
+        });
+        await Updates.reloadAsync();
+      }
+    } catch (error) {
+      // You can also add an alert() to see the error message in case of an error when fetching updates.
+      Alert.alert(`Error fetching latest Expo update: ${error}`);
+    }
+  };
+
+  useEffect(() => {
+    configureExpoUpdates();
+  }, []);
 
   if (!fontLoaded) {
     return null;
