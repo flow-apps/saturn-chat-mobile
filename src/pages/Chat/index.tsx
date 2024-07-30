@@ -93,9 +93,7 @@ const Chat: React.FC = () => {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
-  const { isPremium } = usePremium();
 
-  const [adShowed, setAdShowed] = useState(false);
   const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -125,7 +123,6 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
-  const { Interstitial } = useAds();
   const { socket } = useWebsocket();
   const {
     handleJoinRoom,
@@ -338,7 +335,7 @@ const Chat: React.FC = () => {
     if (fetching || fetchedAll) return;
 
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=20`);
+    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=15`);
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -543,6 +540,7 @@ const Chat: React.FC = () => {
       if (appState === "active") {
         setLoading(true);
         handleJoinRoom(id);
+
         if (page > 0) {
           setPage(0);
         }
@@ -569,11 +567,6 @@ const Chat: React.FC = () => {
     (async () => {
       setLoading(true);
 
-      if (Interstitial.loaded && !adShowed && !isPremium && !__DEV__) {
-        await Interstitial.show();
-        setAdShowed(true);
-      }
-
       if (Platform.OS === "android") {
         OneSignal.Notifications.removeGroupedNotifications(id);
       }
@@ -585,7 +578,6 @@ const Chat: React.FC = () => {
           setGroup(groupRes.data);
         }
       }
-      configureSocketListeners();
 
       await fetchOldMessages();
 
@@ -600,6 +592,8 @@ const Chat: React.FC = () => {
       const participantRes = await api.get(`/group/participant/${id}`);
       if (participantRes.status === 200)
         setParticipant(participantRes.data.participant);
+
+      configureSocketListeners();
 
       setLoading(false);
     })();
@@ -663,8 +657,8 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={25 * 130}
-            estimatedItemSize={130}
+            drawDistance={15 * 120}
+            estimatedItemSize={120}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={fetchOldMessages}

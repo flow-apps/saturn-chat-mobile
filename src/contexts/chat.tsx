@@ -90,6 +90,8 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!connected) {
         console.log(`Conectando o usuário ao grupo ${groupId}`);
 
+        setCurrentGroupId(groupId)
+
         socket.emit("connect_in_chat", groupId);
       }
     },
@@ -231,7 +233,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       socket.on("success_join", (groupID) => {
         console.log("Usuário conectado com sucesso ao grupo", groupID);
 
-        setCurrentGroupId(groupID);
+        // setCurrentGroupId(groupID);
         setConnected(true);
       });
 

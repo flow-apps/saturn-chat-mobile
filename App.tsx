@@ -39,7 +39,6 @@ import secrets from "./secrets.json";
 
 import { isDevice } from "expo-device";
 import * as Updates from "expo-updates";
-import { Alert } from "react-native";
 
 preventAutoHideAsync();
 
@@ -68,14 +67,11 @@ function App() {
       const { isAvailable: hasNewUpdate } = await Updates.checkForUpdateAsync();
 
       if (hasNewUpdate) {
-        await Updates.fetchUpdateAsync().then(() => {
-          Alert.alert("Nova atualização baixada");
-        });
+        await Updates.fetchUpdateAsync()
         await Updates.reloadAsync();
       }
     } catch (error) {
-      // You can also add an alert() to see the error message in case of an error when fetching updates.
-      Alert.alert(`Error fetching latest Expo update: ${error}`);
+      console.log(`Error fetching latest Expo update: ${error}`);
     }
   };
 
