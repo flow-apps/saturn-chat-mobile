@@ -14,6 +14,7 @@
     },
     "production": {
       "channel": "production"
+      // eas update --branch production --message "message here" --platform android
     }
   },
   "submit": {
