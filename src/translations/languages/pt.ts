@@ -112,7 +112,7 @@ export const pt = {
       0: {
         title: "Bem-vindo ao Saturn Chat!",
         subtitle:
-          "Aqui você encontrará uma enorme variedade de grupos (ou criar um do seu próprio jeito).",
+          "Aqui você encontrará uma enorme variedade de grupos (ou criar um grupo do jeito que quiser).",
       },
       1: {
         title: "Envie mensagens com facilidade!",
