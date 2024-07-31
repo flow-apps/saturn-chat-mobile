@@ -14,7 +14,7 @@ import crashlytics from "@react-native-firebase/crashlytics";
 import { ProgressBar } from "react-native-paper";
 import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Audio from "expo-av/build/Audio";
 import { useTheme } from "styled-components";
@@ -536,23 +536,9 @@ const Chat: React.FC = () => {
   const disableAudioPermission = () => setAudioPermission(false);
 
   useEffect(() => {
-    (async () => {
-      if (appState === "active") {
-        setLoading(true);
-        handleJoinRoom(id);
-
-        if (page > 0) {
-          setPage(0);
-        }
-  
-        if (fetchedAll) {
-          setFetchedAll(false);
-        }
-  
-        await fetchOldMessages();
-        setLoading(false);
-      }
-    })()
+    if (appState === "active") {
+      handleJoinRoom(id);
+    }
 
     return () => {
       if (socket) {
@@ -598,6 +584,19 @@ const Chat: React.FC = () => {
       setLoading(false);
     })();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+
+      if (appState !== "active")
+          return
+
+      setPage(0);
+      setFetchedAll(false);
+
+      fetchOldMessages();
+    }, [appState])
+  );
 
   if (loading || !socket || !connected) return <Loading />;
 
@@ -657,12 +656,12 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={15 * 120}
-            estimatedItemSize={120}
+            drawDistance={10 * 150}
+            estimatedItemSize={130}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={fetchOldMessages}
-            onEndReachedThreshold={0.4}
+            onEndReachedThreshold={0.3}
             showsVerticalScrollIndicator={false}
             disableHorizontalListHeightMeasurement
           />
