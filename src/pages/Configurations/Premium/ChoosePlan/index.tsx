@@ -55,6 +55,10 @@ const ChoosePlan: React.FC = () => {
     return tokens as { [key: string]: string };
   }, [subscriptions]);
 
+  if (loadingPurchase) {
+    return <Loading />;
+  }
+
   if (buySubFinished) {
     return (
       <BuyFinishedContainer>
@@ -93,10 +97,6 @@ const ChoosePlan: React.FC = () => {
         />
       </BuyFinishedContainer>
     );
-  }
-
-  if (loadingPurchase) {
-    return <Loading />;
   }
 
   return (
