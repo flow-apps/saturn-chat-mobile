@@ -28,21 +28,19 @@ class LinkUtils {
       return [];
     }
 
-    return (
-      text.match(
-        /\b((https?):\/\/|(www)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/gi
-      ) || []
-    );
+    return (text.match(
+      /\b((https?):\/\/|(www)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/gi
+    ) || []) as string[];
   }
 
   isInviteLink(host: string, pathname: string) {
-    if (!config.SATURN_CHAT_DOMAINS.includes(host)) return;
-    if (!pathname) return;
+    if (!config.SATURN_CHAT_DOMAINS.includes(host)) return { isInvite: false };
+    if (!pathname) return { isInvite: false };
 
     const partsOfPath = pathname.split("/").filter(Boolean);
 
     if (partsOfPath.includes("invite")) {
-      if (partsOfPath.length !== 2) return;
+      if (partsOfPath.length !== 2) return { isInvite: false };
 
       return { isInvite: true, inviteID: partsOfPath.pop() };
     }
