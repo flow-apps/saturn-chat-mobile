@@ -34,7 +34,7 @@ const Login: React.FC = () => {
 
   const navigator = useNavigation<StackNavigationProp<any>>();
 
-  const { signIn, loginError, loading } = useAuth();
+  const { signIn, loginError, internalError, loading } = useAuth();
   const { t } = useTranslate("Auth.Login");
 
   function handleNavigateSignUp() {
@@ -60,9 +60,16 @@ const Login: React.FC = () => {
           <WelcomeContainer>
             <WelcomeTitle>{t("title")}</WelcomeTitle>
           </WelcomeContainer>
-          {loginError && (
+          {loginError && !internalError.has && (
             <ErrorContainer>
               <ErrorText>{t("login_error")}</ErrorText>
+            </ErrorContainer>
+          )}
+          {loginError && internalError.has && (
+            <ErrorContainer>
+              <ErrorText>
+                Ocorreu um erro interno no servidor. Tente mais tarde. {internalError.reason}
+              </ErrorText>
             </ErrorContainer>
           )}
           <FormContainer>

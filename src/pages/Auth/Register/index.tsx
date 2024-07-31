@@ -46,7 +46,7 @@ const Register: React.FC = () => {
   const [passConfirmError, setPassConfirmError] = useState(true);
 
   const { colors } = useTheme();
-  const { signUp, loading, registerError } = useAuth();
+  const { signUp, loading, registerError, internalError } = useAuth();
   const { t } = useTranslate("Auth.CreateAccount");
 
   const passwordValidation =
@@ -173,9 +173,14 @@ const Register: React.FC = () => {
                   {!avatar ? t("avatar_select_tip") : t("avatar_selected")}
                 </SelectAvatarSubtitle>
               </SelectAvatarContainer>
-              {registerError && (
+              {registerError && !internalError.has && (
                 <ErrorContainer>
                   <ErrorText>{t("register_error")}</ErrorText>
+                </ErrorContainer>
+              )}
+              {registerError && internalError.has && (
+                <ErrorContainer>
+                  <ErrorText>Ocorreu um erro interno no servidor. Tente mais tarde. {internalError.reason}</ErrorText>
                 </ErrorContainer>
               )}
               <InputsContainer>

@@ -10,6 +10,7 @@ import { UserData } from "@type/interfaces";
 
 import analytics from "@react-native-firebase/analytics";
 import { OneSignal } from "../configs/notifications";
+import { AxiosError } from "axios";
 
 interface AuthContextData {
   signed: boolean;
@@ -19,6 +20,10 @@ interface AuthContextData {
   loginError: boolean;
   registerError: boolean;
   token: string;
+  internalError: {
+    has: boolean;
+    reason: string;
+  };
   updateUser: (data: any) => Promise<void>;
   signIn(email: string, password: string): Promise<void>;
   signUp(data: FormData, email: string): Promise<void>;
@@ -35,6 +40,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [registerError, setRegisterError] = useState(false);
+  const [internalError, setInternalError] = useState({
+    has: false,
+    reason: "",
+  });
 
   const loadStorageData = async () => {
     setLoadingData(true);
@@ -79,6 +88,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     setLoginError(false);
+    setInternalError({
+      has: false,
+      reason: "",
+    });
     auth
       .signIn(email, password)
       .then(async (response) => {
@@ -89,8 +102,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await updateUser(response.data);
         OneSignal.User.addEmail(email);
         setLoginError(false);
+        setInternalError({ has: false, reason: "" });
       })
-      .catch(() => {
+      .catch((error: AxiosError) => {
+        if (error.response.status === 500) {
+          setInternalError({
+            has: true,
+            reason: JSON.stringify(error.response.data),
+          });
+        }
         setLoginError(true);
       })
       .finally(() => setLoading(false));
@@ -110,8 +130,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         OneSignal.User.addEmail(email);
         setRegisterError(false);
+        setInternalError({ has: false, reason: "" });
       })
-      .catch(() => {
+      .catch((error: AxiosError) => {
+        if (error.response.status === 500) {
+          setInternalError({
+            has: true,
+            reason: JSON.stringify(error.response.data),
+          });
+        }
         setRegisterError(true);
       })
       .finally(() => setLoading(false));
@@ -130,7 +157,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     );
   };
-  
+
   useEffect(() => {
     loadStorageData();
   }, []);
@@ -149,6 +176,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         token,
         registerError,
         loginError,
+        internalError,
       }}
     >
       {children}
