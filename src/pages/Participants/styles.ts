@@ -11,6 +11,7 @@ export const Container = styled.View`
 
 export const ParticipantsContainer = styled.View`
   padding: 10px 15px;
+  margin-bottom: 25px;
 `;
 
 export const ParticipantsList =

@@ -126,7 +126,9 @@ const Participants: React.FC = () => {
               <PremiumName
                 name={item.user.name}
                 nameSize={16}
-                hasPremium={item.user.id === user.id ? isPremium : item.user.isPremium}
+                hasPremium={
+                  item.user.id === user.id ? isPremium : item.user.isPremium
+                }
               />
               <JoinedDate>
                 {item.group.owner.id === item.user.id
@@ -157,24 +159,23 @@ const Participants: React.FC = () => {
       <Header title={t("header_title", { count: participants.length })} />
       <Container>
         <ParticipantsContainer>
-          <SectionContainer>
-            <SectionTitle>{t("title")}</SectionTitle>
-            <ParticipantsList
-              data={participants}
-              renderItem={renderItem}
-              onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
-              ListFooterComponent={
-                fetching &&
-                !loadedAll && (
-                  <ActivityIndicator
-                    style={{ margin: 10 }}
-                    size="large"
-                    color={colors.primary}
-                  />
-                )
-              }
-            />
-          </SectionContainer>
+          <SectionTitle>{t("title")}</SectionTitle>
+          <ParticipantsList
+            data={participants}
+            keyExtractor={(part) => part.id}
+            renderItem={renderItem}
+            onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
+            ListFooterComponent={
+              fetching &&
+              !loadedAll && (
+                <ActivityIndicator
+                  style={{ margin: 10 }}
+                  size="large"
+                  color={colors.primary}
+                />
+              )
+            }
+          />
         </ParticipantsContainer>
       </Container>
     </>
