@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Routes from "@routes/index";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
@@ -43,6 +43,8 @@ import * as Updates from "expo-updates";
 preventAutoHideAsync();
 
 function App() {
+  const [readyForStart, setReadyForStart] = useState(false);
+
   const [fontLoaded] = useFonts({
     Poppins_300Light_Italic,
     Poppins_400Regular,
@@ -61,14 +63,18 @@ function App() {
   const configureExpoUpdates = async () => {
     try {
       if (!isDevice || __DEV__) {
-        return;
+        return setReadyForStart(true);
       }
 
       const { isAvailable: hasNewUpdate } = await Updates.checkForUpdateAsync();
 
       if (hasNewUpdate) {
-        await Updates.fetchUpdateAsync()
-        await Updates.reloadAsync();
+        await Updates.fetchUpdateAsync();
+        await Updates.reloadAsync().finally(() => {
+          setReadyForStart(true);
+        });
+      } else {
+        setReadyForStart(true);
       }
     } catch (error) {
       console.log(`Error fetching latest Expo update: ${error}`);
@@ -79,7 +85,7 @@ function App() {
     configureExpoUpdates();
   }, []);
 
-  if (!fontLoaded) {
+  if (!fontLoaded || !readyForStart) {
     return null;
   }
 
