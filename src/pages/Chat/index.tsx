@@ -19,7 +19,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import Audio from "expo-av/build/Audio";
 import { useTheme } from "styled-components";
 import {
-  FileData,
   GroupData,
   MessageData,
   ParticipantsData,
@@ -69,15 +68,13 @@ import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
 
 import FlashList from "@shopify/flash-list/dist/FlashList";
-import { useAds } from "@contexts/ads";
 import { OneSignal } from "react-native-onesignal";
 import { TextInputRef, File } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
-import { usePremium } from "@contexts/premium";
 import Banner from "@components/Ads/Banner";
-import { BannerAdSize } from "react-native-google-mobile-ads";
 
 const recordService = new RecordService();
+const MESSAGES_LIMIT_REQUEST = 20;
 
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
@@ -331,11 +328,13 @@ const Chat: React.FC = () => {
     setFilesSizeUsed((used) => used - fileSize);
   };
 
-  const fetchOldMessages = async () => {
-    if (fetching || fetchedAll) return;
+  const fetchOldMessages = useCallback(async () => {
+    if (fetching || fetchedAll) return;    
 
     setFetching(true);
-    const { data } = await api.get(`/messages/${id}?_page=${page}&_limit=15`);
+    const { data } = await api.get(
+      `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`
+    );
 
     if (data.messages.length === 0) {
       setFetching(false);
@@ -351,7 +350,7 @@ const Chat: React.FC = () => {
 
     setPage((old) => old + 1);
     setFetching(false);
-  };
+  }, [fetchedAll, fetching, page]);
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
@@ -529,7 +528,7 @@ const Chat: React.FC = () => {
   );
 
   const renderFooter = () =>
-    fetching && !fetchedAll ? <LoadingIndicator /> : <></>;
+    fetching && !fetchedAll ? <LoadingIndicator /> : null;
 
   const disableLargeFile = () => setLargeFile(false);
   const disableIsSelectedFile = () => setIsSelectedFile(false);
@@ -538,6 +537,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     if (appState === "active") {
       handleJoinRoom(id);
+      configureSocketListeners();
     }
 
     return () => {
@@ -565,8 +565,6 @@ const Chat: React.FC = () => {
         }
       }
 
-      await fetchOldMessages();
-
       setPage(0);
       setLoading(false);
     })();
@@ -579,17 +577,13 @@ const Chat: React.FC = () => {
       if (participantRes.status === 200)
         setParticipant(participantRes.data.participant);
 
-      configureSocketListeners();
-
       setLoading(false);
     })();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-
-      if (appState !== "active")
-          return
+      if (appState !== "active") return;
 
       setPage(0);
       setFetchedAll(false);
@@ -656,12 +650,12 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={10 * 150}
+            drawDistance={MESSAGES_LIMIT_REQUEST * 150}
             estimatedItemSize={130}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={fetchOldMessages}
-            onEndReachedThreshold={0.3}
+            onEndReachedThreshold={0.5}
             showsVerticalScrollIndicator={false}
             disableHorizontalListHeightMeasurement
           />
