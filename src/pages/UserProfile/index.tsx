@@ -52,7 +52,6 @@ const UserProfile: React.FC = () => {
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
   const [friendInfos, setFriendInfos] = useState<FriendData>();
 
-  const { Interstitial } = useAds();
   const { colors } = useTheme();
   const { user } = useAuth();
 
@@ -68,10 +67,6 @@ const UserProfile: React.FC = () => {
       (async () => {
         setLoading(true);
         const res = await api.get(`/users?user_id=${id}`);
-
-        if (Interstitial.loaded && !isPremium) {
-          await Interstitial.show();
-        }
 
         if (res.status === 200) {
           setUserInfos(res.data);          

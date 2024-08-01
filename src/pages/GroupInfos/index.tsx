@@ -49,17 +49,12 @@ const GroupInfos: React.FC = () => {
   const [isParticipating, setIsParticipating] = useState(false);
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const { Interstitial } = useAds();
   const { t } = useTranslate("GroupInfos");
   const { id } = useRoute().params as { id: string };
   const { isPremium } = usePremium();
 
   useEffect(() => {
     async function getGroup() {
-      if (Interstitial.loaded && !isPremium) {
-        await Interstitial.show();
-      }
-
       if (group) return;
 
       setLoading(true);

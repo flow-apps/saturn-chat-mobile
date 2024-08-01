@@ -13,12 +13,14 @@ import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
 import { StatusBar } from "expo-status-bar/build/StatusBar";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useAds } from "@contexts/ads";
+import { usePremium } from "@contexts/premium";
 
 interface HeaderProps {
   title: string;
   backButton?: boolean;
   bgColor?: string;
-  children?: React.ReactNode | React.ReactNode[]
+  children?: React.ReactNode | React.ReactNode[];
   onPressTitle?: () => unknown;
 }
 
@@ -30,13 +32,22 @@ const Header = ({
   children,
 }: HeaderProps) => {
   const { colors } = useTheme();
+  const { Interstitial } = useAds();
+  const { isPremium } = usePremium();
+
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  function handleBack() {
-    if (navigation.canGoBack()) {
+  const handleBack = async () => {
+    if (!navigation.canGoBack()) return;
+
+    if (Interstitial.loaded && !isPremium) {
+      Interstitial.show().then(() => {
+        navigation.goBack();
+      });
+    } else {
       navigation.goBack();
     }
-  }
+  };
 
   return (
     <Container bgColor={bgColor}>

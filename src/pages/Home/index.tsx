@@ -123,6 +123,7 @@ const Home: React.FC = () => {
   );
 
   if (loading) return <Loading />;
+
   return (
     <Container>
       <Header title={t("header_title")} backButton={false}>

@@ -39,28 +39,26 @@ const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const adUnitTestID = config.ADS.TEST_ADS_IDS.INTERSTITIAL;
-      const adUnitProdID = Platform.select({
-        android: secrets.AdsID.productionKeys.interstitial.android,
-        ios: secrets.AdsID.productionKeys.interstitial.ios,
-      });
-      const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
-      const interstitial = InterstitialAd.createForAdRequest(adUnitID);
+    const adUnitTestID = config.ADS.TEST_ADS_IDS.INTERSTITIAL;
+    const adUnitProdID = Platform.select({
+      android: secrets.AdsID.productionKeys.interstitial.android,
+      ios: secrets.AdsID.productionKeys.interstitial.ios,
+    });
+    const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
+    const interstitial = InterstitialAd.createForAdRequest(adUnitID);
 
-      interstitial.addAdEventListener(AdEventType.CLOSED, async () => {
+    interstitial.addAdEventListener(AdEventType.CLOSED, async () => {
+      setTimeout(() => {
         interstitial.load();
-      });
-      interstitial.load();
+      }, 60 * 10 * 1000); // 10 minutos em ms
+    });
+    interstitial.load();
 
-      setInterstitial(interstitial);
-    })();
+    setInterstitial(interstitial);
 
     return () => {
-      if (Interstitial) {
-        Interstitial.removeAllListeners();
-      }
-    }
+      Interstitial?.removeAllListeners();
+    };
   }, []);
 
   return (
