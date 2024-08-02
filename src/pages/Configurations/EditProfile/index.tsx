@@ -49,6 +49,12 @@ const EditProfile: React.FC = () => {
     unavailable: "O nome de usuário não está disponível",
   };
 
+  const [isSendable, setIsSendable] = useState(false);
+
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const { updateUser } = useAuth();
+  const { t } = useTranslate("EditProfile");
+
   const checkNickname = async (nick: string) => {
     if (fetchingNickname) return;
 
@@ -109,12 +115,6 @@ const EditProfile: React.FC = () => {
       setNicknameErrorMessage("");
     }
   };
-
-  const [isSendable, setIsSendable] = useState(false);
-
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const { updateUser } = useAuth();
-  const { t } = useTranslate("EditProfile");
 
   const handleSubmit = async () => {
     const newUser = await api.patch("/users/update", {
@@ -201,7 +201,7 @@ const EditProfile: React.FC = () => {
 
     const oldInfos = {
       name: user.name,
-      nickname: user.nickname,
+      nickname: user?.nickname || "",
       bio: user.bio,
     };
 
