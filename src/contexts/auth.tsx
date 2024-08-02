@@ -133,6 +133,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setInternalError({ has: false, reason: "" });
       })
       .catch((error: AxiosError) => {
+
+        console.log(error.response.data);
+        
+
         if (error.response.status === 500) {
           setInternalError({
             has: true,

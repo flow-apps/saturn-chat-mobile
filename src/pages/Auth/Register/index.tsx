@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@components/Button";
 import Header from "@components/Header";
@@ -25,6 +25,7 @@ import {
   InputsContainer,
   Label,
   Link,
+  SearchText,
   SelectAvatarButton,
   SelectAvatarContainer,
   SelectAvatarSubtitle,
@@ -33,10 +34,17 @@ import {
 import analytics from "@react-native-firebase/analytics";
 import config from "../../../config";
 import { useTranslate } from "@hooks/useTranslate";
+import api from "@services/api";
+import {
+  emailValidation,
+  nicknameValidation,
+  passwordValidation,
+} from "@utils/regex";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImagePicker.ImagePickerAsset>();
   const [name, setName] = useState<string>("");
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
@@ -45,13 +53,59 @@ const Register: React.FC = () => {
   const [passError, setPassError] = useState(false);
   const [passConfirmError, setPassConfirmError] = useState(true);
 
+  const [nicknameTimeout, setNicknameTimeout] = useState<NodeJS.Timeout>();
+  const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
+  const [nicknameError, setNicknameError] = useState(false);
+  const [fetchingNickname, setFetchingNickname] = useState(false);
+
   const { colors } = useTheme();
   const { signUp, loading, registerError, internalError } = useAuth();
   const { t } = useTranslate("Auth.CreateAccount");
 
-  const passwordValidation =
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
-  const emailValidation = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  const nicknameErrors = {
+    400: "O nome de usuário não está conforme os padrões esperados",
+    404: "O nome de usuário não foi fornecido",
+    1000: "Não foi possível buscar o nome de usuário",
+    unavailable: "O nome de usuário não está disponível",
+  };
+
+  const checkNickname = async (nick: string) => {
+    if (fetchingNickname) return;
+
+    if (!nick.trim().length) {
+      setNicknameError(false);
+      setNicknameErrorMessage("");
+    }
+
+    setFetchingNickname(true);
+
+    await api
+      .get(`/users/nickname/check/${nick}`)
+      .then((res) => {
+        const { is_available } = res.data;
+
+        if (is_available) {
+          setNicknameError(false);
+          setNicknameErrorMessage("");
+        } else {
+          setNicknameError(true);
+          setNicknameErrorMessage(nicknameErrors.unavailable);
+        }
+      })
+      .catch((error) => {
+        const status = error.response.status;
+
+        if (status === 404) {
+          setNicknameError(false);
+          setNicknameErrorMessage("");
+          return;
+        }
+
+        setNicknameError(true);
+        setNicknameErrorMessage(nicknameErrors[status]);
+      })
+      .finally(() => setFetchingNickname(false));
+  };
 
   const handleSetEmail = (value: string) => {
     setEmail(value);
@@ -78,6 +132,64 @@ const Register: React.FC = () => {
       setPassError(false);
     }
   };
+
+  const handleSetNickname = (value: string) => {
+    setNickname(value);
+
+    if (!value.length) {
+      setNicknameError(false);
+      setNicknameErrorMessage("");
+
+      return;
+    }
+
+    if (!nicknameValidation.test(value)) {
+      setNicknameError(true);
+      setNicknameErrorMessage(nicknameErrors[400]);
+      if (nicknameTimeout) {
+        clearTimeout(nicknameTimeout);
+        setNicknameTimeout(null);
+      }
+    } else {
+      setNicknameError(false);
+      setNicknameErrorMessage("");
+    }
+  };
+
+  useEffect(() => {
+    const NICKNAME_TIMEOUT = 500;
+
+    if (nicknameError) return;
+
+    if (!nickname.length) {
+      if (nicknameTimeout) {
+        clearTimeout(nicknameTimeout);
+        setNicknameTimeout(null);
+      }
+    }
+
+    if (nicknameTimeout) {
+      clearTimeout(nicknameTimeout);
+
+      const newTimeout = setTimeout(async () => {
+        await checkNickname(nickname);
+        clearTimeout(nicknameTimeout);
+        setNicknameTimeout(null);
+      }, NICKNAME_TIMEOUT);
+
+      setNicknameTimeout(newTimeout);
+    } else {
+      const newTimeout = setTimeout(async () => {
+        await checkNickname(nickname);
+        clearTimeout(nicknameTimeout);
+        setNicknameTimeout(null);
+      }, NICKNAME_TIMEOUT);
+
+      setNicknameTimeout(newTimeout);
+    }
+
+    return () => clearTimeout(nicknameTimeout);
+  }, [nickname]);
 
   const handleSetPassConfirm = (value: string) => {
     setPasswordConfirm(value);
@@ -120,6 +232,7 @@ const Register: React.FC = () => {
 
     data.append("name", name);
     data.append("email", email);
+    data.append("nickname", nickname);
     data.append("password", password);
 
     if (avatar) {
@@ -180,7 +293,10 @@ const Register: React.FC = () => {
               )}
               {registerError && internalError.has && (
                 <ErrorContainer>
-                  <ErrorText>Ocorreu um erro interno no servidor. Tente mais tarde. {internalError.reason}</ErrorText>
+                  <ErrorText>
+                    Ocorreu um erro interno no servidor. Tente mais tarde.{" "}
+                    {internalError.reason}
+                  </ErrorText>
                 </ErrorContainer>
               )}
               <InputsContainer>
@@ -206,6 +322,28 @@ const Register: React.FC = () => {
                   {emailError && (
                     <FieldError>{t("labels.email.error")}</FieldError>
                   )}
+                </FormField>
+                <FormField>
+                  <Label>Nome de usuário</Label>
+                  <Input
+                    onChangeText={handleSetNickname}
+                    value={nickname}
+                    autoCapitalize="none"
+                    textContentType="nickname"
+                    placeholder="pedro_henrique"
+                  />
+                  {fetchingNickname && <SearchText>Buscando...</SearchText>}
+                  {nicknameError && (
+                    <FieldError>{nicknameErrorMessage}</FieldError>
+                  )}
+                  <FieldInfoContainer>
+                    <FieldInfo>
+                      Deve ser um nome único, contendo apenas números e letras.
+                      Apenas os símbolos de hífen (-) e underline (_) estão
+                      disponíveis. Se nenhum nome de usuário for fornecido será
+                      gerado um automaticamente para você.
+                    </FieldInfo>
+                  </FieldInfoContainer>
                 </FormField>
                 <FormField>
                   <Label>{t("labels.password.label")}</Label>
@@ -239,7 +377,12 @@ const Register: React.FC = () => {
               </InputsContainer>
               <Button
                 enabled={
-                  !emailError && !passError && !passConfirmError && !!name
+                  !emailError &&
+                  !passError &&
+                  !passConfirmError &&
+                  !!name &&
+                  !nicknameError &&
+                  !fetchingNickname
                 }
                 title={t("register_button")}
                 onPress={handleSubmit}

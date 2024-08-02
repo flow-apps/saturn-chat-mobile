@@ -76,6 +76,11 @@ export const FieldError = styled.Text`
   color: ${(props) => props.theme.colors.red};
 `;
 
+
+export const SearchText = styled(FieldError)`
+  color: ${props => props.theme.colors.primary};
+`
+
 export const Label = styled.Text`
   font-size: 16px;
   font-family: ${fonts.text};

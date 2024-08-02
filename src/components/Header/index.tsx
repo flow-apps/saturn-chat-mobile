@@ -15,6 +15,7 @@ import { StatusBar } from "expo-status-bar/build/StatusBar";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useAds } from "@contexts/ads";
 import { usePremium } from "@contexts/premium";
+import { useAuth } from "@contexts/auth";
 
 interface HeaderProps {
   title: string;
@@ -34,13 +35,14 @@ const Header = ({
   const { colors } = useTheme();
   const { Interstitial } = useAds();
   const { isPremium } = usePremium();
+  const { signed } = useAuth()
 
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const handleBack = async () => {
     if (!navigation.canGoBack()) return;
 
-    if (Interstitial.loaded && !isPremium) {
+    if (Interstitial.loaded && !isPremium && signed) {
       Interstitial.show().then(() => {
         navigation.goBack();
       });
