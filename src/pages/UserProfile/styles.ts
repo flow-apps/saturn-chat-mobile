@@ -72,6 +72,11 @@ export const UserName = styled.Text`
   margin-bottom: 15px;
 `;
 
+export const NicknameText = styled(UserName)`
+  font-family: ${fonts.quote};
+  font-size: 14px;
+`;
+
 export const BioContainer = styled.View`
   padding: 0px 15px;
 `;

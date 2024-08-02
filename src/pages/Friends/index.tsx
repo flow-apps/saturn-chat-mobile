@@ -13,6 +13,7 @@ import {
   getFriendAvatar,
   getFriendID,
   getFriendName,
+  getFriendNickname,
   getFriendPremium,
 } from "@utils/friends";
 
@@ -98,6 +99,7 @@ const Friends: React.FC = () => {
           renderItem={({ item }) => {
             const friendName = getFriendName(user.id, item);
             const friendId = getFriendID(user.id, item);
+            const friendNickname = getFriendNickname(user.id, item);
 
             return (
               <FriendContainer
@@ -113,6 +115,8 @@ const Friends: React.FC = () => {
                   <FriendAvatar uri={getFriendAvatar(user.id, item)} />
                   <PremiumName
                     name={friendName}
+                    showNickname={true}
+                    nickname={friendNickname}
                     hasPremium={getFriendPremium(user.id, item)}
                     fontFamily="text"
                     nameSize={17}

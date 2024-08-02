@@ -166,6 +166,8 @@ const Register: React.FC = () => {
         clearTimeout(nicknameTimeout);
         setNicknameTimeout(null);
       }
+
+      return;
     }
 
     if (nicknameTimeout) {

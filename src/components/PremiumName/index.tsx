@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Container, EmblemContainer, Name, NameContainer } from "./styles";
+import {
+  Container,
+  EmblemContainer,
+  Name,
+  NameContainer,
+  NicknameContainer,
+  NicknameText,
+} from "./styles";
 import { useTheme } from "styled-components";
 import fonts from "@styles/fonts";
 import EmblemModal from "@components/Modals/EmblemModal";
@@ -15,16 +22,20 @@ export interface PremiumNameProps {
   color?: string;
   align?: "center" | "right";
   hasPremium?: boolean;
+  nickname?: string;
+  showNickname?: boolean;
 }
 
 const PremiumName = ({
   name,
+  nickname,
   emblemSize,
   nameSize,
   color,
   fontFamily,
   align,
   hasPremium,
+  showNickname,
 }: PremiumNameProps) => {
   const { colors } = useTheme();
   const { isPremium } = usePremium();
@@ -77,6 +88,11 @@ const PremiumName = ({
             {name}
           </Name>
         </NameContainer>
+        {showNickname && nickname && (
+          <NicknameContainer>
+            <NicknameText>@{nickname}</NicknameText>
+          </NicknameContainer>
+        )}
       </Container>
     </>
   );

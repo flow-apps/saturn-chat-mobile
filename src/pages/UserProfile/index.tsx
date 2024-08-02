@@ -36,6 +36,7 @@ import {
   BioContent,
   AvatarContainer,
   AddFriendContainer,
+  NicknameText,
 } from "./styles";
 
 import isNull from "lodash/isNull";
@@ -69,7 +70,7 @@ const UserProfile: React.FC = () => {
         const res = await api.get(`/users?user_id=${id}`);
 
         if (res.status === 200) {
-          setUserInfos(res.data);          
+          setUserInfos(res.data);
 
           if (res.data.friend) {
             setFriendInfos(res.data.friend);
@@ -177,6 +178,7 @@ const UserProfile: React.FC = () => {
                   userInfos.id === user.id ? isPremium : userInfos.isPremium
                 }
               />
+              {user.nickname && <NicknameText>@{user.nickname}</NicknameText>}
             </BasicInfos>
             {!isNull(userInfos?.bio) && userInfos?.bio.length && (
               <BioContainer>

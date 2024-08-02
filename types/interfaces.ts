@@ -3,6 +3,7 @@ import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums";
 export interface UserData {
   id: string;
   name: string;
+  nickname?: string;
   bio: string;
   email: string;
   groups: GroupData[];
