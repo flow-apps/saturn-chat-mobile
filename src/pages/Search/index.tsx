@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "@components/Header";
 import Feather from "@expo/vector-icons/Feather";
 
@@ -19,10 +19,12 @@ import {
   GroupDesc,
   ResultsContainer,
   GroupParticipantsText,
+  UserCard,
+  UserAvatar,
 } from "./styles";
 import { useTheme } from "styled-components";
 import { Keyboard, TouchableWithoutFeedback, FlatList } from "react-native";
-import { GroupData } from "@type/interfaces";
+import { GroupData, UserData } from "@type/interfaces";
 import api from "@services/api";
 import { ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/core";
@@ -30,19 +32,27 @@ import analytics from "@react-native-firebase/analytics";
 import { MotiView } from "moti";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
+import HorizontalRadio from "@components/HorizontalRadio";
+import PremiumName from "@components/PremiumName";
+
+type TSearchResult = (
+  | (UserData & { search_type: "user" })
+  | (GroupData & { search_type: "group" })
+)[];
 
 const Search: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [loadedAll, setLoadedAll] = useState(false);
-  const [groups, setGroups] = useState<GroupData[]>([]);
+  const [results, setResults] = useState<TSearchResult>([]);
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<"all" | "groups" | "users">("all");
 
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("Search");
 
-  const setQuerySearch = useCallback((text) => {
+  const setQuerySearch = useCallback((text: string) => {
     setQuery(text);
   }, []);
 
@@ -56,34 +66,40 @@ const Search: React.FC = () => {
     await analytics().logEvent("search", {
       search_term: query,
     });
-    const response = await api.get(`/groups/search?q=${query}`);
-
-    if (response.status === 200) {
-      setGroups(response.data);
-    }
-
-    setLoading(false);
-  }, [query]);
+    await api
+      .get(`/explorer/search/${query}?_page=${page}&_limit=30&filter=${filter}`)
+      .then((response) => {
+        if (response.status === 200) {
+          setResults(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [page, filter, query]);
 
   const fetchMoreGroups = useCallback(async () => {
     setLoading(true);
-    const response = await api.get(
-      `/groups/search?q=${query}&_page=${page}&_limit=20`
-    );
+    const response = await api
+      .get(`/explorer/search/${query}?_page=${page}&_limit=30&filter=${filter}`)
+      .finally(() => {
+        setLoading(false);
+      });
 
     if (response.data.length === 0) {
       setLoadedAll(true);
-      setLoading(false);
       return;
     }
 
     if (page === 0) {
-      setGroups(response.data);
+      setResults(response.data);
     } else {
-      setGroups((old) => [...old, ...response.data]);
+      setResults((old) => [...old, ...response.data]);
     }
-    setLoading(false);
-  }, [page]);
+  }, [page, filter, query]);
 
   const reachEnd = async (distance: number) => {
     if (distance < 1 || loadedAll) return;
@@ -99,6 +115,10 @@ const Search: React.FC = () => {
       id,
     });
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [filter]);
 
   return (
     <>
@@ -117,15 +137,20 @@ const Search: React.FC = () => {
                 selectionColor={colors.secondary}
                 placeholderTextColor={colors.dark_gray}
               />
-              <ButtonSearch onPress={handleSearch}>
-                <Feather name="search" size={25} color={"#fff"} />
-              </ButtonSearch>
             </InputContainer>
+            <HorizontalRadio
+              buttons={[
+                { key: t("filters.all"), value: "all" },
+                { key: t("filters.groups"), value: "groups" },
+                { key: t("filters.users"), value: "users" },
+              ]}
+              currentValue={filter}
+              onChangeValue={(newValue) => setFilter(newValue)}
+            />
           </SearchContainer>
           <ResultsContainer>
             <FlatList
-              removeClippedSubviews
-              data={groups}
+              data={results}
               keyExtractor={(item) => item.id}
               ListEmptyComponent={
                 <NoResultsContainer>
@@ -172,18 +197,33 @@ const Search: React.FC = () => {
                     duration: 500,
                   }}
                 >
-                  <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
-                    <GroupImage uri={item.group_avatar?.url} />
-                    <GroupInfosContainer>
-                      <GroupName numberOfLines={2}>{item.name}</GroupName>
-                      <GroupDesc numberOfLines={3}>
-                        {item.description}
-                      </GroupDesc>
-                      <GroupParticipantsText>
-                        {item?.participantsAmount} {t("participants", { count: item?.participantsAmount })}
-                      </GroupParticipantsText>
-                    </GroupInfosContainer>
-                  </GroupCard>
+                  {item.search_type === "group" ? (
+                    <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
+                      <GroupImage uri={item.group_avatar?.url} />
+                      <GroupInfosContainer>
+                        <GroupName numberOfLines={2}>{item.name}</GroupName>
+                        <GroupDesc numberOfLines={3}>
+                          {item.description}
+                        </GroupDesc>
+                        <GroupParticipantsText>
+                          {item?.participantsAmount}{" "}
+                          {t("participants", {
+                            count: item?.participantsAmount,
+                          })}
+                        </GroupParticipantsText>
+                      </GroupInfosContainer>
+                    </GroupCard>
+                  ) : (
+                    <UserCard>
+                      <UserAvatar uri={item?.avatar?.url} />
+                      <PremiumName
+                        name={item.name}
+                        nickname={item?.nickname}
+                        hasPremium={item.isPremium}
+                        showNickname
+                      />
+                    </UserCard>
+                  )}
                 </MotiView>
               )}
             />

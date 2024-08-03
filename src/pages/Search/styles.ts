@@ -24,6 +24,7 @@ export const InputContainer = styled.View`
   align-items: center;
   justify-content: space-between;
   background-color: ${(props) => props.theme.colors.shape};
+  margin-bottom: 10px;
 `;
 
 export const Input = styled.TextInput`
@@ -104,7 +105,6 @@ export const ResultsContainer = styled.View`
 export const GroupCard = memo(styled.TouchableOpacity`
   flex-direction: row;
   background-color: ${(props) => props.theme.colors.shape};
-  elevation: 2;
   padding: 12px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -116,8 +116,8 @@ export const GroupInfosContainer = styled.View`
 `;
 
 export const GroupImage = styled(CachedImage)`
-  width: 120px;
-  height: 120px;
+  width: 75px;
+  height: 75px;
   border-radius: 10px;
 `;
 
@@ -143,3 +143,13 @@ export const GroupParticipantsText = styled.Text`
   color: ${(props) => props.theme.colors.primary};
   text-align: right;
 `;
+
+export const UserCard = styled(GroupCard)`
+  background: transparent;
+`;
+
+export const UserAvatar = styled(GroupImage)`
+  border-radius: 40px;
+  margin-right: 10px;
+`
+

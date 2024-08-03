@@ -2,6 +2,9 @@
   "compilerOptions": {
     "removeComments": true,
     "baseUrl": "./",
+    "types": [
+      "@types/styled-components-react-native"
+    ],
     "paths": {
       "@components/*": ["./src/components/*"],
       "@configs/*": ["./src/configs/*"],

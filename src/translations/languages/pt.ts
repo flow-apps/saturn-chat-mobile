@@ -279,13 +279,18 @@ export const pt = {
     header_title: "Explorar",
     input_placeholder: "O que procura hoje?",
     title: "Sem resultados no momento",
-    subtitle: "Tente buscar o nome de algum grupo ou tag relacionado a ele",
+    subtitle: "Tente buscar o nome de algum grupo ou tag relacionado a ele ou o nome de usuário",
     loading: {
-      title: "Buscando grupos...",
+      title: "Buscando...",
       subtitle: "Isso pode demorar um pouco",
     },
     participants: "participante",
     participants_plural: "participantes",
+    filters: {
+      all: "All",
+      users: "Users",
+      groups: "Groups"
+    }
   },
   InviteManager: {
     header_title: "Convites e soliticitações",

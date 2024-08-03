@@ -277,13 +277,18 @@ export const en = {
     header_title: "Explorer",
     input_placeholder: "What are you looking for today?",
     title: "No results at the moment",
-    subtitle: "Try searching for the name of a group or tag related to it",
+    subtitle: "Try searching for the name of a group or tag related to it or user nickname",
     loading: {
-      title: "Searching for groups...",
+      title: "Searching...",
       subtitle: "This may take a while",
     },
     participants: "participant",
     participants_plural: "participants",
+    filters: {
+      all: "All",
+      users: "Users",
+      groups: "Groups"
+    }
   },
   InviteManager: {
     header_title: "Invites and requests",
