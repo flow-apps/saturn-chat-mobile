@@ -178,7 +178,9 @@ const UserProfile: React.FC = () => {
                   userInfos.id === user.id ? isPremium : userInfos.isPremium
                 }
               />
-              {userInfos.nickname && <NicknameText>@{userInfos.nickname}</NicknameText>}
+              {userInfos.nickname && (
+                <NicknameText>@{userInfos.nickname}</NicknameText>
+              )}
             </BasicInfos>
             {!isNull(userInfos?.bio) && userInfos?.bio.length && (
               <BioContainer>
@@ -198,12 +200,12 @@ const UserProfile: React.FC = () => {
             )}
             <AddFriendContainer>{renderFriendButton()}</AddFriendContainer>
           </BasicInfosContainer>
-          <GroupsContainer>
-            <GroupsTitle>
-              <Feather name="users" size={25} color={colors.light_heading} />{" "}
-              {t("participating")}
-            </GroupsTitle>
-            {userInfos?.participating?.length > 0 && (
+          {userInfos?.participating.length > 0 && (
+            <GroupsContainer>
+              <GroupsTitle>
+                <Feather name="users" size={25} color={colors.light_heading} />{" "}
+                {t("participating")}
+              </GroupsTitle>
               <Groups>
                 {userInfos?.participating?.map((participant, index) => {
                   const avatar = participant.group.group_avatar;
@@ -224,8 +226,8 @@ const UserProfile: React.FC = () => {
                   );
                 })}
               </Groups>
-            )}
-          </GroupsContainer>
+            </GroupsContainer>
+          )}
         </UserProfileContainer>
       </Container>
     </>

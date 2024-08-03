@@ -118,6 +118,12 @@ const Search: React.FC = () => {
     });
   };
 
+  const handleGoUserProfile = async (id: string) => {
+    navigation.navigate("UserProfile", {
+      id,
+    });
+  };
+
   useEffect(() => {
     handleSearch();
   }, [filter]);
@@ -233,7 +239,7 @@ const Search: React.FC = () => {
                       </GroupInfosContainer>
                     </GroupCard>
                   ) : (
-                    <UserCard>
+                    <UserCard onPress={() => handleGoUserProfile(item.id)}>
                       <UserAvatar uri={item?.avatar?.url} />
                       <PremiumName
                         name={item.name}
