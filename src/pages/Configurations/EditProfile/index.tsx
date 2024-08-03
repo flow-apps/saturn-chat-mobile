@@ -117,8 +117,7 @@ const EditProfile: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(nickname);
-    
+    setLoading(true);
     await api
       .patch("/users/update", {
         name,
@@ -136,6 +135,11 @@ const EditProfile: React.FC = () => {
       })
       .catch((error) => {
         console.log(error.response.data);
+        SimpleToast.show(
+          "Não foi possível atualizar o usuário",
+          SimpleToast.SHORT
+        );
+        setLoading(false);
       });
   };
 
