@@ -13,7 +13,6 @@ export const SearchContainer = styled.View`
   width: 100%;
   justify-content: center;
   padding: 10px;
-  margin-top: 20px;
   background-color: ${(props) => props.theme.colors.background};
 `;
 
@@ -104,9 +103,9 @@ export const ResultsContainer = styled.View`
 
 export const GroupCard = memo(styled.TouchableOpacity`
   flex-direction: row;
-  background-color: ${(props) => props.theme.colors.shape};
+  background-color: ${(props) => props.theme.colors.light_gray};
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 20px;
   margin-bottom: 20px;
 `);
 

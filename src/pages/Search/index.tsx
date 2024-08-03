@@ -48,6 +48,8 @@ const Search: React.FC = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "groups" | "users">("all");
 
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>(null);
+
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("Search");
@@ -120,38 +122,55 @@ const Search: React.FC = () => {
     handleSearch();
   }, [filter]);
 
+  useEffect(() => {
+    if (!query.length || loading) return;
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
+      handleSearch();
+      setSearchTimeout(null);
+    }, 650);
+
+    setSearchTimeout(newTimeout);
+  }, [query]);
+
   return (
     <>
       <Header title={t("header_title")} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
-          <SearchContainer>
-            <InputContainer>
-              <Input
-                value={query}
-                onChangeText={setQuerySearch}
-                placeholder={t("input_placeholder")}
-                textContentType="name"
-                returnKeyType="search"
-                onEndEditing={handleSearch}
-                selectionColor={colors.secondary}
-                placeholderTextColor={colors.dark_gray}
-              />
-            </InputContainer>
-            <HorizontalRadio
-              buttons={[
-                { key: t("filters.all"), value: "all" },
-                { key: t("filters.groups"), value: "groups" },
-                { key: t("filters.users"), value: "users" },
-              ]}
-              currentValue={filter}
-              onChangeValue={(newValue) => setFilter(newValue)}
-            />
-          </SearchContainer>
           <ResultsContainer>
             <FlatList
               data={results}
               keyExtractor={(item) => item.id}
+              ListHeaderComponent={
+                <SearchContainer>
+                  <InputContainer>
+                    <Input
+                      value={query}
+                      onChangeText={setQuerySearch}
+                      placeholder={t("input_placeholder")}
+                      textContentType="name"
+                      returnKeyType="search"
+                      onEndEditing={handleSearch}
+                      selectionColor={colors.secondary}
+                      placeholderTextColor={colors.dark_gray}
+                    />
+                  </InputContainer>
+                  <HorizontalRadio
+                    buttons={[
+                      { key: t("filters.all"), value: "all" },
+                      { key: t("filters.groups"), value: "groups" },
+                      { key: t("filters.users"), value: "users" },
+                    ]}
+                    currentValue={filter}
+                    onChangeValue={(newValue) => setFilter(newValue)}
+                  />
+                </SearchContainer>
+              }
               ListEmptyComponent={
                 <NoResultsContainer>
                   <NoResultAnimation
