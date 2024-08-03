@@ -87,12 +87,12 @@ const PremiumName = ({
           >
             {name}
           </Name>
+          {showNickname && nickname && (
+            <NicknameContainer>
+              <NicknameText>@{nickname}</NicknameText>
+            </NicknameContainer>
+          )}
         </NameContainer>
-        {showNickname && nickname && (
-          <NicknameContainer>
-            <NicknameText>@{nickname}</NicknameText>
-          </NicknameContainer>
-        )}
       </Container>
     </>
   );

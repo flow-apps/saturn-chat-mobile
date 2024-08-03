@@ -117,19 +117,26 @@ const EditProfile: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    const newUser = await api.patch("/users/update", {
-      name,
-      nickname,
-      bio,
-    });
-
-    if (newUser.status === 200) {
-      await updateUser({
-        user: newUser.data.user,
+    console.log(nickname);
+    
+    await api
+      .patch("/users/update", {
+        name,
+        nickname,
+        bio,
+      })
+      .then(async (res) => {
+        if (res.status === 200) {
+          await updateUser({
+            user: res.data.user,
+          });
+          SimpleToast.show(t("toasts.updated"), SimpleToast.SHORT);
+          navigation.goBack();
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data);
       });
-      SimpleToast.show(t("toasts.updated"), SimpleToast.SHORT);
-      navigation.goBack();
-    }
   };
 
   const handleSwitchAvatar = async () => {
@@ -195,7 +202,7 @@ const EditProfile: React.FC = () => {
   };
 
   const handleCheckFields = () => {
-    if (!name.length || !nickname.length) {
+    if (!name.length || !nickname || !nickname.length) {
       return setIsSendable(false);
     }
 
@@ -207,7 +214,7 @@ const EditProfile: React.FC = () => {
 
     const newInfos = {
       name,
-      nickname,
+      nickname: nickname || "",
       bio,
     };
 
@@ -234,7 +241,7 @@ const EditProfile: React.FC = () => {
 
     if (nicknameError) return;
 
-    if (!nickname.length) {
+    if (!nickname || !nickname.length) {
       if (nicknameTimeout) {
         clearTimeout(nicknameTimeout);
         setNicknameTimeout(null);

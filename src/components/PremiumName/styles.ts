@@ -24,7 +24,9 @@ export const Name = styled.Text<PremiumNameProps>`
 
 export const NicknameText = styled(Name)`
   color: ${(props) => props.theme.colors.light_heading};
+  font-family: ${fonts.quote};
   font-size: 14px;
+  margin-top: -5px;
 `;
 
 export const EmblemContainer = styled.TouchableOpacity<EmblemProps>`
