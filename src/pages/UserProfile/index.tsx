@@ -178,7 +178,7 @@ const UserProfile: React.FC = () => {
                   userInfos.id === user.id ? isPremium : userInfos.isPremium
                 }
               />
-              {user.nickname && <NicknameText>@{user.nickname}</NicknameText>}
+              {userInfos.nickname && <NicknameText>@{userInfos.nickname}</NicknameText>}
             </BasicInfos>
             {!isNull(userInfos?.bio) && userInfos?.bio.length && (
               <BioContainer>
