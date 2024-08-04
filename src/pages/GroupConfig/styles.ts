@@ -23,28 +23,32 @@ export const Container = styled.ScrollView`
 export const OptionsContainer = styled.View`
   width: 100%;
   margin-top: -5px;
+  flex: 1;
 `;
 
 export const SectionTitle = styled.Text<SectionTitleProps>`
   font-size: 18px;
   font-family: ${fonts.heading};
   margin: 15px 0;
-  margin-left: 7px;
   color: ${(props) =>
     props.color ? props.color : props.theme.colors.dark_heading};
 `;
 
-export const OptionContainer = styled.TouchableOpacity<OptionContainerProps>`
-  display: ${(props) => (!props.hidden ? "flex" : "none")};
+export const OptionContainer = styled.View<OptionContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 5px;
+  flex: 1;
+  margin-bottom: 5px;
+`;
+
+export const OptionActionContainer = styled.View`
 `;
 
 export const OptionText = styled.Text<OptionTextProps>`
-  font-size: 18px;
+  font-size: 16px;
   font-family: ${fonts.text};
-  align-items: center;
-  color: ${(props) => (props.color || props.theme.colors.black)};
+  color: ${(props) => props.color || props.theme.colors.black};
+  flex: 1;
 `;

@@ -155,8 +155,7 @@ export const pt = {
         password: {
           label: "Digite uma senha",
           error: "A senha não segue os padrões segurança",
-          info:
-            "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
+          info: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
         },
         password_again: {
           label: "Confirme sua senha",
@@ -279,7 +278,8 @@ export const pt = {
     header_title: "Explorar",
     input_placeholder: "O que procura hoje?",
     title: "Sem resultados no momento",
-    subtitle: "Tente buscar o nome de algum grupo ou tag relacionado a ele ou o nome de usuário",
+    subtitle:
+      "Tente buscar o nome de algum grupo ou tag relacionado a ele ou o nome de usuário",
     loading: {
       title: "Buscando...",
       subtitle: "Isso pode demorar um pouco",
@@ -289,8 +289,8 @@ export const pt = {
     filters: {
       all: "Todos",
       users: "Usuários",
-      groups: "Grupos"
-    }
+      groups: "Grupos",
+    },
   },
   InviteManager: {
     header_title: "Convites e soliticitações",
@@ -384,19 +384,21 @@ export const pt = {
     alerts: {
       cancel_plan: {
         title: "❗ Tem certeza disso?",
-        content: "Ao cancelar sua assinatura você perde TODOS os beneficios concedidos pelo plano. Além disso, você NÃO RECEBERÁ O REEMBOLSO DO MÊS JÁ PAGO (mas poderá utilizar os benefícios até a data de renovação).",
+        content:
+          "Ao cancelar sua assinatura você perde TODOS os beneficios concedidos pelo plano. Além disso, você NÃO RECEBERÁ O REEMBOLSO DO MÊS JÁ PAGO (mas poderá utilizar os benefícios até a data de renovação).",
         ok_text: "Manter plano",
-        cancel_text: "Cancelar plano"
-      }
+        cancel_text: "Cancelar plano",
+      },
     },
     title: "Gerencie seu plano Star",
-    subtitle: "Aqui você vê detalhes sobre seu plano como a data de renovação do plano, o status de pagamento. Você também pode cancelar sua assinatura a qualquer momento por aqui.",
+    subtitle:
+      "Aqui você vê detalhes sobre seu plano como a data de renovação do plano, o status de pagamento. Você também pode cancelar sua assinatura a qualquer momento por aqui.",
     plan_labels: {
       plan: "Plano da assinatura:",
       status: "Status da assinatura",
       start: "Data da aquisição",
       expire: "Data de renovação",
-      resume: "Data de retorno"
+      resume: "Data de retorno",
     },
     payments: {
       0: "Pendente",
@@ -407,9 +409,9 @@ export const pt = {
     periods: {
       0: "Mensal",
       1: "Trimestral",
-      2: "Anual"
+      2: "Anual",
     },
-    cancel_text: "Cancelar assinatura" 
+    cancel_text: "Cancelar assinatura",
   },
   ChoosePlan: {
     header_title: "Escolha seu plano",
@@ -472,6 +474,12 @@ export const pt = {
         invite_users: "Convidar usuários",
         edit_group: "Editar grupo",
         details: "Ver detalhes",
+        notify_new_participants:
+          "Avisar ao dono do grupo quando novos participantes entrarem no grupo",
+        accepting_new_users: "Aceitar entrada de novos participantes",
+        max_participants: "Quantidade máxima de participantes",
+        minimum_role_for_send_message:
+          "Cargo mínimo para enviar mensagens no grupo (cargos acima do selecionado não poderão enviar mensagens no grupo)",
       },
       danger_zone: {
         title: "Zona de perigo",
@@ -507,8 +515,8 @@ export const pt = {
     cancel_text: "Não, mudei de ideia",
     toasts: {
       success: "Usuário punido com sucesso!",
-      error: "Não foi possível punir o usuário. Tente novamente."
-    }
+      error: "Não foi possível punir o usuário. Tente novamente.",
+    },
   },
   ChangeRole: {
     header_title: "Alterar cargo",
@@ -518,20 +526,20 @@ export const pt = {
     roles: {
       participant: {
         name: "Participante",
-        desc: "Este cargo não dá poderes especiais ao participante."
+        desc: "Este cargo não dá poderes especiais ao participante.",
       },
       mod: {
         name: "Moderador",
-        desc: "Os moderadores são os que cuidam da segurança do grupo."
+        desc: "Os moderadores são os que cuidam da segurança do grupo.",
       },
       manager: {
         name: "Gerente",
-        desc: "Os gerentes ajudam a gerenciar o grupo e a trazer novos usuários."
+        desc: "Os gerentes ajudam a gerenciar o grupo e a trazer novos usuários.",
       },
       admin: {
         name: "Administrador",
-        desc: "Permite que o participante tenha os mesmos poderes do dono do grupo."
-      }
+        desc: "Permite que o participante tenha os mesmos poderes do dono do grupo.",
+      },
     },
     permissions: {
       create_invites: "Criar convites para convidar novos usuários",
@@ -543,33 +551,37 @@ export const pt = {
     },
     toasts: {
       success: "Cargo do usuário alterado com sucesso",
-      error: "Erro ao alterar cargo. Tente novamente."
-    }
+      error: "Erro ao alterar cargo. Tente novamente.",
+    },
   },
   FriendsManager: {
     alerts: {
       unfriend: {
         title: "⚠️ Deseja desfazer a amizade?",
-        content: "Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.",
-        ok_text: "Desfazer amizade"
-      }
+        content:
+          "Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.",
+        ok_text: "Desfazer amizade",
+      },
     },
-    header_title: "Gerenciar amigos"
+    header_title: "Gerenciar amigos",
   },
   InviteUsers: {
     header_title: "Convidar",
-    empty_title: "Não há amigos para convidar. Tente compartilhar um convite através de links.",
+    empty_title:
+      "Não há amigos para convidar. Tente compartilhar um convite através de links.",
     title: "Convite do grupo",
-    subtitle: "Crie e gerencie todos os convites do grupo através do nosso gerenciador de convites",
+    subtitle:
+      "Crie e gerencie todos os convites do grupo através do nosso gerenciador de convites",
     new_invite_text: "Gerenciar convites",
     friends_invite_title: "Convide seus amigos",
-    friends_invite_subtitle: "Somente amigos que não estão no grupo aparecem aqui. Eles precisarão aceitar o convite para entrar.",
+    friends_invite_subtitle:
+      "Somente amigos que não estão no grupo aparecem aqui. Eles precisarão aceitar o convite para entrar.",
     invite: "Convidar",
     invited: "Convidado",
     toasts: {
       success: "Convite enviado com sucesso!",
-      error: "Não foi possível convidar seu amigo!"
-    }
+      error: "Não foi possível convidar seu amigo!",
+    },
   },
   NewInvites: {
     header_title: "Criar convites",
@@ -594,16 +606,16 @@ export const pt = {
       success: "Grupo editado com sucesso!",
       avatar_permission: "Precisamos da permissão para acessar suas fotos!",
       updating: "Atualizando avatar...",
-      updated: "Avatar atualizado"
+      updated: "Avatar atualizado",
     },
     header_title: "Editar grupo",
     switch_avatar: "Trocar avatar",
     inputs: {
       name: "Nome",
       desc: "Descrição",
-      public: "Tornar público"
+      public: "Tornar público",
     },
-    done: "Concluir"
+    done: "Concluir",
   },
   GroupInfos: {
     join: "Participar",
@@ -612,9 +624,10 @@ export const pt = {
     participants_plural: "Participantes",
     tags: "Tags do grupo",
     desc: "Descrição",
-    accepting_participants_text: "Este grupo atingiu o número máximo de participantes",
+    accepting_participants_text:
+      "Este grupo atingiu o número máximo de participantes",
     toasts: {
-      error: "Não foi possível entrar no grupo!"
-    }
-  }
+      error: "Não foi possível entrar no grupo!",
+    },
+  },
 };

@@ -17,6 +17,12 @@ export const rolesForDeleteGroup = [
   ParticipantRoles.OWNER
 ]
 
+export const rolesForEditConfigs = [
+  ParticipantRoles.ADMIN,
+  ParticipantRoles.MANAGER,
+  ParticipantRoles.OWNER
+]
+
 export const rolesForDeleteMessage = [
   ParticipantRoles.ADMIN,
   ParticipantRoles.OWNER,

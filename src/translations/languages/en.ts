@@ -277,7 +277,8 @@ export const en = {
     header_title: "Explorer",
     input_placeholder: "What are you looking for today?",
     title: "No results at the moment",
-    subtitle: "Try searching for the name of a group or tag related to it or user nickname",
+    subtitle:
+      "Try searching for the name of a group or tag related to it or user nickname",
     loading: {
       title: "Searching...",
       subtitle: "This may take a while",
@@ -287,8 +288,8 @@ export const en = {
     filters: {
       all: "All",
       users: "Users",
-      groups: "Groups"
-    }
+      groups: "Groups",
+    },
   },
   InviteManager: {
     header_title: "Invites and requests",
@@ -380,32 +381,34 @@ export const en = {
     alerts: {
       cancel_plan: {
         title: "❗ Are you sure about this?",
-        content: "When you cancel your subscription you lose ALL benefits granted by the plan. Furthermore, you WILL NOT RECEIVE A REFUND FOR THE MONTH ALREADY PAID (but you will be able to use the benefits until the renewal date).",
+        content:
+          "When you cancel your subscription you lose ALL benefits granted by the plan. Furthermore, you WILL NOT RECEIVE A REFUND FOR THE MONTH ALREADY PAID (but you will be able to use the benefits until the renewal date).",
         ok_text: "Keep plan",
-        cancel_text: "Cancel plan"
-      }
+        cancel_text: "Cancel plan",
+      },
     },
     title: "Manage your Star plan",
-    subtitle: "Here you see details about your plan such as plan renewal date, payment status. You can also cancel your subscription at any time here.",
+    subtitle:
+      "Here you see details about your plan such as plan renewal date, payment status. You can also cancel your subscription at any time here.",
     plan_labels: {
       plan: "Subscription plan:",
       status: "Subscription status",
       start: "Acquisition date",
       expire: "Renewal date",
-      resume: "Resume date"
+      resume: "Resume date",
     },
     payments: {
       0: "Pendent",
       1: "Paid",
       2: "Test",
-      3: "Updated plan"
+      3: "Updated plan",
     },
     periods: {
       0: "Monthly",
       1: "Quartely",
-      2: "Yearly"
+      2: "Yearly",
     },
-    cancel_text: "Cancel subscription" 
+    cancel_text: "Cancel subscription",
   },
   ChoosePlan: {
     header_title: "Choose your plan",
@@ -468,6 +471,12 @@ export const en = {
         invite_users: "Invite users",
         edit_group: "Edit group",
         details: "View details",
+        notify_new_participants:
+          "Notify the group owner when new participants join the group",
+        accepting_new_users: "Accept join of new participants",
+        max_participants: "Maximum number of participants",
+        minimum_role_for_send_message:
+          "Minimum role to send messages in the group (role above those selected will not be able to send messages in the group)",
       },
       danger_zone: {
         title: "Danger zone",
@@ -612,7 +621,8 @@ export const en = {
     participants_plural: "Participants",
     tags: "Group tags",
     desc: "Description",
-    accepting_participants_text: "This group has reached the maximum number of participants",
+    accepting_participants_text:
+      "This group has reached the maximum number of participants",
     toasts: {
       error: "Unable to join group!",
     },
