@@ -103,7 +103,7 @@ export const ResultsContainer = styled.View`
 
 export const GroupCard = memo(styled.TouchableOpacity`
   flex-direction: row;
-  background-color: ${(props) => props.theme.colors.light_gray};
+  background-color: ${(props) => props.theme.colors.shape};
   padding: 12px;
   border-radius: 20px;
   margin-bottom: 20px;

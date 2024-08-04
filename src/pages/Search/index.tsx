@@ -133,12 +133,13 @@ const Search: React.FC = () => {
 
     if (searchTimeout) {
       clearTimeout(searchTimeout);
+      setSearchTimeout(null);
     }
 
     const newTimeout = setTimeout(() => {
       handleSearch();
       setSearchTimeout(null);
-    }, 650);
+    }, 1000);
 
     setSearchTimeout(newTimeout);
   }, [query]);
@@ -148,35 +149,32 @@ const Search: React.FC = () => {
       <Header title={t("header_title")} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
+          <SearchContainer>
+            <InputContainer>
+              <Input
+                value={query}
+                onChangeText={setQuerySearch}
+                placeholder={t("input_placeholder")}
+                textContentType="name"
+                returnKeyType="search"
+                selectionColor={colors.secondary}
+                placeholderTextColor={colors.dark_gray}
+              />
+            </InputContainer>
+            <HorizontalRadio
+              buttons={[
+                { key: t("filters.all"), value: "all" },
+                { key: t("filters.groups"), value: "groups" },
+                { key: t("filters.users"), value: "users" },
+              ]}
+              currentValue={filter}
+              onChangeValue={(newValue) => setFilter(newValue)}
+            />
+          </SearchContainer>
           <ResultsContainer>
             <FlatList
               data={results}
               keyExtractor={(item) => item.id}
-              ListHeaderComponent={
-                <SearchContainer>
-                  <InputContainer>
-                    <Input
-                      value={query}
-                      onChangeText={setQuerySearch}
-                      placeholder={t("input_placeholder")}
-                      textContentType="name"
-                      returnKeyType="search"
-                      onEndEditing={handleSearch}
-                      selectionColor={colors.secondary}
-                      placeholderTextColor={colors.dark_gray}
-                    />
-                  </InputContainer>
-                  <HorizontalRadio
-                    buttons={[
-                      { key: t("filters.all"), value: "all" },
-                      { key: t("filters.groups"), value: "groups" },
-                      { key: t("filters.users"), value: "users" },
-                    ]}
-                    currentValue={filter}
-                    onChangeValue={(newValue) => setFilter(newValue)}
-                  />
-                </SearchContainer>
-              }
               ListEmptyComponent={
                 <NoResultsContainer>
                   <NoResultAnimation

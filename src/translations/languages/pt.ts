@@ -287,9 +287,9 @@ export const pt = {
     participants: "participante",
     participants_plural: "participantes",
     filters: {
-      all: "All",
-      users: "Users",
-      groups: "Groups"
+      all: "Todos",
+      users: "Usuários",
+      groups: "Grupos"
     }
   },
   InviteManager: {

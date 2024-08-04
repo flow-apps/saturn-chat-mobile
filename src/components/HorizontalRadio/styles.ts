@@ -10,13 +10,14 @@ export const ButtonsContainer = styled.View`
 `;
 
 export const ButtonContainer = styled.TouchableOpacity`
-  padding: 10px 25px;
+  padding: 10px 35px;
   background-color: ${props => props.theme.colors.shape};
-  color: ${(props) => props.theme.colors.black};
   margin-right: 10px;
   border-radius: 25px;
   border: 1.5px solid ${props => props.theme.colors.shape};
-  font-family: ${fonts.text};
-`
+  `
 
-export const ButtonText = styled.Text``;
+export const ButtonText = styled.Text`
+  color: ${(props) => props.theme.colors.black};
+  font-family: ${fonts.text};
+`;
