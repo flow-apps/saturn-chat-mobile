@@ -28,6 +28,7 @@ import { useTranslate } from "@hooks/useTranslate";
 import { ParticipantRoles } from "@type/enums";
 import Switcher from "@components/Switcher";
 import { Feather } from "@expo/vector-icons";
+import InputNumber from "@components/InputNumber";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -271,11 +272,9 @@ const GroupConfig: React.FC = () => {
                   
                 )
               } */}
-              {/* {
-                setting.input_type === "number" && (
-                  
-                )
-              } */}
+              {setting.input_type === "number" && (
+                <InputNumber currentValue={0} onChangeValue={() => {}} />
+              )}
             </OptionContainer>
           ))}
         </OptionsContainer>
