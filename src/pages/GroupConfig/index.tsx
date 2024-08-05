@@ -27,17 +27,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 import { ParticipantRoles } from "@type/enums";
 import Switcher from "@components/Switcher";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import { FAB } from "react-native-paper";
 
 import InputNumber from "@components/InputNumber";
 import RNPickerSelect from "react-native-picker-select";
+import SimpleToast from "react-native-simple-toast";
 import _ from "lodash";
-
-const isArrayEqual = (x: any[], y: any[]) => {
-  return _.size(x) === _.size(y) && _.isEmpty(_.xorWith(x, y, _.isEqual));
-};
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -146,6 +143,37 @@ const GroupConfig: React.FC = () => {
     setGroupSettings(updatedSettings);
   };
 
+  const handleSubmitGroupSettings = async () => {
+    if (!hasUpdateSettings) return;
+
+    setLoading(true);
+
+    await api
+      .patch(`/group/settings/${id}`, { settings: groupSettings })
+      .then((res) => {
+        if (res.status === 200) {
+          setGroupSettings(res.data);
+          setHasUpdateSettings(false);
+
+          SimpleToast.show(
+            "Configurações alteradas com sucesso",
+            SimpleToast.SHORT
+          );
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+
+        SimpleToast.show(
+          "Não foi possível salvar as alterações",
+          SimpleToast.SHORT
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   if (loading) return <Loading />;
 
   return (
@@ -239,10 +267,15 @@ const GroupConfig: React.FC = () => {
               )}
               {setting.input_type === "participant_role" && (
                 <RNPickerSelect
-                  onValueChange={(value) =>
-                    updateSetting(setting.setting_name, value)
-                  }
+                  onValueChange={(value) => {
+                    if (!value) {
+                      setHasUpdateSettings(false);
+                      return;
+                    }
+                    updateSetting(setting.setting_name, value);
+                  }}
                   value={setting.setting_value}
+                  placeholder={{ label: "Selecione um cargo", value: undefined }}
                   items={[
                     {
                       label: t(`options.general.roles.participant`),
@@ -312,7 +345,7 @@ const GroupConfig: React.FC = () => {
             bottom: 20,
             backgroundColor: colors.primary,
           }}
-          onPress={() => console.log("Pressed")}
+          onPress={handleSubmitGroupSettings}
         />
       )}
     </>
