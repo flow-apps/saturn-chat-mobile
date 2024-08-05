@@ -40,6 +40,7 @@ export interface GroupData {
     name: string;
     url: string;
   };
+  group_settings: ISetting[];
   owner_id: string;
   owner: UserData;
   participantsAmount?: number;

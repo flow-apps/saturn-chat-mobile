@@ -302,9 +302,9 @@ const GroupConfig: React.FC = () => {
             </OptionContainer>
           ))}
         </OptionsContainer>
-        <OptionsContainer>
+        {/* <OptionsContainer>
           <SectionTitle>Configurações do participante</SectionTitle>
-        </OptionsContainer>
+        </OptionsContainer> */}
         {rolesForDeleteGroup.includes(participant.role) &&
           group.type === "GROUP" && (
             <>

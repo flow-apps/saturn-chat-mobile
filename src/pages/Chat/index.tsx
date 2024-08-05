@@ -69,9 +69,12 @@ import { useChat } from "@contexts/chat";
 
 import FlashList from "@shopify/flash-list/dist/FlashList";
 import { OneSignal } from "react-native-onesignal";
-import { TextInputRef, File } from "./types";
+import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
 import Banner from "@components/Ads/Banner";
+import { ParticipantRoles } from "@type/enums";
+import _ from "lodash";
+import { getSettingValue } from "@utils/settings";
 
 const recordService = new RecordService();
 const MESSAGES_LIMIT_REQUEST = 20;
@@ -118,6 +121,9 @@ const Chat: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(false);
   const [fetchedAll, setFetchedAll] = useState(false);
+
+  const [canSendMessage, setCanSendMessage] = useState(true);
+
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   const { socket } = useWebsocket();
@@ -329,7 +335,7 @@ const Chat: React.FC = () => {
   };
 
   const fetchOldMessages = useCallback(async () => {
-    if (fetching || fetchedAll) return;    
+    if (fetching || fetchedAll) return;
 
     setFetching(true);
     const { data } = await api.get(
@@ -534,42 +540,6 @@ const Chat: React.FC = () => {
   const disableIsSelectedFile = () => setIsSelectedFile(false);
   const disableAudioPermission = () => setAudioPermission(false);
 
-  useEffect(() => {
-    if (appState === "active") {
-      handleJoinRoom(id);
-      configureSocketListeners();
-    }
-
-    return () => {
-      if (socket) {
-        socket.emit("leave_chat");
-        socket.offAny();
-        handleTypingTimeout();
-      }
-    };
-  }, [appState, socket]);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-
-      if (Platform.OS === "android") {
-        OneSignal.Notifications.removeGroupedNotifications(id);
-      }
-
-      if (!group.id) {
-        const groupRes = await api.get(`/group/${id}`);
-
-        if (groupRes.status === 200) {
-          setGroup(groupRes.data);
-        }
-      }
-
-      setPage(0);
-      setLoading(false);
-    })();
-  }, []);
-
   useLayoutEffect(() => {
     (async () => {
       setLoading(true);
@@ -591,6 +561,67 @@ const Chat: React.FC = () => {
       fetchOldMessages();
     }, [appState])
   );
+
+  useEffect(() => {
+    if (appState === "active") {
+      handleJoinRoom(id);
+      configureSocketListeners();
+    }
+
+    return () => {
+      if (socket) {
+        socket.emit("leave_chat");
+        socket.offAny();
+        handleTypingTimeout();
+      }
+    };
+  }, [appState, socket]);
+
+  useEffect(() => {
+    if (!participant || !group) return;
+
+    if (participant.role === ParticipantRoles.OWNER) {
+      setCanSendMessage(true);
+      return;
+    }
+
+    const participantRoleIndex = _.findIndex(
+      ordernedRolesArray,
+      participant.role
+    );
+    const minimumRoleSendMessageIndex = _.findIndex(
+      ordernedRolesArray,
+      getSettingValue(group.group_settings, "minimum_role_for_send_message")
+    );
+    const isMinimumRole = participantRoleIndex >= minimumRoleSendMessageIndex;
+
+    if (!isMinimumRole) {
+      setCanSendMessage(false);
+    } else {
+      setCanSendMessage(true);
+    }
+  }, [participant, group]);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+
+      if (Platform.OS === "android") {
+        OneSignal.Notifications.removeGroupedNotifications(id);
+      }
+
+      if (!group.id) {
+        const groupRes = await api.get(`/group/${id}`);
+
+        if (groupRes.status === 200) {
+          setGroup(groupRes.data);
+        }
+      }
+
+      setPage(0);
+      setLoading(false);
+    })();
+  }, []);
 
   if (loading || !socket || !connected) return <Loading />;
 
