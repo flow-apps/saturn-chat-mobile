@@ -21,13 +21,11 @@ const InputNumber: React.FC<IInputNumberProps> = ({
   onChangeValue,
   currentValue,
   infinity,
-  min,
+  min = 0,
   max,
 }) => {
   const add = () => {
-
-    if (infinity)
-      return;
+    if (infinity) return;
 
     if (max && currentValue + 1 >= max) {
       onChangeValue(currentValue + 1);
@@ -36,8 +34,7 @@ const InputNumber: React.FC<IInputNumberProps> = ({
     }
   };
   const sub = () => {
-    if (infinity)
-      return;
+    if (infinity) return;
 
     if (min && currentValue - 1 >= min) {
       onChangeValue(currentValue - 1);
@@ -46,11 +43,11 @@ const InputNumber: React.FC<IInputNumberProps> = ({
     }
   };
 
-  const { colors } = useTheme()
+  const { colors } = useTheme();
 
   return (
     <Container>
-      <ActionButtonContainer onPress={sub}>
+      <ActionButtonContainer onPress={sub} onLongPress={add}>
         <Feather name="minus" size={25} color={colors.primary} />
       </ActionButtonContainer>
       {infinity ? (
@@ -60,11 +57,11 @@ const InputNumber: React.FC<IInputNumberProps> = ({
       ) : (
         <InputField
           keyboardType="number-pad"
-          onChangeText={(text: string) => onChangeValue(Number(text))}
+          editable={false}
           value={String(currentValue)}
         />
       )}
-      <ActionButtonContainer onPress={add}>
+      <ActionButtonContainer onPress={add} onLongPress={add}>
         <Feather name="plus" size={25} color={colors.primary} />
       </ActionButtonContainer>
     </Container>

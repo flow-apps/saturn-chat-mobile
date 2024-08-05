@@ -51,4 +51,5 @@ export const OptionText = styled.Text<OptionTextProps>`
   font-family: ${fonts.text};
   color: ${(props) => props.color || props.theme.colors.black};
   flex: 1;
+  width: 100%;
 `;

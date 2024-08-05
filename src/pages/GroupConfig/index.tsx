@@ -27,8 +27,17 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 import { ParticipantRoles } from "@type/enums";
 import Switcher from "@components/Switcher";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { FAB } from "react-native-paper";
+
 import InputNumber from "@components/InputNumber";
+import RNPickerSelect from "react-native-picker-select";
+import _ from "lodash";
+
+const isArrayEqual = (x: any[], y: any[]) => {
+  return _.size(x) === _.size(y) && _.isEmpty(_.xorWith(x, y, _.isEqual));
+};
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -37,9 +46,9 @@ const GroupConfig: React.FC = () => {
   );
   const [groupSettings, setGroupSettings] = useState<ISetting[]>();
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState(true);
   const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
   const [showExitGroupAlert, setShowExitGroup] = useState(false);
+  const [hasUpdateSettings, setHasUpdateSettings] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -87,10 +96,6 @@ const GroupConfig: React.FC = () => {
     })();
   }, [participant]);
 
-  const handleSetNotifications = () => {
-    setNotifications(!notifications);
-  };
-
   const handleGoGroupInfos = () => {
     navigation.navigate("GroupInfos", { id });
   };
@@ -125,6 +130,22 @@ const GroupConfig: React.FC = () => {
     }
   };
 
+  const updateSetting = (settingName: string, newValue: any) => {
+    const updatedSettings = groupSettings.map((setting) => {
+      if (setting.setting_name === settingName) {
+        setting.setting_value = String(newValue);
+      }
+
+      return setting;
+    });
+
+    if (!hasUpdateSettings) {
+      setHasUpdateSettings(true);
+    }
+
+    setGroupSettings(updatedSettings);
+  };
+
   if (loading) return <Loading />;
 
   return (
@@ -157,71 +178,6 @@ const GroupConfig: React.FC = () => {
         <SectionTitle>{t("options.general.title")}</SectionTitle>
 
         <OptionsContainer>
-          {/* {group.type === "GROUP" && (
-            <>
-              <SectionTitle>{t("options.general.title")}</SectionTitle>
-              <OptionContainer onPress={handleGoParticipants}>
-                <OptionText color={colors.secondary}>
-                  <Feather name="users" size={20} />{" "}
-                  {t("options.general.participants")}
-                </OptionText>
-              </OptionContainer>
-              <OptionContainer
-                hidden={!rolesForInvite.includes(participant.role)}
-                onPress={handleGoInviteUsers}
-              >
-                <OptionText color={colors.primary}>
-                  <Feather name="user-plus" size={20} />{" "}
-                  {t("options.general.invite_users")}
-                </OptionText>
-              </OptionContainer>
-              <OptionContainer
-                hidden={!rolesForEditGroup.includes(participant.role)}
-                onPress={handleGoEditGroup}
-              >
-                <OptionText>
-                  <Feather name="edit-3" size={20} />{" "}
-                  {t("options.general.edit_group")}
-                </OptionText>
-              </OptionContainer>
-              <OptionContainer onPress={handleGoGroupInfos}>
-                <OptionText>
-                  <Feather name="file" size={20} />{" "}
-                  {t("options.general.details")}
-                </OptionText>
-              </OptionContainer>
-            </>
-          )}
-          {rolesForDeleteGroup.includes(participant.role) &&
-            group.type === "GROUP" && (
-              <>
-                <SectionTitle color={colors.red}>
-                  {t("options.danger_zone.title")}
-                </SectionTitle>
-                <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>
-                  <OptionText color={colors.red}>
-                    <Feather name="trash" size={20} />{" "}
-                    {t("options.danger_zone.delete_group")}
-                  </OptionText>
-                </OptionContainer>
-              </>
-            )}
-          {!rolesForDeleteGroup.includes(participant.role) &&
-            group.type === "GROUP" && (
-              <>
-                <SectionTitle color={colors.red}>
-                  {t("options.danger_zone.title")}
-                </SectionTitle>
-                <OptionContainer onPress={() => setShowExitGroup(true)}>
-                  <OptionText color={colors.red}>
-                    <Feather name="log-out" size={20} />{" "}
-                    {t("options.danger_zone.exit_group")}
-                  </OptionText>
-                </OptionContainer>
-              </>
-            )}
-          <Banner size={BannerAdSize.LARGE_BANNER} /> */}
-
           {group.type === "GROUP" && (
             <>
               <OptionContainer onPress={handleGoParticipants}>
@@ -257,21 +213,56 @@ const GroupConfig: React.FC = () => {
             </>
           )}
           {groupSettings.map((setting) => (
-            <OptionContainer onPress={() => {}} key={setting.id}>
+            <OptionContainer
+              style={{
+                flexDirection: ["select", "participant_role"].includes(
+                  setting.input_type
+                )
+                  ? "column"
+                  : "row",
+              }}
+              key={setting.id}
+            >
               <OptionText>
                 <Feather name="info" size={20} />{" "}
                 {t(`options.general.${setting.setting_name}`)}
               </OptionText>
               {setting.input_type === "switch" && (
                 <OptionActionContainer>
-                  <Switcher currentValue={true} onChangeValue={() => {}} />
+                  <Switcher
+                    currentValue={setting.setting_value === "true"}
+                    onChangeValue={(value) =>
+                      updateSetting(setting.setting_name, value)
+                    }
+                  />
                 </OptionActionContainer>
               )}
-              {/* {
-                setting.input_type === "participant_role" && (
-                  
-                )
-              } */}
+              {setting.input_type === "participant_role" && (
+                <RNPickerSelect
+                  onValueChange={(value) =>
+                    updateSetting(setting.setting_name, value)
+                  }
+                  value={setting.setting_value}
+                  items={[
+                    {
+                      label: t(`options.general.roles.participant`),
+                      value: ParticipantRoles.PARTICIPANT,
+                    },
+                    {
+                      label: t(`options.general.roles.moderator`),
+                      value: ParticipantRoles.MODERATOR,
+                    },
+                    {
+                      label: t(`options.general.roles.manager`),
+                      value: ParticipantRoles.MANAGER,
+                    },
+                    {
+                      label: t(`options.general.roles.admin`),
+                      value: ParticipantRoles.ADMIN,
+                    },
+                  ]}
+                />
+              )}
               {setting.input_type === "number" && (
                 <InputNumber currentValue={0} onChangeValue={() => {}} />
               )}
@@ -310,6 +301,20 @@ const GroupConfig: React.FC = () => {
             </>
           )}
       </Container>
+      {hasUpdateSettings && (
+        <FAB
+          icon="content-save-cog"
+          color={"#fff"}
+          elevation={0}
+          style={{
+            position: "absolute",
+            right: 20,
+            bottom: 20,
+            backgroundColor: colors.primary,
+          }}
+          onPress={() => console.log("Pressed")}
+        />
+      )}
     </>
   );
 };

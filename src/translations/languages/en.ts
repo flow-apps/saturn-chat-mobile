@@ -477,6 +477,12 @@ export const en = {
         max_participants: "Maximum number of participants",
         minimum_role_for_send_message:
           "Minimum role to send messages in the group (role above those selected will not be able to send messages in the group)",
+        roles: {
+          participant: "Participant",
+          moderator: "Moderator",
+          manager: "Manager",
+          admin: "Admin",
+        },
       },
       danger_zone: {
         title: "Danger zone",

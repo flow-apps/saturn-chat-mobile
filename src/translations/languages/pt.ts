@@ -477,9 +477,16 @@ export const pt = {
         notify_new_participants:
           "Avisar ao dono do grupo quando novos participantes entrarem no grupo",
         accepting_new_users: "Aceitar entrada de novos participantes",
-        max_participants: "Quantidade máxima de participantes",
+        max_participants:
+          "Quantidade máxima de participantes (deixe em 0 para quantidade ilimitada)",
         minimum_role_for_send_message:
           "Cargo mínimo para enviar mensagens no grupo (cargos acima do selecionado não poderão enviar mensagens no grupo)",
+        roles: {
+          participant: "Participante",
+          moderator: "Moderador",
+          manager: "Gerente",
+          admin: "Administrador",
+        },
       },
       danger_zone: {
         title: "Zona de perigo",

@@ -8,9 +8,10 @@ export const Container = styled.View`
 
 export const InputField = styled.TextInput`
   text-align: center;
-  width: 80px;
+  width: 60px;
   font-family: ${fonts.text};
-  font-size: 18px;
+  color: ${props => props.theme.colors.black};
+  font-size: 17px;
   margin-top: 5px;
 `;
 
