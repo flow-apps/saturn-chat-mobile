@@ -47,6 +47,8 @@ import {
   InputContainer,
   MessageContainer,
   MessageInput,
+  NoSendMessageContainer,
+  NoSendMessageText,
   OptionsButton,
   OptionsContainer,
   SendButton,
@@ -139,6 +141,7 @@ const Chat: React.FC = () => {
     onDeletedUserTyping,
     onDeleteUserMessage,
     connected,
+    currentGroupId,
   } = useChat();
 
   const appState = useAppState();
@@ -554,28 +557,31 @@ const Chat: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       if (appState !== "active") return;
+      if (socket && !connected) {
+        handleJoinRoom(id);
+        configureSocketListeners();
+      }
 
       setPage(0);
       setFetchedAll(false);
 
       fetchOldMessages();
-    }, [appState])
+    }, [appState, connected, socket])
   );
 
   useEffect(() => {
-    if (appState === "active") {
-      handleJoinRoom(id);
-      configureSocketListeners();
+    if (appState !== "active") {
+      socket?.emit("leave_chat");
+      socket?.offAny();
+      handleTypingTimeout();
     }
 
     return () => {
-      if (socket) {
-        socket.emit("leave_chat");
-        socket.offAny();
-        handleTypingTimeout();
-      }
+      socket?.emit("leave_chat");
+      socket?.offAny();
+      handleTypingTimeout();
     };
-  }, [appState, socket]);
+  }, [appState]);
 
   useEffect(() => {
     if (!participant || !group) return;
@@ -621,9 +627,15 @@ const Chat: React.FC = () => {
       setPage(0);
       setLoading(false);
     })();
+
+    return () => {
+      socket?.emit("leave_chat");
+      socket?.offAny();
+      handleTypingTimeout();
+    };
   }, []);
 
-  if (loading || !socket || !connected) return <Loading />;
+  if (loading || !connected) return <Loading />;
 
   return (
     <>
@@ -691,7 +703,7 @@ const Chat: React.FC = () => {
             disableHorizontalListHeightMeasurement
           />
         </MessageContainer>
-        <FormContainer>
+        <FormContainer style={{ paddingHorizontal: canSendMessage ? 12 : 0 }}>
           <AnimatePresence>
             {recordingAudio && (
               <MotiView
@@ -735,43 +747,54 @@ const Chat: React.FC = () => {
             )}
           </AnimatePresence>
 
-          <InputContainer>
-            <MessageInput
-              ref={messageInputRef}
-              as={TextInput}
-              cursorColor={colors.secondary}
-              placeholderTextColor={colors.dark_heading}
-              onChangeText={handleSetMessage}
-              maxLength={userConfigs?.messageLength || 500}
-              placeholder={recordingAudio ? t("drop_send") : t("type_message")}
-            />
-            <OptionsContainer>
-              <OptionsButton onPress={handleFileSelector}>
-                <Feather name="file" size={24} color={colors.primary} />
-              </OptionsButton>
-              {(isTypingMessage || files.length > 0) && (
-                <SendButton>
-                  <Feather
-                    name="send"
-                    size={26}
-                    color={colors.primary}
-                    onPress={handleMessageSubmit}
-                    style={{ transform: [{ rotate: "45deg" }] }}
-                  />
-                </SendButton>
-              )}
-              {!isTypingMessage && files.length <= 0 && (
-                <AudioContainer>
-                  <AudioButton
-                    onPressIn={recordAudio}
-                    onPressOut={stopRecordAudioAndSubmit}
-                  >
-                    <Feather name="mic" size={26} color={colors.secondary} />
-                  </AudioButton>
-                </AudioContainer>
-              )}
-            </OptionsContainer>
-          </InputContainer>
+          {canSendMessage ? (
+            <InputContainer>
+              <MessageInput
+                ref={messageInputRef}
+                as={TextInput}
+                cursorColor={colors.secondary}
+                placeholderTextColor={colors.dark_heading}
+                onChangeText={handleSetMessage}
+                maxLength={userConfigs?.messageLength || 500}
+                placeholder={
+                  recordingAudio ? t("drop_send") : t("type_message")
+                }
+              />
+              <OptionsContainer>
+                <OptionsButton onPress={handleFileSelector}>
+                  <Feather name="file" size={24} color={colors.primary} />
+                </OptionsButton>
+                {(isTypingMessage || files.length > 0) && (
+                  <SendButton>
+                    <Feather
+                      name="send"
+                      size={26}
+                      color={colors.primary}
+                      onPress={handleMessageSubmit}
+                      style={{ transform: [{ rotate: "45deg" }] }}
+                    />
+                  </SendButton>
+                )}
+                {!isTypingMessage && files.length <= 0 && (
+                  <AudioContainer>
+                    <AudioButton
+                      onPressIn={recordAudio}
+                      onPressOut={stopRecordAudioAndSubmit}
+                    >
+                      <Feather name="mic" size={26} color={colors.secondary} />
+                    </AudioButton>
+                  </AudioContainer>
+                )}
+              </OptionsContainer>
+            </InputContainer>
+          ) : (
+            <NoSendMessageContainer>
+              <NoSendMessageText>
+                Você não pode enviar mensagens nesse grupo, mas ainda pode
+                vê-las e receber notificações.
+              </NoSendMessageText>
+            </NoSendMessageContainer>
+          )}
         </FormContainer>
       </Container>
     </>

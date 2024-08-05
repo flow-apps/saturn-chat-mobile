@@ -30,9 +30,7 @@ export const FileSendedText = styled.Text`
   margin-bottom: 10px;
 `;
 
-export const FormContainer = styled.View`
-  padding: 0 12px;
-`;
+export const FormContainer = styled.View``;
 
 export const InputContainer = styled.View`
   flex-direction: row;
@@ -72,4 +70,21 @@ export const AudioButton = styled.Pressable``;
 
 export const AdBannerWrapper = styled.View`
   padding: 10px;
+`;
+
+export const NoSendMessageContainer = styled.View`
+  background-color: ${(props) => props.theme.colors.shape};
+  width: 100%;
+  padding: 20px 10px;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+`;
+
+export const NoSendMessageText = styled.Text`
+  text-align: center;
+  font-family: ${fonts.quote};
+`;
+
+export const NoSendMessageTextFeature = styled.Text`
+  color: ${props => props.theme.colors.secondary};
 `;
