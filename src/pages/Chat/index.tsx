@@ -591,14 +591,11 @@ const Chat: React.FC = () => {
       return;
     }
 
-    const participantRoleIndex = _.findIndex(
-      ordernedRolesArray,
-      participant.role
-    );
-    const minimumRoleSendMessageIndex = _.findIndex(
-      ordernedRolesArray,
+    const participantRoleIndex = ordernedRolesArray.indexOf(participant.role);
+    const minimumRoleSendMessageIndex = ordernedRolesArray.indexOf(
       getSettingValue(group.group_settings, "minimum_role_for_send_message")
     );
+
     const isMinimumRole = participantRoleIndex >= minimumRoleSendMessageIndex;
 
     if (!isMinimumRole) {

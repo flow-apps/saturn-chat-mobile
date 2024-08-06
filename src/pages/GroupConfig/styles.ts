@@ -34,7 +34,7 @@ export const SectionTitle = styled.Text<SectionTitleProps>`
     props.color ? props.color : props.theme.colors.dark_heading};
 `;
 
-export const OptionContainer = styled.View<OptionContainerProps>`
+export const OptionContainer = styled.TouchableOpacity<OptionContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

@@ -46,6 +46,7 @@ const GroupConfig: React.FC = () => {
   const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
   const [showExitGroupAlert, setShowExitGroup] = useState(false);
   const [hasUpdateSettings, setHasUpdateSettings] = useState(false);
+  const [showGroupSettings, setShowGroupSettings] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -61,36 +62,25 @@ const GroupConfig: React.FC = () => {
 
       if (groupRes.status === 200) {
         setGroup(groupRes.data);
+        setGroupSettings(groupRes.data.group_settings);        
       }
 
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
       }
+      setLoading(false);
     })();
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const authorizedRoles = [
-        ParticipantRoles.ADMIN,
-        ParticipantRoles.MANAGER,
-        ParticipantRoles.OWNER,
-      ];
+    if (!participant) return;
+    const authorizedRoles = [
+      ParticipantRoles.ADMIN,
+      ParticipantRoles.MANAGER,
+      ParticipantRoles.OWNER,
+    ];
 
-      setLoading(true);
-      if (authorizedRoles.includes(participant.role)) {
-        await api
-          .get(`/group/settings/${id}`)
-          .then((res) => {
-            if (res.status === 200) {
-              setGroupSettings(res.data);
-            }
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }
-    })();
+    setShowGroupSettings(authorizedRoles.includes(participant.role));
   }, [participant]);
 
   const handleGoGroupInfos = () => {
@@ -240,67 +230,72 @@ const GroupConfig: React.FC = () => {
               </OptionContainer>
             </>
           )}
-          {groupSettings.map((setting) => (
-            <OptionContainer
-              style={{
-                flexDirection: ["select", "participant_role"].includes(
-                  setting.input_type
-                )
-                  ? "column"
-                  : "row",
-              }}
-              key={setting.id}
-            >
-              <OptionText>
-                <Feather name="info" size={20} />{" "}
-                {t(`options.general.${setting.setting_name}`)}
-              </OptionText>
-              {setting.input_type === "switch" && (
-                <OptionActionContainer>
-                  <Switcher
-                    currentValue={setting.setting_value === "true"}
-                    onChangeValue={(value) =>
-                      updateSetting(setting.setting_name, value)
-                    }
+          {showGroupSettings &&
+            groupSettings.map((setting) => (
+              <OptionContainer
+                style={{
+                  flexDirection: ["select", "participant_role"].includes(
+                    setting.input_type
+                  )
+                    ? "column"
+                    : "row",
+                }}
+                key={setting.id}
+              >
+                <OptionText>
+                  <Feather name="info" size={20} />{" "}
+                  {t(`options.general.${setting.setting_name}`)}
+                </OptionText>
+                {setting.input_type === "switch" && (
+                  <OptionActionContainer>
+                    <Switcher
+                      currentValue={setting.setting_value === "true"}
+                      onChangeValue={(value) =>
+                        updateSetting(setting.setting_name, value)
+                      }
+                    />
+                  </OptionActionContainer>
+                )}
+                {setting.input_type === "participant_role" && (
+                  <RNPickerSelect
+                    style={{}}
+                    onValueChange={(value) => {
+                      if (!value) {
+                        setHasUpdateSettings(false);
+                        return;
+                      }
+                      updateSetting(setting.setting_name, value);
+                    }}
+                    value={setting.setting_value}
+                    placeholder={{
+                      label: "Selecione um cargo",
+                      value: undefined,
+                    }}
+                    items={[
+                      {
+                        label: t(`options.general.roles.participant`),
+                        value: ParticipantRoles.PARTICIPANT,
+                      },
+                      {
+                        label: t(`options.general.roles.moderator`),
+                        value: ParticipantRoles.MODERATOR,
+                      },
+                      {
+                        label: t(`options.general.roles.manager`),
+                        value: ParticipantRoles.MANAGER,
+                      },
+                      {
+                        label: t(`options.general.roles.admin`),
+                        value: ParticipantRoles.ADMIN,
+                      },
+                    ]}
                   />
-                </OptionActionContainer>
-              )}
-              {setting.input_type === "participant_role" && (
-                <RNPickerSelect
-                  onValueChange={(value) => {
-                    if (!value) {
-                      setHasUpdateSettings(false);
-                      return;
-                    }
-                    updateSetting(setting.setting_name, value);
-                  }}
-                  value={setting.setting_value}
-                  placeholder={{ label: "Selecione um cargo", value: undefined }}
-                  items={[
-                    {
-                      label: t(`options.general.roles.participant`),
-                      value: ParticipantRoles.PARTICIPANT,
-                    },
-                    {
-                      label: t(`options.general.roles.moderator`),
-                      value: ParticipantRoles.MODERATOR,
-                    },
-                    {
-                      label: t(`options.general.roles.manager`),
-                      value: ParticipantRoles.MANAGER,
-                    },
-                    {
-                      label: t(`options.general.roles.admin`),
-                      value: ParticipantRoles.ADMIN,
-                    },
-                  ]}
-                />
-              )}
-              {setting.input_type === "number" && (
-                <InputNumber currentValue={0} onChangeValue={() => {}} />
-              )}
-            </OptionContainer>
-          ))}
+                )}
+                {setting.input_type === "number" && (
+                  <InputNumber currentValue={0} onChangeValue={() => {}} />
+                )}
+              </OptionContainer>
+            ))}
         </OptionsContainer>
         {/* <OptionsContainer>
           <SectionTitle>Configurações do participante</SectionTitle>
