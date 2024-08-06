@@ -79,7 +79,7 @@ import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 
 const recordService = new RecordService();
-const MESSAGES_LIMIT_REQUEST = 12;
+const MESSAGES_LIMIT_REQUEST = 10;
 
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
@@ -141,7 +141,6 @@ const Chat: React.FC = () => {
     onDeletedUserTyping,
     onDeleteUserMessage,
     connected,
-    currentGroupId,
   } = useChat();
 
   const appState = useAppState();
@@ -544,31 +543,29 @@ const Chat: React.FC = () => {
   const disableIsSelectedFile = () => setIsSelectedFile(false);
   const disableAudioPermission = () => setAudioPermission(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       setLoading(true);
       const participantRes = await api.get(`/group/participant/${id}`);
-      if (participantRes.status === 200)
+      if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
+        setGroup(participantRes.data.participant.group);
+      }
 
-      setLoading(false);
-    })();
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (appState !== "active") return;
-      if (socket && !connected) {
-        handleJoinRoom(id);
-        configureSocketListeners();
+      if (Platform.OS === "android") {
+        OneSignal.Notifications.removeGroupedNotifications(id);
       }
 
       setPage(0);
-      setFetchedAll(false);
+      setLoading(false);
 
-      fetchOldMessages();
-    }, [appState, connected, socket])
-  );
+      return () => {
+        socket?.emit("leave_chat");
+        socket?.offAny();
+        handleTypingTimeout();
+      };
+    })();
+  }, []);
 
   useEffect(() => {
     if (appState !== "active") {
@@ -576,12 +573,6 @@ const Chat: React.FC = () => {
       socket?.offAny();
       handleTypingTimeout();
     }
-
-    return () => {
-      socket?.emit("leave_chat");
-      socket?.offAny();
-      handleTypingTimeout();
-    };
   }, [appState]);
 
   useEffect(() => {
@@ -606,32 +597,20 @@ const Chat: React.FC = () => {
     }
   }, [participant, group]);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-
-      if (Platform.OS === "android") {
-        OneSignal.Notifications.removeGroupedNotifications(id);
-      }
-
-      if (!group.id) {
-        const groupRes = await api.get(`/group/${id}`);
-
-        if (groupRes.status === 200) {
-          setGroup(groupRes.data);
-        }
+  useFocusEffect(
+    useCallback(() => {
+      if (appState !== "active") return;
+      if (socket && !connected) {
+        handleJoinRoom(id);
+        configureSocketListeners();
       }
 
       setPage(0);
-      setLoading(false);
-    })();
+      setFetchedAll(false);
 
-    return () => {
-      socket?.emit("leave_chat");
-      socket?.offAny();
-      handleTypingTimeout();
-    };
-  }, []);
+      fetchOldMessages();
+    }, [appState, connected, socket])
+  );
 
   if (loading || !connected) return <Loading />;
 

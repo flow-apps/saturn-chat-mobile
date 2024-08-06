@@ -50,7 +50,7 @@ const GroupConfig: React.FC = () => {
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { colors } = useTheme();
+  const { colors, title } = useTheme();
   const { id } = route.params as { id: string };
   const { t } = useTranslate("GroupConfig");
 
@@ -62,7 +62,7 @@ const GroupConfig: React.FC = () => {
 
       if (groupRes.status === 200) {
         setGroup(groupRes.data);
-        setGroupSettings(groupRes.data.group_settings);        
+        setGroupSettings(groupRes.data.group_settings);
       }
 
       if (participantRes.status === 200) {
@@ -241,6 +241,7 @@ const GroupConfig: React.FC = () => {
                     : "row",
                 }}
                 key={setting.id}
+                disabled={true}
               >
                 <OptionText>
                   <Feather name="info" size={20} />{" "}
@@ -258,7 +259,6 @@ const GroupConfig: React.FC = () => {
                 )}
                 {setting.input_type === "participant_role" && (
                   <RNPickerSelect
-                    style={{}}
                     onValueChange={(value) => {
                       if (!value) {
                         setHasUpdateSettings(false);
@@ -271,22 +271,31 @@ const GroupConfig: React.FC = () => {
                       label: "Selecione um cargo",
                       value: undefined,
                     }}
+                    style={{
+                      inputAndroid: {
+                        backgroundColor: colors.shape,
+                      },
+                    }}
                     items={[
                       {
                         label: t(`options.general.roles.participant`),
                         value: ParticipantRoles.PARTICIPANT,
+                        color: colors.dark_gray,
                       },
                       {
                         label: t(`options.general.roles.moderator`),
                         value: ParticipantRoles.MODERATOR,
+                        color: colors.primary,
                       },
                       {
                         label: t(`options.general.roles.manager`),
                         value: ParticipantRoles.MANAGER,
+                        color: colors.green,
                       },
                       {
                         label: t(`options.general.roles.admin`),
                         value: ParticipantRoles.ADMIN,
+                        color: colors.red,
                       },
                     ]}
                   />

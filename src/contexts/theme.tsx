@@ -44,7 +44,7 @@ const ThemeControllerProvider: React.FC<{ children: React.ReactNode }> = ({
     (async () => {
       await nav.setNavigationColor(
         themes[theme].colors.shape,
-        theme !== "light"
+        theme as "dark" | "light"
       );
     })();
 

@@ -44,6 +44,7 @@ export const OptionContainer = styled.TouchableOpacity<OptionContainerProps>`
 `;
 
 export const OptionActionContainer = styled.View`
+  margin-bottom: 10px;
 `;
 
 export const OptionText = styled.Text<OptionTextProps>`
