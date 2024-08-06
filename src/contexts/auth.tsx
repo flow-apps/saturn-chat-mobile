@@ -133,9 +133,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setInternalError({ has: false, reason: "" });
       })
       .catch((error: AxiosError) => {
-
         console.log(error.response.data);
-        
 
         if (error.response.status === 500) {
           setInternalError({
@@ -151,13 +149,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const signOut = () => {
     AsyncStorage.multiRemove(["@SaturnChat:user", "@SaturnChat:token"]).then(
       async () => {
-        await api.delete(`/users/notify/unregister?platform=${Platform.OS}`);
-
-        OneSignal.logout();
-        api.defaults.headers["authorization"] = undefined;
-        websocket.query.token = "";
-        setToken("");
-        setUser(null);
+        await api
+          .delete(`/users/notify/unregister?platform=${Platform.OS}`)
+          .finally(() => {
+            OneSignal.logout();
+            api.defaults.headers["authorization"] = undefined;
+            websocket.query.token = "";
+            setToken("");
+            setUser(null);
+          });
       }
     );
   };

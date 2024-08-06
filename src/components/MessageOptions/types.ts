@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { ParticipantRoles } from "@type/enums";
-import { MessageData } from "@type/interfaces";
+import { GroupData, MessageData } from "@type/interfaces";
 
 export interface IOptions {
   content: string;
@@ -18,4 +18,5 @@ export interface IMessageOptionsProps {
   options: IOptions[];
   participant_role: ParticipantRoles;
   close: () => void;
+  group: GroupData;
 }

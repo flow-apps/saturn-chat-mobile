@@ -81,7 +81,7 @@ const ReplyingMessage = ({ replying_message }: ReplyingMessageProps) => {
         </ReplyingMessageAuthorWrapper>
         <ReplyingMessageContentContainer>
           {getMessageContent()}
-          {replying_message.message.length > 72 && (
+          {replying_message.message.length > 80 && (
             <ReadMoreButton onPress={handleReadMore}>
               <ReadMoreText>
                 {readAll ? `[${t("read_less")}]` : `[${t("read_more")}]`}

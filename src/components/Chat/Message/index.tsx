@@ -6,7 +6,7 @@ import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
-import { MessageData, ParticipantsData, UserData } from "@type/interfaces";
+import { GroupData, MessageData, ParticipantsData, UserData } from "@type/interfaces";
 
 import * as Clipboard from "expo-clipboard";
 
@@ -49,6 +49,7 @@ interface MessageProps {
   lastMessage: MessageData | null;
   onReplyMessage: (message: MessageData) => void;
   children?: React.ReactNode;
+  group: GroupData;
 }
 
 interface InvitesData {
@@ -60,6 +61,7 @@ const Message = ({
   lastMessage,
   participant,
   onReplyMessage,
+  group
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -311,6 +313,7 @@ const Message = ({
               visible={msgOptions}
               message={message}
               participant_role={participant.role}
+              group={group}
               options={[
                 {
                   iconName: "corner-up-right",

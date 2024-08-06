@@ -23,6 +23,7 @@ const MessageOptions = ({
   message,
   options = [],
   participant_role,
+  group
 }: IMessageOptionsProps) => {
   const { user } = useAuth();
   const { t } = useTranslate("Components.Chat.ReplyingMessage");
@@ -36,7 +37,7 @@ const MessageOptions = ({
 
   const canShowOptionChecker = (option: IOptions) => {
     const roles = option.authorizedRoles;
-    const groupType = message.group.type;
+    const groupType = group.type;
     const authorId = message.author.id;
 
     if (!option.showInDM && groupType === "DIRECT") {

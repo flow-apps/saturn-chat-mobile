@@ -79,7 +79,7 @@ import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 
 const recordService = new RecordService();
-const MESSAGES_LIMIT_REQUEST = 20;
+const MESSAGES_LIMIT_REQUEST = 12;
 
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
@@ -530,6 +530,7 @@ const Chat: React.FC = () => {
           participant={participant as ParticipantsData}
           lastMessage={lastMessage}
           onReplyMessage={handleReplyMessage}
+          group={group}
         />
       );
     },
