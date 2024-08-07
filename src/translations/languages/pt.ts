@@ -488,6 +488,9 @@ export const pt = {
           admin: "Administrador",
         },
       },
+      participant: {
+        send_notifications: "Receber notificações de novas mensagens"
+      },
       danger_zone: {
         title: "Zona de perigo",
         delete_group: "Apagar grupo",

@@ -56,6 +56,7 @@ export interface ParticipantsData {
   status: "ONLINE" | "OFFLINE";
   role: ParticipantRoles;
   state: ParticipantStates;
+  participant_settings: ISetting[];
   participating_since: string;
 }
 
@@ -72,11 +73,9 @@ export interface MessageData {
   links?: LinkData[];
   created_at: string;
   author: UserData;
-  participant: ParticipantsData;
-  group: GroupData;
   reply_to?: MessageData;
   voice_message?: AudioData;
-  files?: FileData[];
+  files?: FileData[] | File[];
   sended?: boolean;
   localReference?: string;
 }

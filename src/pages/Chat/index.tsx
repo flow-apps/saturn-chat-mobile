@@ -141,6 +141,7 @@ const Chat: React.FC = () => {
     onDeletedUserTyping,
     onDeleteUserMessage,
     connected,
+    currentGroupId,
   } = useChat();
 
   const appState = useAppState();
@@ -411,24 +412,29 @@ const Chat: React.FC = () => {
     const messageRefValue = messageInputRef.current.value;
     const message = messageRefValue?.slice(0) || "";
 
+    if (group.id !== currentGroupId) {
+      socket?.emit("leave_chat");
+      socket?.offAny();
+      handleTypingTimeout();
+      handleJoinRoom(group.id);
+      return;
+    }
+
     if (messageRefValue) {
       messageInputRef.current.clear();
       messageInputRef.current.value = "";
     }
 
     if (files.length === 0 && !message) return;
+    handleTypingTimeout();
 
     const localReference = uuid.v4() as string;
-
-    handleTypingTimeout();
 
     setOldMessages((old) => [
       {
         id: localReference,
         author: user as UserData,
-        group,
         message,
-        participant,
         files: files.map((file) => ({
           id: file.file.name,
           original_name: file.file.name,
@@ -557,6 +563,7 @@ const Chat: React.FC = () => {
       }
 
       setPage(0);
+      setFetchedAll(false);
       setLoading(false);
     })();
     return () => {
@@ -649,11 +656,9 @@ const Chat: React.FC = () => {
             <Feather name="users" size={22} color="#fff" />
           </HeaderButton>
         )}
-        {group.type === "GROUP" && (
-          <HeaderButton onPress={handleGoGroupConfig}>
-            <Feather name="more-vertical" size={22} color="#fff" />
-          </HeaderButton>
-        )}
+        <HeaderButton onPress={handleGoGroupConfig}>
+          <Feather name="more-vertical" size={22} color="#fff" />
+        </HeaderButton>
       </Header>
       <AdBannerWrapper>
         <Banner />

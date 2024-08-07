@@ -42,10 +42,13 @@ const GroupConfig: React.FC = () => {
     {} as ParticipantsData
   );
   const [groupSettings, setGroupSettings] = useState<ISetting[]>();
+  const [participantSettings, setParticipantSettings] = useState<ISetting[]>();
   const [loading, setLoading] = useState(true);
   const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
   const [showExitGroupAlert, setShowExitGroup] = useState(false);
-  const [hasUpdateSettings, setHasUpdateSettings] = useState(false);
+  const [hasUpdateGroupSettings, setHasUpdateGroupSettings] = useState(false);
+  const [hasUpdateParticipantSettings, setHasUpdateParticipantSettings] =
+    useState(false);
   const [showGroupSettings, setShowGroupSettings] = useState(false);
 
   const route = useRoute();
@@ -67,6 +70,9 @@ const GroupConfig: React.FC = () => {
 
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
+        setParticipantSettings(
+          participantRes.data.participant.participant_settings
+        );
       }
       setLoading(false);
     })();
@@ -117,7 +123,7 @@ const GroupConfig: React.FC = () => {
     }
   };
 
-  const updateSetting = (settingName: string, newValue: any) => {
+  const updateGroupSetting = (settingName: string, newValue: any) => {
     const updatedSettings = groupSettings.map((setting) => {
       if (setting.setting_name === settingName) {
         setting.setting_value = String(newValue);
@@ -126,42 +132,85 @@ const GroupConfig: React.FC = () => {
       return setting;
     });
 
-    if (!hasUpdateSettings) {
-      setHasUpdateSettings(true);
+    if (!hasUpdateGroupSettings) {
+      setHasUpdateGroupSettings(true);
     }
 
     setGroupSettings(updatedSettings);
   };
 
+  const updateParticipantSetting = (settingName: string, newValue: any) => {
+    const updatedSettings = participantSettings.map((setting) => {
+      if (setting.setting_name === settingName) {
+        setting.setting_value = String(newValue);
+      }
+
+      return setting;
+    });
+
+    if (!hasUpdateGroupSettings) {
+      setHasUpdateParticipantSettings(true);
+    }
+
+    setParticipantSettings(updatedSettings);
+  };
+
   const handleSubmitGroupSettings = async () => {
-    if (!hasUpdateSettings) return;
+    if (!hasUpdateGroupSettings && !hasUpdateParticipantSettings) return;
 
     setLoading(true);
 
-    await api
-      .patch(`/group/settings/${id}`, { settings: groupSettings })
-      .then((res) => {
-        if (res.status === 200) {
-          setGroupSettings(res.data);
-          setHasUpdateSettings(false);
+    if (hasUpdateGroupSettings) {
+      await api
+        .patch(`/group/settings/${id}`, { settings: groupSettings })
+        .then((res) => {
+          if (res.status === 200) {
+            setGroupSettings(res.data);
+            setHasUpdateGroupSettings(false);
+
+            SimpleToast.show(
+              "Configurações alteradas com sucesso",
+              SimpleToast.SHORT
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error.response.data);
 
           SimpleToast.show(
-            "Configurações alteradas com sucesso",
+            "Não foi possível salvar as alterações",
             SimpleToast.SHORT
           );
-        }
-      })
-      .catch((error) => {
-        console.log(error.response.data);
+        });
+    }
 
-        SimpleToast.show(
-          "Não foi possível salvar as alterações",
-          SimpleToast.SHORT
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (hasUpdateParticipantSettings) {
+      await api
+        .patch(`/group/participant/settings/${participant.id}`, {
+          settings: participantSettings,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setParticipantSettings(res.data);
+            setHasUpdateParticipantSettings(false);
+
+            SimpleToast.show(
+              "Configurações alteradas com sucesso",
+              SimpleToast.SHORT
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+
+          SimpleToast.show(
+            "Não foi possível salvar as alterações",
+            SimpleToast.SHORT
+          );
+        });
+    }
+
+    setLoading(false);
   };
 
   if (loading) return <Loading />;
@@ -193,11 +242,10 @@ const GroupConfig: React.FC = () => {
         cancelButtonAction={() => setShowExitGroup(false)}
       />
       <Container>
-        <SectionTitle>{t("options.general.title")}</SectionTitle>
-
         <OptionsContainer>
           {group.type === "GROUP" && (
             <>
+              <SectionTitle>{t("options.general.title")}</SectionTitle>
               <OptionContainer onPress={handleGoParticipants}>
                 <OptionText color={colors.secondary}>
                   <Feather name="users" size={20} />{" "}
@@ -228,89 +276,121 @@ const GroupConfig: React.FC = () => {
                   {t("options.general.details")}
                 </OptionText>
               </OptionContainer>
+              {showGroupSettings &&
+                groupSettings.map((setting) => (
+                  <OptionContainer
+                    style={{
+                      flexDirection: ["select", "participant_role"].includes(
+                        setting.input_type
+                      )
+                        ? "column"
+                        : "row",
+                    }}
+                    key={setting.id}
+                    disabled={true}
+                  >
+                    <OptionText>
+                      <Feather name="info" size={20} />{" "}
+                      {t(`options.general.${setting.setting_name}`)}
+                    </OptionText>
+                    {setting.input_type === "switch" && (
+                      <OptionActionContainer>
+                        <Switcher
+                          currentValue={setting.setting_value === "true"}
+                          onChangeValue={(value) =>
+                            updateGroupSetting(setting.setting_name, value)
+                          }
+                        />
+                      </OptionActionContainer>
+                    )}
+                    {setting.input_type === "participant_role" && (
+                      <RNPickerSelect
+                        onValueChange={(value) => {
+                          if (!value) {
+                            setHasUpdateGroupSettings(false);
+                            return;
+                          }
+                          updateGroupSetting(setting.setting_name, value);
+                        }}
+                        value={setting.setting_value}
+                        placeholder={{
+                          label: "Selecione um cargo",
+                          value: undefined,
+                          color: colors.light_gray,
+                        }}
+                        style={{
+                          inputAndroid: {
+                            backgroundColor: colors.shape,
+                          },
+                        }}
+                        items={[
+                          {
+                            label: t(`options.general.roles.participant`),
+                            value: ParticipantRoles.PARTICIPANT,
+                            color: colors.dark_heading,
+                          },
+                          {
+                            label: t(`options.general.roles.moderator`),
+                            value: ParticipantRoles.MODERATOR,
+                            color: colors.primary,
+                          },
+                          {
+                            label: t(`options.general.roles.manager`),
+                            value: ParticipantRoles.MANAGER,
+                            color: colors.green,
+                          },
+                          {
+                            label: t(`options.general.roles.admin`),
+                            value: ParticipantRoles.ADMIN,
+                            color: colors.red,
+                          },
+                        ]}
+                      />
+                    )}
+                    {setting.input_type === "number" && (
+                      <InputNumber currentValue={0} onChangeValue={() => {}} />
+                    )}
+                  </OptionContainer>
+                ))}
             </>
           )}
-          {showGroupSettings &&
-            groupSettings.map((setting) => (
-              <OptionContainer
-                style={{
-                  flexDirection: ["select", "participant_role"].includes(
-                    setting.input_type
-                  )
-                    ? "column"
-                    : "row",
-                }}
-                key={setting.id}
-                disabled={true}
-              >
-                <OptionText>
-                  <Feather name="info" size={20} />{" "}
-                  {t(`options.general.${setting.setting_name}`)}
-                </OptionText>
-                {setting.input_type === "switch" && (
-                  <OptionActionContainer>
-                    <Switcher
-                      currentValue={setting.setting_value === "true"}
-                      onChangeValue={(value) =>
-                        updateSetting(setting.setting_name, value)
-                      }
-                    />
-                  </OptionActionContainer>
-                )}
-                {setting.input_type === "participant_role" && (
-                  <RNPickerSelect
-                    onValueChange={(value) => {
-                      if (!value) {
-                        setHasUpdateSettings(false);
-                        return;
-                      }
-                      updateSetting(setting.setting_name, value);
-                    }}
-                    value={setting.setting_value}
-                    placeholder={{
-                      label: "Selecione um cargo",
-                      value: undefined,
-                    }}
-                    style={{
-                      inputAndroid: {
-                        backgroundColor: colors.shape,
-                      },
-                    }}
-                    items={[
-                      {
-                        label: t(`options.general.roles.participant`),
-                        value: ParticipantRoles.PARTICIPANT,
-                        color: colors.dark_gray,
-                      },
-                      {
-                        label: t(`options.general.roles.moderator`),
-                        value: ParticipantRoles.MODERATOR,
-                        color: colors.primary,
-                      },
-                      {
-                        label: t(`options.general.roles.manager`),
-                        value: ParticipantRoles.MANAGER,
-                        color: colors.green,
-                      },
-                      {
-                        label: t(`options.general.roles.admin`),
-                        value: ParticipantRoles.ADMIN,
-                        color: colors.red,
-                      },
-                    ]}
-                  />
-                )}
-                {setting.input_type === "number" && (
-                  <InputNumber currentValue={0} onChangeValue={() => {}} />
-                )}
-              </OptionContainer>
-            ))}
         </OptionsContainer>
-        {/* <OptionsContainer>
+        <OptionsContainer>
           <SectionTitle>Configurações do participante</SectionTitle>
-        </OptionsContainer> */}
-        {rolesForDeleteGroup.includes(participant.role) &&
-          group.type === "GROUP" && (
+          {participantSettings.map((setting) => (
+            <OptionContainer
+              style={{
+                flexDirection: ["select", "participant_role"].includes(
+                  setting.input_type
+                )
+                  ? "column"
+                  : "row",
+              }}
+              key={setting.id}
+              disabled={true}
+            >
+              <OptionText>
+                <Feather name="info" size={20} />{" "}
+                {t(`options.participant.${setting.setting_name}`)}
+              </OptionText>
+              {setting.input_type === "switch" && (
+                <OptionActionContainer>
+                  <Switcher
+                    currentValue={setting.setting_value === "true"}
+                    onChangeValue={(value) =>
+                      updateParticipantSetting(setting.setting_name, value)
+                    }
+                  />
+                </OptionActionContainer>
+              )}
+              {setting.input_type === "number" && (
+                <InputNumber currentValue={0} onChangeValue={() => {}} />
+              )}
+            </OptionContainer>
+          ))}
+        </OptionsContainer>
+        {group.type === "GROUP" &&
+          rolesForDeleteGroup.includes(participant.role) && (
             <>
               <SectionTitle color={colors.red}>
                 {t("options.danger_zone.title")}
@@ -321,10 +401,18 @@ const GroupConfig: React.FC = () => {
                   {t("options.danger_zone.delete_group")}
                 </OptionText>
               </OptionContainer>
+              {participant.role !== ParticipantRoles.OWNER && (
+                <OptionContainer onPress={() => setShowExitGroup(true)}>
+                  <OptionText color={colors.red}>
+                    <Feather name="log-out" size={20} />{" "}
+                    {t("options.danger_zone.exit_group")}
+                  </OptionText>
+                </OptionContainer>
+              )}
             </>
           )}
-        {!rolesForDeleteGroup.includes(participant.role) &&
-          group.type === "GROUP" && (
+        {group.type === "GROUP" &&
+          participant.role !== ParticipantRoles.OWNER && (
             <>
               <SectionTitle color={colors.red}>
                 {t("options.danger_zone.title")}
@@ -338,19 +426,19 @@ const GroupConfig: React.FC = () => {
             </>
           )}
       </Container>
-      {hasUpdateSettings && (
-        <FAB
-          icon="content-save-cog"
-          color={"#fff"}
-          elevation={0}
-          style={{
-            position: "absolute",
-            right: 20,
-            bottom: 20,
-            backgroundColor: colors.primary,
-          }}
-          onPress={handleSubmitGroupSettings}
-        />
+      {(hasUpdateGroupSettings || hasUpdateParticipantSettings) && (
+          <FAB
+            icon="content-save-cog"
+            color={"#fff"}
+            elevation={0}
+            style={{
+              position: "absolute",
+              right: 20,
+              bottom: 20,
+              backgroundColor: colors.primary,
+            }}
+            onPress={handleSubmitGroupSettings}
+          />
       )}
     </>
   );

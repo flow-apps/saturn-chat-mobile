@@ -18,6 +18,7 @@ export const Container = styled.ScrollView`
   flex: 1;
   padding: 10px;
   background-color: ${(props) => props.theme.colors.background};
+  margin-bottom: 5px;
 `;
 
 export const OptionsContainer = styled.View`
@@ -45,6 +46,7 @@ export const OptionContainer = styled.TouchableOpacity<OptionContainerProps>`
 
 export const OptionActionContainer = styled.View`
   margin-bottom: 10px;
+  margin-left: 5px;
 `;
 
 export const OptionText = styled.Text<OptionTextProps>`

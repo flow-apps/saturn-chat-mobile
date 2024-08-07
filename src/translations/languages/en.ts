@@ -484,6 +484,9 @@ export const en = {
           admin: "Admin",
         },
       },
+      participant: {
+        send_notifications: "Receive new messages notifications"
+      },
       danger_zone: {
         title: "Danger zone",
         delete_group: "Delete group",
