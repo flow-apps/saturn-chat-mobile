@@ -558,13 +558,12 @@ const Chat: React.FC = () => {
 
       setPage(0);
       setLoading(false);
-
-      return () => {
-        socket?.emit("leave_chat");
-        socket?.offAny();
-        handleTypingTimeout();
-      };
     })();
+    return () => {
+      socket?.emit("leave_chat");
+      socket?.offAny();
+      handleTypingTimeout();
+    };
   }, []);
 
   useEffect(() => {
