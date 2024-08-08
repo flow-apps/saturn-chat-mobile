@@ -50,6 +50,7 @@ interface MessageProps {
   onReplyMessage: (message: MessageData) => void;
   children?: React.ReactNode;
   group: GroupData;
+  disableReply: boolean;
 }
 
 interface InvitesData {
@@ -61,7 +62,8 @@ const Message = ({
   lastMessage,
   participant,
   onReplyMessage,
-  group
+  group,
+  disableReply
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -243,6 +245,10 @@ const Message = ({
   }, [message.links, hasInvite]);
 
   const replyMessage = (direction?: "right" | "left") => {
+
+    if (disableReply)
+      return;
+
     if (!direction) {
       onReplyMessage(message);
       return;
@@ -292,11 +298,13 @@ const Message = ({
         visible={showLinkAlert}
       />
       <Swipeable
-        overshootLeft={!isRight}
-        overshootRight={isRight}
+        overshootLeft={!isRight && !disableReply}
+        overshootRight={isRight && !disableReply}
         overshootFriction={8}
         onSwipeableWillClose={(direction) => replyMessage(direction)}
         containerStyle={{ transform: [{ rotate: "180deg" }] }}
+        cancelsTouchesInView
+        enabled={!disableReply}
       >
         <Container isRight={isRight}>
           {message.reply_to && (

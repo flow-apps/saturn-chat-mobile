@@ -1,3 +1,4 @@
+import { ParticipantData } from "@pages/Home";
 import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums";
 
 export interface UserData {
@@ -51,6 +52,8 @@ export interface GroupData {
 
 export interface ParticipantsData {
   id: string;
+  user_id: string;
+  group_id: string;
   user: UserData;
   group: GroupData;
   status: "ONLINE" | "OFFLINE";
@@ -73,6 +76,8 @@ export interface MessageData {
   links?: LinkData[];
   created_at: string;
   author: UserData;
+  participant: ParticipantData;
+  group: GroupData;
   reply_to?: MessageData;
   voice_message?: AudioData;
   files?: FileData[] | File[];

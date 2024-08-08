@@ -411,15 +411,7 @@ const Chat: React.FC = () => {
   const handleMessageSubmit = async () => {
     const messageRefValue = messageInputRef.current.value;
     const message = messageRefValue?.slice(0) || "";
-
-    if (group.id !== currentGroupId) {
-      socket?.emit("leave_chat");
-      socket?.offAny();
-      handleTypingTimeout();
-      handleJoinRoom(group.id);
-      return;
-    }
-
+    
     if (messageRefValue) {
       messageInputRef.current.clear();
       messageInputRef.current.value = "";
@@ -434,6 +426,8 @@ const Chat: React.FC = () => {
       {
         id: localReference,
         author: user as UserData,
+        group,
+        participant,
         message,
         files: files.map((file) => ({
           id: file.file.name,
@@ -536,6 +530,7 @@ const Chat: React.FC = () => {
           lastMessage={lastMessage}
           onReplyMessage={handleReplyMessage}
           group={group}
+          disableReply={!canSendMessage}
         />
       );
     },

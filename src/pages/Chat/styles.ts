@@ -83,6 +83,7 @@ export const NoSendMessageContainer = styled.View`
 export const NoSendMessageText = styled.Text`
   text-align: center;
   font-family: ${fonts.quote};
+  color: ${props => props.theme.colors.black};
 `;
 
 export const NoSendMessageTextFeature = styled.Text`

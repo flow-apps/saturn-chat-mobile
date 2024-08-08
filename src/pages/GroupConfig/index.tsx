@@ -261,15 +261,17 @@ const GroupConfig: React.FC = () => {
                   {t("options.general.invite_users")}
                 </OptionText>
               </OptionContainer>
-              <OptionContainer
-                hidden={!rolesForEditGroup.includes(participant.role)}
-                onPress={handleGoEditGroup}
-              >
-                <OptionText>
-                  <Feather name="edit-3" size={20} />{" "}
-                  {t("options.general.edit_group")}
-                </OptionText>
-              </OptionContainer>
+              {rolesForEditGroup.includes(participant.role) && (
+                <OptionContainer
+                  hidden={!rolesForEditGroup.includes(participant.role)}
+                  onPress={handleGoEditGroup}
+                >
+                  <OptionText>
+                    <Feather name="edit-3" size={20} />{" "}
+                    {t("options.general.edit_group")}
+                  </OptionText>
+                </OptionContainer>
+              )}
               <OptionContainer onPress={handleGoGroupInfos}>
                 <OptionText>
                   <Feather name="file" size={20} />{" "}
@@ -427,18 +429,18 @@ const GroupConfig: React.FC = () => {
           )}
       </Container>
       {(hasUpdateGroupSettings || hasUpdateParticipantSettings) && (
-          <FAB
-            icon="content-save-cog"
-            color={"#fff"}
-            elevation={0}
-            style={{
-              position: "absolute",
-              right: 20,
-              bottom: 20,
-              backgroundColor: colors.primary,
-            }}
-            onPress={handleSubmitGroupSettings}
-          />
+        <FAB
+          icon="content-save-cog"
+          color={"#fff"}
+          elevation={0}
+          style={{
+            position: "absolute",
+            right: 20,
+            bottom: 20,
+            backgroundColor: colors.primary,
+          }}
+          onPress={handleSubmitGroupSettings}
+        />
       )}
     </>
   );
