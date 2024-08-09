@@ -1,6 +1,6 @@
 import { OneSignal } from "react-native-onesignal";
 import { NotificationsTypes } from "@type/enums";
-import { navigate } from "../routes/rootNavigation";
+import { getCurrentRoute, navigate, setParams } from "../routes/rootNavigation";
 import { LinkUtils } from "@utils/link";
 
 interface NotificationDataType {
@@ -11,29 +11,40 @@ interface NotificationDataType {
 }
 
 const configureNotificationsHandlers = async (signed: boolean) => {
-  OneSignal.Notifications.addEventListener("click", async ({ notification }) => {
-        
-    if (signed && notification) {
-      const { openLink } = new LinkUtils();
-      const data = notification.additionalData as NotificationDataType;
+  OneSignal.Notifications.addEventListener(
+    "click",
+    async ({ notification }) => {
+      if (signed && notification) {
+        const { openLink } = new LinkUtils();
+        const data = notification.additionalData as NotificationDataType;
 
-      if (data.open_in_app) {
-        if (data.open_url_on_click) {
-          await openLink(data.open_url_on_click);
-        }
-        if (data.type === NotificationsTypes.CHAT_MESSAGE) {
-          const isDM = data.group_type === "DIRECT";
-          const name = data.friend_name;
+        if (data.open_in_app) {
+          if (data.open_url_on_click) {
+            await openLink(data.open_url_on_click);
+          }
+          if (data.type === NotificationsTypes.CHAT_MESSAGE) {
+            const isDM = data.group_type === "DIRECT";
+            const name = data.friend_name;
+            const currentScreenName = getCurrentRoute().name;
 
-          navigate("Chat", {
-            id: data.group_id,
-            name: isDM ? name : undefined,
-            friendId: isDM ? data.friend_id : undefined,
-          });
+            if (currentScreenName === "Chat") {
+              setParams({
+                id: data.group_id,
+                name: isDM ? name : undefined,
+                friendId: isDM ? data.friend_id : undefined,
+              });
+            } else {
+              navigate("Chat", {
+                id: data.group_id,
+                name: isDM ? name : undefined,
+                friendId: isDM ? data.friend_id : undefined,
+              });
+            }
+          }
         }
       }
     }
-  });
+  );
 };
 
 export { configureNotificationsHandlers, OneSignal };

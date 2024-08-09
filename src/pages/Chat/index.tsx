@@ -610,8 +610,14 @@ const Chat: React.FC = () => {
       setFetchedAll(false);
 
       fetchOldMessages();
-    }, [appState, connected, socket])
+    }, [appState, connected, socket, id])
   );
+
+  useFocusEffect(useCallback(() => {
+    if (id === currentGroupId) {
+      
+    }
+  }, [id, group, currentGroupId]))
 
   if (loading || !connected) return <Loading />;
 
