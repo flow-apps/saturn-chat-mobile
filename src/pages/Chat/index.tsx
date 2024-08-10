@@ -73,7 +73,7 @@ import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 
 const recordService = new RecordService();
-const MESSAGES_LIMIT_REQUEST = 10;
+const MESSAGES_LIMIT_REQUEST = 15;
 
 const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
