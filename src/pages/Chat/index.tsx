@@ -686,8 +686,8 @@ const Chat: React.FC = () => {
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
-            drawDistance={MESSAGES_LIMIT_REQUEST * 150}
-            estimatedItemSize={130}
+            drawDistance={MESSAGES_LIMIT_REQUEST * 160}
+            estimatedItemSize={160}
             renderItem={renderMessage}
             ListFooterComponent={renderFooter}
             onEndReached={fetchOldMessages}
