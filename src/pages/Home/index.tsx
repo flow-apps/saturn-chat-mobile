@@ -39,6 +39,7 @@ import { useHome } from "@contexts/home";
 import configs from "../../config";
 import { useTranslate } from "@hooks/useTranslate";
 import { ParticipantStates } from "@type/enums";
+import _ from "lodash";
 
 export interface ParticipantData {
   id: string;
@@ -52,7 +53,6 @@ export interface ParticipantData {
 
 const Home: React.FC = () => {
   const [groups, setGroups] = useState<GroupData[]>([]);
-  const [groupsCount, setGroupsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   const { allConfigs } = useRemoteConfigs();
@@ -68,21 +68,13 @@ const Home: React.FC = () => {
 
     if (groups.status === 200) {
       const groupsData = groups.data as GroupData[];
-      const sortedGroups = groupsData.sort((a, b) => {
-        const aAmount = Number(a?.unreadMessagesAmount);
-        const bAmount = Number(b?.unreadMessagesAmount);
-
-        if (aAmount > bAmount) {
-          return -1;
-        } else if (aAmount < bAmount) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+      const sortedGroups = _.orderBy(
+        groupsData,
+        ["unreadMessagesAmount"],
+        "desc"
+      );
 
       setGroups(sortedGroups);
-      setGroupsCount(groups.data.length);
     }
     setLoading(false);
   }, []);
@@ -113,12 +105,8 @@ const Home: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      async function fetchGroups() {
-        await loadGroups();
-      }
-
       handleCheckInvites();
-      fetchGroups();
+      loadGroups();
     }, [])
   );
 
@@ -223,7 +211,7 @@ const Home: React.FC = () => {
               <TitleWrapper>
                 <GroupsTitle>{t("groups_list.title")}</GroupsTitle>
                 <GroupsSubtitle>
-                  {t("groups_list.subtitle", { count: groupsCount })}
+                  {t("groups_list.subtitle", { count: groups?.length })}
                 </GroupsSubtitle>
                 {groups.length > 0 && (
                   <AdContainer>

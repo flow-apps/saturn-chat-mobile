@@ -36,6 +36,7 @@ import { useTranslate } from "@hooks/useTranslate";
 import PremiumName from "@components/PremiumName";
 import fonts from "@styles/fonts";
 import { useTheme } from "styled-components";
+import _ from "lodash";
 
 interface OpenChatProps {
   id: string;
@@ -59,7 +60,7 @@ const Friends: React.FC = () => {
         const res = await api.get("/friends");
 
         if (res.status === 200) {
-          setFriends(res.data);
+          setFriends(_.orderBy(res.data, ["unreadMessagesAmount"], "desc"));
         }
 
         setLoading(false);
