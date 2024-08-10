@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppState } from "@react-native-community/hooks";
 import { ListRenderItem, Platform, TextInput } from "react-native";
 
@@ -337,29 +331,62 @@ const Chat: React.FC = () => {
     setFilesSizeUsed((used) => used - fileSize);
   };
 
-  const fetchOldMessages = useCallback(async () => {
-    if (fetching || fetchedAll) return;
+  const fetchOldMessages = useCallback(
+    async (fetchFirstPage = false) => {
+      if (fetching || fetchedAll) return;
 
-    setFetching(true);
-    const { data } = await api.get(
-      `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`
-    );
+      if (fetchFirstPage) {
+        setPage(0);
+        setFetchedAll(false);
+      }
 
-    if (data.messages.length === 0) {
+      setFetching(true);
+      const { data } = await api.get(
+        `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`
+      );
+
+      if (data.messages.length === 0) {
+        setFetching(false);
+        setFetchedAll(true);
+        return;
+      }
+
+      if (page > 0) {
+        setOldMessages((old) => [...old, ...data.messages]);
+      } else {
+        setOldMessages(data.messages);
+      }
+
+      setPage((old) => old + 1);
       setFetching(false);
-      setFetchedAll(true);
-      return;
+    },
+    [fetchedAll, fetching, page, id]
+  );
+
+  const fetchParticipantAndGroup = useCallback(async () => {
+    setLoading(true);
+    const participantRes = await api.get(`/group/participant/${id}`);
+    if (participantRes.status === 200) {
+      setParticipant(participantRes.data.participant);
+      setGroup(participantRes.data.participant.group);
     }
 
-    if (page > 0) {
-      setOldMessages((old) => [...old, ...data.messages]);
-    } else {
-      setOldMessages(data.messages);
+    if (Platform.OS === "android") {
+      OneSignal.Notifications.removeGroupedNotifications(id);
     }
 
-    setPage((old) => old + 1);
-    setFetching(false);
-  }, [fetchedAll, fetching, page]);
+    setPage(0);
+    setFetchedAll(false);
+    setLoading(false);
+  }, [id]);
+
+  const handleDisconnectGroup = useCallback(() => {
+    if (!socket) return;
+
+    socket?.emit("leave_chat");
+    socket?.offAny();
+    handleTypingTimeout();
+  }, [socket]);
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
@@ -411,7 +438,11 @@ const Chat: React.FC = () => {
   const handleMessageSubmit = async () => {
     const messageRefValue = messageInputRef.current.value;
     const message = messageRefValue?.slice(0) || "";
-    
+
+    if (id !== currentGroupId || !connected) {
+      return;
+    }
+
     if (messageRefValue) {
       messageInputRef.current.clear();
       messageInputRef.current.value = "";
@@ -545,36 +576,27 @@ const Chat: React.FC = () => {
   const disableAudioPermission = () => setAudioPermission(false);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const participantRes = await api.get(`/group/participant/${id}`);
-      if (participantRes.status === 200) {
-        setParticipant(participantRes.data.participant);
-        setGroup(participantRes.data.participant.group);
-      }
+    if (currentGroupId !== id && connected) {
+      handleDisconnectGroup();
+      handleJoinRoom(id);
+    }
 
-      if (Platform.OS === "android") {
-        OneSignal.Notifications.removeGroupedNotifications(id);
-      }
-
-      setPage(0);
-      setFetchedAll(false);
-      setLoading(false);
-    })();
     return () => {
-      socket?.emit("leave_chat");
-      socket?.offAny();
-      handleTypingTimeout();
+      handleDisconnectGroup();
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (appState !== "active") {
-      socket?.emit("leave_chat");
-      socket?.offAny();
-      handleTypingTimeout();
+      handleDisconnectGroup();
     }
   }, [appState]);
+
+  useEffect(() => {
+    if (group?.id !== currentGroupId) {
+      fetchParticipantAndGroup();
+    }
+  }, [currentGroupId]);
 
   useEffect(() => {
     if (!participant || !group) return;
@@ -605,21 +627,10 @@ const Chat: React.FC = () => {
         handleJoinRoom(id);
         configureSocketListeners();
       }
-
-      setPage(0);
-      setFetchedAll(false);
-
-      fetchOldMessages();
-    }, [appState, connected, socket, id])
+    }, [connected, socket, appState])
   );
 
-  useFocusEffect(useCallback(() => {
-    if (id === currentGroupId) {
-      
-    }
-  }, [id, group, currentGroupId]))
-
-  if (loading || !connected) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <>

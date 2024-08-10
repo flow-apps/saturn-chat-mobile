@@ -54,7 +54,7 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 
     createdSocket.on("disconnect", (error) => console.log(error));
-    createdSocket.on("error", (error) => console.log(JSON.stringify(error)));
+    // createdSocket.on("error", (error) => console.log(JSON.stringify(error)));
 
     return () => {
       createdSocket.offAny();
