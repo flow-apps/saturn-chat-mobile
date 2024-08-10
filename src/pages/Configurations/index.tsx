@@ -27,7 +27,6 @@ import config from "../../config";
 import { useNotifications } from "@contexts/notifications";
 import { LinkUtils } from "@utils/link";
 import { useTranslate } from "@hooks/useTranslate";
-import { usePurchases } from "@contexts/purchases";
 import { usePremium } from "@contexts/premium";
 
 const Configurations: React.FC = () => {
@@ -40,7 +39,6 @@ const Configurations: React.FC = () => {
   const { colors } = useTheme();
   const linkUtils = new LinkUtils();
   const { t } = useTranslate("Settings");
-  const { userSubscription, handleGetUserSubscription } = usePurchases();
   const { isPremium } = usePremium();
 
   const showManageSub = useMemo(() => {
