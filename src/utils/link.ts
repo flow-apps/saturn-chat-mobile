@@ -54,6 +54,9 @@ class LinkUtils {
     if (isSaturnChatLink) {
       const { path, queryParams } = ExpoLinking.parse(url);
 
+      console.log(path);
+      
+
       if (this.hasSaturnChatDeepLinkInApp(path)) {
         const deepURL = ExpoLinking.createURL(path, {
           queryParams,

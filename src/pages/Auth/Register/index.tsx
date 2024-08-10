@@ -40,6 +40,7 @@ import {
   nicknameValidation,
   passwordValidation,
 } from "@utils/regex";
+import { LinkUtils } from "@utils/link";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImagePicker.ImagePickerAsset>();
@@ -61,6 +62,8 @@ const Register: React.FC = () => {
   const { colors } = useTheme();
   const { signUp, loading, registerError, internalError } = useAuth();
   const { t } = useTranslate("Auth.CreateAccount");
+
+  const linkUtils = new LinkUtils()
 
   const nicknameErrors = {
     400: "O nome de usuário não está conforme os padrões esperados",
@@ -255,11 +258,11 @@ const Register: React.FC = () => {
   };
 
   const handleGoPrivacyPolicie = async () => {
-    await Linking.openURL(`${config.WEBSITE_URL}/privacy`);
+    await linkUtils.openLink(`${config.WEBSITE_URL}/privacy`);
   };
 
   const handleGoGuidelines = async () => {
-    await Linking.openURL(`${config.WEBSITE_URL}/guidelines`);
+    await linkUtils.openLink(`${config.WEBSITE_URL}/guidelines`);
   };
 
   if (loading) {
