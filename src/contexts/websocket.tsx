@@ -49,12 +49,12 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsConnecting(false);
     });
 
-    createdSocket.on("connect_error", (error) =>
-      console.error("Connection Error:", JSON.stringify(error))
-    );
+    // createdSocket.on("connect_error", (error) =>
+    //   console.error("Connection Error:", JSON.stringify(error))
+    // );
 
-    createdSocket.on("disconnect", (error) => console.log(error));
-    // createdSocket.on("error", (error) => console.log(JSON.stringify(error)));
+    // createdSocket.on("disconnect", (error) => console.log(error));
+    createdSocket.on("error", (error) => console.log(JSON.stringify(error)));
 
     return () => {
       createdSocket.offAny();

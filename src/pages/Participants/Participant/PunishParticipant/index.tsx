@@ -21,15 +21,19 @@ import Loading from "@components/Loading";
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";
 import { useTranslate } from "@hooks/useTranslate";
+import { useWebsocket } from "@contexts/websocket";
+import { ParticipantData } from "@pages/Home";
 
 const PunishParticipant: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { colors } = useTheme();
   const { t } = useTranslate("PunishParticipant");
+  const { socket } = useWebsocket();
 
   const { type, participant } = route.params as {
-    [key: string]: any;
+    type: string;
+    participant: ParticipantData;
   };
   const [notify, setNotify] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,12 +54,16 @@ const PunishParticipant: React.FC = () => {
       )
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show(t("toasts.success"),SimpleToast.SHORT);
+          SimpleToast.show(t("toasts.success"), SimpleToast.SHORT);
           navigation.navigate("Chat", { id: participant?.group.id });
+          socket.emit(`${type === "kick" ? "kicked" : "banned"}_user_register`, {
+            group_id: participant?.group.id,
+            user_id: participant.user_id,
+          });
         }
       })
       .catch(() => {
-        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
+        SimpleToast.show(t("toasts.error"), SimpleToast.SHORT);
       });
 
     setLoading(false);

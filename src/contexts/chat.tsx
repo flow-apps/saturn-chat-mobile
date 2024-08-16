@@ -90,7 +90,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!connected) {
         console.log(`Conectando o usuário ao grupo ${groupId}`);
 
-        setCurrentGroupId(groupId)
+        setCurrentGroupId(groupId);
 
         socket.emit("connect_in_chat", groupId);
       }
@@ -207,27 +207,21 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (socket) {
       socket.on("deleted_group", () => {
-        const historyRoutes = getRoutes();
-        const inChatScreen = historyRoutes
-          ?.map((value) => value.name)
-          .includes("Chat");
-
-        if (inChatScreen) navigate("Groups");
+        navigate("Groups");
       });
-      socket.on("kicked_user", (data) => {
-        const historyRoutes = getRoutes();
-        const inChatScreen = historyRoutes
-          ?.map((value) => value.name)
-          .includes("Chat");
-
-        if (user?.id === data.userId && inChatScreen) navigate("Groups");
+      socket.on("kicked_user", ({ group_id, user_id }) => {        
+        if (group_id === currentGroupId) {
+          if (user_id === user.id) {
+            navigate("Groups");
+          }
+        }
       });
-      socket.on("banned_user", (data) => {
-        const historyRoutes = getRoutes();
-        const inChatScreen = historyRoutes
-          ?.map((value) => value.name)
-          .includes("Chat");
-        if (user?.id === data.userId && inChatScreen) navigate("Groups");
+      socket.on("banned_user", ({ group_id, user_id }) => {
+        if (group_id === currentGroupId) {
+          if (user_id === user.id) {
+            navigate("Groups");
+          }
+        }
       });
 
       socket.on("success_join", (groupID) => {
