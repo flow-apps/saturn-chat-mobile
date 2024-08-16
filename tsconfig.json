@@ -3,7 +3,7 @@
     "removeComments": true,
     "baseUrl": "./",
     "types": [
-      "@types/styled-components-react-native"
+      "@types/styled-components"
     ],
     "paths": {
       "@components/*": ["./src/components/*"],
