@@ -527,6 +527,7 @@ const Chat: React.FC = () => {
           if (res.status === 200) {
             handleSendMessage({
               message_id: res.data.message_id,
+              message,
               withFiles: true,
               localReference,
             });
