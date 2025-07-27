@@ -1,0 +1,5 @@
+<resources>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="app_name">Saturn Chat</string>
+  <string name="expo_runtime_version">39</string>
+</resources>

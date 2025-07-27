@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Saturn Chat",
+    "slug": "SaturnChat",
+    "version": "0.1.12",
+    "platforms": [
+      "android"
+    ],
+    "scheme": "saturnchat",
+    "android": {
+      "package": "com.flowapps.saturnchat",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-5955119850349278~6592119770"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5702d402-a17b-417c-ad01-ac3ddd0446cc"
+      }
+    },
+    "runtimeVersion": "39",
+    "updates": {
+      "url": "https://u.expo.dev/5702d402-a17b-417c-ad01-ac3ddd0446cc",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "requestHeaders": {
+        "expo-runtime-version": "39",
+        "expo-channel-name": "production"
+      }
+    },
+    "plugins": [
+      "expo-font",
+      "expo-localization",
+      "react-native-google-mobile-ads",
+      "react-native-iap"
+    ]
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-5955119850349278~6592119770"
+  }
+}
