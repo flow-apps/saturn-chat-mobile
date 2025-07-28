@@ -81,7 +81,7 @@ const EditGroup: React.FC = () => {
       allowsEditing: true,
       quality: 0.7,
       allowsMultipleSelection: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       base64: true,
       selectionLimit: 1,
     });
@@ -177,7 +177,7 @@ const EditGroup: React.FC = () => {
               label={t("inputs.name")}
               value={name}
               onChangeText={setName}
-              onTextInput={handleCheckFields}
+              onChange={handleCheckFields}
             />
           </FieldContainer>
           <FieldContainer>
@@ -186,7 +186,7 @@ const EditGroup: React.FC = () => {
               label={t("inputs.desc")}
               value={description}
               onChangeText={setDescription}
-              onTextInput={handleCheckFields}
+              onChange={handleCheckFields}
             />
           </FieldContainer>
           <FieldContainer>
@@ -195,7 +195,7 @@ const EditGroup: React.FC = () => {
               label="Tags"
               value={tags}
               onChangeText={setTags}
-              onTextInput={handleCheckFields}
+              onChange={handleCheckFields}
             />
           </FieldContainer>
           <FieldContainer>

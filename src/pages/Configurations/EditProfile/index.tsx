@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import FormData from "form-data";
-import { Alert, KeyboardAvoidingView } from "react-native";
+import { Alert } from "react-native";
 import SimpleToast from "react-native-simple-toast";
 import { UserData } from "@type/interfaces";
 import Button from "@components/Button";
@@ -38,7 +38,7 @@ const EditProfile: React.FC = () => {
   const [bio, setBio] = useState("");
 
   const [nickname, setNickname] = useState("");
-  const [nicknameTimeout, setNicknameTimeout] = useState<NodeJS.Timeout>();
+  const [nicknameTimeout, setNicknameTimeout] = useState<number>();
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [nicknameError, setNicknameError] = useState(false);
   const [fetchingNickname, setFetchingNickname] = useState(false);
@@ -159,7 +159,7 @@ const EditProfile: React.FC = () => {
       allowsEditing: true,
       quality: 0.7,
       allowsMultipleSelection: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       base64: true,
       selectionLimit: 1,
     });
@@ -311,7 +311,7 @@ const EditProfile: React.FC = () => {
                 placeholder={t("labels.name.placeholder")}
                 value={name}
                 onChangeText={setName}
-                onTextInput={handleCheckFields}
+                onChange={handleCheckFields}
                 maxLength={100}
               />
             </FieldContainer>
@@ -321,7 +321,7 @@ const EditProfile: React.FC = () => {
                 placeholder={"pedro_henrique"}
                 value={nickname}
                 onChangeText={handleSetNickname}
-                onTextInput={handleCheckFields}
+                onChange={handleCheckFields}
                 maxLength={100}
               />
               {fetchingNickname && <SearchText>Buscando...</SearchText>}
@@ -333,7 +333,7 @@ const EditProfile: React.FC = () => {
                 placeholder={t("labels.bio.placeholder")}
                 value={bio}
                 onChangeText={setBio}
-                onTextInput={handleCheckFields}
+                onChange={handleCheckFields}
                 maxLength={100}
                 multiline={true}
               />

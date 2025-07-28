@@ -7,8 +7,8 @@ import Loading from "@components/Loading";
 import formData from "form-data";
 
 import { Feather } from "@expo/vector-icons";
-import { Alert, Keyboard, KeyboardAvoidingView, Linking } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { useAuth } from "@contexts/auth";
 import {
@@ -54,7 +54,7 @@ const Register: React.FC = () => {
   const [passError, setPassError] = useState(false);
   const [passConfirmError, setPassConfirmError] = useState(true);
 
-  const [nicknameTimeout, setNicknameTimeout] = useState<NodeJS.Timeout>();
+  const [nicknameTimeout, setNicknameTimeout] = useState<number>();
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [nicknameError, setNicknameError] = useState(false);
   const [fetchingNickname, setFetchingNickname] = useState(false);
@@ -222,7 +222,7 @@ const Register: React.FC = () => {
       allowsEditing: true,
       quality: 0.7,
       allowsMultipleSelection: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       base64: true,
       selectionLimit: 1,
     });
@@ -273,7 +273,7 @@ const Register: React.FC = () => {
     <>
       <Header title={t("header_title")} />
       <Container>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Pressable onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView>
             <FormContainer>
               <SelectAvatarContainer>
@@ -404,7 +404,7 @@ const Register: React.FC = () => {
               </ConsentText>
             </FormContainer>
           </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+        </Pressable>
       </Container>
     </>
   );

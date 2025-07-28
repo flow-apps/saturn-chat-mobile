@@ -167,7 +167,7 @@ const NewGroup: React.FC = () => {
       allowsEditing: true,
       quality: 0.7,
       allowsMultipleSelection: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
     });
 
     if (!photo.canceled) {
