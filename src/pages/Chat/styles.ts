@@ -3,9 +3,10 @@ import fonts from "@styles/fonts";
 import { FlatList, Platform } from "react-native";
 
 export const Container = styled.KeyboardAvoidingView.attrs({
-  behavior: Platform.OS == "ios" ? "padding" : "height",
+  behavior: Platform.OS == "ios" ? "padding" : "padding",
 })`
   background-color: ${(props) => props.theme.colors.background};
+  flex: 1;
 `;
 
 export const Messages = styled.FlatList`
@@ -44,7 +45,7 @@ export const InputContainer = styled.View`
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
   padding: 12px;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-top: 10px;
 `;
 
 export const OptionsContainer = styled.View`

@@ -685,7 +685,8 @@ const Chat: React.FC = () => {
       </AdBannerWrapper>
 
       <Container style={{
-        flex: flexKeyboard
+        flex: flexKeyboard,
+        marginBottom: flexKeyboard ? 20 : 0
       }} >
         <Typing typingUsers={typingUsers} />
         <MessageContainer>

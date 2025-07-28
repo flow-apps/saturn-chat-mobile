@@ -5,7 +5,7 @@ import fonts from "@styles/fonts";
 export const Container = styled.View<{ bgColor?: string }>`
   width: 100%;
   padding: 0 15px;
-  height: ${getStatusBarHeight(true) + 70}px;
+  height: ${getStatusBarHeight(true) + 60}px;
   padding-top: ${getStatusBarHeight()}px;
   background: ${(props) => props.bgColor || props.theme.colors.primary};
 `;
