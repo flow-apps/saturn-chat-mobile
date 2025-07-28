@@ -3,7 +3,6 @@ module.exports = function (api) {
   return {
     plugins: [
       "react-native-reanimated/plugin",
-      "lodash",
       [
         "module-resolver",
         {

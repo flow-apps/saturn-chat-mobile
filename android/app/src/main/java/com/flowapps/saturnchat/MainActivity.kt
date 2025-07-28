@@ -1,5 +1,4 @@
-package com.saturnchatupdate
-
+package com.flowapps.saturnchat
 import android.os.Build
 import android.os.Bundle
 

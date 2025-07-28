@@ -11,7 +11,7 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
-import { StatusBar } from "expo-status-bar/build/StatusBar";
+import { StatusBar } from "expo-status-bar";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useAds } from "@contexts/ads";
 import { usePremium } from "@contexts/premium";

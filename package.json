@@ -60,6 +60,7 @@
     "lodash": "^4.17.21",
     "lottie-react-native": "7.2.2",
     "markdown-it": "^14.1.0",
+    "markdown-it-linkscheme": "^1.0.2",
     "moment": "^2.30.1",
     "moment-timezone": "^0.6.0",
     "moti": "^0.30.0",

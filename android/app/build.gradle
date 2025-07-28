@@ -91,9 +91,10 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdk rootProject.ext.compileSdkVersion
+    // compileSdk rootProject.ext.compileSdkVersion
+    compileSdk 36
 
-    namespace "com.saturnchatupdate"
+    namespace "com.flowapps.saturnchat"
     defaultConfig {
         missingDimensionStrategy 'store', 'play' 
         applicationId "com.flowapps.saturnchat"
