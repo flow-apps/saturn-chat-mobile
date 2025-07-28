@@ -5,8 +5,8 @@ import fonts from "@styles/fonts";
 export const Container = styled.View<{ bgColor?: string }>`
   width: 100%;
   padding: 0 10px;
-  height: ${getStatusBarHeight() + 30}px;
-  padding-top: ${getStatusBarHeight() - 60}px;
+  height: ${getStatusBarHeight() + 50}px;
+  padding-top: ${getStatusBarHeight() - 5}px;
   background: ${(props) => props.bgColor || props.theme.colors.primary};
 `;
 
