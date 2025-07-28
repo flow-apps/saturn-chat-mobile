@@ -263,7 +263,7 @@ const NewGroup: React.FC = () => {
                   returnKeyType="go"
                   value={name}
                   onChangeText={setName}
-                  onTextInput={handleCheckFields}
+                  onChange={handleCheckFields}
                 />
                 <TextArea
                   label={t("form.labels.desc.label")}
@@ -273,7 +273,7 @@ const NewGroup: React.FC = () => {
                   maxLength={500}
                   value={description}
                   onChangeText={setDescription}
-                  onTextInput={handleCheckFields}
+                  onChange={handleCheckFields}
                 />
                 <TextArea
                   label={t("form.labels.tags.label")}
