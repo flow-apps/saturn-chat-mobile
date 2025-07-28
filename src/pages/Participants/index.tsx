@@ -117,7 +117,7 @@ const Participants: React.FC = () => {
         <ParticipantContainer onPress={() => handleGoParticipant(item)}>
           <Participant>
             <ParticipantAvatarContainer>
-              <ParticipantAvatar uri={item.user.avatar?.url} />
+              <ParticipantAvatar uri={item.user.avatar?.url} width={60} height={60} />
               <ParticipantStatus
                 status={item.user.id === user?.id ? "ONLINE" : item.status}
               />

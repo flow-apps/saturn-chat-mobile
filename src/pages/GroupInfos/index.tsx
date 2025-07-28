@@ -112,7 +112,7 @@ const GroupInfos: React.FC = () => {
                 disabled={!group.group_avatar}
                 activeOpacity={0.7}
               >
-                <Avatar uri={group.group_avatar?.url} />
+                <Avatar uri={group.group_avatar?.url} width={180} height={180} />
               </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>

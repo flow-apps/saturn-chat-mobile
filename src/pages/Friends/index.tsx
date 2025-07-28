@@ -113,7 +113,7 @@ const Friends: React.FC = () => {
                 }
               >
                 <FriendLeftContainer>
-                  <FriendAvatar uri={getFriendAvatar(user.id, item)} />
+                  <FriendAvatar uri={getFriendAvatar(user.id, item)} width={60} height={60} />
                   <PremiumName
                     name={friendName}
                     showNickname={true}

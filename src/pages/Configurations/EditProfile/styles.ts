@@ -15,7 +15,6 @@ export const AvatarContainer = styled.View`
   justify-content: center;
   align-items: center;
   margin: 15px 0px;
-  z-index: -1;
 `;
 
 export const AvatarImage = styled.Image`

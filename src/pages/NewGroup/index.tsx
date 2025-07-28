@@ -53,7 +53,7 @@ import { useTranslate } from "@hooks/useTranslate";
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [groupPhoto, setGroupPhoto] = useState<ImageInfo>();
+  const [groupPhoto, setGroupPhoto] = useState<ImagePicker.ImagePickerAsset>();
   const [groupPhotoPreview, setGroupPhotoPreview] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -171,11 +171,9 @@ const NewGroup: React.FC = () => {
     });
 
     if (!photo.canceled) {
-      // @ts-ignore
-      setGroupPhotoPreview(photo.uri);
+      setGroupPhotoPreview(photo.assets.pop().uri);
 
-      // @ts-ignore
-      return setGroupPhoto(photo);
+      return setGroupPhoto(photo.assets.pop());
     }
   };
 

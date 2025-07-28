@@ -1,13 +1,15 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
-import { FlatList } from "react-native";
+import { FlatList, Platform } from "react-native";
 
-export const Container = styled.View`
-  flex: 1;
+export const Container = styled.KeyboardAvoidingView.attrs({
+  behavior: Platform.OS == "ios" ? "padding" : "height",
+})`
   background-color: ${(props) => props.theme.colors.background};
 `;
 
-export const Messages = styled.FlatList`` as unknown as typeof FlatList;
+export const Messages = styled.FlatList`
+` as unknown as typeof FlatList;
 
 export const MessageContainer = styled.View`
   flex: 1;
@@ -30,22 +32,23 @@ export const FileSendedText = styled.Text`
   margin-bottom: 10px;
 `;
 
-export const FormContainer = styled.View``;
+export const FormContainer = styled.View`
+`;
 
 export const InputContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
   background: ${(props) => props.theme.colors.shape};
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
   padding: 12px;
   border-radius: 8px;
-  margin: 10px 0 20px 0;
+  margin-bottom: 10px;
 `;
 
 export const OptionsContainer = styled.View`
   flex-direction: row;
-  align-items: center;
 `;
 
 export const OptionsButton = styled.TouchableOpacity`

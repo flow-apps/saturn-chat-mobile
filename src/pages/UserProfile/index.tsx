@@ -165,7 +165,7 @@ const UserProfile: React.FC = () => {
                 disabled={!userInfos.avatar}
                 activeOpacity={0.7}
               >
-                <Avatar uri={userInfos?.avatar?.url} />
+                <Avatar uri={userInfos?.avatar?.url} width={180} height={180} />
               </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>

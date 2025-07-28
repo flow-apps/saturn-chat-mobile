@@ -101,7 +101,7 @@ const Message = ({
           onPress={handleGoParticipant}
           disabled={message.participant.state !== ParticipantStates.JOINED}
         >
-          <MessageAvatar uri={message.author?.avatar?.url} />
+          <MessageAvatar uri={message.author?.avatar?.url} width={22} height={22} />
           <PremiumName
             name={message.author.name}
             nameSize={12}

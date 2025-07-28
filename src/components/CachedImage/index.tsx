@@ -29,6 +29,7 @@ const CachedImage: React.FC<CachedImageProps> = ({
       />
     );
   }
+  
 
   return uri ? (
     <Cache
@@ -39,7 +40,6 @@ const CachedImage: React.FC<CachedImageProps> = ({
     <Image
       source={placeholder || require("@assets/avatar-placeholder.png")}
       style={style}
-      // @ts-ignore
       width={width || 0}
       height={height || 0}
     />

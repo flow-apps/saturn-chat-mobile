@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import { ListRenderItem, Platform, TextInput } from "react-native";
+import { Keyboard, KeyboardAvoidingView, ListRenderItem, Platform, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -90,6 +90,8 @@ const Chat: React.FC = () => {
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
 
+  const [flexKeyboard, setFlexKeyboard] = useState(1);
+
   const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -100,7 +102,7 @@ const Chat: React.FC = () => {
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout>();
+  const [typingTimeout, setTypingTimeout] = useState<number>();
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
@@ -631,6 +633,11 @@ const Chat: React.FC = () => {
     }, [connected, socket, appState])
   );
 
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidHide", () => setFlexKeyboard(1));
+    Keyboard.addListener("keyboardDidShow", () => setFlexKeyboard(0));
+  }, [])
+
   if (loading) return <Loading />;
 
   return (
@@ -677,7 +684,9 @@ const Chat: React.FC = () => {
         <Banner />
       </AdBannerWrapper>
 
-      <Container>
+      <Container style={{
+        flex: flexKeyboard
+      }} >
         <Typing typingUsers={typingUsers} />
         <MessageContainer>
           <FlashList
