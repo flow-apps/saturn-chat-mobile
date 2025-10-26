@@ -1,9 +1,6 @@
 import { 
-  createAudioPlayer,
   AudioModule,
   RecordingPresets,
-  setAudioModeAsync,
-  useAudioRecorderState, 
   AudioRecorder,
   RecorderState
 } from "expo-audio";
@@ -39,24 +36,26 @@ class RecordService {
 
   async start({ onDurationUpdate }: StartRecordAudioProps) {
     try {
-      const permission = await AudioModule.getPermissionsAsync();
+      let time = 0
+      const permission = await AudioModule.getRecordingPermissionsAsync();      
 
       if (!permission.granted) {
-        const { granted } = await AudioModule.requestPermissionsAsync();
+        const { granted } = await AudioModule.requestRecordingPermissionsAsync();
         return;
       }
 
-      if (!this.audioRecorder || this.audioRecorder.getStatus().canRecord)
-      this.audioRecorder
-        .prepareToRecordAsync()
-        .then(async () => {
-          this.audioRecorder.record();
+      if (!this.audioRecorder || this.audioRecorder.getStatus().canRecord) {
+        await this.audioRecorder
+          .prepareToRecordAsync(RecordingPresets.LOW_QUALITY)
+  
+        this.audioRecorder.record()
 
-          this.recordInterval = setInterval(() => {
-            onDurationUpdate(this.recorderState.durationMillis);
-          }, 1000);
+        this.recordInterval = setInterval(async () => {
+          time += 1000
+          onDurationUpdate(time);
+        }, 1000);
+      }
 
-        });
       return {
         recording: this.audioRecorder,
       };

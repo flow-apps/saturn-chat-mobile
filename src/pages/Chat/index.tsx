@@ -11,6 +11,7 @@ import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {
+  AudioModule,
   AudioRecorder,
   RecordingPresets,
   useAudioRecorder,
@@ -80,9 +81,8 @@ import { getSettingValue } from "@utils/settings";
 const MESSAGES_LIMIT_REQUEST = 30;
 
 const Chat: React.FC = () => {
-  const audioRecorder = useAudioRecorder(RecordingPresets.LOW_QUALITY);
+  const audioRecorder = useAudioRecorder({...RecordingPresets.LOW_QUALITY, isMeteringEnabled: true });
   const recordingState = useAudioRecorderState(audioRecorder);
-  const recordService = new RecordService(audioRecorder, recordingState);
 
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -111,11 +111,12 @@ const Chat: React.FC = () => {
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number>();
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout>()
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
   const [audioPermission, setAudioPermission] = useState(false);
-  const [recordingAudio, setRecordingAudio] = useState<AudioRecorder>();
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -217,88 +218,109 @@ const Chat: React.FC = () => {
 
   const recordAudio = async () => {
     const hasMessage = !!(messageInputRef.current.value || "");
-  
-    if (recordingAudio || hasMessage) return;
+
+    if (hasMessage || isRecording) return;
 
     try {
-      const record = await recordService.start({
-        onDurationUpdate(duration) {
-          setAudioDuration(duration);
-        },
-      });
+      const permission = await AudioModule.getRecordingPermissionsAsync();
 
-      if (record) {
-        setRecordingAudio(record.recording);
+      if (!permission.granted) {
+        await AudioModule.requestRecordingPermissionsAsync();
+        return;
       }
+
+      await audioRecorder.prepareToRecordAsync({ isMeteringEnabled: true });
+      audioRecorder.record();
+      const recordTimer = setInterval((status) => {
+          const newStatus = audioRecorder.getStatus();
+          console.log(newStatus);
+          
+          setAudioDuration(newStatus.durationMillis);
+      }, 500);
+
+      setRecordingInterval(recordTimer);
+
+
+      setIsRecording(true);
     } catch (error: any) {
-      setRecordingAudio(undefined);
       new Error(error);
     }
   };
 
   const stopRecordAudioAndSubmit = async () => {
-    if (!recordingAudio) return;
+    const extension = Platform.select({
+      android: RecordingPresets.LOW_QUALITY.android.extension,
+      ios: RecordingPresets.LOW_QUALITY.ios.extension,
+    });
+
+    if (!isRecording) return;
+
+    console.log(audioRecorder.getStatus());
+    
+    if (audioRecorder.currentTime <= 1200) {
+        return SimpleToast.show("Grave uma mensagem maior que 1 segundo", SimpleToast.SHORT);
+    }
+
+    await audioRecorder.stop();
+    const duration = audioRecorder.currentTime;
 
     try {
       setAudioDuration(0);
-      setRecordingAudio(undefined);
+      setIsRecording(false);
+      clearInterval(recordingInterval);
+      setRecordingInterval(undefined);
 
-      await recordService.finish({
-        audio: recordingAudio,
-        async onRecordFinish({ duration, audioURI, audioInfos, extension }) {
-          SimpleToast.show(t("toasts.sending_voice"), SimpleToast.SHORT);
+      SimpleToast.show(t("toasts.sending_voice"), SimpleToast.SHORT);
 
-          const audioData = new FormData();
-          const localReference = uuid.v4() as string;
+      const audioData = new FormData();
+      const localReference = uuid.v4() as string;
 
-          audioData.append("duration", duration);
-          audioData.append("attachment", {
-            uri: audioURI,
-            name: `attachment_audio${extension}`,
-            type: `audio/${extension.replace(".", "")}`,
-          });
-
-          setOldMessages((old) => [
-            {
-              id: localReference,
-              author: user as UserData,
-              group,
-              message: "",
-              participant,
-              voice_message: {
-                name: `attachment_audio_${localReference}${extension}`,
-                duration,
-                size: 0,
-                url: audioInfos.uri,
-              },
-              files: [],
-              sended: false,
-              localReference,
-              reply_to: replyingMessage,
-              created_at: new Date().toISOString(),
-            },
-            ...old,
-          ]);
-
-          const sendedAudio = await api.post(
-            `/messages/SendAttachment/${id}?type=voice_message`,
-            audioData,
-            {
-              headers: {
-                "Content-Type": `multipart/form-data`,
-              },
-            }
-          );
-
-          handleSendVoiceMessage({
-            audio: sendedAudio.data,
-            reply_to_id: replyingMessage?.id,
-            message: "",
-            localReference,
-          });
-          setReplyingMessage(undefined);
-        },
+      audioData.append("duration", duration);
+      audioData.append("attachment", {
+        uri: audioRecorder.uri,
+        name: `attachment_audio${extension}`,
+        type: `audio/${extension.replace(".", "")}`,
       });
+
+      setOldMessages((old) => [
+        {
+          id: localReference,
+          author: user as UserData,
+          group,
+          message: "",
+          participant,
+          voice_message: {
+            name: `attachment_audio_${localReference}${extension}`,
+            duration,
+            size: 0,
+            url: audioRecorder.uri,
+          },
+          files: [],
+          sended: false,
+          localReference,
+          reply_to: replyingMessage,
+          created_at: new Date().toISOString(),
+        },
+        ...old,
+      ]);
+
+      const sendedAudio = await api.post(
+        `/messages/SendAttachment/${id}?type=voice_message`,
+        audioData,
+        {
+          headers: {
+            "Content-Type": `multipart/form-data`,
+          },
+        }
+      );
+
+      handleSendVoiceMessage({
+        audio: sendedAudio.data,
+        reply_to_id: replyingMessage?.id,
+        message: "",
+        localReference,
+      });
+      setReplyingMessage(undefined);
     } catch (error: any) {
       new Error(error);
     }
@@ -719,7 +741,7 @@ const Chat: React.FC = () => {
         </MessageContainer>
         <FormContainer style={{ paddingHorizontal: canSendMessage ? 12 : 0 }}>
           <AnimatePresence>
-            {recordingAudio && (
+            {isRecording && (
               <MotiView
                 from={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 40 }}
@@ -770,9 +792,7 @@ const Chat: React.FC = () => {
                 placeholderTextColor={colors.dark_heading}
                 onChangeText={handleSetMessage}
                 maxLength={userConfigs?.messageLength || 500}
-                placeholder={
-                  recordingAudio ? t("drop_send") : t("type_message")
-                }
+                placeholder={isRecording ? t("drop_send") : t("type_message")}
               />
               <OptionsContainer>
                 <OptionsButton onPress={handleFileSelector}>
