@@ -232,15 +232,11 @@ const Chat: React.FC = () => {
       await audioRecorder.prepareToRecordAsync({ isMeteringEnabled: true });
       audioRecorder.record();
       const recordTimer = setInterval((status) => {
-          const newStatus = audioRecorder.getStatus();
-          console.log(newStatus);
-          
+          const newStatus = audioRecorder.getStatus();          
           setAudioDuration(newStatus.durationMillis);
       }, 500);
 
       setRecordingInterval(recordTimer);
-
-
       setIsRecording(true);
     } catch (error: any) {
       new Error(error);
@@ -666,6 +662,10 @@ const Chat: React.FC = () => {
   useEffect(() => {
     Keyboard.addListener("keyboardDidHide", () => setFlexKeyboard(1));
     Keyboard.addListener("keyboardDidShow", () => setFlexKeyboard(0));
+    return () => {
+      Keyboard.removeAllListeners("keyboardDidHide");
+      Keyboard.removeAllListeners("keyboardDidShow");
+    }
   }, []);
 
   if (loading) return <Loading />;
@@ -717,7 +717,7 @@ const Chat: React.FC = () => {
       <Container
         style={{
           flex: flexKeyboard,
-          marginBottom: flexKeyboard ? 30 : 0,
+          marginBottom: flexKeyboard ? 20 : 0,
         }}
       >
         <Typing typingUsers={typingUsers} />

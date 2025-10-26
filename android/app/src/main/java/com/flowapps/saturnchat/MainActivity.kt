@@ -1,6 +1,7 @@
 package com.flowapps.saturnchat
 import android.os.Build
 import android.os.Bundle
+import androidx.core.view.WindowCompat
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -16,7 +17,7 @@ class MainActivity : ReactActivity() {
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
     super.onCreate(null)
-    WindowCompat.enableEdgeToEdge(window)
+    WindowCompat.setDecorFitsSystemWindows(window, false)
   }
 
   /**

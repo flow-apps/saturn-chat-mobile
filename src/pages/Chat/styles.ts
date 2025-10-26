@@ -34,6 +34,7 @@ export const FileSendedText = styled.Text`
 `;
 
 export const FormContainer = styled.View`
+  margin-bottom: 10px;
 `;
 
 export const InputContainer = styled.View`
@@ -43,8 +44,8 @@ export const InputContainer = styled.View`
 
   background: ${(props) => props.theme.colors.shape};
   border: 1px solid ${(props) => props.theme.colors.dark_gray};
-  padding: 12px;
-  border-radius: 8px;
+  padding: 15px;
+  border-radius: 50px;
   margin-top: 10px;
 `;
 

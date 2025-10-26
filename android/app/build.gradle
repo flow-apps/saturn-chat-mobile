@@ -102,8 +102,8 @@ android {
         minSdkVersion 24
         // targetSdkVersion rootProject.ext.targetSdkVersion
         targetSdkVersion 35
-        versionCode 41
-        versionName "0.1.17"
+        versionCode 42
+        versionName "0.1.18"
         multiDexEnabled true
     }
     signingConfigs {
