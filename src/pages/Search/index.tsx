@@ -48,7 +48,7 @@ const Search: React.FC = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "groups" | "users">("all");
 
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>(null);
+  const [searchTimeout, setSearchTimeout] = useState<number>(null);
 
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -222,7 +222,7 @@ const Search: React.FC = () => {
                 >
                   {item.search_type === "group" ? (
                     <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
-                      <GroupImage uri={item.group_avatar?.url} />
+                      <GroupImage uri={item.group_avatar?.url} width={80} height={80} />
                       <GroupInfosContainer>
                         <GroupName numberOfLines={2}>{item.name}</GroupName>
                         <GroupDesc numberOfLines={3}>
@@ -238,7 +238,7 @@ const Search: React.FC = () => {
                     </GroupCard>
                   ) : (
                     <UserCard onPress={() => handleGoUserProfile(item.id)}>
-                      <UserAvatar uri={item?.avatar?.url} />
+                      <UserAvatar uri={item?.avatar?.url} width={80} height={80} />
                       <PremiumName
                         name={item.name}
                         nickname={item?.nickname}

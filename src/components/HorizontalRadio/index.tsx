@@ -32,6 +32,7 @@ const HorizontalRadio: React.FC<IHorizontalRadioProps> = ({
               borderColor:
                 currentValue === button.value ? colors.primary : colors.shape,
             }}
+            key={button.key.length}
             onPress={() => onChangeValue(button.value)}
           >
             <ButtonText>{button.key}</ButtonText>

@@ -15,7 +15,7 @@ interface GroupProps extends TouchableOpacityProps {
   unreadMessages?: number;
 }
 
-const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {
+const Group = ({ name, unreadMessages = 0, image, ...rest }: GroupProps) => {  
   return (
     <>
       <Container as={TouchableOpacity} {...rest}>

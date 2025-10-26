@@ -115,15 +115,13 @@ export const GroupInfosContainer = styled.View`
 `;
 
 export const GroupImage = styled(CachedImage)`
-  width: 75px;
-  height: 75px;
-  border-radius: 10px;
+  border-radius: 15px;
 `;
 
 export const GroupName = styled.Text`
   flex: 1;
   font-family: ${fonts.heading};
-  font-size: 16px;
+  font-size: 22px;
   color: ${(props) => props.theme.colors.black};
 `;
 

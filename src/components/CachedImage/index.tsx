@@ -34,14 +34,13 @@ const CachedImage: React.FC<CachedImageProps> = ({
   return uri ? (
     <Cache
       source={{ uri, cache: "immutable", priority: "high" }}
-      style={style}
+      style={[{ width, height }, style]}
+      fallback
     />
   ) : (
     <Image
       source={placeholder || require("@assets/avatar-placeholder.png")}
-      style={style}
-      width={width || 0}
-      height={height || 0}
+      style={[{ width, height }, style]}
     />
   );
 };

@@ -16,6 +16,7 @@ class MainActivity : ReactActivity() {
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
     super.onCreate(null)
+    WindowCompat.enableEdgeToEdge(window)
   }
 
   /**
