@@ -60,7 +60,7 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
   const [currentTime, setCurrentTime] = useState(0);
   const [hiddenControls, setHiddenControls] = useState(true);
   const [hiddenControlsTimeout, setHiddenControlsTimeout] =
-    useState<NodeJS.Timeout>();
+    useState<number>();
   const ytPlayerRef = useRef<IYouTubeControllers>(null);
 
   const { colors } = useTheme();

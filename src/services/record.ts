@@ -1,5 +1,13 @@
-import { Audio } from "expo-av";
-import { Alert, Platform } from "react-native";
+import { 
+  createAudioPlayer,
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorderState, 
+  AudioRecorder,
+  RecorderState
+} from "expo-audio";
+import { Platform } from "react-native";
 import Toast from "react-native-simple-toast";
 import * as FileSystem from "expo-file-system";
 
@@ -8,7 +16,7 @@ type StartRecordAudioProps = {
 };
 
 type FinishRecordAudioProps = {
-  audio: Audio.Recording;
+  audio: AudioRecorder;
   onRecordFinish: (data: OnRecordFinishProps) => any;
 };
 
@@ -20,38 +28,37 @@ type OnRecordFinishProps = {
 };
 
 class RecordService {
-  private recording: Audio.Recording;
+  public audioRecorder: AudioRecorder;
+  public recorderState: RecorderState;
+  private recordInterval: number;
 
-  constructor() {
-    this.recording = new Audio.Recording();
+  constructor(audioRecorder: AudioRecorder, recorderState: RecorderState) {
+    this.audioRecorder = audioRecorder
+    this.recorderState = recorderState;
   }
 
   async start({ onDurationUpdate }: StartRecordAudioProps) {
     try {
-      const permission = await Audio.getPermissionsAsync();
+      const permission = await AudioModule.getPermissionsAsync();
 
       if (!permission.granted) {
-        const { granted } = await Audio.requestPermissionsAsync();
+        const { granted } = await AudioModule.requestPermissionsAsync();
         return;
       }
 
-      if (!this.recording || this.recording._isDoneRecording)
-        this.recording = new Audio.Recording();
-
-      this.recording
-        .prepareToRecordAsync({
-          ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
-          keepAudioActiveHint: true,
-        })
+      if (!this.audioRecorder || this.audioRecorder.getStatus().canRecord)
+      this.audioRecorder
+        .prepareToRecordAsync()
         .then(async () => {
-          await this.recording.startAsync();
+          this.audioRecorder.record();
 
-          this.recording.setOnRecordingStatusUpdate((status) => {
-            onDurationUpdate(status.durationMillis);
-          });
+          this.recordInterval = setInterval(() => {
+            onDurationUpdate(this.recorderState.durationMillis);
+          }, 1000);
+
         });
       return {
-        recording: this.recording,
+        recording: this.audioRecorder,
       };
     } catch (error) {
       new Error(error);
@@ -61,20 +68,22 @@ class RecordService {
   async finish({ audio, onRecordFinish }: FinishRecordAudioProps) {
     try {
       if (!audio) return;
-      await audio.stopAndUnloadAsync();
+      
+      await audio.stop();
+      clearInterval(this.recordInterval);
 
-      if (audio._finalDurationMillis <= 1200) {
+      if (audio.currentTime <= 1200) {
         return Toast.show("Grave uma mensagem maior que 1 segundo",Toast.SHORT);
       }
 
-      const uri = audio.getURI();
+      const uri = audio.uri;
       if (!uri) return;
 
       const extension = Platform.select({
-        android: Audio.RecordingOptionsPresets.HIGH_QUALITY.android.extension,
-        ios: Audio.RecordingOptionsPresets.HIGH_QUALITY.ios.extension,
+        android: RecordingPresets.LOW_QUALITY.android.extension,
+        ios: RecordingPresets.LOW_QUALITY.ios.extension,
       });
-      const duration = audio._finalDurationMillis;
+      const duration = audio.currentTime;
       const audioInfos = await FileSystem.getInfoAsync(uri);
 
       if (!audioInfos.exists)

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import { Keyboard, KeyboardAvoidingView, ListRenderItem, Platform, TextInput } from "react-native";
+import { Keyboard, ListRenderItem, Platform, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -10,7 +10,12 @@ import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Audio from "expo-av/build/Audio";
+import {
+  AudioRecorder,
+  RecordingPresets,
+  useAudioRecorder,
+  useAudioRecorderState,
+} from "expo-audio";
 import { useTheme } from "styled-components";
 import {
   GroupData,
@@ -72,10 +77,13 @@ import { ParticipantRoles } from "@type/enums";
 import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 
-const recordService = new RecordService();
 const MESSAGES_LIMIT_REQUEST = 30;
 
 const Chat: React.FC = () => {
+  const audioRecorder = useAudioRecorder(RecordingPresets.LOW_QUALITY);
+  const recordingState = useAudioRecorderState(audioRecorder);
+  const recordService = new RecordService(audioRecorder, recordingState);
+
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
@@ -107,7 +115,7 @@ const Chat: React.FC = () => {
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
   const [audioPermission, setAudioPermission] = useState(false);
-  const [recordingAudio, setRecordingAudio] = useState<Audio.Recording>();
+  const [recordingAudio, setRecordingAudio] = useState<AudioRecorder>();
   const [audioDuration, setAudioDuration] = useState(0);
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -209,7 +217,7 @@ const Chat: React.FC = () => {
 
   const recordAudio = async () => {
     const hasMessage = !!(messageInputRef.current.value || "");
-
+  
     if (recordingAudio || hasMessage) return;
 
     try {
@@ -636,7 +644,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     Keyboard.addListener("keyboardDidHide", () => setFlexKeyboard(1));
     Keyboard.addListener("keyboardDidShow", () => setFlexKeyboard(0));
-  }, [])
+  }, []);
 
   if (loading) return <Loading />;
 
@@ -684,10 +692,12 @@ const Chat: React.FC = () => {
         <Banner />
       </AdBannerWrapper>
 
-      <Container style={{
-        flex: flexKeyboard,
-        marginBottom: flexKeyboard ? 20 : 0
-      }} >
+      <Container
+        style={{
+          flex: flexKeyboard,
+          marginBottom: flexKeyboard ? 30 : 0,
+        }}
+      >
         <Typing typingUsers={typingUsers} />
         <MessageContainer>
           <FlashList

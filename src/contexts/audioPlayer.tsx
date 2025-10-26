@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
+import { setAudioModeAsync } from "expo-audio";
 
 interface AudioPlayerContextProps {
-  Audio: typeof Audio;
   currentAudioName: string;
   setCurrentAudioName: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -18,21 +17,17 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentAudioName, setCurrentAudioName] = useState("");
 
   useEffect(() => {
-    Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      staysActiveInBackground: false,
-      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-      playsInSilentModeIOS: true,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
-    });
+    setAudioModeAsync({
+      interruptionMode: "doNotMix",
+      interruptionModeAndroid: "doNotMix",
+      playsInSilentMode: true,
+      shouldRouteThroughEarpiece: true
+    })
   }, []);
 
   return (
     <AudioPlayerContext.Provider
       value={{
-        Audio,
         currentAudioName,
         setCurrentAudioName,
       }}

@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { Video } from "expo-av";
+import { VideoView } from "expo-video";
 import fonts from "@styles/fonts";
 import Slider from "@react-native-community/slider";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
@@ -45,7 +45,7 @@ export const VideoPlayerWrapper = styled.View`
   height: 100%;
 `;
 
-export const VideoPlayer = styled(Video)`
+export const VideoPlayer = styled(VideoView)`
   width: 100%;
   height: 100%;
 `;

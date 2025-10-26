@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/core";
 import {
   Container,
@@ -19,7 +19,7 @@ import {
 } from "./styles";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "styled-components";
-import Video from "expo-av/build/Video";
+import { VideoView, useVideoPlayer } from "expo-video";
 import { millisToTime } from "@utils/format";
 import { MotiView } from "moti";
 import { AnimatePresence } from "moti";
@@ -27,8 +27,6 @@ import SystemNavigationBar from "react-native-system-navigation-bar";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { FileService } from "@services/file";
-import { AVPlaybackStatus } from "expo-av/build/AV";
-import { ResizeMode } from "expo-av/build/Video.types";
 import { DateUtils } from "@utils/date";
 
 const { convertToMillis } = new DateUtils();
@@ -41,11 +39,9 @@ const VideoPreview: React.FC = () => {
   const [duration, setDuration] = useState(0);
   const [hiddenControls, setHiddenControls] = useState(true);
   const [hiddenControlsTimeout, setHiddenControlsTimeout] =
-    useState<NodeJS.Timeout>();
-  const [status, setStatus] = useState<AVPlaybackStatus>();
+    useState<number>();
 
   const fileService = new FileService()
-  const videoRef = useRef<Video>(null);
   const navigation = useNavigation();
   const route = useRoute();
   const routeParams = route.params as {
@@ -56,6 +52,7 @@ const VideoPreview: React.FC = () => {
   };
 
   const { colors } = useTheme();
+  const videoPlayer = useVideoPlayer({ uri: routeParams.url });
 
   useEffect(() => {
     SystemNavigationBar.stickyImmersive();
@@ -64,35 +61,19 @@ const VideoPreview: React.FC = () => {
     };
   }, []);
 
-  const handleSetInitialData = (data: AVPlaybackStatus) => {
-    if (!data.isLoaded) return;
-
-    setStatus(data);
-    setDuration(data.durationMillis);
-    setCurrentPosition(data.positionMillis);
-  };
-
-  const handleUpdateStatus = (newStatus: AVPlaybackStatus) => {
-    if (!newStatus.isLoaded) return;
-
-    setStatus(newStatus);
-    setCurrentPosition(newStatus.positionMillis);
-  };
-
   const handlePlayPause = async () => {
-    if (!status.isLoaded) return;
 
-    if (status.isPlaying) {
-      await videoRef.current.pauseAsync();
+    if (videoPlayer.playing) {
+      videoPlayer.pause();
     } else {
-      await videoRef.current.playAsync();
+      videoPlayer.play();
     }
 
     setPlay((old) => !old);
   };
 
   const handleSeek = async (value: number) => {
-    await videoRef.current.setPositionAsync(value);
+    videoPlayer.seekBy(value);
     setCurrentPosition(value);
   };
 
@@ -118,6 +99,13 @@ const VideoPreview: React.FC = () => {
   const downloadFile = async () => {
     await fileService.downloadFile(routeParams.url, routeParams.original_name)
   };
+
+  useEffect(() => {
+    videoPlayer.addListener("sourceLoad", (source) => {
+      setDuration(videoPlayer.duration);
+      setCurrentPosition(videoPlayer.currentTime);
+    })
+  }, [])
 
   return (
     <>
@@ -157,18 +145,10 @@ const VideoPreview: React.FC = () => {
           )}
         </AnimatePresence>
         <VideoPlayerWrapper>
-          <Video
-            ref={videoRef}
+          <VideoView
+            player={videoPlayer}
             style={{ width: "100%", height: "100%" }}
-            shouldPlay={play}
-            isLooping={true}
-            volume={1}
-            source={{ uri: routeParams.url }}
-            posterSource={{ uri: routeParams.poster }}
-            resizeMode={ResizeMode.CONTAIN}
-            onLoad={handleSetInitialData}
-            onPlaybackStatusUpdate={handleUpdateStatus}
-            progressUpdateIntervalMillis={800}
+            allowsPictureInPicture={false}
           />
         </VideoPlayerWrapper>
         <PlayerControlsContainer onPress={handleHiddenControls}>

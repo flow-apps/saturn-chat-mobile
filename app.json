@@ -32,7 +32,9 @@
       "expo-font",
       "expo-localization",
       "react-native-google-mobile-ads",
-      "react-native-iap"
+      "react-native-iap",
+      "expo-audio",
+      "expo-video"
     ]
   },
   "react-native-google-mobile-ads": {
