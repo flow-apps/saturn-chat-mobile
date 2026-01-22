@@ -58,7 +58,7 @@
     "expo-video": "~2.2.2",
     "form-data": "^4.0.4",
     "i18next": "^25.3.2",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lottie-react-native": "7.2.2",
     "markdown-it": "^14.1.0",
     "markdown-it-linkscheme": "^1.0.2",
