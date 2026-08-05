@@ -55,6 +55,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const parsedUser = JSON.parse(String(storageUser));
 
       api.defaults.headers["authorization"] = headerToken;
+      if (!websocket.query) {
+        websocket.query = {};
+      }
       websocket.query.token = headerToken;
       setToken(headerToken);
       setUser(parsedUser);
@@ -70,6 +73,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await AsyncStorage.setItem("@SaturnChat:token", data.token, () => {
         api.defaults.headers["authorization"] = headerToken;
+        if (!websocket.query) {
+          websocket.query = {};
+        }
         websocket.query.token = headerToken;
         setToken(headerToken);
       });
@@ -79,7 +85,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       JSON.stringify(data.user),
       () => {
         setUser(data.user);
-      }
+      },
     );
 
     OneSignal.login(data.user.id);
@@ -105,10 +111,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setInternalError({ has: false, reason: "" });
       })
       .catch((error: AxiosError) => {
-        if (error.response.status === 500) {
+        if (error?.response?.status === 500) {
           setInternalError({
             has: true,
-            reason: JSON.stringify(error.response.data),
+            reason: JSON.stringify(error.response?.data),
           });
         }
         setLoginError(true);
@@ -133,12 +139,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setInternalError({ has: false, reason: "" });
       })
       .catch((error: AxiosError) => {
-        console.log(error.response.data);
+        console.log(error.response?.data);
 
-        if (error.response.status === 500) {
+        if (error.response?.status === 500) {
           setInternalError({
             has: true,
-            reason: JSON.stringify(error.response.data),
+            reason: JSON.stringify(error.response?.data),
           });
         }
         setRegisterError(true);
@@ -153,12 +159,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           .delete(`/users/notify/unregister?platform=${Platform.OS}`)
           .finally(() => {
             OneSignal.logout();
-            api.defaults.headers["authorization"] = undefined;
-            websocket.query.token = "";
+            api.defaults.headers["authorization"] = "";
+            if (websocket.query) {
+              websocket.query.token = "";
+            }
             setToken("");
             setUser(null);
           });
-      }
+      },
     );
   };
 

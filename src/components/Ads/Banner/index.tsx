@@ -78,7 +78,7 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
         </RemoveBanner>
         <BannerContainer>
           <BannerAd
-            unitId={adUnitID}
+            unitId={adUnitID!}
             size={size}
             onAdOpened={() => setShow(true)}
             onAdFailedToLoad={(error) => {

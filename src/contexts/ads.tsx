@@ -9,7 +9,7 @@ import config from "../config";
 
 interface ADSContextProps {
   unitID: string;
-  Interstitial: InterstitialAd;
+  Interstitial: InterstitialAd | undefined;
 }
 
 const AdsContext = createContext<ADSContextProps>({} as ADSContextProps);
@@ -34,7 +34,7 @@ const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         ios: secrets.AdsAppID.ios,
       });
       const adUnitID = __DEV__ ? testID : productionID;
-      setUnitID(adUnitID);
+      setUnitID(adUnitID!);
     })();
   }, []);
 
@@ -45,7 +45,7 @@ const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       ios: secrets.AdsID.productionKeys.interstitial.ios,
     });
     const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
-    const interstitial = InterstitialAd.createForAdRequest(adUnitID);
+    const interstitial = InterstitialAd.createForAdRequest(adUnitID!);
 
     interstitial.addAdEventListener(AdEventType.CLOSED, async () => {
       setTimeout(() => {
@@ -57,7 +57,7 @@ const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     setInterstitial(interstitial);
 
     return () => {
-      Interstitial?.removeAllListeners();
+      interstitial.removeAllListeners();
     };
   }, []);
 

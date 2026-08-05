@@ -96,7 +96,7 @@ const Register: React.FC = () => {
         }
       })
       .catch((error) => {
-        const status = error.response.status;
+        const status: number = error.response.status;
 
         if (status === 404) {
           setNicknameError(false);
@@ -105,7 +105,7 @@ const Register: React.FC = () => {
         }
 
         setNicknameError(true);
-        setNicknameErrorMessage(nicknameErrors[status]);
+        setNicknameErrorMessage(nicknameErrors[status as 400 | 1000]);
       })
       .finally(() => setFetchingNickname(false));
   };
@@ -151,7 +151,7 @@ const Register: React.FC = () => {
       setNicknameErrorMessage(nicknameErrors[400]);
       if (nicknameTimeout) {
         clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        setNicknameTimeout(undefined);
       }
     } else {
       setNicknameError(false);
@@ -167,7 +167,7 @@ const Register: React.FC = () => {
     if (!nickname.length) {
       if (nicknameTimeout) {
         clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        setNicknameTimeout(undefined);
       }
 
       return;
@@ -178,16 +178,16 @@ const Register: React.FC = () => {
 
       const newTimeout = setTimeout(async () => {
         await checkNickname(nickname);
-        clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        clearTimeout(nicknameTimeout); // This line is already there
+        setNicknameTimeout(undefined);
       }, NICKNAME_TIMEOUT);
 
       setNicknameTimeout(newTimeout);
     } else {
       const newTimeout = setTimeout(async () => {
         await checkNickname(nickname);
-        clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        clearTimeout(nicknameTimeout); // This line is already there
+        setNicknameTimeout(undefined);
       }, NICKNAME_TIMEOUT);
 
       setNicknameTimeout(newTimeout);

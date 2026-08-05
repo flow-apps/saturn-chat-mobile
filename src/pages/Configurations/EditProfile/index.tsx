@@ -88,7 +88,7 @@ const EditProfile: React.FC = () => {
         }
 
         setNicknameError(true);
-        setNicknameErrorMessage(nicknameErrors[status]);
+        setNicknameErrorMessage(nicknameErrors[status as 400 | 1000]);
       })
       .finally(() => setFetchingNickname(false));
   };
@@ -108,7 +108,7 @@ const EditProfile: React.FC = () => {
       setNicknameErrorMessage(nicknameErrors[400]);
       if (nicknameTimeout) {
         clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        setNicknameTimeout(undefined);
       }
     } else {
       setNicknameError(false);
@@ -211,9 +211,9 @@ const EditProfile: React.FC = () => {
     }
 
     const oldInfos = {
-      name: user.name,
+      name: user?.name,
       nickname: user?.nickname || "",
-      bio: user.bio,
+      bio: user?.bio,
     };
 
     const newInfos = {
@@ -248,13 +248,13 @@ const EditProfile: React.FC = () => {
     if (!nickname || !nickname.length) {
       if (nicknameTimeout) {
         clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        setNicknameTimeout(undefined);
       }
 
       return;
     }
 
-    if (nickname === user.nickname) {
+    if (nickname === user?.nickname) {
       setNicknameError(false);
       setNicknameErrorMessage("");
       return;
@@ -266,7 +266,7 @@ const EditProfile: React.FC = () => {
       const newTimeout = setTimeout(async () => {
         await checkNickname(nickname);
         clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        setNicknameTimeout(undefined);
       }, NICKNAME_TIMEOUT);
 
       setNicknameTimeout(newTimeout);
@@ -274,7 +274,7 @@ const EditProfile: React.FC = () => {
       const newTimeout = setTimeout(async () => {
         await checkNickname(nickname);
         clearTimeout(nicknameTimeout);
-        setNicknameTimeout(null);
+        setNicknameTimeout(undefined);
       }, NICKNAME_TIMEOUT);
 
       setNicknameTimeout(newTimeout);

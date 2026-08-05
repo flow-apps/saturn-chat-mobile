@@ -2,6 +2,7 @@
   "compilerOptions": {
     "removeComments": true,
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "types": [
       "@types/styled-components"
     ],
