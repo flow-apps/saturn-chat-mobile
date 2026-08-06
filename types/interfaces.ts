@@ -61,6 +61,7 @@ export interface ParticipantsData {
   state: ParticipantStates;
   participant_settings: ISetting[];
   participating_since: string;
+  last_seen: string;
 }
 
 export interface AudioData {

@@ -16,6 +16,7 @@ import {
   JoinedDate,
   ParticipantAvatarContainer,
   ParticipantStatus,
+  ParticipanteName,
 } from "./styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -57,7 +58,7 @@ const Participants: React.FC = () => {
     (async () => {
       setLoading(true);
       const res = await api.get(
-        `/group/participants/list/?group_id=${id}&_page=${page}&_limit=30`
+        `/group/participants/list/?group_id=${id}&_page=${page}&_limit=30`,
       );
 
       if (res.status === 200) {
@@ -74,7 +75,7 @@ const Participants: React.FC = () => {
   const fetchMoreParticipants = useCallback(async () => {
     setFetching(true);
     const res = await api.get(
-      `/group/participants/list/?group_id=${id}&_page=${page}&_limit=30`
+      `/group/participants/list/?group_id=${id}&_page=${page}&_limit=30`,
     );
 
     if (res.data.length === 0) {
@@ -117,30 +118,52 @@ const Participants: React.FC = () => {
         <ParticipantContainer onPress={() => handleGoParticipant(item)}>
           <Participant>
             <ParticipantAvatarContainer>
-              <ParticipantAvatar uri={item.user.avatar?.url} width={60} height={60} />
+              <ParticipantAvatar
+                uri={item.user.avatar?.url}
+                width={60}
+                height={60}
+              />
               <ParticipantStatus
                 status={item.user.id === user?.id ? "ONLINE" : item.status}
               />
             </ParticipantAvatarContainer>
             <ParticipantInfosWrapper>
-              <PremiumName
+              <ParticipanteName
                 name={item.user.name}
+                nickname={item.user.nickname}
+                showNickname
                 nameSize={16}
                 hasPremium={
-                  item.user.id === user.id ? isPremium : item.user.isPremium
+                  item.user.id === user?.id ? isPremium : item.user.isPremium
                 }
               />
-              <JoinedDate>
-                {item.group.owner.id === item.user.id
-                  ? t("created", {
-                      date: convertDate.formatToDate(item.participating_since),
-                    })
-                  : t("joined", {
-                      date: convertDate.formatToDate(item.participating_since),
-                    })}
-              </JoinedDate>
+              <JoinedDateContainer>
+                <JoinedDate>
+                  {item.group.owner.id === item.user.id
+                    ? t("created", {
+                        date: convertDate.formatToDate(
+                          item.participating_since,
+                        ),
+                      })
+                    : t("joined", {
+                        date: convertDate.formatToDate(
+                          item.participating_since,
+                        ),
+                      })}
+                </JoinedDate>
+                {(item.user.id === user?.id ||
+                  item.status === "ONLINE" ||
+                  item.last_seen) && (
+                  <JoinedDate>
+                    {item.user.id === user?.id || item.status === "ONLINE"
+                      ? t("online")
+                      : t("last_seen", {
+                          date: convertDate.formatToDate(item.last_seen),
+                        })}
+                  </JoinedDate>
+                )}
+              </JoinedDateContainer>
             </ParticipantInfosWrapper>
-            <JoinedDateContainer></JoinedDateContainer>
           </Participant>
           {item.group.owner.id === item.user.id && (
             <OwnerTagContainer>
@@ -165,15 +188,14 @@ const Participants: React.FC = () => {
             keyExtractor={(part) => part.id}
             renderItem={renderItem}
             onEndReached={({ distanceFromEnd }) => reachEnd(distanceFromEnd)}
-            ListFooterComponent={
-              fetching &&
-              !loadedAll && (
+            ListFooterComponent={() =>
+              fetching && !loadedAll ? (
                 <ActivityIndicator
                   style={{ margin: 10 }}
                   size="large"
                   color={colors.primary}
                 />
-              )
+              ) : null
             }
           />
         </ParticipantsContainer>

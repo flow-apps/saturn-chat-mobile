@@ -15,7 +15,7 @@ import { MotiView } from "moti";
 import { usePremium } from "@contexts/premium";
 
 export interface PremiumNameProps {
-  name: string;
+  name?: string;
   nameSize?: number;
   fontFamily?: keyof typeof fonts;
   emblemSize?: number;
@@ -70,7 +70,7 @@ const PremiumName = ({
             loop: true,
           }}
         >
-          <EmblemContainer onPress={handleEmblemDetails} isPremium={hasPremium}>
+          <EmblemContainer onPress={handleEmblemDetails} isPremium={!!hasPremium}>
             <FontAwesome
               name="star"
               size={emblemSize || (nameSize || 16) + 4}

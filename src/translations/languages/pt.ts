@@ -504,6 +504,8 @@ export const pt = {
     title: "Todos os participantes",
     created: "Criou em {{date}}",
     joined: "Entrou em {{date}}",
+    online: "Online",
+    last_seen: "Visto por último em {{date}}",
     owner: "Dono",
   },
   Participant: {

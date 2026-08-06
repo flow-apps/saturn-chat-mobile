@@ -24,7 +24,7 @@ export const Name = styled.Text<PremiumNameProps>`
 
 export const NicknameText = styled(Name)`
   color: ${(props) => props.theme.colors.light_heading};
-  font-family: ${fonts.quote};
+  font-family: ${fonts["text-bold"]};
   font-size: 10px;
 `;
 

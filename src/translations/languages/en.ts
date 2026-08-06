@@ -501,6 +501,8 @@ export const en = {
     created: "Created on {{date}}",
     joined: "Joined on {{date}}",
     owner: "Owner",
+    online: "Online",
+    last_seen: "Last seen at {{date}}",
   },
   Participant: {
     title: "Participant options",

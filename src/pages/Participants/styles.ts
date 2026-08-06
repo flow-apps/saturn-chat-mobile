@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 import { ParticipantsData } from "@type/interfaces";
 import CachedImage from "@components/CachedImage";
+import PremiumName from "@components/PremiumName";
 
 export const Container = styled.View`
   flex: 1;
@@ -31,6 +32,9 @@ export const ParticipantContainer = styled.TouchableOpacity`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding: 20px 15px;
+  background-color: ${(props) => props.theme.colors.shape};
+  border-radius: 12px;
 `;
 
 export const OwnerTagContainer = styled.View`
@@ -52,11 +56,14 @@ export const ParticipantInfosWrapper = styled.View`
   justify-content: space-around;
 `;
 
-export const JoinedDateContainer = styled.View``;
+export const JoinedDateContainer = styled.View`
+  margin-top: 5px;
+`;
 
 export const JoinedDate = styled.Text`
   color: ${(props) => props.theme.colors.light_heading};
   font-family: ${fonts.text};
+  font-size: 12px;
 `;
 
 export const Participant = styled.View`
@@ -94,7 +101,7 @@ export const ParticipantAvatar = styled(CachedImage)`
   margin-right: 10px;
 `;
 
-export const ParticipanteName = styled.Text`
+export const ParticipanteName = styled(PremiumName)`
   font-size: 18px;
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.black};
