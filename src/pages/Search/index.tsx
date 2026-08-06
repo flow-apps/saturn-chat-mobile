@@ -48,7 +48,7 @@ const Search: React.FC = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "groups" | "users">("all");
 
-  const [searchTimeout, setSearchTimeout] = useState<number>(null);
+  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
 
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();

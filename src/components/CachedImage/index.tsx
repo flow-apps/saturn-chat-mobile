@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 
 import { Image, Cache } from "./styles";
 import { ImageProps, ImageSourcePropType, StyleProp } from "react-native";
@@ -19,6 +19,8 @@ const CachedImage: React.FC<CachedImageProps> = ({
   placeholder,
   style,
 }) => {
+  const [hasError, setHasError] = useState(false);
+
   if (uri && uri.includes(".svg")) {
     return (
       <SvgCssUri
@@ -29,18 +31,23 @@ const CachedImage: React.FC<CachedImageProps> = ({
       />
     );
   }
-  
 
-  return uri ? (
+  const placeholderImage =
+    placeholder || require("@assets/avatar-placeholder.png");
+
+  if (hasError || !uri) {
+    return (
+      <Image source={placeholderImage} style={[{ width, height }, style]} />
+    );
+  }
+
+  return (
     <Cache
       source={{ uri, cache: "immutable", priority: "high" }}
       style={[{ width, height }, style]}
       fallback
-    />
-  ) : (
-    <Image
-      source={placeholder || require("@assets/avatar-placeholder.png")}
-      style={[{ width, height }, style]}
+      onError={() => setHasError(true)}
+
     />
   );
 };
