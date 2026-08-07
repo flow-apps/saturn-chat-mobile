@@ -36,7 +36,7 @@ import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import api from "@services/api";
 
-import Localize from "expo-localization";
+import { getCalendars } from "expo-localization";
 import { InviteData } from "@type/interfaces";
 import { DateUtils } from "@utils/date";
 import config from "../../../../config";
@@ -68,31 +68,40 @@ const NewInvites: React.FC = () => {
   }, []);
 
   const handleCreateInvite = async () => {
-    const response = await api.post("/invites", {
-      groupId: id,
-      isPermanent: String(permanent),
-      isUnlimitedUsage: String(unlimitedUsages),
-      usageAmount: Number(usages),
-      expireIn: expireIn,
-      expireTimezone: Localize.getCalendars()[0].timeZone,
-    });
+    try {
+      const response = await api.post("/invites", {
+        groupId: id,
+        isPermanent: permanent,
+        isUnlimitedUsage: unlimitedUsages,
+        usageAmount: usages,
+        expireIn: expireIn,
+        expireTimezone: getCalendars()[0].timeZone,
+      });
 
-    if (response.status === 200) {
-      setInvites((old) => [response.data, ...old]);
+      if (response.status === 200) {
+        setInvites((old) => [response.data, ...old]);
+        Toast.show("Convite criado com sucesso!", Toast.SHORT);
+      }
+    } catch (error) {
+      console.error("Erro ao criar convite:", error);
+      Toast.show("Não foi possível criar o convite.", Toast.SHORT);
     }
   };
 
   const handleDeleteInvite = async (id: string) => {
-    const response = await api.delete(`/invites/${id}`);
-
-    if (response.status === 204) {
+    try {
+      await api.delete(`/invites/${id}`);
       setInvites((old) => old.filter((inv) => inv.id !== id));
+      Toast.show("Convite removido com sucesso!", Toast.SHORT);
+    } catch (error) {
+      console.error("Erro ao remover convite:", error);
+      Toast.show("Não foi possível remover o convite.", Toast.SHORT);
     }
   };
 
   const handleCopyLink = async (url: string) => {
     await Clipboard.setStringAsync(url);
-    Toast.show("Convite copiado!");
+    Toast.show("Convite copiado!", Toast.SHORT);
   };
 
   const { colors } = useTheme();
