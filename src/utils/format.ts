@@ -9,3 +9,10 @@ export const millisToTime = (millis: number) => {
 
   return `${minutes.padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 };
+
+export const secondsToTime = (seconds: number) => {
+  const minutes = Math.trunc(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+};

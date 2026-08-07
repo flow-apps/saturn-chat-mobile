@@ -11,7 +11,7 @@ import {
   Container,
 } from "./styles";
 import { useTheme } from "styled-components";
-import { millisToTime } from "@utils/format";
+import { millisToTime, secondsToTime } from "@utils/format";
 import { useAudioPlayer } from "@contexts/audioPlayer";
 import {
   AudioPlayer as AP,
@@ -44,15 +44,11 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
   );
 
   useEffect(() => {
-    if (!sound) return;
-
     const subscription = sound.addListener("playbackStatusUpdate", (status) => {
-      console.log(  sound.currentStatus
-      );
-      
+
       if (status.isLoaded) {
-        setDuration(status.duration);
-        setCurrentPosition(status.currentTime);
+        setDuration(Math.ceil(status.duration));
+        setCurrentPosition(Math.ceil(status.currentTime));
         setIsPlaying(status.playing);
       }
     });
@@ -60,7 +56,7 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
     return () => {
       subscription?.remove();
     };
-  }, [sound, audio]);
+  }, [sound]);
 
   useEffect(() => {
     (async () => {
@@ -84,7 +80,7 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
   };
 
   const seekAudio = async (newPos: number) => {
-    setCurrentPosition(newPos);
+    setCurrentPosition(Math.ceil(newPos));
     await sound?.seekTo(newPos);
   };
 
@@ -113,8 +109,8 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
           <AudioPreviewDurationContainer>
             <AudioPreviewDuration>
               {isPlaying || currentPosition > 0
-                ? millisToTime(currentPosition)
-                : millisToTime(duration)}
+                ? secondsToTime(currentPosition)
+                : secondsToTime(duration)}
             </AudioPreviewDuration>
           </AudioPreviewDurationContainer>
         </AudioPreviewControllersWrapper>

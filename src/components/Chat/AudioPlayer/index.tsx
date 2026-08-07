@@ -11,7 +11,7 @@ import {
 } from "./styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTheme } from "styled-components";
-import { millisToTime } from "@utils/format";
+import { millisToTime, secondsToTime } from "@utils/format";
 import { AudioData } from "@type/interfaces";
 import { useAudioPlayer } from "@contexts/audioPlayer";
 import {
@@ -40,12 +40,19 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
     1000,
   );
 
-
   useEffect(() => {
-    if (sound) {
-      setDuration(sound.duration);
-      setCurrentPosition(sound.currentTime);
-    }
+    const subscription = sound.addListener("playbackStatusUpdate", (status) => {
+
+      if (status.isLoaded) {
+        setDuration(Math.ceil(status.duration));
+        setCurrentPosition(Math.ceil(status.currentTime));
+        setIsPlaying(status.playing);
+      }
+    });
+
+    return () => {
+      subscription?.remove();
+    };
   }, [sound]);
 
   useEffect(() => {
@@ -70,9 +77,8 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   };
 
   const seekAudio = async (newPos: number) => {
-    setCurrentPosition(newPos);
-    await sound?.seekTo(currentPosition);
-    newPos;
+    setCurrentPosition(Math.ceil(newPos));
+    await sound?.seekTo(newPos);
   };
 
   return (
@@ -101,8 +107,8 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
           <AudioDurationContainer>
             <AudioDuration>
               {isPlaying || currentPosition > 0
-                ? millisToTime(currentPosition)
-                : millisToTime(duration)}
+                ? secondsToTime(currentPosition)
+                : secondsToTime(duration)}
             </AudioDuration>
           </AudioDurationContainer>
         </AudioControllerContainer>
