@@ -27,7 +27,7 @@ export const PresentationSubtitle = styled.Text`
   margin-bottom: 5px;
 `;
 
-export const FriendsListContainer = styled.View`
+export const FriendsListContainer = styled.ScrollView`
   margin-top: 15px;
 `;
 

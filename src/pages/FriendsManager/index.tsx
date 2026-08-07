@@ -50,7 +50,7 @@ const FriendsManager: React.FC = () => {
 
         setLoading(false);
       })();
-    }, [])
+    }, []),
   );
 
   const openUnfriendAlert = (unfriend: FriendData) => {
@@ -90,38 +90,37 @@ const FriendsManager: React.FC = () => {
         okButtonAction={removeFriend}
         cancelButtonAction={closeUnfriendAlert}
       />
-      <Container>
-        <Header title={t("header_title")} />
-        <FriendsList>
-          <FlatList
-            data={friends}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
-              const friendName = getFriendName(user.id, item);
+      <Header title={t("header_title")} />
+      <FlatList
+        data={friends}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{
+          padding: 15,
+        }}
+        renderItem={({ item }) => {
+          const friendName = getFriendName(user.id, item);
 
-              return (
-                <Friend>
-                  <FriendInfos>
-                    <FriendAvatarContainer>
-                      <FriendAvatar uri={getFriendAvatar(user.id, item)} />
-                    </FriendAvatarContainer>
-                    <PremiumName
-                      name={friendName}
-                      hasPremium={getFriendPremium(user.id, item)}
-                      nameSize={14}
-                      fontFamily="text"
-                      color={colors.black}
-                    />
-                  </FriendInfos>
-                  <UnFriendButton onPress={() => openUnfriendAlert(item)}>
-                    <Feather name="user-x" size={22} color={colors.red} />
-                  </UnFriendButton>
-                </Friend>
-              );
-            }}
-          />
-        </FriendsList>
-      </Container>
+          return (
+            <Friend>
+              <FriendInfos>
+                <FriendAvatarContainer>
+                  <FriendAvatar uri={getFriendAvatar(user.id, item)} />
+                </FriendAvatarContainer>
+                <PremiumName
+                  name={friendName}
+                  hasPremium={getFriendPremium(user.id, item)}
+                  nameSize={14}
+                  fontFamily="text"
+                  color={colors.black}
+                />
+              </FriendInfos>
+              <UnFriendButton onPress={() => openUnfriendAlert(item)}>
+                <Feather name="user-x" size={22} color={colors.red} />
+              </UnFriendButton>
+            </Friend>
+          );
+        }}
+      />
     </>
   );
 };

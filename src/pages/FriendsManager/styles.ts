@@ -7,7 +7,7 @@ export const Container = styled.View`
   background: ${(props) => props.theme.colors.background};
 `;
 
-export const FriendsList = styled.View`
+export const FriendsList = styled.ScrollView`
   padding: 15px;
 `;
 
