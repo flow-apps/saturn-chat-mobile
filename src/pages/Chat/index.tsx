@@ -70,7 +70,7 @@ import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
 
 import FlashList from "@shopify/flash-list/dist/FlashList";
-import { OneSignal } from "react-native-onesignal";
+import { OneSignal } from "@configs/notifications";
 import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
 import Banner from "@components/Ads/Banner";
@@ -79,6 +79,15 @@ import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 
 const MESSAGES_LIMIT_REQUEST = 30;
+
+type OptimisticMessageInput = {
+  id: string;
+  localReference: string;
+  message?: string;
+  files?: MessageData["files"];
+  voice_message?: MessageData["voice_message"];
+  reply_to?: MessageData;
+};
 
 const Chat: React.FC = () => {
   const audioRecorder = useAudioRecorder({...RecordingPresets.LOW_QUALITY, isMeteringEnabled: true });
@@ -112,7 +121,7 @@ const Chat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number>();
   const [isRecording, setIsRecording] = useState(false);
-  const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout>()
+  const [recordingInterval, setRecordingInterval] = useState<ReturnType<typeof setInterval>>()
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
@@ -157,7 +166,7 @@ const Chat: React.FC = () => {
       setOldMessages((old) =>
         arrayUtils.iterator(old, (m) =>
           m.localReference === localReference ? { ...msg, sended: true } : m
-        )
+        ) || old
       );
     });
 
@@ -183,7 +192,7 @@ const Chat: React.FC = () => {
         typingUsers,
         (user) => user.id === removedUserID
       );
-      setTypingUsers(filteredUsers);
+      setTypingUsers(filteredUsers || []);
     });
 
     onDeleteUserMessage(async (result) => {
@@ -194,6 +203,30 @@ const Chat: React.FC = () => {
       setOldMessages((old) => old.filter((msg) => msg.id !== result.id));
     });
   }, [socket]);
+
+  const buildOptimisticMessage = useCallback(
+    ({
+      id,
+      localReference,
+      message = "",
+      files = [],
+      voice_message,
+      reply_to,
+    }: OptimisticMessageInput): MessageData => ({
+      id,
+      author: user as UserData,
+      group,
+      participant,
+      message,
+      files,
+      voice_message,
+      sended: false,
+      localReference,
+      reply_to,
+      created_at: new Date().toISOString(),
+    }),
+    [group, participant, user]
+  );
 
   const handleTypingTimeout = () => {
     setIsTyping(false);
@@ -217,7 +250,7 @@ const Chat: React.FC = () => {
   };
 
   const recordAudio = async () => {
-    const hasMessage = !!(messageInputRef.current.value || "");
+    const hasMessage = !!(messageInputRef.current?.value || "");
 
     if (hasMessage || isRecording) return;
 
@@ -231,15 +264,15 @@ const Chat: React.FC = () => {
 
       await audioRecorder.prepareToRecordAsync({ isMeteringEnabled: true });
       audioRecorder.record();
-      const recordTimer = setInterval((status) => {
-          const newStatus = audioRecorder.getStatus();          
-          setAudioDuration(newStatus.durationMillis);
+      const recordTimer = setInterval(() => {
+        const newStatus = audioRecorder.getStatus();
+        setAudioDuration(newStatus.durationMillis);
       }, 500);
 
       setRecordingInterval(recordTimer);
       setIsRecording(true);
     } catch (error: any) {
-      new Error(error);
+      crashlytics().recordError(error, "Record Audio Error");
     }
   };
 
@@ -248,17 +281,20 @@ const Chat: React.FC = () => {
       android: RecordingPresets.LOW_QUALITY.android.extension,
       ios: RecordingPresets.LOW_QUALITY.ios.extension,
     });
+    const audioExtension = extension || ".m4a";
 
     if (!isRecording) return;
 
-    console.log(audioRecorder.getStatus());
-    
-    if (audioRecorder.currentTime <= 1200) {
+    const status = audioRecorder.getStatus();
+    const duration = status.durationMillis
+
+    console.log(duration);
+  
+    if (duration <= 1200) {
         return SimpleToast.show("Grave uma mensagem maior que 1 segundo", SimpleToast.SHORT);
     }
 
     await audioRecorder.stop();
-    const duration = audioRecorder.currentTime;
 
     try {
       setAudioDuration(0);
@@ -274,29 +310,22 @@ const Chat: React.FC = () => {
       audioData.append("duration", duration);
       audioData.append("attachment", {
         uri: audioRecorder.uri,
-        name: `attachment_audio${extension}`,
-        type: `audio/${extension.replace(".", "")}`,
+        name: `attachment_audio${audioExtension}`,
+        type: `audio/${audioExtension.replace(".", "")}`,
       });
 
       setOldMessages((old) => [
-        {
+        buildOptimisticMessage({
           id: localReference,
-          author: user as UserData,
-          group,
-          message: "",
-          participant,
+          localReference,
           voice_message: {
-            name: `attachment_audio_${localReference}${extension}`,
+            name: `attachment_audio_${localReference}${audioExtension}`,
             duration,
             size: 0,
-            url: audioRecorder.uri,
+            url: audioRecorder.uri!,
           },
-          files: [],
-          sended: false,
-          localReference,
           reply_to: replyingMessage,
-          created_at: new Date().toISOString(),
-        },
+        }),
         ...old,
       ]);
 
@@ -312,13 +341,13 @@ const Chat: React.FC = () => {
 
       handleSendVoiceMessage({
         audio: sendedAudio.data,
-        reply_to_id: replyingMessage?.id,
+        reply_to_id: replyingMessage?.id ?? "",
         message: "",
         localReference,
       });
       setReplyingMessage(undefined);
     } catch (error: any) {
-      new Error(error);
+      crashlytics().recordError(error, "Stop Record and Submit Error");
     }
   };
 
@@ -327,6 +356,7 @@ const Chat: React.FC = () => {
 
     if (!fileRes.error) {
       const newFile = fileRes.selectedFile;
+      if (!newFile) return;
       const isSelected = arrayUtils.has(files, (f) => {
         return (
           f.file.uri === newFile.file.uri || f.file?.name === newFile.file.name
@@ -352,6 +382,7 @@ const Chat: React.FC = () => {
 
   const removeFile = (position: number) => {
     const file = arrayUtils.findFirst(files, (f, index) => index === position);
+    if (!file?.file?.size) return;
 
     const fileSize = Math.trunc(file.file.size / 1000 / 1000);
     const filteredFiles = files.filter((f, index) => index !== position);
@@ -430,7 +461,9 @@ const Chat: React.FC = () => {
       setIsTypingMessage(false);
     }
 
-    messageInputRef.current.value = newMessage;
+    if (messageInputRef.current) {
+      messageInputRef.current.value = newMessage;
+    }
     handleTyping();
   };
 
@@ -464,7 +497,7 @@ const Chat: React.FC = () => {
   };
 
   const handleMessageSubmit = async () => {
-    const messageRefValue = messageInputRef.current.value;
+    const messageRefValue = messageInputRef.current?.value || "";
     const message = messageRefValue?.slice(0) || "";
 
     if (id !== currentGroupId || !connected) {
@@ -472,8 +505,10 @@ const Chat: React.FC = () => {
     }
 
     if (messageRefValue) {
-      messageInputRef.current.clear();
-      messageInputRef.current.value = "";
+      messageInputRef.current?.clear();
+      if (messageInputRef.current) {
+        messageInputRef.current.value = "";
+      }
     }
 
     if (files.length === 0 && !message) return;
@@ -482,11 +517,9 @@ const Chat: React.FC = () => {
     const localReference = uuid.v4() as string;
 
     setOldMessages((old) => [
-      {
+      buildOptimisticMessage({
         id: localReference,
-        author: user as UserData,
-        group,
-        participant,
+        localReference,
         message,
         files: files.map((file) => ({
           id: file.file.name,
@@ -496,11 +529,8 @@ const Chat: React.FC = () => {
           type: file.type,
           url: file.file.uri,
         })),
-        sended: false,
-        localReference,
         reply_to: replyingMessage,
-        created_at: new Date().toISOString(),
-      },
+      }),
       ...old,
     ]);
 
@@ -547,7 +577,8 @@ const Chat: React.FC = () => {
             "Content-Type": "multipart/form-data",
           },
           onUploadProgress: (event) => {
-            const totalSended = Math.round((event.loaded * 100) / event.total);
+            const total = event.total || event.loaded || 1;
+            const totalSended = Math.round((event.loaded * 100) / total);
             setSendedFileProgress(totalSended);
           },
         })
@@ -660,12 +691,17 @@ const Chat: React.FC = () => {
   );
 
   useEffect(() => {
-    Keyboard.addListener("keyboardDidHide", () => setFlexKeyboard(1));
-    Keyboard.addListener("keyboardDidShow", () => setFlexKeyboard(0));
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setFlexKeyboard(0);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setFlexKeyboard(1);
+    });
+
     return () => {
-      Keyboard.removeAllListeners("keyboardDidHide");
-      Keyboard.removeAllListeners("keyboardDidShow");
-    }
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
   }, []);
 
   if (loading) return <Loading />;

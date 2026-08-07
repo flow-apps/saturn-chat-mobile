@@ -21,7 +21,7 @@ const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       interruptionMode: "doNotMix",
       interruptionModeAndroid: "doNotMix",
       playsInSilentMode: true,
-      shouldRouteThroughEarpiece: true
+      shouldRouteThroughEarpiece: false
     })
   }, []);
 
