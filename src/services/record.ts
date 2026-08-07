@@ -4,7 +4,6 @@ import {
   AudioRecorder,
   RecorderState
 } from "expo-audio";
-import { Platform } from "react-native";
 import Toast from "react-native-simple-toast";
 import * as FileSystem from "expo-file-system";
 
@@ -46,7 +45,7 @@ class RecordService {
 
       if (!this.audioRecorder || this.audioRecorder.getStatus().canRecord) {
         await this.audioRecorder
-          .prepareToRecordAsync(RecordingPresets.LOW_QUALITY)
+          .prepareToRecordAsync(RecordingPresets.HIGH_QUALITY)
   
         this.audioRecorder.record()
 
@@ -78,10 +77,7 @@ class RecordService {
       const uri = audio.uri;
       if (!uri) return;
 
-      const extension = Platform.select({
-        android: RecordingPresets.LOW_QUALITY.android.extension,
-        ios: RecordingPresets.LOW_QUALITY.ios.extension,
-      });
+      const extension = RecordingPresets.HIGH_QUALITY.extension;
       const duration = audio.currentTime;
       const audioInfos = await FileSystem.getInfoAsync(uri);
 
@@ -92,7 +88,7 @@ class RecordService {
         duration,
         audioURI: uri,
         audioInfos,
-        extension: extension || "unknown",
+        extension,
       });
     } catch (error) {
       new Error(error);

@@ -170,7 +170,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const onSendedUserMessage = useCallback(
-    (callback: (data: onSendedUserMessageCallbackType) => void) => {
+    (callback: (data: onSendedUserMessageCallbackType) => void) => {      
       socket.on("sended_user_message", callback);
     },
     [socket]

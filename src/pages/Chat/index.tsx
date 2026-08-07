@@ -90,7 +90,10 @@ type OptimisticMessageInput = {
 };
 
 const Chat: React.FC = () => {
-  const audioRecorder = useAudioRecorder({...RecordingPresets.LOW_QUALITY, isMeteringEnabled: true });
+  const audioRecorder = useAudioRecorder({
+    ...RecordingPresets.HIGH_QUALITY,
+    isMeteringEnabled: true,
+  });
   const recordingState = useAudioRecorderState(audioRecorder);
 
   const messageInputRef = useRef<TextInputRef>(null);
@@ -121,7 +124,8 @@ const Chat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number>();
   const [isRecording, setIsRecording] = useState(false);
-  const [recordingInterval, setRecordingInterval] = useState<ReturnType<typeof setInterval>>()
+  const [recordingInterval, setRecordingInterval] =
+    useState<ReturnType<typeof setInterval>>();
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
@@ -130,7 +134,7 @@ const Chat: React.FC = () => {
 
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [participant, setParticipant] = useState<ParticipantsData>(
-    {} as ParticipantsData
+    {} as ParticipantsData,
   );
 
   const [page, setPage] = useState(0);
@@ -162,11 +166,12 @@ const Chat: React.FC = () => {
   const { t } = useTranslate("Chat");
 
   const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) => {
-      setOldMessages((old) =>
-        arrayUtils.iterator(old, (m) =>
-          m.localReference === localReference ? { ...msg, sended: true } : m
-        ) || old
+    onSendedUserMessage(({ msg, localReference }) => {      
+      setOldMessages(
+        (old) =>
+          arrayUtils.iterator(old, (m) =>
+            m.localReference === localReference ? { ...msg, sended: true } : m,
+          ) || old,
       );
     });
 
@@ -190,7 +195,7 @@ const Chat: React.FC = () => {
     onDeletedUserTyping((removedUserID) => {
       const filteredUsers = arrayUtils.removeOne(
         typingUsers,
-        (user) => user.id === removedUserID
+        (user) => user.id === removedUserID,
       );
       setTypingUsers(filteredUsers || []);
     });
@@ -225,7 +230,7 @@ const Chat: React.FC = () => {
       reply_to,
       created_at: new Date().toISOString(),
     }),
-    [group, participant, user]
+    [group, participant, user],
   );
 
   const handleTypingTimeout = () => {
@@ -262,7 +267,10 @@ const Chat: React.FC = () => {
         return;
       }
 
-      await audioRecorder.prepareToRecordAsync({ isMeteringEnabled: true });
+      await audioRecorder.prepareToRecordAsync({
+        ...RecordingPresets.HIGH_QUALITY,
+        isMeteringEnabled: true,
+      });
       audioRecorder.record();
       const recordTimer = setInterval(() => {
         const newStatus = audioRecorder.getStatus();
@@ -277,21 +285,20 @@ const Chat: React.FC = () => {
   };
 
   const stopRecordAudioAndSubmit = async () => {
-    const extension = Platform.select({
-      android: RecordingPresets.LOW_QUALITY.android.extension,
-      ios: RecordingPresets.LOW_QUALITY.ios.extension,
-    });
-    const audioExtension = extension || ".m4a";
+    const audioExtension = ".m4a";
 
     if (!isRecording) return;
 
     const status = audioRecorder.getStatus();
-    const duration = status.durationMillis
+    const duration = status.durationMillis;
 
     console.log(duration);
-  
+
     if (duration <= 1200) {
-        return SimpleToast.show("Grave uma mensagem maior que 1 segundo", SimpleToast.SHORT);
+      return SimpleToast.show(
+        "Grave uma mensagem maior que 1 segundo",
+        SimpleToast.SHORT,
+      );
     }
 
     await audioRecorder.stop();
@@ -311,7 +318,7 @@ const Chat: React.FC = () => {
       audioData.append("attachment", {
         uri: audioRecorder.uri,
         name: `attachment_audio${audioExtension}`,
-        type: `audio/${audioExtension.replace(".", "")}`,
+        type: "audio/mp4",
       });
 
       setOldMessages((old) => [
@@ -336,7 +343,22 @@ const Chat: React.FC = () => {
           headers: {
             "Content-Type": `multipart/form-data`,
           },
-        }
+        },
+      );
+
+      const sentAudioData = sendedAudio.data?.voice_message ?? sendedAudio.data;     
+
+      setOldMessages(
+        (old) =>
+          arrayUtils.iterator(old, (message) =>
+            message.localReference === localReference
+              ? {
+                  ...message,
+                  voice_message: sentAudioData ?? message.voice_message,
+                  sended: true,
+                }
+              : message,
+          ) || old,
       );
 
       handleSendVoiceMessage({
@@ -401,7 +423,7 @@ const Chat: React.FC = () => {
 
       setFetching(true);
       const { data } = await api.get(
-        `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`
+        `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`,
       );
 
       if (data.messages.length === 0) {
@@ -419,7 +441,7 @@ const Chat: React.FC = () => {
       setPage((old) => old + 1);
       setFetching(false);
     },
-    [fetchedAll, fetching, page, id]
+    [fetchedAll, fetching, page, id],
   );
 
   const fetchParticipantAndGroup = useCallback(async () => {
@@ -451,7 +473,7 @@ const Chat: React.FC = () => {
     if (newMessage.length >= userConfigs.messageLength) {
       return SimpleToast.show(
         t("limit_char", { count: userConfigs.messageLength }),
-        SimpleToast.SHORT
+        SimpleToast.SHORT,
       );
     }
 
@@ -625,7 +647,7 @@ const Chat: React.FC = () => {
         />
       );
     },
-    [oldMessages.length]
+    [oldMessages.length],
   );
 
   const renderFooter = () =>
@@ -668,7 +690,7 @@ const Chat: React.FC = () => {
 
     const participantRoleIndex = ordernedRolesArray.indexOf(participant.role);
     const minimumRoleSendMessageIndex = ordernedRolesArray.indexOf(
-      getSettingValue(group.group_settings, "minimum_role_for_send_message")
+      getSettingValue(group.group_settings, "minimum_role_for_send_message"),
     );
 
     const isMinimumRole = participantRoleIndex >= minimumRoleSendMessageIndex;
@@ -687,7 +709,7 @@ const Chat: React.FC = () => {
         handleJoinRoom(id);
         configureSocketListeners();
       }
-    }, [connected, socket, appState])
+    }, [connected, socket, appState]),
   );
 
   useEffect(() => {
