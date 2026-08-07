@@ -28,6 +28,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { FileService } from "@services/file";
 import { DateUtils } from "@utils/date";
+import { useAuth } from "@contexts/auth";
 
 const { convertToMillis } = new DateUtils();
 const TIME_FOR_HIDE_CONTROLS = convertToMillis(3, "SECONDS");
@@ -51,8 +52,9 @@ const VideoPreview: React.FC = () => {
     poster: string;
   };
 
+  const { getHeadersForAuthFiles } = useAuth()
   const { colors } = useTheme();
-  const videoPlayer = useVideoPlayer({ uri: routeParams.url });
+  const videoPlayer = useVideoPlayer({ uri: routeParams.url, headers: getHeadersForAuthFiles(routeParams.url) });
 
   useEffect(() => {
     SystemNavigationBar.stickyImmersive();

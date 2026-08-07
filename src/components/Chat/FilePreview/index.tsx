@@ -26,6 +26,7 @@ import { createThumbnail } from "react-native-create-thumbnail";
 import AudioPreview from "./AudioPreview";
 import { FileService } from "@services/file";
 import { useTranslate } from "@hooks/useTranslate";
+import { useAuth } from "@contexts/auth";
 
 interface IFilePreviewProps {
   name: string;
@@ -53,6 +54,7 @@ const FilePreview = ({
   const mimeType = useMemo(() => MimeTypes.lookup(name), []);
 
   const { t } = useTranslate("Components.Chat.FilePreview");
+  const { getHeadersForAuthFiles } = useAuth();
 
   useEffect(() => {
     (async () => {
@@ -60,6 +62,7 @@ const FilePreview = ({
         FastImage.preload([
           {
             uri: url,
+            headers: getHeadersForAuthFiles(url),
             cache: "immutable",
             priority: "normal",
           },
@@ -67,6 +70,7 @@ const FilePreview = ({
       } else if (type === "video") {
         const thumb = await createThumbnail({
           url,
+          headers: getHeadersForAuthFiles(url),
           format: "jpeg",
         });
 
@@ -112,7 +116,12 @@ const FilePreview = ({
       return (
         <FileButton onPress={handleGoImagePreview}>
           <FileImagePreview
-            source={{ uri: url, cache: "immutable", priority: "high" }}
+            source={{
+              uri: url,
+              headers: getHeadersForAuthFiles(url),
+              cache: "immutable",
+              priority: "high",
+            }}
           />
         </FileButton>
       );

@@ -11,6 +11,7 @@ import { UserData } from "@type/interfaces";
 import analytics from "@react-native-firebase/analytics";
 import { OneSignal } from "../configs/notifications";
 import { AxiosError } from "axios";
+import configs from "@config";
 
 interface AuthContextData {
   signed: boolean;
@@ -24,6 +25,11 @@ interface AuthContextData {
     has: boolean;
     reason: string;
   };
+  getHeadersForAuthFiles: (url: string) =>
+    | {
+        [key: string]: string;
+      }
+    | undefined;
   updateUser: (data: any) => Promise<void>;
   signIn(email: string, password: string): Promise<void>;
   signUp(data: FormData, email: string): Promise<void>;
@@ -170,6 +176,16 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  const getHeadersForAuthFiles = (url: string) => {
+    if (url.includes(configs.STORAGE_URL) || url.includes(configs.API_URL)) {
+      return {
+        Authorization: token,
+      };
+    }
+
+    return undefined;
+  };
+
   useEffect(() => {
     loadStorageData();
   }, []);
@@ -185,6 +201,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         signUp,
         signOut,
         updateUser,
+        getHeadersForAuthFiles,
         token,
         registerError,
         loginError,

@@ -14,83 +14,65 @@ import { useTheme } from "styled-components";
 import { millisToTime } from "@utils/format";
 import { AudioData } from "@type/interfaces";
 import { useAudioPlayer } from "@contexts/audioPlayer";
-import { AudioPlayer as AP, useAudioPlayer as expoAudioPlayer } from "expo-audio";
+import {
+  AudioPlayer as AP,
+  useAudioPlayer as expoAudioPlayer,
+} from "expo-audio";
+import { useAuth } from "@contexts/auth";
 
 interface IAudioPlayer {
   audio: AudioData;
 }
 
 const AudioPlayer = ({ audio }: IAudioPlayer) => {
-  const { colors } = useTheme();
   const { currentAudioName, setCurrentAudioName } = useAudioPlayer();
+  const { colors } = useTheme();
 
-  const [sound, setSound] = useState<AP>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
+  const { getHeadersForAuthFiles } = useAuth();
+  const sound = expoAudioPlayer(
+    {
+      uri: audio.url,
+      headers: getHeadersForAuthFiles(audio.url),
+    },
+    1000,
+  );
 
-  useEffect(() => {
-    (async () => {
-      const newSound = expoAudioPlayer({ uri: audio.url });
-
-      setSound(newSound);
-    })();
-  }, [audio]);
 
   useEffect(() => {
     if (sound) {
-      sound.addListener("playbackStatusUpdate", async (status) => {
-        if (status.isLoaded) {
-          if (!duration) 
-            setDuration(sound.duration);
-
-          setCurrentPosition(status.currentTime);    
-
-          if (status.didJustFinish) {
-            setIsPlaying(false);
-            setCurrentPosition(0);
-
-            if (sound) {
-              sound.pause();
-              await sound.seekTo(0);
-            };
-          }
-        }
-      });
+      setDuration(sound.duration);
+      setCurrentPosition(sound.currentTime);
     }
-
-    return () => {
-      if (sound && sound.isLoaded) {
-        sound.release();
-      }
-    };
-  }, [sound, audio]);
+  }, [sound]);
 
   useEffect(() => {
     (async () => {
       if (currentAudioName !== audio.name && isPlaying) {
-        setIsPlaying(false)
-        sound.pause()
+        setIsPlaying(false);
+        sound?.pause();
       }
-    })()
-  }, [currentAudioName])
+    })();
+  }, [currentAudioName]);
 
   const playAndPause = async () => {
     if (isPlaying) {
-      setCurrentAudioName("")
-      setIsPlaying(false)
-      sound.pause();
+      setCurrentAudioName("");
+      setIsPlaying(false);
+      await sound?.pause;
     } else {
-      setCurrentAudioName(audio.name)
-      setIsPlaying(true)
-      sound.play();
+      setCurrentAudioName(audio.name);
+      setIsPlaying(true);
+      await sound?.seekTo(currentPosition);
     }
-
   };
 
   const seekAudio = async (newPos: number) => {
     setCurrentPosition(newPos);
-    await sound.seekTo(newPos);
+    await sound?.seekTo(currentPosition);
+    newPos;
   };
 
   return (

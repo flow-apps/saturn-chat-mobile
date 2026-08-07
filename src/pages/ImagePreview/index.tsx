@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactNative, { Dimensions, StatusBar } from "react-native";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
@@ -8,29 +8,37 @@ import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
 import { HeaderButton } from "@components/Header/styles";
 import { useCallback } from "react";
-import { useImageDimensions } from "@react-native-community/hooks/lib/useImageDimensions";
+import { ImageDimensions, useImageDimensions } from "@react-native-community/hooks/lib/useImageDimensions";
 import { FileService } from "@services/file";
+import { useAuth } from "@contexts/auth";
 
 const ImagePreview = () => {
   const fileService = new FileService();
 
   const route = useRoute();
+  const { getHeadersForAuthFiles } = useAuth()
   const { name, original_name, url } = route.params as {
     name: string;
     original_name: string;
     url: string;
   };
-  const { dimensions } = useImageDimensions({ uri: url });
 
+  const [dimensions, setDimensions] = useState<ImageDimensions | undefined>()
+
+  const imageHeaders = useMemo(() => getHeadersForAuthFiles(url), [url, getHeadersForAuthFiles]);
+  
   useEffect(() => {
-    ReactNative.Image.prefetch(url);
-  }, []);
+    // const d = useImageDimensions({ uri: url }, { headers: imageHeaders as any });
+    // setDimensions(d.dimensions)
+  }, [])
 
   const downloadFile = useCallback(async () => {
     await fileService.downloadFile(url, original_name);
   }, [original_name, url]);
 
-  if (!dimensions) return <Loading />;
+  // if (!dimensions) return <Loading />;
+  console.log(url);
+  
 
   return (
     <>
@@ -54,11 +62,9 @@ const ImagePreview = () => {
             enableDoubleClickZoom
           >
             <Image
-              source={{ uri: url }}
-              //@ts-ignore
-              width={dimensions.width}
-              height={dimensions.height}
-              resizeMode="center"
+              uri={url}
+              width={100}
+              height={100}
             />
           </ImageZoom>
         </ImageContainer>

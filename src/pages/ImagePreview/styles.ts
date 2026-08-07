@@ -14,8 +14,9 @@ export const ImageContainer = styled.View`
   justify-content: center;
 `;
 
-export const Image = styled.Image`
-  width: 100%;
-  height: 100%;
+export const Image = styled(CachedImage)`
+  width: 80%;
+  height: 80%;
+  margin: 15px auto;
 `;
 

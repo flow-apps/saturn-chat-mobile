@@ -3,6 +3,7 @@ import React, { memo, useState } from "react";
 import { Image, Cache } from "./styles";
 import { ImageProps, ImageSourcePropType, StyleProp } from "react-native";
 import { SvgCssUri } from "react-native-svg/src/css";
+import { useAuth } from "@contexts/auth";
 
 interface CachedImageProps {
   uri: string | null | undefined;
@@ -20,6 +21,7 @@ const CachedImage: React.FC<CachedImageProps> = ({
   style,
 }) => {
   const [hasError, setHasError] = useState(false);
+  const { getHeadersForAuthFiles } = useAuth();
 
   if (uri && uri.includes(".svg")) {
     return (
@@ -43,11 +45,16 @@ const CachedImage: React.FC<CachedImageProps> = ({
 
   return (
     <Cache
-      source={{ uri, cache: "immutable", priority: "high" }}
+      source={{
+        uri,
+        cache: "immutable",
+        headers: getHeadersForAuthFiles(uri),
+        priority: "high",
+      }}
       style={[{ width, height }, style]}
       fallback
       onError={() => setHasError(true)}
-
+      resizeMode="center"
     />
   );
 };

@@ -13,7 +13,11 @@ import {
 import { useTheme } from "styled-components";
 import { millisToTime } from "@utils/format";
 import { useAudioPlayer } from "@contexts/audioPlayer";
-import { SoundObject } from "expo-av/build/Audio";
+import {
+  AudioPlayer as AP,
+  useAudioPlayer as expoAudioPlayer,
+} from "expo-audio";
+import { useAuth } from "@contexts/auth";
 
 interface AudioPreviewProps {
   audio: {
@@ -23,47 +27,38 @@ interface AudioPreviewProps {
 }
 
 const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
-  const { Audio, currentAudioName, setCurrentAudioName } = useAudioPlayer();
+  const { currentAudioName, setCurrentAudioName } = useAudioPlayer();
   const { colors } = useTheme();
 
-  const [sound, setSound] = useState<SoundObject>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
+  const { getHeadersForAuthFiles } = useAuth();
+
+  const sound = expoAudioPlayer(
+    {
+      uri: audio.url,
+      headers: getHeadersForAuthFiles(audio.url),
+    },
+    1000,
+  );
 
   useEffect(() => {
-    (async () => {
-      const newSound = await Audio.Sound.createAsync({ uri: audio.url });
+    if (!sound) return;
 
-      setSound(newSound);
-    })();
-  }, [audio]);
-
-  useEffect(() => {
-    if (sound) {
-      sound.sound.setOnPlaybackStatusUpdate(async (status) => {
-        if (status.isLoaded) {
-          if (!duration) setDuration(status.durationMillis);
-
-          setCurrentPosition(status.positionMillis);
-
-          if (status.didJustFinish) {
-            setIsPlaying(false);
-            setCurrentPosition(0);
-
-            if (sound) {
-              await sound.sound.pauseAsync();
-              await sound.sound.setPositionAsync(0);
-            }
-          }
-        }
-      });
-    }
+    const subscription = sound.addListener("playbackStatusUpdate", (status) => {
+      console.log(  sound.currentStatus
+      );
+      
+      if (status.isLoaded) {
+        setDuration(status.duration);
+        setCurrentPosition(status.currentTime);
+        setIsPlaying(status.playing);
+      }
+    });
 
     return () => {
-      if (sound && sound.status.isLoaded) {
-        sound.sound.unloadAsync();
-      }
+      subscription?.remove();
     };
   }, [sound, audio]);
 
@@ -71,7 +66,7 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
     (async () => {
       if (currentAudioName !== audio.name && isPlaying) {
         setIsPlaying(false);
-        await sound.sound.pauseAsync();
+        sound?.pause();
       }
     })();
   }, [currentAudioName]);
@@ -80,17 +75,17 @@ const AudioPreview: React.FC<AudioPreviewProps> = ({ audio }) => {
     if (isPlaying) {
       setCurrentAudioName("");
       setIsPlaying(false);
-      await sound.sound.pauseAsync();
+      await sound?.pause();
     } else {
       setCurrentAudioName(audio.name);
       setIsPlaying(true);
-      await sound.sound.playFromPositionAsync(currentPosition);
+      await sound?.play();
     }
   };
 
   const seekAudio = async (newPos: number) => {
     setCurrentPosition(newPos);
-    await sound.sound.setPositionAsync(newPos);
+    await sound?.seekTo(newPos);
   };
 
   return (
