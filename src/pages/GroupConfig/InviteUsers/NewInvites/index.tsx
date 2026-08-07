@@ -36,7 +36,7 @@ import { useRoute } from "@react-navigation/native";
 import { useEffect } from "react";
 import api from "@services/api";
 
-import * as Localize from "expo-localization";
+import Localize from "expo-localization";
 import { InviteData } from "@type/interfaces";
 import { DateUtils } from "@utils/date";
 import config from "../../../../config";
@@ -74,7 +74,7 @@ const NewInvites: React.FC = () => {
       isUnlimitedUsage: String(unlimitedUsages),
       usageAmount: Number(usages),
       expireIn: expireIn,
-      expireTimezone: Localize.timezone,
+      expireTimezone: Localize.getCalendars()[0].timeZone,
     });
 
     if (response.status === 200) {
