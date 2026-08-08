@@ -6704,10 +6704,10 @@ react-native-google-mobile-ads@^15.4.0:
     "@iabtcf/core" "^1.5.3"
     use-deep-compare-effect "^1.8.1"
 
-react-native-iap@^13.0.2:
-  version "13.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-13.0.2.tgz#08a968f7b090d9e9acc3b82fa193a5c3948c8203"
-  integrity sha512-Mxpiq0Waa5neCzcyfiXs9fV/4F3kwxhRK4agcQzNI0XAGKbDlE1rhOmJpb5Nm+ItVxCxYJUsnll/HEm0tzt//w==
+react-native-iap@^16.0.2:
+  version "16.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-iap/-/react-native-iap-16.0.2.tgz#dab20d64aa2433698046e7dbf87657767de56189"
+  integrity sha512-al5SM9atrzez3mG+Y16RSvWuDYTKcMKT/QUo7yhhO310GPp7NVuCWryfHV0EniTV9pRxMFgpX6yBVcmB8MF6Zg==
 
 react-native-image-pan-zoom@^2.1.12:
   version "2.1.12"
@@ -6753,6 +6753,11 @@ react-native-mime-types@^2.5.0:
   integrity sha512-l1NIGxa0MBFPGBFDd3yeGe2f8+Qb+U4M1FEK7l3Fob0R7kOecwgRau2CCCmu6W5QzyhKdBxRC8SOTuTIEKKAUw==
   dependencies:
     mime-db "~1.52.0"
+
+react-native-nitro-modules@^0.36.5:
+  version "0.36.5"
+  resolved "https://registry.yarnpkg.com/react-native-nitro-modules/-/react-native-nitro-modules-0.36.5.tgz#438c77e4f1e77bd1d3e901eb5b4953762e68a078"
+  integrity sha512-SJby84+hovD70JmQ1fq+56tw3oapJeChehUqXA4Gqjm+ktJhMAcj8LGwoAjStSOUwRaK7czbzBPB0Widj+EDoQ==
 
 react-native-onboarding-swiper@^1.3.0:
   version "1.3.0"

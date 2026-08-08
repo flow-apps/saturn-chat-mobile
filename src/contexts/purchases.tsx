@@ -5,37 +5,37 @@ import * as Device from "expo-device";
 import {
   initConnection,
   endConnection,
-  flushFailedPurchasesCachedAsPendingAndroid,
   Subscription,
-  PurchaseError,
+  ProductSubscription,
   useIAP,
+  ErrorCode,
 } from "react-native-iap";
 import configs from "@config";
 import api from "@services/api";
 import { useAuth } from "./auth";
 import { PaymentState } from "@type/enums";
 import { UserData } from "@type/interfaces";
-import { SubscriptionPeriod } from "react-native-iap/lib/typescript/src/types/appleSk2";
+import { SubscriptionPeriod } from "react-native-iap";
 
 interface PurchasesContextProps {
   handleBuySubscription: (
     sku: string,
     offerToken: string,
-    period: PlanPeriods
+    period: PlanPeriods,
   ) => any;
   handleGetUserSubscription: () => Promise<void>;
   clearStates: () => any;
-  subscriptions: Subscription[];
+  subscriptions: ProductSubscription[];
   buySubFinished: boolean;
   purchaseSuccess: boolean;
   purchaseError: boolean;
-  loadingPurchase: boolean;
-  currentPlanSelected: PlanPeriods;
+  loadingPurchase: boolean; 
+  currentPlanSelected: PlanPeriods | undefined;
   userSubscription: UserSubscription | null;
 }
 
 const PurchasesContext = createContext<PurchasesContextProps>(
-  {} as PurchasesContextProps
+  {} as PurchasesContextProps,
 );
 
 type PlanPeriods = "MONTHLY" | "QUARTERLY" | "YEARLY";
@@ -67,45 +67,104 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState(false);
   const [loadingPurchase, setLoadingPurchase] = useState(false);
-  const [currentPlanSelected, setCurrentPlanSelected] = useState<
-    PlanPeriods | undefined
-  >();
-  const [userSubscription, setUserSubscription] =
-    useState<UserSubscription>(null);
+  const [currentPlanSelected, setCurrentPlanSelected] = useState<PlanPeriods>();
+  const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
 
   const { signed } = useAuth();
   const {
-    currentPurchase,
     subscriptions,
-    currentPurchaseError,
     finishTransaction,
-    getSubscriptions,
-    requestSubscription,
-  } = useIAP();
+    getActiveSubscriptions,
+    requestPurchase,
+    fetchProducts,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      try {
+        if (purchase?.productId) {
+          await finishTransaction({
+            purchase: purchase,
+            isConsumable: false,
+          });
+
+          await api
+            .post("/subscriptions", {
+              purchase_token: purchase.purchaseToken,
+              product_id: purchase.productId,
+              package_name: "com.flowapps.saturnchat",
+              period: currentPlanSelected,
+            })
+            .then((res) => {
+              setUserSubscription({
+                ...res.data,
+                hasSubscription: true,
+                isPaused: !!res.data.resume_in,
+                isActive: true,
+              });
+              setPurchaseSuccess(true);
+              setPurchaseError(false);
+              setBuySubFinished(true);
+              setLoadingPurchase(false);
+            })
+            .catch((error) => {
+              console.log(error);
+              setPurchaseError(true);
+              setPurchaseSuccess(false);
+              setBuySubFinished(true);
+              setLoadingPurchase(false);
+            });
+        }
+      } catch (error) {
+        if (error) {
+          console.log({ message: `[${error}]`, error });
+        } else {
+          console.log({ message: "handleBuyProduct", error });
+        }
+        setPurchaseError(true);
+        setPurchaseSuccess(false);
+        setBuySubFinished(true);
+        setLoadingPurchase(false);
+      }
+    },
+    onPurchaseError: (error) => {
+      if (error.code !== ErrorCode.UserCancelled) {
+        console.log({ message: `[${error.code}]: ${error.message}`, error });
+      }
+      setPurchaseError(true);
+      setPurchaseSuccess(false);
+      setBuySubFinished(true);
+      setLoadingPurchase(false);
+    },
+  });
 
   const fetchSubscriptions = async () => {
-    await getSubscriptions({
-      skus: configs.PRODUCT_SKUS,
+    await fetchProducts({
+      type: "subs",
+      skus: configs.PRODUCT_SKUS as string[],
     });
   };
 
   const handleBuySubscription = async (
     sku: string,
     offerToken: string,
-    period: PlanPeriods
+    period: PlanPeriods,
   ) => {
     try {
       setLoadingPurchase(true);
       setCurrentPlanSelected(period);
-      await requestSubscription({
-        sku,
-        ...(offerToken && {
-          subscriptionOffers: [{ sku, offerToken }],
-        }),
+      await requestPurchase({
+        type: "subs",
+        request: {
+          google: {
+            skus: configs.PRODUCT_SKUS as string[],
+            ...(offerToken && {
+              subscriptionOffers: [{ sku, offerToken }],
+            }),
+          },
+        },
       });
     } catch (error) {
-      if (error instanceof PurchaseError) {
-        console.log({ message: `[${error.code}]: ${error.message}`, error });
+      if (error) {
+        console.log({ message: `[${error}]`, error });
       } else {
         console.log({ message: "handleBuySubscription", error });
       }
@@ -140,11 +199,8 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
             }
           })
           .catch((error) => console.log(error));
-        if (Platform.OS === "android") {
-          flushFailedPurchasesCachedAsPendingAndroid();
-        }
       } catch (error) {
-        console.error("Erro ao conectar na Play Store", error.message);
+        console.error("Erro ao conectar na Play Store", error);
       }
     };
 
@@ -162,63 +218,6 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
       await handleGetUserSubscription();
     })();
   }, [signed]);
-
-  useEffect(() => {
-    const checkCurrentPurchase = async () => {
-      try {
-        if (currentPurchase?.productId) {
-          await finishTransaction({
-            purchase: currentPurchase,
-            isConsumable: Platform.OS === "ios",
-          });
-
-          await api
-            .post("/subscriptions", {
-              purchase_token: currentPurchase.purchaseToken,
-              product_id: currentPurchase.productId,
-              package_name: currentPurchase.packageNameAndroid,
-              period: currentPlanSelected,
-            })
-            .then((res) => {
-              setUserSubscription({
-                ...res.data,
-                hasSubscription: true,
-                isPaused: !!res.data.resume_in,
-                isActive: true,
-              });
-              setPurchaseSuccess(true);
-              setPurchaseError(false);
-              setBuySubFinished(true);
-              setLoadingPurchase(false);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      } catch (error) {
-        if (error instanceof PurchaseError) {
-          console.log({ message: `[${error.code}]: ${error.message}`, error });
-        } else {
-          console.log({ message: "handleBuyProduct", error });
-        }
-        setPurchaseError(true);
-        setPurchaseSuccess(false);
-        setBuySubFinished(true);
-        setLoadingPurchase(false);
-      }
-    };
-
-    checkCurrentPurchase();
-  }, [currentPurchase]);
-
-  useEffect(() => {
-    if (currentPurchaseError) {
-      setPurchaseError(true);
-      setPurchaseSuccess(false);
-      setBuySubFinished(true);
-      setLoadingPurchase(false);
-    }
-  }, [currentPurchaseError]);
 
   return (
     <PurchasesContext.Provider
