@@ -58,7 +58,6 @@ import RecordingAudio from "@components/Chat/RecordingAudio";
 import LoadingIndicator from "@components/LoadingIndicator";
 import SelectedFiles from "@components/Chat/SelectedFiles";
 import { FileService, FileServiceErrors } from "@services/file";
-import { RecordService } from "@services/record";
 
 import analytics from "@react-native-firebase/analytics";
 import { useRemoteConfigs } from "@contexts/remoteConfigs";
@@ -69,7 +68,7 @@ import { ArrayUtils } from "@utils/array";
 import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
 
-import FlashList from "@shopify/flash-list/dist/FlashList";
+import { FlashList } from "@shopify/flash-list";
 import { OneSignal } from "@configs/notifications";
 import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
