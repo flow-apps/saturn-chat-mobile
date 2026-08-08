@@ -1,6 +1,5 @@
 import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
-import RNFB, { RNFetchBlobConfig } from "rn-fetch-blob";
 import { Platform } from "react-native";
 import SimpleToast from "react-native-simple-toast";
 
@@ -65,60 +64,8 @@ class FileService {
   }
 
   async downloadFile(url: string, fileName: string) {
-    try {
-
-      if (["https", "http"].includes(url?.split("//")?.shift())) {
-        SimpleToast.show("Invalid image file", SimpleToast.SHORT);
-        return;
-      }
-
-      const {
-        dirs: { DownloadDir, DocumentDir },
-      } = RNFB.fs;
-      const directoryPath = Platform.select({
-        ios: DocumentDir,
-        android: DownloadDir,
-      });
-
-      const filePath = `${directoryPath}/${fileName}`;
-      const mimetype = MimeTypes.lookup(fileName) as string;
-      
-      if (!mimetype) {
-        return SimpleToast.show("Arquivo não disponível para download", SimpleToast.SHORT)
-      }
-
-      const downloadConfig: RNFetchBlobConfig = Platform.select({
-        ios: {
-          fileCache: true,
-          path: filePath,
-          notification: true,
-        },
-        android: {
-          fileCache: true,
-          path: filePath,
-          addAndroidDownloads: {
-            useDownloadManager: true,
-            mime: String(mimetype),
-            title: fileName,
-            path: filePath,
-            mediaScannable: true,
-            notification: true,
-          },
-        },
-      });
-
-      SimpleToast.show("Iniciando download...",SimpleToast.SHORT);
-      RNFB.config(downloadConfig as RNFetchBlobConfig)
-        .fetch("GET", url)
-        .then((res) => {
-          SimpleToast.show("Download concluído!",SimpleToast.SHORT);
-        })
-        .catch((error) => {
-          SimpleToast.show("Falha no download",SimpleToast.SHORT);
-        });
-    } catch (error) {
-      SimpleToast.show("Falha no download",SimpleToast.SHORT);
-    }
+   console.log("TODO: IMPLEMENTAR DOWNLOAD");
+   
   }
 }
 

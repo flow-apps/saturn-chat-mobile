@@ -33,7 +33,9 @@
       "expo-localization",
       "react-native-google-mobile-ads",
       "expo-audio",
-      "expo-video"
+      "expo-video",
+      "expo-splash-screen",
+      "expo-status-bar"
     ]
   },
   "react-native-google-mobile-ads": {

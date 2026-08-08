@@ -32,7 +32,7 @@ import { ChatProvider } from "@contexts/chat";
 
 import { HomeProvider } from "@contexts/home";
 import { PurchasesProvider } from "@contexts/purchases";
-import { withIAPContext } from "react-native-iap";
+import {  } from "react-native-iap";
 import { PremiumProvider } from "@contexts/premium";
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import secrets from "./secrets.json";
@@ -120,4 +120,4 @@ function App() {
   );
 }
 
-export default withIAPContext(App);
+export default App;
