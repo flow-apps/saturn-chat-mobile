@@ -32,21 +32,23 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
   const { getHeadersForAuthFiles } = useAuth();
-  const sound = expoAudioPlayer(
-    {
-      uri: audio.url,
-      headers: getHeadersForAuthFiles(audio.url),
-    },
-    1000,
-  );
+  const sound = expoAudioPlayer({
+    uri: audio.url,
+    headers: getHeadersForAuthFiles(audio.url),
+  });
 
   useEffect(() => {
-    const subscription = sound.addListener("playbackStatusUpdate", (status) => {
-
+    const subscription = sound.addListener("playbackStatusUpdate", async (status) => {
       if (status.isLoaded) {
         setDuration(Math.ceil(status.duration));
         setCurrentPosition(Math.ceil(status.currentTime));
-        setIsPlaying(status.playing);
+      }
+
+      if (status.didJustFinish) {
+        setIsPlaying(false);
+        setCurrentAudioName("")
+        await sound.seekTo(0)
+        await sound.pause()
       }
     });
 
@@ -68,11 +70,11 @@ const AudioPlayer = ({ audio }: IAudioPlayer) => {
     if (isPlaying) {
       setCurrentAudioName("");
       setIsPlaying(false);
-      await sound?.pause;
+      await sound?.pause();
     } else {
       setCurrentAudioName(audio.name);
       setIsPlaying(true);
-      await sound?.seekTo(currentPosition);
+      await sound?.play();
     }
   };
 

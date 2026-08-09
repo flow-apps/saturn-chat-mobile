@@ -782,7 +782,7 @@ const Chat: React.FC = () => {
           <FlashList
             data={oldMessages}
             extraData={oldMessages.length}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => `${item.id + index.toString()}`}
             viewabilityConfig={{
               minimumViewTime: 500,
             }}
