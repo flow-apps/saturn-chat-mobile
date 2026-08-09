@@ -123,7 +123,7 @@ const ChoosePlan: React.FC = () => {
           <PlanContainer>
             <PlanTitle>{t("monthly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice>R$ 19,99</PlanPrice>
+              <PlanPrice>R$ 9,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
@@ -144,7 +144,7 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor={colors.primary}>{t("quarterly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice planColor={colors.primary}>R$ 59,99</PlanPrice>
+              <PlanPrice planColor={colors.primary}>R$ 29,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
@@ -165,8 +165,8 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor="#FF5E0D">{t("yearly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanDiscountText> R$ 239,99 </PlanDiscountText>
-              <PlanPrice planColor="#FF5E0D">R$ 219,99</PlanPrice>
+              <PlanDiscountText> R$ 119,99 </PlanDiscountText>
+              <PlanPrice planColor="#FF5E0D">R$ 99,99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
