@@ -412,13 +412,8 @@ const Chat: React.FC = () => {
   };
 
   const fetchOldMessages = useCallback(
-    async (fetchFirstPage = false) => {
+    async () => {
       if (fetching || fetchedAll) return;
-
-      if (fetchFirstPage) {
-        setPage(0);
-        setFetchedAll(false);
-      }
 
       setFetching(true);
       const { data } = await api.get(
@@ -426,16 +421,16 @@ const Chat: React.FC = () => {
       );
 
       if (data.messages.length === 0) {
-        setFetching(false);
         setFetchedAll(true);
+        setFetching(false);
         return;
       }
 
-      if (page > 0) {
-        setOldMessages((old) => [...old, ...data.messages]);
-      } else {
-        setOldMessages(data.messages);
+      if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
+        setFetchedAll(true);
       }
+
+      setOldMessages((old) => [...old, ...data.messages]);
 
       setPage((old) => old + 1);
       setFetching(false);
@@ -445,19 +440,34 @@ const Chat: React.FC = () => {
 
   const fetchParticipantAndGroup = useCallback(async () => {
     setLoading(true);
-    const participantRes = await api.get(`/group/participant/${id}`);
-    if (participantRes.status === 200) {
-      setParticipant(participantRes.data.participant);
-      setGroup(participantRes.data.participant.group);
-    }
+    try {
+      const [participantRes, messagesRes] = await Promise.all([
+        api.get(`/group/participant/${id}`),
+        api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
+      ]);
 
-    if (Platform.OS === "android") {
-      OneSignal.Notifications.removeGroupedNotifications(id);
-    }
+      if (participantRes.status === 200) {
+        setParticipant(participantRes.data.participant);
+        setGroup(participantRes.data.participant.group);
+      }
 
-    setPage(0);
-    setFetchedAll(false);
-    setLoading(false);
+      if (Platform.OS === "android") {
+        OneSignal.Notifications.removeGroupedNotifications(id);
+      }
+
+      const { data } = messagesRes;
+
+      if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
+        setFetchedAll(true);
+      }
+
+      setOldMessages(data.messages);
+      setPage(1);
+    } catch (error) {
+      crashlytics().recordError(error as Error, "Chat: fetchParticipantAndGroup");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   const handleDisconnectGroup = useCallback(() => {

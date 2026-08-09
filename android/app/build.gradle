@@ -1,8 +1,8 @@
+apply plugin: 'com.google.gms.google-services'
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-apply plugin: 'com.google.gms.google-services'
 apply plugin: "com.google.firebase.appdistribution"
 apply plugin: "com.google.firebase.firebase-perf"
 apply plugin: "com.google.firebase.crashlytics"
