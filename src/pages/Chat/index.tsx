@@ -777,9 +777,7 @@ const Chat: React.FC = () => {
           <Feather name="more-vertical" size={22} color="#fff" />
         </HeaderButton>
       </Header>
-      <AdBannerWrapper>
-        <Banner />
-      </AdBannerWrapper>
+      
 
       <Container
         style={{

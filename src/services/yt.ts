@@ -60,7 +60,9 @@ class YTService {
               "modestbranding": 1,
               "controls": 0,
               "rel": 0,
-              "loop": 1
+              "loop": 1,
+              "iv_load_policy": 3,
+              "showinfo": 0
             }
           })
           MessageInvoker.postMessage("YouTube has loaded")

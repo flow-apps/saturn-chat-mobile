@@ -107,7 +107,7 @@ const Message = ({
             nameSize={12}
             color={colors.light_heading}
             hasPremium={
-              message.author?.id === user.id
+              message.author?.id === user?.id
                 ? isPremium
                 : message.author.isPremium
             }
@@ -218,7 +218,7 @@ const Message = ({
     return (
       <>
         {invitesData.map((invite, index) => (
-          <InviteInMessage inviteID={invite.id} />
+          <InviteInMessage key={index} inviteID={invite.id} />
         ))}
       </>
     );
@@ -272,7 +272,7 @@ const Message = ({
         const { host, pathname } = new URLParser(link);
         const { isInvite, inviteID } = linkUtils.isInviteLink(host, pathname);
 
-        if (isInvite) {
+        if (isInvite && inviteID) {
           if (!hasInvite) {
             setHasInvite(true);
           }

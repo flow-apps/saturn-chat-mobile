@@ -40,16 +40,21 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
   const [duration, setDuration] = useState(0);
 
   const playVideo = useCallback(() => {
-    webViewRef.current.injectJavaScript("play()");
+    if (webViewRef.current) {
+      webViewRef.current.injectJavaScript("play()");
+    }
   }, [webViewRef]);
 
   const pauseVideo = useCallback(() => {
-    webViewRef.current.injectJavaScript("pause()");
+    if (webViewRef.current) {
+      webViewRef.current.injectJavaScript("pause()");
+    }
   }, [webViewRef]);
 
   const seekTo = useCallback(
     (time: number) => {
-      webViewRef.current.injectJavaScript(`seekTo(${time})`);
+      if (webViewRef.current)
+        webViewRef.current.injectJavaScript(`seekTo(${time})`);
     },
     [webViewRef]
   );
@@ -58,12 +63,18 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
     (message: WebViewMessageEvent) => {
       const res: ICurrentTimeData = JSON.parse(message.nativeEvent.data);
 
-      if (res.type === "VIDEO_TIME_UPDATE") {
-        return onUpdateTime(res.currentTime);
+      
+
+      if (res.type === "VIDEO_TIME_UPDATE") { 
+        if (res.currentTime !== undefined) {
+          return onUpdateTime(res.currentTime);
+        }
       }
 
       if (res.type === "VIDEO_DURATION") {
-        setDuration(res.duration);
+        if (res.duration !== undefined) {
+          setDuration(res.duration);
+        }
       }
     },
     [onUpdateTime]
