@@ -7,7 +7,6 @@ const token = AsyncStorage.getItem("@SaturnChat:token") || undefined;
 const api = axios.create({
   baseURL: config.API_URL,
   headers: {
-    // @ts-ignore
     authorization: token,
   },
 });

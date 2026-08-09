@@ -72,6 +72,7 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { signed } = useAuth();
   const {
+    connected,
     subscriptions,
     finishTransaction,
     getActiveSubscriptions,
@@ -190,6 +191,8 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
+    if (!connected) return;
+    
     const init = async () => {
       try {
         await initConnection()
@@ -209,15 +212,15 @@ const PurchasesProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       endConnection();
     };
-  }, []);
+  }, [connected]);
 
   useEffect(() => {
-    if (!signed) return;
+    if (!signed || !connected) return;
 
     (async () => {
       await handleGetUserSubscription();
     })();
-  }, [signed]);
+  }, [signed, connected]);
 
   return (
     <PurchasesContext.Provider

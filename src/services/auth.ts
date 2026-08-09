@@ -3,18 +3,17 @@ import api from "@services/api";
 import FormData from "form-data";
 import { UserData } from "@type/interfaces";
 
-interface Response extends AxiosResponse {
-  data: {
-    token: string;
-    user: UserData;
-  };
+interface Response {
+  token: string;
+  user: UserData;
 }
 
-export async function signIn(
-  email: string,
-  password: string
-): Promise<Response> {
-  const response = (await api.post("/auth", { email, password })) as Response;
+export async function signIn(email: string, password: string) {
+  const response = await api.post<Response>("/auth", { email, password });
+
+  if (response.status !== 200) {
+    console.log(response.data);
+  }
 
   return response;
 }

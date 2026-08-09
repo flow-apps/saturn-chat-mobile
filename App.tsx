@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Routes from "@routes/index";
+import { BackHandler } from "react-native";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
 import { AuthProvider } from "@contexts/auth";
@@ -39,6 +40,7 @@ import secrets from "./secrets.json";
 
 import { isDevice } from "expo-device";
 import * as Updates from "expo-updates";
+import { useNavigation } from "@react-navigation/native";
 
 preventAutoHideAsync();
 

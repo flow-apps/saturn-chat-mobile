@@ -100,7 +100,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
     Object.entries(values).forEach(($) => {
       const [key, entry] = $;
       configs[key] = entry.asString();
-    });
+    });    
 
     setAllConfigs(configs);
 
