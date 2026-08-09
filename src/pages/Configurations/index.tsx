@@ -115,7 +115,10 @@ const Configurations: React.FC = () => {
                   <MaterialCommunityIcons name="translate" size={17} />{" "}
                   {t("general.languages")}
                 </ConfigTitle>
-                <CurrentValueText>{Localize.locale}</CurrentValueText>
+                <CurrentValueText>
+                  {Localize.getLocales()[0].languageCode +
+                    `-${Localize.getLocales()[0].languageRegionCode}`}
+                </CurrentValueText>
               </ConfigContainer>
               <ConfigContainer>
                 <ConfigTitle>

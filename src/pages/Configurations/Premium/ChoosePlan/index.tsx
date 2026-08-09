@@ -26,7 +26,6 @@ import { usePurchases } from "@contexts/purchases";
 import Button from "@components/Button";
 import { navigate } from "@routes/rootNavigation";
 import Loading from "@components/Loading";
-import { IapPlatform } from "react-native-iap";
 import * as Localize from "expo-localization";
 
 const ChoosePlan: React.FC = () => {
