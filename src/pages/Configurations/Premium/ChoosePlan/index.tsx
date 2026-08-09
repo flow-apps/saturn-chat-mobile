@@ -26,7 +26,7 @@ import { usePurchases } from "@contexts/purchases";
 import Button from "@components/Button";
 import { navigate } from "@routes/rootNavigation";
 import Loading from "@components/Loading";
-import { SubscriptionPlatform } from "react-native-iap";
+import { IapPlatform } from "react-native-iap";
 
 const ChoosePlan: React.FC = () => {
   const { colors } = useTheme();
@@ -42,12 +42,16 @@ const ChoosePlan: React.FC = () => {
   const { t } = useTranslate("ChoosePlan");
 
   const planTokens = useMemo(() => {
-    let tokens = {};    
+    let tokens: { [key: string]: string } = {};    
 
     subscriptions.map((sub) => {
-      if (sub.platform === SubscriptionPlatform.android) {
-        sub.subscriptionOfferDetails.map((offer) => {
-          tokens[offer.offerTags[0]] = offer.offerToken;
+      if (sub.platform === "android") {
+        sub.subscriptionOffers.map((offer) => {
+          const tag = offer.offerTagsAndroid?.[0];
+          const token = offer.offerTokenAndroid;
+          if (tag && token) {
+            tokens[tag] = token;
+          }
         });
       }
     });
