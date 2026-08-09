@@ -64,6 +64,7 @@ export const WebsiteImageContainer = styled.TouchableOpacity`
 `;
 
 export const WebsiteImage = styled(CachedImage)<{ aspectRatio?: number }>`
+
   max-width: 100%;
   aspect-ratio: ${(props) => props.aspectRatio};
   border-radius: 8px;

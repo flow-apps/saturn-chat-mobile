@@ -9,6 +9,7 @@ import WebView, { WebViewMessageEvent } from "react-native-webview";
 import { YTService } from "@services/yt";
 
 import { Container, VideoPlayerContainer } from "./styles";
+import configs from "@config";
 
 interface ICurrentTimeData {
   type: "VIDEO_TIME_UPDATE" | "VIDEO_DURATION";
@@ -88,7 +89,7 @@ const YouTubeVideoPlayer: React.ForwardRefRenderFunction<
           ref={webViewRef}
           onMessage={onReceivedMessageWithTime}
           onLoad={onLoadEnd}
-          source={{ html: ytService.buildYouTubePlayerHTML(videoId) }}
+          source={{ html: ytService.buildYouTubePlayerHTML(videoId), baseUrl: configs.WEBSITE_URL }}
           bounces={false}
           scrollEnabled={false}
           scalesPageToFit={false}

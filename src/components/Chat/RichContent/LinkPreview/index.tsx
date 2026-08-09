@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LinkData } from "@type/interfaces";
 import {
   Container,
@@ -26,7 +26,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import YouTubeIFrame, {
   IYouTubeIFrameRef,
 } from "@components/Chat/RichContent/YouTubeIFrame";
-import URLParse from "url-parse";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MotiView } from "moti";
 import { useTranslate } from "@hooks/useTranslate";
@@ -38,9 +37,20 @@ interface LinkPreviewProps {
 
 const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
   const ytIFrameRef = useRef<IYouTubeIFrameRef>(null);
-  const [videoId, setVideoId] = useState("");
+  const [videoId, setVideoId] = useState<string | null>(null);
+  const [displayTitle, setDisplayTitle] = useState(link.title || link.link);
+
+  const isYoutubeLink = useMemo(() => !!videoId, [videoId]);
+
+  const imageUri = useMemo(() => {
+    if (videoId) {
+      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+    return link.image;
+  }, [videoId, link.image]);
+
   const { dimensions, loading, error } = useImageDimensions({
-    uri: link.image,
+    uri: imageUri,
   });
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("Components.Chat.LinkPreview");
@@ -51,33 +61,46 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
   }, [link]);
 
   const handlePreview = useCallback(() => {
-    if (videoId) {
+    if (isYoutubeLink) {
       return ytIFrameRef.current.openYouTubeIFrameModal();
     }
 
     navigation.navigate("ImagePreview", { name: link.link, url: link.image });
-  }, [videoId]);
+  }, [isYoutubeLink, link.image, link.link, navigation]);
 
   useEffect(() => {
-    const YTUrls = ["youtube.com", "youtu.be"];
-    const { host, pathname, query } = new URLParse(
-      link.link.replace("www.", ""),
-      true
-    );
-
-    if (YTUrls.includes(host)) {
-      setVideoId(query.v || pathname.split("/").pop());
-    }
-  }, []);
+    const fetchYouTubeData = async () => {
+      const regExp =
+        /(?:[?&]v=|youtu\.be\/|\/(?:embed|v|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
+      const match = link.link.match(regExp);
+      if (match && match[1]) {
+        const currentVideoId = match[1];
+        setVideoId(currentVideoId);
+        try {
+          const response = await fetch(
+            `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${currentVideoId}`
+          );
+          const data = await response.json();
+          if (data.title) {
+            setDisplayTitle(data.title);
+          }
+        } catch (error) {}
+      } else {
+        setVideoId(null);
+        setDisplayTitle(link.title || link.link);
+      }
+    };
+    fetchYouTubeData();
+  }, [link.link, link.title]);
 
   if (loading) {
     return <></>;
-  }
+  }  
 
   return (
     <>
-      {!!videoId && (
-        <YouTubeIFrame ref={ytIFrameRef} title={link.title} videoId={videoId} />
+      {isYoutubeLink && (
+        <YouTubeIFrame ref={ytIFrameRef} title={displayTitle} videoUrl={link.link} />
       )}
       <Container>
         {!!link.siteName && (
@@ -92,11 +115,11 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
           >
             {!!link.favicon && (
               <WebsiteFaviconContainer>
-                <WebsiteFavicon width={45} height={45} uri={link.favicon} />
+                <WebsiteFavicon width={75} height={75} uri={link.favicon} />
               </WebsiteFaviconContainer>
             )}
             <WebsiteTitle numberOfLines={2}>
-              {link.title || link.link}
+              {displayTitle}
             </WebsiteTitle>
           </WebsiteTitleContainer>
         </WebsiteHeaderContainer>
@@ -107,13 +130,13 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
             </WebsiteDescription>
           </WebsiteDescriptionContainer>
         )}
-        {!!link.image && !error && (
+        {!!imageUri && !error && (
           <WebsiteImageContainer onPress={handlePreview}>
             <WebsiteImage
-              aspectRatio={dimensions.aspectRatio}
-              uri={link.image}
+              aspectRatio={dimensions?.aspectRatio}
+              uri={imageUri}
             />
-            {!!videoId && (
+            {isYoutubeLink && (
               <VideoIndicatorContainer
                 onPress={handlePreview}
                 activeOpacity={0.5}

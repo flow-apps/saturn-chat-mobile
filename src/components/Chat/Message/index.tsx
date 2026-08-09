@@ -238,7 +238,7 @@ const Message = ({
             }
           }
 
-          return <LinkPreview link={link} openLink={alertLink} />;
+          return <LinkPreview key={index} link={link} openLink={alertLink} />;
         })}
       </>
     );

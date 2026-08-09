@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -37,7 +38,7 @@ import { LinkUtils } from "@utils/link";
 import { DateUtils } from "@utils/date"
 
 interface IYouTubeIFrame {
-  videoId: string;
+  videoUrl: string;
   title: string;
 }
 
@@ -51,7 +52,7 @@ const TIME_FOR_HIDE_CONTROLS = convertToMillis(3, "SECONDS");
 const YouTubeIFrame: React.ForwardRefRenderFunction<
   IYouTubeIFrameRef,
   IYouTubeIFrame
-> = ({ videoId, title }, ref) => {
+> = ({ videoUrl, title }, ref) => {
   const [videoStatus, setVideoStatus] = useState<"PLAYING" | "PAUSED">(
     "PLAYING"
   );
@@ -61,10 +62,37 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
   const [hiddenControls, setHiddenControls] = useState(true);
   const [hiddenControlsTimeout, setHiddenControlsTimeout] =
     useState<number>();
+  const [videoTitle, setVideoTitle] = useState(title);
   const ytPlayerRef = useRef<IYouTubeControllers>(null);
 
   const { colors } = useTheme();
   const linkUtils = new LinkUtils()
+
+  const videoId = useMemo(() => {
+    if (!videoUrl) return null;
+    const regExp = /(?:[?&]v=|youtu\.be\/|\/(?:embed|v|shorts|live)\/)([a-zA-Z0-9_-]{11})/;
+    const match = videoUrl.match(regExp);    
+
+    if (match && match[1]) {
+      return match[1];
+    }
+    return null;
+  }, [videoUrl]);
+
+  useEffect(() => {
+    const fetchTitle = async () => {
+      if (videoId) {
+        try {
+          const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
+          const data = await response.json();
+          if (data.title) {
+            setVideoTitle(data.title);
+          }
+        } catch (error) {}
+      }
+    };
+    fetchTitle();
+  }, [videoId]);
 
   const playPauseVideo = useCallback(() => {
     if (videoStatus === "PLAYING") {
@@ -89,11 +117,13 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
 
   const openYouTubeIFrameModal = useCallback(async () => {
     setModalVisible(true);
-    await SystemNavigationBar.stickyImmersive();
+    await SystemNavigationBar.fullScreen(true);
   }, [modalVisible]);
 
   const handleCloseModal = useCallback(async () => {
     await SystemNavigationBar.navigationShow();
+        await SystemNavigationBar.fullScreen(false);
+
     setModalVisible(false);
   }, [modalVisible]);
 
@@ -113,8 +143,8 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
   }, [hiddenControls, hiddenControlsTimeout]);
 
   const openVideoOnYouTube = useCallback(() => {
-    linkUtils.openLink(`https://youtube.com/v/${videoId}`)
-  }, [videoId])
+    linkUtils.openLink(videoUrl);
+  }, [videoUrl]);
 
   useEffect(() => {
     if (ytPlayerRef.current) {
@@ -125,6 +155,8 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
   useImperativeHandle(ref, () => ({
     openYouTubeIFrameModal,
   }));
+
+  if (!videoId) return null;
 
   return (
     <Container
@@ -157,7 +189,7 @@ const YouTubeIFrame: React.ForwardRefRenderFunction<
               <Feather name="x" size={25} color="#fff" />
             </YouTubeModalHeaderButton>
             <YouTubeVideoTitle ellipsizeMode="middle" numberOfLines={1}>
-              {title}
+              {videoTitle}
             </YouTubeVideoTitle>
             <YouTubeModalHeaderButton onPress={openVideoOnYouTube}>
               <FontAwesome name="youtube-play" size={25} color="#fff" />
