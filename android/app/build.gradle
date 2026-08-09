@@ -94,6 +94,7 @@ android {
 
     namespace 'com.flowapps.saturnchat'
     defaultConfig {
+        missingDimensionStrategy 'store', 'play' 
         applicationId 'com.flowapps.saturnchat'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
