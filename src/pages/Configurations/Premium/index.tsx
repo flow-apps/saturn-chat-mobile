@@ -70,7 +70,7 @@ const Premium: React.FC = () => {
               <BuyButtonText>
                 <Feather name="star" size={18} />{" "}
                 {t("buy_button", {
-                  price: `R$ 19${Localize.getLocales()[0].decimalSeparator}99`,
+                  price: `R$ 9${Localize.getLocales()[0].decimalSeparator}99`,
                 })}
               </BuyButtonText>
             </BuyButton>

@@ -27,6 +27,7 @@ import Button from "@components/Button";
 import { navigate } from "@routes/rootNavigation";
 import Loading from "@components/Loading";
 import { IapPlatform } from "react-native-iap";
+import * as Localize from "expo-localization";
 
 const ChoosePlan: React.FC = () => {
   const { colors } = useTheme();
@@ -123,7 +124,7 @@ const ChoosePlan: React.FC = () => {
           <PlanContainer>
             <PlanTitle>{t("monthly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice>R$ 9,99</PlanPrice>
+              <PlanPrice>R$ 9{Localize.getLocales()[0].decimalSeparator}99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
@@ -144,7 +145,7 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor={colors.primary}>{t("quarterly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice planColor={colors.primary}>R$ 29,99</PlanPrice>
+              <PlanPrice planColor={colors.primary}>R$ 29{Localize.getLocales()[0].decimalSeparator}99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
@@ -165,8 +166,8 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor="#FF5E0D">{t("yearly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanDiscountText> R$ 119,99 </PlanDiscountText>
-              <PlanPrice planColor="#FF5E0D">R$ 99,99</PlanPrice>
+              <PlanDiscountText> R$ 119{Localize.getLocales()[0].decimalSeparator}99 </PlanDiscountText>
+              <PlanPrice planColor="#FF5E0D">R$ 99{Localize.getLocales()[0].decimalSeparator}99</PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
