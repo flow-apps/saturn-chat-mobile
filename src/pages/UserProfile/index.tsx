@@ -15,7 +15,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { FriendData, UserData } from "@type/interfaces";
-import { FriendsStates } from "@type/enums";
+import { FriendsStates, ParticipantStates } from "@type/enums";
 import { View } from "react-native";
 import {
   Container,
@@ -79,7 +79,7 @@ const UserProfile: React.FC = () => {
         }
         setLoading(false);
       })();
-    }, [])
+    }, []),
   );
 
   const openFriendsManager = () => {
@@ -132,7 +132,7 @@ const UserProfile: React.FC = () => {
 
   const handleAcceptOrRejectFriend = async (action: "ACCEPT" | "REJECT") => {
     const res = await api.put(
-      `/friends/response?state=${action}&friend_id=${friendInfos?.id}`
+      `/friends/response?state=${action}&friend_id=${friendInfos?.id}`,
     );
 
     if (res.status === 200) {
@@ -149,7 +149,7 @@ const UserProfile: React.FC = () => {
   return (
     <>
       <Header title={userInfos?.name}>
-        {userInfos?.id === user.id && (
+        {userInfos?.id === user?.id && (
           <HeaderButton onPress={handleGoEditProfile}>
             <Feather name="edit" size={22} color="#fff" />
           </HeaderButton>
@@ -175,7 +175,7 @@ const UserProfile: React.FC = () => {
                 color={colors.light_heading}
                 align="center"
                 hasPremium={
-                  userInfos.id === user.id ? isPremium : userInfos.isPremium
+                  userInfos.id === user?.id ? isPremium : userInfos.isPremium
                 }
               />
               {userInfos.nickname && (
@@ -200,7 +200,7 @@ const UserProfile: React.FC = () => {
             )}
             <AddFriendContainer>{renderFriendButton()}</AddFriendContainer>
           </BasicInfosContainer>
-          {userInfos?.participating.length > 0 && (
+          {userInfos?.participating!.length > 0 && (
             <GroupsContainer>
               <GroupsTitle>
                 <Feather name="users" size={25} color={colors.light_heading} />{" "}
@@ -210,7 +210,8 @@ const UserProfile: React.FC = () => {
                 {userInfos?.participating?.map((participant, index) => {
                   const avatar = participant.group.group_avatar;
                   return (
-                    participant.group.privacy !== "PRIVATE" && (
+                    participant.group.privacy !== "PRIVATE" &&
+                    participant.state === ParticipantStates.JOINED && (
                       <View key={index * 1.5}>
                         {!!index && index % 5 === 0 && <AdBanner />}
                         <Group
