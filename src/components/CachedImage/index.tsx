@@ -35,7 +35,7 @@ const CachedImage: React.FC<CachedImageProps> = ({
   }
 
   const placeholderImage =
-    placeholder || require("@assets/avatar-placeholder.png");
+    placeholder || require("@assets/placeholder.jpg");
 
   if (hasError || !uri) {
     return (

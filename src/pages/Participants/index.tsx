@@ -120,6 +120,7 @@ const Participants: React.FC = () => {
             <ParticipantAvatarContainer>
               <ParticipantAvatar
                 uri={item.user.avatar?.url}
+                placeholder={require("@assets/avatar-placeholder.png")}
                 width={60}
                 height={60}
               />

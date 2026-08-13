@@ -6,7 +6,12 @@ import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
-import { GroupData, MessageData, ParticipantsData, UserData } from "@type/interfaces";
+import {
+  GroupData,
+  MessageData,
+  ParticipantsData,
+  UserData,
+} from "@type/interfaces";
 
 import * as Clipboard from "expo-clipboard";
 
@@ -63,7 +68,7 @@ const Message = ({
   participant,
   onReplyMessage,
   group,
-  disableReply
+  disableReply,
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -101,7 +106,12 @@ const Message = ({
           onPress={handleGoParticipant}
           disabled={message.participant.state !== ParticipantStates.JOINED}
         >
-          <MessageAvatar uri={message.author?.avatar?.url} width={22} height={22} />
+          <MessageAvatar
+            uri={message.author?.avatar?.url}
+            placeholder={require("@assets/avatar-placeholder.png")}
+            width={22}
+            height={22}
+          />
           <PremiumName
             name={message.author.name}
             nameSize={12}
@@ -165,7 +175,7 @@ const Message = ({
       setLinkUrl(link);
       setShowLinkAlert(true);
     },
-    [message]
+    [message],
   );
 
   const openLink = useCallback(
@@ -176,7 +186,7 @@ const Message = ({
 
       setLinkUrl("");
     },
-    [linkUrl]
+    [linkUrl],
   );
 
   const closeLink = useCallback(() => {
@@ -245,9 +255,7 @@ const Message = ({
   }, [message.links, hasInvite]);
 
   const replyMessage = (direction?: "right" | "left") => {
-
-    if (disableReply)
-      return;
+    if (disableReply) return;
 
     if (!direction) {
       onReplyMessage(message);
