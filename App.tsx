@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Routes from "@routes/index";
-import { BackHandler } from "react-native";
+import { View } from "react-native";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 
 import { AuthProvider } from "@contexts/auth";
@@ -87,38 +87,44 @@ function App() {
     configureExpoUpdates();
   }, []);
 
+  const onLayoutRootView = useCallback(async () => {
+    if (fontLoaded && readyForStart) {
+      await hideAsync();
+    }
+  }, [fontLoaded, readyForStart]);
+
   if (!fontLoaded || !readyForStart) {
     return null;
   }
 
-  hideAsync();
-
   return (
-    <ThemeControllerProvider>
-      <FirebaseProvider>
-        <AuthProvider>
-          <PurchasesProvider>
-            <PremiumProvider>
-              <WebsocketProvider>
-                <NotificationsProvider>
-                  <AdsProvider>
-                    <ChatProvider>
-                      <AudioPlayerProvider>
-                        <RemoteConfigsProvider>
-                          <HomeProvider>
-                            <Routes />
-                          </HomeProvider>
-                        </RemoteConfigsProvider>
-                      </AudioPlayerProvider>
-                    </ChatProvider>
-                  </AdsProvider>
-                </NotificationsProvider>
-              </WebsocketProvider>
-            </PremiumProvider>
-          </PurchasesProvider>
-        </AuthProvider>
-      </FirebaseProvider>
-    </ThemeControllerProvider>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <ThemeControllerProvider>
+        <FirebaseProvider>
+          <AuthProvider>
+            <PurchasesProvider>
+              <PremiumProvider>
+                <WebsocketProvider>
+                  <NotificationsProvider>
+                    <AdsProvider>
+                      <ChatProvider>
+                        <AudioPlayerProvider>
+                          <RemoteConfigsProvider>
+                            <HomeProvider>
+                              <Routes />
+                            </HomeProvider>
+                          </RemoteConfigsProvider>
+                        </AudioPlayerProvider>
+                      </ChatProvider>
+                    </AdsProvider>
+                  </NotificationsProvider>
+                </WebsocketProvider>
+              </PremiumProvider>
+            </PurchasesProvider>
+          </AuthProvider>
+        </FirebaseProvider>
+      </ThemeControllerProvider>
+    </View>
   );
 }
 

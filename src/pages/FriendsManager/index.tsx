@@ -104,7 +104,10 @@ const FriendsManager: React.FC = () => {
             <Friend>
               <FriendInfos>
                 <FriendAvatarContainer>
-                  <FriendAvatar uri={getFriendAvatar(user.id, item)} />
+                  <FriendAvatar
+                    uri={getFriendAvatar(user.id, item)}
+                    placeholder={require("@assets/avatar-placeholder.png")}
+                  />
                 </FriendAvatarContainer>
                 <PremiumName
                   name={friendName}

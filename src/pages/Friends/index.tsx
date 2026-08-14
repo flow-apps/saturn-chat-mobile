@@ -65,7 +65,7 @@ const Friends: React.FC = () => {
 
         setLoading(false);
       })();
-    }, [])
+    }, []),
   );
 
   const handleOpenChat = ({ id, name, friendId }: OpenChatProps) => {
@@ -113,7 +113,12 @@ const Friends: React.FC = () => {
                 }
               >
                 <FriendLeftContainer>
-                  <FriendAvatar uri={getFriendAvatar(user.id, item)} width={60} height={60} />
+                  <FriendAvatar
+                    uri={getFriendAvatar(user.id, item)}
+                    placeholder={require("@assets/avatar-placeholder.png")}
+                    width={60}
+                    height={60}
+                  />
                   <PremiumName
                     name={friendName}
                     showNickname={true}
