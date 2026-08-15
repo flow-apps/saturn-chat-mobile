@@ -30,7 +30,7 @@ const Routes = () => {
     },
   };
 
-  const routeNameRef = useRef<string>("");
+  const routeNameRef = useRef<string | undefined>("");
 
   if (loadingData) {
     return <Loading />;
@@ -49,11 +49,16 @@ const Routes = () => {
           : undefined
       }
       onReady={() => {
-        routeNameRef.current = navigationRef.current.getCurrentRoute()?.name;
+        if (navigationRef.current) {
+          routeNameRef.current = navigationRef.current.getCurrentRoute()?.name;
+        }
       }}
       onStateChange={async () => {
-        const previousRouteName = navigationRef.current.getCurrentRoute().name;
-        const currentRouteName = navigationRef.current.getCurrentRoute().name;
+        if (!navigationRef.current) {
+          return;
+        }
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = navigationRef.current.getCurrentRoute()?.name;
         
         if (previousRouteName !== currentRouteName) {
           await analytics().logEvent("screen_view", { currentRouteName });

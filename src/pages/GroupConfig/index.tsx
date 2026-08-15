@@ -39,7 +39,7 @@ import _ from "lodash";
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [participant, setParticipant] = useState<ParticipantsData>(
-    {} as ParticipantsData
+    {} as ParticipantsData,
   );
   const [groupSettings, setGroupSettings] = useState<ISetting[]>();
   const [participantSettings, setParticipantSettings] = useState<ISetting[]>();
@@ -71,7 +71,7 @@ const GroupConfig: React.FC = () => {
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
         setParticipantSettings(
-          participantRes.data.participant.participant_settings
+          participantRes.data.participant.participant_settings,
         );
       }
       setLoading(false);
@@ -124,7 +124,7 @@ const GroupConfig: React.FC = () => {
   };
 
   const updateGroupSetting = (settingName: string, newValue: any) => {
-    const updatedSettings = groupSettings.map((setting) => {
+    const updatedSettings = groupSettings?.map((setting) => {
       if (setting.setting_name === settingName) {
         setting.setting_value = String(newValue);
       }
@@ -140,7 +140,7 @@ const GroupConfig: React.FC = () => {
   };
 
   const updateParticipantSetting = (settingName: string, newValue: any) => {
-    const updatedSettings = participantSettings.map((setting) => {
+    const updatedSettings = participantSettings?.map((setting) => {
       if (setting.setting_name === settingName) {
         setting.setting_value = String(newValue);
       }
@@ -170,7 +170,7 @@ const GroupConfig: React.FC = () => {
 
             SimpleToast.show(
               "Configurações alteradas com sucesso",
-              SimpleToast.SHORT
+              SimpleToast.SHORT,
             );
           }
         })
@@ -179,7 +179,7 @@ const GroupConfig: React.FC = () => {
 
           SimpleToast.show(
             "Não foi possível salvar as alterações",
-            SimpleToast.SHORT
+            SimpleToast.SHORT,
           );
         });
     }
@@ -196,7 +196,7 @@ const GroupConfig: React.FC = () => {
 
             SimpleToast.show(
               "Configurações alteradas com sucesso",
-              SimpleToast.SHORT
+              SimpleToast.SHORT,
             );
           }
         })
@@ -205,7 +205,7 @@ const GroupConfig: React.FC = () => {
 
           SimpleToast.show(
             "Não foi possível salvar as alterações",
-            SimpleToast.SHORT
+            SimpleToast.SHORT,
           );
         });
     }
@@ -214,6 +214,8 @@ const GroupConfig: React.FC = () => {
   };
 
   if (loading) return <Loading />;
+
+  console.log(participantSettings);
 
   return (
     <>
@@ -279,11 +281,11 @@ const GroupConfig: React.FC = () => {
                 </OptionText>
               </OptionContainer>
               {showGroupSettings &&
-                groupSettings.map((setting) => (
+                groupSettings?.map((setting) => (
                   <OptionContainer
                     style={{
                       flexDirection: ["select", "participant_role"].includes(
-                        setting.input_type
+                        setting.input_type,
                       )
                         ? "column"
                         : "row",
@@ -359,11 +361,11 @@ const GroupConfig: React.FC = () => {
         </OptionsContainer>
         <OptionsContainer>
           <SectionTitle>Configurações do participante</SectionTitle>
-          {participantSettings.map((setting) => (
+          {participantSettings?.map((setting) => (
             <OptionContainer
               style={{
                 flexDirection: ["select", "participant_role"].includes(
-                  setting.input_type
+                  setting.input_type,
                 )
                   ? "column"
                   : "row",

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Routes from "@routes/index";
 import { View, ActivityIndicator } from "react-native"; // Import ActivityIndicator
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
-import { Image, StyleSheet } from "react-native"; // Importe Image e StyleSheet
+import { Image, StyleSheet } from "react-native";
 import { AuthProvider } from "@contexts/auth";
 import { ThemeControllerProvider } from "@contexts/theme";
 import { NotificationsProvider } from "@contexts/notifications";
@@ -37,14 +37,30 @@ import {} from "react-native-iap";
 import { PremiumProvider } from "@contexts/premium";
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import secrets from "./secrets.json";
+import { useAuth } from "@contexts/auth";
+import { useRemoteConfigs } from "@contexts/remoteConfigs";
 
 import { isDevice } from "expo-device";
 import * as Updates from "expo-updates";
 
 preventAutoHideAsync();
 
+const InitializerGate: React.FC<{ onReady: () => void }> = ({ onReady }) => {
+  const { loadingData: authLoading } = useAuth();
+  const { loadingRemoteConfigs } = useRemoteConfigs();
+
+  useEffect(() => {
+    if (!authLoading && !loadingRemoteConfigs) {
+      onReady();
+    }
+  }, [authLoading, loadingRemoteConfigs, onReady]);
+
+  return null;
+};
+
 function App() {
   const [readyForStart, setReadyForStart] = useState(false);
+  const [contextsAreReady, setContextsAreReady] = useState(false); // Novo estado para a prontidão dos contextos
 
   const [fontLoaded] = useFonts({
     Poppins_300Light_Italic,
@@ -84,11 +100,11 @@ function App() {
     configureExpoUpdates();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontLoaded && readyForStart) {
-      await hideAsync();
+  useEffect(() => {
+    if (fontLoaded && readyForStart && contextsAreReady) {
+      hideAsync();
     }
-  }, [fontLoaded, readyForStart]);
+  }, [fontLoaded, readyForStart, contextsAreReady]);
 
   if (!fontLoaded || !readyForStart) {
     return (
@@ -108,7 +124,7 @@ function App() {
   }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1 }}>
       <ThemeControllerProvider>
         <FirebaseProvider>
           <AuthProvider>
@@ -121,7 +137,25 @@ function App() {
                         <AudioPlayerProvider>
                           <RemoteConfigsProvider>
                             <HomeProvider>
-                              <Routes />
+                              <InitializerGate
+                                onReady={() => setContextsAreReady(true)}
+                              />
+                              {contextsAreReady ? (
+                                <Routes />
+                              ) : (
+                                <View style={styles.splashContainer}>
+                                  <Image
+                                    source={require("./assets/splash.png")}
+                                    style={styles.splashImage}
+                                    resizeMode="cover"
+                                  />
+                                  <ActivityIndicator
+                                    style={styles.activityIndicator}
+                                    size="large"
+                                    color="#FF9D00"
+                                  />
+                                </View>
+                              )}
                             </HomeProvider>
                           </RemoteConfigsProvider>
                         </AudioPlayerProvider>

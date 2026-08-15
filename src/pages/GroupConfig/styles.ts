@@ -42,6 +42,7 @@ export const OptionContainer = styled.TouchableOpacity<OptionContainerProps>`
   padding: 5px;
   flex: 1;
   margin-bottom: 5px;
+  display: ${props => props.hidden ? "none" : "flex"};
 `;
 
 export const OptionActionContainer = styled.View`

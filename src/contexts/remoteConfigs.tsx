@@ -14,6 +14,7 @@ import { usePremium } from "./premium";
 interface RemoteConfigContextProps {
   allConfigs: Configs;
   userConfigs: UserConfigs;
+  loadingRemoteConfigs: boolean;
 }
 
 export interface Configs {
@@ -28,6 +29,7 @@ export interface Configs {
   premium_max_message_length: string;
   ad_multiple_in_chat: string;
   ad_multiple_in_home: string;
+  [key: string]: string;
 }
 
 interface UserConfigs {
@@ -47,10 +49,12 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userConfigs, setUserConfigs] = useState<UserConfigs>(
     {} as UserConfigs
   );
+  const [loadingRemoteConfigs, setLoadingRemoteConfigs] = useState(true);
   const { isPremium } = usePremium();
 
   useEffect(() => {
     (async () => {
+      setLoadingRemoteConfigs(true);
       await remoteConfig().setConfigSettings({
         minimumFetchIntervalMillis: convertToMillis(5, "MINUTES"),
         fetchTimeMillis: convertToMillis(1, "MINUTES"),
@@ -72,6 +76,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await remoteConfig().fetchAndActivate();
       await updateUserConfigs();
+      setLoadingRemoteConfigs(false);
     })();
   }, []);
 
@@ -127,6 +132,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         allConfigs,
         userConfigs,
+        loadingRemoteConfigs,
       }}
     >
       {children}
