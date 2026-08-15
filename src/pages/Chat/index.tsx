@@ -87,6 +87,7 @@ type OptimisticMessageInput = {
   files?: MessageData["files"];
   voice_message?: MessageData["voice_message"];
   reply_to?: MessageData;
+  mentions?: string[];
 };
 
 const Chat: React.FC = () => {
@@ -135,6 +136,7 @@ const Chat: React.FC = () => {
   const [participant, setParticipant] = useState<ParticipantsData>(
     {} as ParticipantsData,
   );
+  const [participants, setParticipants] = useState<ParticipantsData[]>([]);
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -222,6 +224,7 @@ const Chat: React.FC = () => {
       files = [],
       voice_message,
       reply_to,
+      mentions,
     }: OptimisticMessageInput): MessageData => ({
       id,
       author: user as UserData,
@@ -233,6 +236,7 @@ const Chat: React.FC = () => {
       sended: false,
       localReference,
       reply_to,
+      mentions,
       created_at: new Date().toISOString(),
     }),
     [group, participant, user],
@@ -444,14 +448,19 @@ const Chat: React.FC = () => {
   const fetchParticipantAndGroup = useCallback(async () => {
     setLoading(true);
     try {
-      const [participantRes, messagesRes] = await Promise.all([
+      const [participantRes, messagesRes, participantsRes] = await Promise.all([
         api.get(`/group/participant/${id}`),
         api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
+        api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
       ]);
 
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
         setGroup(participantRes.data.participant.group);
+      }
+
+      if (participantsRes.status === 200) {
+        setParticipants(participantsRes.data);
       }
 
       if (Platform.OS === "android") {
@@ -582,6 +591,7 @@ const Chat: React.FC = () => {
           url: file.file.uri,
         })),
         reply_to: replyingMessage,
+        mentions: mentions.map((m) => m.id),
       }),
       ...old,
     ]);
@@ -708,6 +718,7 @@ const Chat: React.FC = () => {
           onReplyMessage={handleReplyMessage}
           group={group}
           disableReply={!canSendMessage}
+          participants={participants}
         />
       );
     },

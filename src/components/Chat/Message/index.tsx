@@ -56,6 +56,7 @@ interface MessageProps {
   children?: React.ReactNode;
   group: GroupData;
   disableReply: boolean;
+  participants: ParticipantsData[];
 }
 
 interface InvitesData {
@@ -69,6 +70,7 @@ const Message = ({
   onReplyMessage,
   group,
   disableReply,
+  participants,
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -370,6 +372,7 @@ const Message = ({
               message={message}
               onPressLink={alertLink}
               user={user as UserData}
+              participants={participants}
             />
             {renderVoiceMessage()}
             {renderFiles()}

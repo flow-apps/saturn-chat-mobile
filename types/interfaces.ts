@@ -83,6 +83,7 @@ export interface MessageData {
   voice_message?: AudioData;
   files?: FileData[] | File[];
   sended?: boolean;
+  mentions?: string[];
   localReference?: string;
 }
 
