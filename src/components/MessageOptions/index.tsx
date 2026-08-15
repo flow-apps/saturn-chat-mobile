@@ -84,16 +84,8 @@ const MessageOptions = ({
               <MessageInfos>
                 <UserName>{message.author.name}</UserName>
                 <MessageText
-                  ellipsizeMode="tail"
-                  lineBreakMode="tail"
-                  numberOfLines={1}
                   textBreakStrategy="highQuality"
                 >
-                  {!!message.voice_message && t("voice_message")}
-                  {message.files.length > 0 &&
-                    `(${message.files.length} ${t("files", {
-                      count: message.files.length,
-                    })}) `}
                   {!!message.message && message.message}
                 </MessageText>
               </MessageInfos>

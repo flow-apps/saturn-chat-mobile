@@ -4087,6 +4087,11 @@ fast-glob@^3.3.2:
     merge2 "^1.3.0"
     micromatch "^4.0.8"
 
+fast-mlkit-translate-text@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/fast-mlkit-translate-text/-/fast-mlkit-translate-text-1.0.3.tgz#d19ec1dfe8ba19e85a9d67f4fc0496f8f85b2af1"
+  integrity sha512-J2V55ImD7wGwytNJ33opw6OPpi5jIEM6owR+8qHAAZjmhtyS7zVp9INjaiKtJ8l6rDm2nP/33c3LnzDZt0fPgQ==
+
 fast-xml-builder@^1.2.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/fast-xml-builder/-/fast-xml-builder-1.3.0.tgz#bc849804796fe47bf915022dd939b0fc30ba455d"

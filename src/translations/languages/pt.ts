@@ -51,6 +51,12 @@ export const pt = {
         options: {
           reply: "Responder",
           copy: "Copiar",
+          show_original_message: "Mostrar mensagem original",
+          translate_message: "Traduzir mensagem",
+          original_restored: "Mensagem original restaurada.",
+          already_in_lang: "A mensagem já está no seu idioma.",
+          translated_success: "Mensagem traduzida!",
+          not_identified_lang: "Não foi possível identificar o idioma.",
           part_opt: "Opções do participante",
           delete: "Excluir",
         },

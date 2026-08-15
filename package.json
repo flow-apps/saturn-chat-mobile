@@ -55,6 +55,7 @@
     "expo-status-bar": "~57.0.1",
     "expo-updates": "~57.0.12",
     "expo-video": "~57.0.2",
+    "fast-mlkit-translate-text": "^1.0.3",
     "form-data": "^4.0.4",
     "i18next": "^25.3.2",
     "lodash": "^4.17.21",

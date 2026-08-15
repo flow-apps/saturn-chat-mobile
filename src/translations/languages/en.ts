@@ -38,6 +38,10 @@ export const en = {
       Message: {
         toasts: {
           copied_message: "Copied message",
+          original_restored: "Original message restored",
+          already_in_lang: "The message is already translated",
+          translated_success: "Message translated!",
+          not_identified_lang: "Translate error",
         },
         alerts: {
           open_link: {
@@ -51,6 +55,8 @@ export const en = {
         options: {
           reply: "Reply",
           copy: "Copy",
+          show_original_message: "Original Message",
+          translate_message: "Translate Message",
           part_opt: "Participant Options",
           delete: "Delete",
         },

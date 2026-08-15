@@ -47,6 +47,8 @@ import { useChat } from "@contexts/chat";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
+import FastTranslator from "fast-mlkit-translate-text";
+import { getLocales } from "expo-localization";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -75,7 +77,9 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
-  const [deleted, setDeleted] = useState(false);
+  const [displayedMessageContent, setDisplayedMessageContent] = useState(
+    message.message,
+  );
   const [hasInvite, setHasInvite] = useState(false);
   const [invitesData, setInvitesData] = useState<InvitesData[]>([]);
 
@@ -88,6 +92,15 @@ const Message = ({
 
   const linkUtils = new LinkUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
+
+  const messageForDisplay = useMemo(() => ({
+    ...message,
+    message: displayedMessageContent,
+  }), [message, displayedMessageContent]);
+
+  useEffect(() => {
+    setDisplayedMessageContent(message.message);
+  }, [message.message]);
 
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
@@ -201,6 +214,63 @@ const Message = ({
     SimpleToast.show(t("toasts.copied_message"), SimpleToast.SHORT);
   }, [message.message]);
 
+  const handleTranslateMessage = useCallback(async () => {
+    if (displayedMessageContent !== message.message) {
+      setDisplayedMessageContent(message.message);
+      SimpleToast.show(t("toasts.original_restored"), SimpleToast.SHORT);
+      return;
+    }
+
+    try {
+      const messageLanguageTag = await FastTranslator.identify(message.message);
+      const safeMessageLanguageTag = typeof messageLanguageTag === 'string' ? messageLanguageTag : ''; // Garante que é uma string
+      const messageLanguage = FastTranslator.languageFromTag(safeMessageLanguageTag);
+
+      const userLanguage = FastTranslator.languageFromTag(
+        getLocales()[0]?.languageCode || "",
+      );
+
+    if (!messageLanguage || !userLanguage) {
+      SimpleToast.show(t("toasts.not_identified_lang"), SimpleToast.SHORT);
+      return;
+    }
+
+    if (messageLanguage === userLanguage) {
+      SimpleToast.show(t("toasts.already_in_lang"), SimpleToast.SHORT);
+      return;
+    }
+
+      if (!(await FastTranslator.isLanguageDownloaded(userLanguage))) {
+        await FastTranslator.downloadLanguageModel(userLanguage);
+      }
+      if (!(await FastTranslator.isLanguageDownloaded(messageLanguage))) {
+        await FastTranslator.downloadLanguageModel(messageLanguage);
+      }
+
+      await FastTranslator.prepare({
+        source: messageLanguage,
+        target: userLanguage,
+        downloadIfNeeded: true
+      });
+      const translated = await FastTranslator.translate(message.message);
+
+      setDisplayedMessageContent(translated);
+      SimpleToast.show(t("toasts.translated_success"), SimpleToast.SHORT);
+    } catch (error) {
+      console.log("Translation error:", error);
+      SimpleToast.show("Erro ao traduzir mensagem. Tente novamente mais tarde.", SimpleToast.SHORT);
+    }
+  }, [message.message, displayedMessageContent, t]);
+
+  const translateOptionContent = useMemo(
+    () => (
+      displayedMessageContent !== message.message ?
+        t("options.show_original_message") :
+        t("options.translate_message")
+    ),
+    [displayedMessageContent, message.message],
+  );
+
   const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
 
@@ -217,12 +287,11 @@ const Message = ({
             url={file.url}
             size={file.size}
             type={file.type}
-            deleted={deleted}
           />
         );
       });
     }
-  }, [message.files, deleted]);
+  }, [message.files]);
 
   const renderInvites = useCallback(() => {
     if (!hasInvite || !message.links) return <></>;
@@ -329,7 +398,7 @@ const Message = ({
             <MessageOptions
               close={handleCloseMsgOptions}
               visible={msgOptions}
-              message={message}
+              message={messageForDisplay}
               participant_role={participant.role}
               group={group}
               options={[
@@ -345,6 +414,14 @@ const Message = ({
                   iconName: "copy",
                   content: t("options.copy"),
                   action: handleCopyMessage,
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL" as ParticipantRoles],
+                  showInDM: true,
+                },
+                {
+                  iconName: "globe",
+                  content: translateOptionContent,
+                  action: handleTranslateMessage,
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
                   showInDM: true,
@@ -369,7 +446,8 @@ const Message = ({
               ]}
             />
             <MessageMark
-              message={message}
+              key={messageForDisplay.message} // Adiciona uma key que muda com o conteúdo exibido
+              message={messageForDisplay}
               onPressLink={alertLink}
               user={user as UserData}
               participants={participants}
