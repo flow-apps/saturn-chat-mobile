@@ -2,10 +2,10 @@ import React from "react";
 import { File, ImageFile, OtherFile, RemoveFileButton } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
-import { DocumentResult } from "expo-document-picker";
+import { DocumentPickerAsset } from "expo-document-picker";
 
 interface File {
-  file: DocumentResult;
+  file: DocumentPickerAsset;
   type: string;
 }
 

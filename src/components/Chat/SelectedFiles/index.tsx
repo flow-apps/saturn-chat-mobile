@@ -1,4 +1,4 @@
-import { DocumentResult } from "expo-document-picker";
+import { DocumentPickerAsset } from "expo-document-picker";
 import React from "react";
 import SelectedFile from "@components/Chat/SelectedFile";
 import {
@@ -7,7 +7,7 @@ import {
 } from "./styles";
 
 interface File {
-  file: DocumentResult;
+  file: DocumentPickerAsset;
   type: string;
 }
 
