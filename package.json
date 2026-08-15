@@ -90,6 +90,7 @@
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-simple-toast": "^3.3.2",
+    "react-native-store-review": "^0.5.0",
     "react-native-svg": "15.15.4",
     "react-native-system-navigation-bar": "^2.6.4",
     "react-native-uuid": "^2.0.3",

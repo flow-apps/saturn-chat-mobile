@@ -40,6 +40,7 @@ import configs from "../../config";
 import { useTranslate } from "@hooks/useTranslate";
 import { ParticipantStates } from "@type/enums";
 import _ from "lodash";
+import * as StoreReview from 'react-native-store-review'
 
 export interface ParticipantData {
   id: string;

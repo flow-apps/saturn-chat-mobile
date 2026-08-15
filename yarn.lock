@@ -6323,6 +6323,11 @@ react-native-simple-toast@^3.3.2:
   resolved "https://registry.yarnpkg.com/react-native-simple-toast/-/react-native-simple-toast-3.3.2.tgz#9f1c3a92bb56424d3e5d3bc7caf3f29dee819d9b"
   integrity sha512-jtZa5VXLDc3Rr+1a2eYyviakxOXP8U9AFYp1VWlslApi0wkiNeyAQ4yLZbIY8nayrbHTUSkERiDzKoCsy9v7Dw==
 
+react-native-store-review@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-store-review/-/react-native-store-review-0.5.0.tgz#7f353ea017edfa0d1d5d16997179659eea576bc9"
+  integrity sha512-HPJw7rKIi1eQwEkUuolfNtvDnh71B0QV1IH2TLzHTp5ICp/euk0pjC6Wyob3iZNjO8R/z47VRdD7kNPFKcaD/g==
+
 react-native-svg@15.15.4:
   version "15.15.4"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.15.4.tgz#c029be85c20ead09c63dffa6b1ade06012f095ed"
