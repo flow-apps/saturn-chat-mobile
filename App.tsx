@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Routes from "@routes/index";
-import { View } from "react-native";
+import { View, ActivityIndicator } from "react-native"; // Import ActivityIndicator
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
-
+import { Image, StyleSheet } from "react-native"; // Importe Image e StyleSheet
 import { AuthProvider } from "@contexts/auth";
 import { ThemeControllerProvider } from "@contexts/theme";
 import { NotificationsProvider } from "@contexts/notifications";
@@ -33,14 +33,14 @@ import { ChatProvider } from "@contexts/chat";
 
 import { HomeProvider } from "@contexts/home";
 import { PurchasesProvider } from "@contexts/purchases";
-import {  } from "react-native-iap";
+import {} from "react-native-iap";
 import { PremiumProvider } from "@contexts/premium";
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import secrets from "./secrets.json";
 
 import { isDevice } from "expo-device";
 import * as Updates from "expo-updates";
-import { useNavigation } from "@react-navigation/native";
+// Remova a importação do componente Loading
 
 preventAutoHideAsync();
 
@@ -94,7 +94,20 @@ function App() {
   }, [fontLoaded, readyForStart]);
 
   if (!fontLoaded || !readyForStart) {
-    return null;
+    return (
+      <View style={styles.splashContainer}>
+        <Image
+          source={require("./assets/splash.png")}
+          style={styles.splashImage}
+          resizeMode="cover"
+        />
+        <ActivityIndicator
+          style={styles.activityIndicator}
+          size="large"
+          color="#FF9D00"
+        />
+      </View>
+    );
   }
 
   return (
@@ -129,3 +142,19 @@ function App() {
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  splashContainer: {
+    flex: 1,
+    backgroundColor: "#FFFFFF", // Defina uma cor de fundo que combine com sua imagem de splash
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  splashImage: {
+    width: "100%",
+    height: "100%",
+  },
+  activityIndicator: {
+    // O ActivityIndicator será centralizado automaticamente dentro do splashContainer
+  },
+});
