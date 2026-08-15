@@ -40,7 +40,7 @@ import configs from "../../config";
 import { useTranslate } from "@hooks/useTranslate";
 import { ParticipantStates } from "@type/enums";
 import _ from "lodash";
-import * as StoreReview from 'react-native-store-review'
+import * as StoreReview from "react-native-store-review";
 
 export interface ParticipantData {
   id: string;
@@ -72,7 +72,7 @@ const Home: React.FC = () => {
       const sortedGroups = _.orderBy(
         groupsData,
         ["unreadMessagesAmount"],
-        "desc"
+        "desc",
       );
 
       setGroups(sortedGroups);
@@ -108,7 +108,9 @@ const Home: React.FC = () => {
     useCallback(() => {
       handleCheckInvites();
       loadGroups();
-    }, [])
+      if (!__DEV__)
+        StoreReview.requestReview();
+    }, []),
   );
 
   if (loading) return <Loading />;
