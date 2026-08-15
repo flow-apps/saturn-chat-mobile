@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import {
   BannerContainer,
@@ -24,9 +24,11 @@ type BannerProps = {
   size?: BannerAdSize;
 };
 
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 5000;
+
 const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const { name } = useRoute();
-  const [show, setShow] = useState(false);
 
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
@@ -41,11 +43,31 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
 
   const { t } = useTranslate("Components.Ads");
 
+  const [retryCount, setRetryCount] = useState(0);
+  const [retryKey, setRetryKey] = useState(0);
+
   const handleGoPremium = async () => {
     navigation.navigate("PurchasePremium");
     await analytics().logEvent("RemoveBannerAD", {
       requested_in: name,
     });
+  };
+
+  const handleAdFailedToLoad = (error: any) => {
+    console.log("Erro ao carregar AD: ", error);
+    if (retryCount < MAX_RETRIES) {
+      console.log(
+        `Tentando recarregar o anúncio... Tentativa ${retryCount + 1}`,
+      );
+      setTimeout(() => {
+        setRetryCount((prev) => prev + 1);
+        setRetryKey((prev) => prev + 1);
+      }, RETRY_DELAY);
+    } else {
+      console.log(
+        "Número máximo de tentativas de carregamento de anúncio atingido.",
+      );
+    }
   };
 
   if (isPremium) return <></>;
@@ -77,14 +99,14 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
           </RemoveBannerText>
         </RemoveBanner>
         <BannerContainer>
-          <BannerAd
-            unitId={adUnitID!}
-            size={size}
-            onAdOpened={() => setShow(true)}
-            onAdFailedToLoad={(error) => {
-              console.log("Erro ao carregar AD: ", error);
-            }}
-          />
+          {adUnitID && (
+            <BannerAd
+              key={retryKey}
+              unitId={adUnitID}
+              size={size}
+              onAdFailedToLoad={handleAdFailedToLoad}
+            />
+          )}
         </BannerContainer>
       </Container>
     </AnimatePresence>
