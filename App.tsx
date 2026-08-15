@@ -40,7 +40,6 @@ import secrets from "./secrets.json";
 
 import { isDevice } from "expo-device";
 import * as Updates from "expo-updates";
-// Remova a importação do componente Loading
 
 preventAutoHideAsync();
 
@@ -65,21 +64,19 @@ function App() {
   const configureExpoUpdates = async () => {
     try {
       if (!isDevice || __DEV__) {
-        return setReadyForStart(true);
+        return;
       }
 
       const { isAvailable: hasNewUpdate } = await Updates.checkForUpdateAsync();
 
       if (hasNewUpdate) {
         await Updates.fetchUpdateAsync();
-        await Updates.reloadAsync().finally(() => {
-          setReadyForStart(true);
-        });
-      } else {
-        setReadyForStart(true);
+        await Updates.reloadAsync();
       }
     } catch (error) {
       console.log(`Error fetching latest Expo update: ${error}`);
+    } finally {
+      setReadyForStart(true);
     }
   };
 
@@ -146,7 +143,7 @@ export default App;
 const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
-    backgroundColor: "#FFFFFF", // Defina uma cor de fundo que combine com sua imagem de splash
+    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -155,6 +152,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   activityIndicator: {
-    // O ActivityIndicator será centralizado automaticamente dentro do splashContainer
+    position: "absolute",
+    bottom: 100,
   },
 });
