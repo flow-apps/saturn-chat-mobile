@@ -268,6 +268,8 @@ export const pt = {
       edit_password: "Alterar senha",
     },
     about: {
+      developer_options: "Opções de Desenvolvedor",
+      use_dev_api: "Usar API de Desenvolvimento",
       title: "Sobre",
       guidelines: "Diretrizes da Comunidade",
       privacy_policy: "Politica de Privacidade",

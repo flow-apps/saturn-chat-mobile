@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ConfigContainer,
   ConfigsContainer,
@@ -21,6 +21,7 @@ import Alert from "@components/Alert";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
+import { Platform } from "react-native";
 import * as Localize from "expo-localization";
 import Banner from "@components/Ads/Banner";
 import config from "../../config";
@@ -28,9 +29,13 @@ import { useNotifications } from "@contexts/notifications";
 import { LinkUtils } from "@utils/link";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import { setApiBaseURL } from "@services/api"; // Import the function to set API base URL
 
+const API_PREFERENCE_KEY = "@SaturnChat:useDevApi"; // Same key as in api.ts
 const Configurations: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
+  const [useDevApi, setUseDevApi] = useState(false); // Estado para o switch da API de desenvolvimento
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { signOut } = useAuth();
@@ -49,6 +54,20 @@ const Configurations: React.FC = () => {
     return false;
   }, [isPremium]);
 
+  // Load the persisted state for useDevApi on component mount
+  useEffect(() => {
+    const loadApiPreference = async () => {
+      try {
+        const storedPreference = await AsyncStorage.getItem(API_PREFERENCE_KEY);
+        if (storedPreference !== null) {
+          setUseDevApi(JSON.parse(storedPreference));
+        }
+      } catch (error) {
+        console.error("Failed to load API preference from AsyncStorage", error);
+      }
+    };
+    loadApiPreference();
+  }, []);
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
   }, []);
@@ -79,6 +98,16 @@ const Configurations: React.FC = () => {
 
   const handleGoGuidelines = async () => {
     await linkUtils.openLink(`${config.WEBSITE_URL}/guidelines`);
+  };
+
+  // Função para alternar o uso da API de desenvolvimento
+  const handleToggleDevApi = async (value: boolean) => {
+    setUseDevApi(value);
+    await setApiBaseURL(value); // Update the API base URL
+    // Optionally, you might want to restart the app or clear some caches
+    // if the API change requires a full re-initialization of data.
+    // For example, if the user is logged in, you might want to sign them out
+    // or prompt them to restart the app.
   };
 
   return (
@@ -172,6 +201,23 @@ const Configurations: React.FC = () => {
               </ConfigContainer>
             </ConfigsContainer>
           </SectionContainer>
+
+          {__DEV__ && ( // Renderiza esta seção apenas em ambiente de desenvolvimento
+            <SectionContainer>
+              <SectionTitle>{t("about.developer_options")}</SectionTitle>
+              <ConfigsContainer>
+                <ConfigContainer>
+                  <ConfigTitle>
+                    <Feather name="code" size={16} /> {t("about.use_dev_api")}
+                  </ConfigTitle>
+                  <Switcher
+                    currentValue={useDevApi}
+                    onChangeValue={handleToggleDevApi}
+                  />
+                </ConfigContainer>
+              </ConfigsContainer>
+            </SectionContainer>
+          )}
 
           <Button
             title={t("sign_out")}

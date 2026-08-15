@@ -267,6 +267,8 @@ export const en = {
       edit_password: "Change Password",
     },
     about: {
+      developer_options: "Opções de Desenvolvedor",
+      use_dev_api: "Usar API de Desenvolvimento",
       title: "About",
       guidelines: "Community Guidelines",
       privacy_policy: "Privacy Policy",
