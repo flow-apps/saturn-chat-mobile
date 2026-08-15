@@ -1,5 +1,5 @@
-import styled from 'styled-components/native';
-import fonts from '@styles/fonts';
+import styled from "styled-components/native";
+import fonts from "@styles/fonts";
 
 export const ReplyingMessageContainer = styled.View`
   flex-direction: row;
@@ -12,23 +12,27 @@ export const ReplyingMessageContainer = styled.View`
   height: 100%;
 `;
 
-export const ReplyingMessageContentContainer = styled.View``;
+export const ReplyingMessageContentContainer = styled.View`
+  flex: 1;
+`;
 
 export const ReplyingMessageRemoveContainer = styled.View`
   min-height: 50px;
-  margin-left: auto;
   align-items: center;
   justify-content: center;
 `;
 
 export const ReplyingMessageRemoveButton = styled.TouchableOpacity``;
 
-export const ReplyingMessageTitleWrapper = styled.View``;
+export const ReplyingMessageTitleWrapper = styled.View`
+  flex: 1;
+`;
 
 export const ReplyingMessageTitle = styled.Text`
   font-family: ${fonts.heading};
   font-size: 12px;
   color: ${(props) => props.theme.colors.primary};
+  width: 100%;
 `;
 
 export const ReplyingMessageAuthorNameWrapper = styled.View`
