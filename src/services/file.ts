@@ -1,6 +1,7 @@
 import * as DocumentPicker from "expo-document-picker";
 import * as MimeTypes from "react-native-mime-types";
 import { Platform } from "react-native";
+import * as FileSystem from "expo-file-system";
 import SimpleToast from "react-native-simple-toast";
 
 enum FileServiceErrors {
@@ -33,9 +34,10 @@ class FileService {
 
     if (!file.canceled) {
       const selectedFile = file.assets[0]
-      const fileSize = selectedFile.size / 1024 / 1024;
+      const fileSize = (selectedFile.size ?? Number.MAX_SAFE_INTEGER) / 1024 / 1024;
       const usageSize = this.filesSizeUsed + fileSize;
-      const type = MimeTypes.lookup(selectedFile.name).split("/")[0] as string;
+      const mimeTypeResult = MimeTypes.lookup(selectedFile.name);
+      const type = typeof mimeTypeResult === 'string' ? mimeTypeResult.split("/")[0] : "application";
       if (fileSize > this.sizeLimit || usageSize > this.sizeLimit) {
         return {
           error: true,
@@ -63,9 +65,21 @@ class FileService {
     }
   }
 
-  async downloadFile(url: string, fileName: string) {
-   console.log("TODO: IMPLEMENTAR DOWNLOAD");
-   
+  async downloadFile(url: string, fileName: string): Promise<string | null> {
+    try {
+      const fileUri = (await FileSystem.Directory.pickDirectoryAsync()).createFile(fileName, null);
+      const { uri } = await FileSystem.File.downloadFileAsync(url, fileUri);
+
+      SimpleToast.show(
+        `Arquivo "${fileName}" baixado com sucesso em ${uri}`,
+        SimpleToast.LONG
+      );
+      return uri;
+    } catch (error) {
+      console.error("Erro ao baixar o arquivo:", error);
+      SimpleToast.show("Não foi possível baixar o arquivo.", SimpleToast.LONG);
+      return null;
+    }
   }
 }
 

@@ -15,10 +15,11 @@ class LinkUtils {
     return config.SATURN_CHAT_DOMAINS.includes(hostname);
   }
 
-  hasSaturnChatDeepLinkInApp(path: string) {
+  hasSaturnChatDeepLinkInApp(path: string | null) {
+    if (!path) return false;
     const arrayUtils = new ArrayUtils();
     const paths = ["invite"];
-    const separatedPath = path.split("/").filter(Boolean).shift().toLowerCase();
+    const separatedPath = (path.split("/").filter(Boolean).shift() ?? "").toLowerCase();
 
     return arrayUtils.has(paths, (p) => separatedPath === p);
   }
@@ -57,9 +58,9 @@ class LinkUtils {
       console.log(path);
       
 
-      if (this.hasSaturnChatDeepLinkInApp(path)) {
+      if (path && this.hasSaturnChatDeepLinkInApp(path)) {
         const deepURL = ExpoLinking.createURL(path, {
-          queryParams,
+          queryParams: queryParams || undefined,
         });
 
         if (await ExpoLinking.canOpenURL(deepURL)) {
