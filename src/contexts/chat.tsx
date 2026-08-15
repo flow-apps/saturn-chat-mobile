@@ -25,6 +25,7 @@ interface IHandleSendMessage {
   message?: string;
   message_id?: string;
   reply_to_id?: string;
+  mentions?: string[];
 }
 
 interface IHandleSendVoiceMessage {
@@ -134,12 +135,14 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
           reply_to_id: data.reply_to_id,
           group_id: currentGroupId,
           message: data.message,
+          mentions: data.mentions,
         });
       } else {
         socket?.emit("new_message_with_files", {
           message_id: data.message_id,
           group_id: currentGroupId,
           localReference: data.localReference,
+          mentions: data.mentions,
         });
       }
     },
@@ -170,7 +173,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const onSendedUserMessage = useCallback(
-    (callback: (data: onSendedUserMessageCallbackType) => void) => {      
+    (callback: (data: onSendedUserMessageCallbackType) => void) => {
       socket.on("sended_user_message", callback);
     },
     [socket]
@@ -209,16 +212,16 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       socket.on("deleted_group", () => {
         navigate("Groups");
       });
-      socket.on("kicked_user", ({ group_id, user_id }) => {        
+      socket.on("kicked_user", ({ group_id, user_id }) => {
         if (group_id === currentGroupId) {
-          if (user_id === user.id) {
+          if (user_id === user?.id) {
             navigate("Groups");
           }
         }
       });
       socket.on("banned_user", ({ group_id, user_id }) => {
         if (group_id === currentGroupId) {
-          if (user_id === user.id) {
+          if (user_id === user?.id) {
             navigate("Groups");
           }
         }

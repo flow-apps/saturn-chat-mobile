@@ -76,6 +76,7 @@ import Banner from "@components/Ads/Banner";
 import { ParticipantRoles } from "@type/enums";
 import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
+import Mentions from "@components/Chat/Mentions";
 
 const MESSAGES_LIMIT_REQUEST = 30;
 
@@ -86,6 +87,7 @@ type OptimisticMessageInput = {
   files?: MessageData["files"];
   voice_message?: MessageData["voice_message"];
   reply_to?: MessageData;
+  mentions?: string[];
 };
 
 const Chat: React.FC = () => {
@@ -121,10 +123,9 @@ const Chat: React.FC = () => {
   const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<number>();
+  const [typingTimeout, setTypingTimeout] = useState<number | NodeJS.Timeout>();
   const [isRecording, setIsRecording] = useState(false);
-  const [recordingInterval, setRecordingInterval] =
-    useState<ReturnType<typeof setInterval>>();
+  const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout>();
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
 
@@ -135,6 +136,7 @@ const Chat: React.FC = () => {
   const [participant, setParticipant] = useState<ParticipantsData>(
     {} as ParticipantsData,
   );
+  const [participants, setParticipants] = useState<ParticipantsData[]>([]);
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -142,6 +144,12 @@ const Chat: React.FC = () => {
   const [fetchedAll, setFetchedAll] = useState(false);
 
   const [canSendMessage, setCanSendMessage] = useState(true);
+
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [isMentioning, setIsMentioning] = useState(false);
+  const [mentions, setMentions] = useState<UserData[]>([]);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
 
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
@@ -165,7 +173,7 @@ const Chat: React.FC = () => {
   const { t } = useTranslate("Chat");
 
   const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) => {      
+    onSendedUserMessage(({ msg, localReference }) => {
       setOldMessages(
         (old) =>
           arrayUtils.iterator(old, (m) =>
@@ -216,6 +224,7 @@ const Chat: React.FC = () => {
       files = [],
       voice_message,
       reply_to,
+      mentions,
     }: OptimisticMessageInput): MessageData => ({
       id,
       author: user as UserData,
@@ -227,6 +236,7 @@ const Chat: React.FC = () => {
       sended: false,
       localReference,
       reply_to,
+      mentions,
       created_at: new Date().toISOString(),
     }),
     [group, participant, user],
@@ -345,7 +355,7 @@ const Chat: React.FC = () => {
         },
       );
 
-      const sentAudioData = sendedAudio.data?.voice_message ?? sendedAudio.data;     
+      const sentAudioData = sendedAudio.data?.voice_message ?? sendedAudio.data;
 
       setOldMessages(
         (old) =>
@@ -411,44 +421,46 @@ const Chat: React.FC = () => {
     setFilesSizeUsed((used) => used - fileSize);
   };
 
-  const fetchOldMessages = useCallback(
-    async () => {
-      if (fetching || fetchedAll) return;
+  const fetchOldMessages = useCallback(async () => {
+    if (fetching || fetchedAll) return;
 
-      setFetching(true);
-      const { data } = await api.get(
-        `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`,
-      );
+    setFetching(true);
+    const { data } = await api.get(
+      `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`,
+    );
 
-      if (data.messages.length === 0) {
-        setFetchedAll(true);
-        setFetching(false);
-        return;
-      }
-
-      if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
-        setFetchedAll(true);
-      }
-
-      setOldMessages((old) => [...old, ...data.messages]);
-
-      setPage((old) => old + 1);
+    if (data.messages.length === 0) {
+      setFetchedAll(true);
       setFetching(false);
-    },
-    [fetchedAll, fetching, page, id],
-  );
+      return;
+    }
+
+    if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
+      setFetchedAll(true);
+    }
+
+    setOldMessages((old) => [...old, ...data.messages]);
+
+    setPage((old) => old + 1);
+    setFetching(false);
+  }, [fetchedAll, fetching, page, id]);
 
   const fetchParticipantAndGroup = useCallback(async () => {
     setLoading(true);
     try {
-      const [participantRes, messagesRes] = await Promise.all([
+      const [participantRes, messagesRes, participantsRes] = await Promise.all([
         api.get(`/group/participant/${id}`),
         api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
+        api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
       ]);
 
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
         setGroup(participantRes.data.participant.group);
+      }
+
+      if (participantsRes.status === 200) {
+        setParticipants(participantsRes.data);
       }
 
       if (Platform.OS === "android") {
@@ -464,7 +476,10 @@ const Chat: React.FC = () => {
       setOldMessages(data.messages);
       setPage(1);
     } catch (error) {
-      crashlytics().recordError(error as Error, "Chat: fetchParticipantAndGroup");
+      crashlytics().recordError(
+        error as Error,
+        "Chat: fetchParticipantAndGroup",
+      );
     } finally {
       setLoading(false);
     }
@@ -492,39 +507,54 @@ const Chat: React.FC = () => {
       setIsTypingMessage(false);
     }
 
+    const mentionRegex = /@(\w+)/g;
+    let match;
+    let isCurrentlyMentioning = false;
+    while ((match = mentionRegex.exec(newMessage)) !== null) {
+      const mentionStart = match.index;
+      const mentionEnd = mentionStart + match[0].length;
+      if (cursorPosition >= mentionStart && cursorPosition <= mentionEnd) {
+        setMentionQuery(match[1]);
+        setMentionPosition({ start: mentionStart, end: mentionEnd });
+        setIsMentioning(true);
+        isCurrentlyMentioning = true;
+        break;
+      }
+    }
+
+    if (!isCurrentlyMentioning) {
+      setIsMentioning(false);
+    }
+
+    const newMentions = mentions.filter((mention) =>
+      newMessage.includes(`@${mention.nickname}`),
+    );
+    setMentions(newMentions);
+
     if (messageInputRef.current) {
       messageInputRef.current.value = newMessage;
     }
     handleTyping();
   };
 
-  const handleGoGroupConfig = () => {
-    navigation.navigate("GroupConfig", { id });
-  };
+  const handleUserSelect = (user: UserData) => {
+    const message = messageInputRef.current?.value || "";
+    const newMessage =
+      message.substring(0, mentionPosition.start) +
+      `@${user.nickname} ` +
+      message.substring(mentionPosition.end);
 
-  const handleGoGroupParticipants = () => {
-    navigation.navigate("Participants", { id });
-  };
+    if (messageInputRef.current) {
+      messageInputRef.current.setNativeProps({ text: newMessage });
+      messageInputRef.current.value = newMessage;
+    }
 
-  const handleGoGroupInfos = () => {
-    navigation.navigate("GroupInfos", { id });
-  };
-
-  const handleGoFriendInfos = () => {
-    navigation.navigate("UserProfile", { id: friendId });
-  };
-
-  const handleGoStar = async () => {
-    await analytics().logEvent("IncreaseUpload");
-    navigation.navigate("PurchasePremium");
-  };
-
-  const handleReplyMessage = async (message: MessageData) => {
-    setReplyingMessage(message);
-  };
-
-  const handleRemoveReplyingMessage = async () => {
-    setReplyingMessage(undefined);
+    setMentions((prev) => [...prev, user]);
+    setIsMentioning(false);
+    setMentionQuery("");
+    setIsTypingMessage(true);
+    handleTyping();
+    messageInputRef.current?.focus();
   };
 
   const handleMessageSubmit = async () => {
@@ -561,6 +591,7 @@ const Chat: React.FC = () => {
           url: file.file.uri,
         })),
         reply_to: replyingMessage,
+        mentions: mentions.map((m) => m.id),
       }),
       ...old,
     ]);
@@ -576,6 +607,7 @@ const Chat: React.FC = () => {
         reply_to_id: replyingMessage?.id,
         message,
         localReference,
+        mentions: mentions.map((m) => m.id),
       });
 
       if (replyingMessage) {
@@ -599,6 +631,8 @@ const Chat: React.FC = () => {
 
       filesData.append("message", message);
       if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
+      if (mentions.length > 0)
+        filesData.append("mentions", JSON.stringify(mentions.map((m) => m.id)));
 
       await trace.start();
 
@@ -620,6 +654,7 @@ const Chat: React.FC = () => {
               message,
               withFiles: true,
               localReference,
+              mentions: mentions.map((m) => m.id),
             });
           }
         })
@@ -639,6 +674,36 @@ const Chat: React.FC = () => {
     if (replyingMessage) {
       setReplyingMessage(undefined);
     }
+    setMentions([]);
+  };
+
+  const handleGoGroupConfig = () => {
+    navigation.navigate("GroupConfig", { id });
+  };
+
+  const handleGoGroupParticipants = () => {
+    navigation.navigate("Participants", { id });
+  };
+
+  const handleGoGroupInfos = () => {
+    navigation.navigate("GroupInfos", { id });
+  };
+
+  const handleGoFriendInfos = () => {
+    navigation.navigate("UserProfile", { id: friendId });
+  };
+
+  const handleGoStar = async () => {
+    await analytics().logEvent("IncreaseUpload");
+    navigation.navigate("PurchasePremium");
+  };
+
+  const handleReplyMessage = async (message: MessageData) => {
+    setReplyingMessage(message);
+  };
+
+  const handleRemoveReplyingMessage = async () => {
+    setReplyingMessage(undefined);
   };
 
   const renderMessage = useCallback(
@@ -653,6 +718,7 @@ const Chat: React.FC = () => {
           onReplyMessage={handleReplyMessage}
           group={group}
           disableReply={!canSendMessage}
+          participants={participants}
         />
       );
     },
@@ -777,7 +843,6 @@ const Chat: React.FC = () => {
           <Feather name="more-vertical" size={22} color="#fff" />
         </HeaderButton>
       </Header>
-      
 
       <Container
         style={{
@@ -805,6 +870,13 @@ const Chat: React.FC = () => {
           />
         </MessageContainer>
         <FormContainer style={{ paddingHorizontal: canSendMessage ? 12 : 0 }}>
+          {isMentioning && (
+            <Mentions
+              query={mentionQuery}
+              groupId={id}
+              onUserSelect={handleUserSelect}
+            />
+          )}
           <AnimatePresence>
             {isRecording && (
               <MotiView
@@ -856,6 +928,9 @@ const Chat: React.FC = () => {
                 cursorColor={colors.secondary}
                 placeholderTextColor={colors.dark_heading}
                 onChangeText={handleSetMessage}
+                onSelectionChange={({ nativeEvent: { selection } }) => {
+                  setCursorPosition(selection.start);
+                }}
                 maxLength={userConfigs?.messageLength || 500}
                 placeholder={isRecording ? t("drop_send") : t("type_message")}
               />
