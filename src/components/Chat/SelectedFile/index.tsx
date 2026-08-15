@@ -15,7 +15,7 @@ interface FileProps {
 }
 
 const SelectedFile = ({ onRemoveFile, file }: FileProps) => {
-  const { colors } = useTheme();    
+  const { colors } = useTheme();      
 
   return (
     <File
@@ -33,7 +33,7 @@ const SelectedFile = ({ onRemoveFile, file }: FileProps) => {
       <RemoveFileButton onPress={onRemoveFile}>
         <Feather name="x" size={14} color={colors.secondary} />
       </RemoveFileButton>
-      {file.file.type === "success" && file.type === "image" ? (
+      {file.type === "image" ? (
         <ImageFile source={{ uri: file.file.uri }}
           // @ts-ignore
           width={80}
