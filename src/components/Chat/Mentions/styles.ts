@@ -1,4 +1,5 @@
 import CachedImage from "@components/CachedImage";
+import fonts from "@styles/fonts";
 import styled from "styled-components/native";
 
 export const Container = styled.View`
@@ -20,12 +21,14 @@ export const Avatar = styled(CachedImage)`
 `;
 
 export const Nickname = styled.Text`
-  font-size: 16px;
+  font-size: 14px;
+  font-family: ${fonts.text};
   color: ${({ theme }) => theme.colors.black};
 `;
 
 export const NoResultsText = styled.Text`
   padding: 16px;
   text-align: center;
-  color: ${({ theme }) => theme.colors.light_gray};
+  color: ${({ theme }) => theme.colors.dark_gray};
+  font-family: ${fonts.text};
 `;
