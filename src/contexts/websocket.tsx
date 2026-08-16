@@ -3,6 +3,7 @@ import websocketConfig from "../configs/websocket";
 import config from "../config";
 import io, { Socket } from "socket.io-client";
 import { useAuth } from "./auth";
+import api from "@services/api";
 
 interface IWebsocketContext {
   socket: Socket;
@@ -37,7 +38,7 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsConnecting(true);
 
     console.log("Criando novo socket e conectando ao servidor");
-    const createdSocket = io(config.API_URL, {
+    const createdSocket = io(api.defaults.baseURL, {
       ...websocketConfig,
       query: { token },
     });
