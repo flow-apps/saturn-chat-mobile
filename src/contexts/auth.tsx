@@ -177,7 +177,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const getHeadersForAuthFiles = (url: string) => {
-    if (url.includes(configs.STORAGE_URL) || url.includes(configs.API_URL)) {
+    if (url.includes(configs.STORAGE_URL) || url.includes(configs.PROD_API_URL)) {
       
       return {
         Authorization: token,
