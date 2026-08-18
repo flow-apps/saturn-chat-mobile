@@ -110,7 +110,7 @@ function App() {
     return (
       <View style={styles.splashContainer}>
         <Image
-          source={require("./assets/splash.png")}
+          source={require("./assets/splash.jpg")}
           style={styles.splashImage}
           resizeMode="cover"
         />
@@ -145,7 +145,7 @@ function App() {
                               ) : (
                                 <View style={styles.splashContainer}>
                                   <Image
-                                    source={require("./assets/splash.png")}
+                                    source={require("./assets/splash.jpg")}
                                     style={styles.splashImage}
                                     resizeMode="cover"
                                   />

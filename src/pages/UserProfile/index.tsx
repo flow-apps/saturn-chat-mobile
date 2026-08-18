@@ -167,7 +167,7 @@ const UserProfile: React.FC = () => {
               >
                 <Avatar
                   uri={userInfos?.avatar?.url}
-                  placeholder={require("@assets/avatar-placeholder.png")}
+                  placeholder={require("@assets/avatar-placeholder.jpg")}
                   width={180}
                   height={180}
                 />

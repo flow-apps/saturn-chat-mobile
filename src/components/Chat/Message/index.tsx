@@ -123,7 +123,7 @@ const Message = ({
         >
           <MessageAvatar
             uri={message.author?.avatar?.url}
-            placeholder={require("@assets/avatar-placeholder.png")}
+            placeholder={require("@assets/avatar-placeholder.jpg")}
             width={22}
             height={22}
           />

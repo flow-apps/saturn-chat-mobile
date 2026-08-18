@@ -106,7 +106,7 @@ const FriendsManager: React.FC = () => {
                 <FriendAvatarContainer>
                   <FriendAvatar
                     uri={getFriendAvatar(user.id, item)}
-                    placeholder={require("@assets/avatar-placeholder.png")}
+                    placeholder={require("@assets/avatar-placeholder.jpg")}
                   />
                 </FriendAvatarContainer>
                 <PremiumName

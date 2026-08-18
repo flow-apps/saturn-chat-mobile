@@ -41,7 +41,7 @@ const Mentions: React.FC<MentionsProps> = ({
     <UserContainer onPress={() => onUserSelect(item)}>
       <Avatar
         uri={item.avatar ? item.avatar.url : ""}
-        placeholder={require("@assets/avatar-placeholder.png")}
+        placeholder={require("@assets/avatar-placeholder.jpg")}
       />
       <Nickname>{item.nickname}</Nickname>
     </UserContainer>

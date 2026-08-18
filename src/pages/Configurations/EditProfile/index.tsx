@@ -201,7 +201,7 @@ const EditProfile: React.FC = () => {
     if (avatar) {
       return <AvatarImage source={{ uri: avatar.url }} />;
     } else {
-      return <AvatarImage source={require("@assets/avatar-placeholder.png")} />;
+      return <AvatarImage source={require("@assets/avatar-placeholder.jpg")} />;
     }
   };
 

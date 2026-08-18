@@ -115,7 +115,7 @@ const Friends: React.FC = () => {
                 <FriendLeftContainer>
                   <FriendAvatar
                     uri={getFriendAvatar(user.id, item)}
-                    placeholder={require("@assets/avatar-placeholder.png")}
+                    placeholder={require("@assets/avatar-placeholder.jpg")}
                     width={60}
                     height={60}
                   />

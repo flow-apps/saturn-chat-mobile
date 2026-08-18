@@ -112,7 +112,12 @@ const OnBoarding: React.FC = () => {
             />
           ),
           title: <BoardTitle>{t("pages.3.title")}</BoardTitle>,
-          subtitle: <BoardSubTitle>{t("pages.3.subtitle")}</BoardSubTitle>,
+          subtitle: (
+            <>
+              <BoardSubTitle>{t("pages.3.subtitle")}</BoardSubTitle>
+              <DoneButton />
+            </>
+          ),
         },
       ]}
     />
