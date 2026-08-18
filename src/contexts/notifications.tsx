@@ -32,7 +32,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [enabled, setEnabled] = useState(true);
 
   const platform = useMemo(() => Platform.OS, []);
-  const language = useMemo(() => Localize.locale, []);
+  const language = useMemo(() => Localize.getLocales()[0].languageTag, []);
 
   const { signed } = useAuth();
 
