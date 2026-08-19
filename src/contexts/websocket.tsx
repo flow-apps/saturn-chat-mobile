@@ -3,65 +3,76 @@ import websocketConfig from "../configs/websocket";
 import config from "../config";
 import io, { Socket } from "socket.io-client";
 import { useAuth } from "./auth";
-import api from "@services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface IWebsocketContext {
-  socket: Socket;
+  socket: Socket | null;
 }
 
-const WebsocketContext = createContext({} as IWebsocketContext);
+const WebsocketContext = createContext<IWebsocketContext>({ socket: null });
+
+const API_PREFERENCE_KEY = "@SaturnChat:useDevApi";
 
 const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [socket, setSocket] = useState<Socket>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
   const { token } = useAuth();
 
   useEffect(() => {
-    if (!token) {
-      if (socket) {
-        socket.offAny();
-        socket.disconnect();
-        setSocket(null);
+    const setupSocket = async () => {
+      if (!token) {
+        if (socket) {
+          socket.offAny();
+          socket.disconnect();
+          setSocket(null);
+        }
+        return;
       }
-      return;
-    }
 
-    if (socket && socket.connected) {
-      return; // Ignorar conexão se já estiver conectado
-    }
+      if (socket && socket.connected) {
+        return;
+      }
 
-    if (isConnecting) return;
+      if (isConnecting) return;
 
-    setIsConnecting(true);
+      setIsConnecting(true);
 
-    console.log("Criando novo socket e conectando ao servidor");
-    const createdSocket = io(api.defaults.baseURL, {
-      ...websocketConfig,
-      query: { token },
-    });
+      let currentBaseURL = config.PROD_API_URL;
 
-    setSocket(createdSocket);
+      try {
+        const storedPreference = await AsyncStorage.getItem(API_PREFERENCE_KEY);
+        const useDev = storedPreference && __DEV__ ? JSON.parse(storedPreference) : false;
+        currentBaseURL = useDev ? config.DEV_API_URL : config.PROD_API_URL;
+      } catch (error) {
+        console.error("Failed to load API preference from AsyncStorage in websocket context", error);
+      }
 
-    createdSocket.on("connect", () => {
-      console.log("Socket conectado com sucesso");
-      setIsConnecting(false);
-    });
+      console.log(`Criando novo socket e conectando ao servidor em ${currentBaseURL}`);
+      const createdSocket = io(currentBaseURL, {
+        ...websocketConfig,
+        query: { token },
+      });
 
-    // createdSocket.on("connect_error", (error) =>
-    //   console.error("Connection Error:", JSON.stringify(error))
-    // );
+      setSocket(createdSocket);
 
-    // createdSocket.on("disconnect", (error) => console.log(error));
-    createdSocket.on("error", (error) => console.log(JSON.stringify(error)));
+      createdSocket.on("connect", () => {
+        console.log("Socket conectado com sucesso");
+        setIsConnecting(false);
+      });
 
-    return () => {
-      createdSocket.offAny();
-      createdSocket.disconnect();
-      setSocket(null);
+      createdSocket.on("error", (error) => console.log(JSON.stringify(error)));
+
+      return () => {
+        createdSocket.offAny();
+        createdSocket.disconnect();
+        setSocket(null);
+      };
     };
+
+    setupSocket();
   }, [token]);
 
   return (
