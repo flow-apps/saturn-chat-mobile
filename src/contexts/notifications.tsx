@@ -61,7 +61,6 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     configureNotificationsHandlers(signed);
-    
     OneSignal.Notifications.clearAll();
     
     await api
@@ -69,7 +68,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         platform,
         language,
       })
-      .then((res) => {
+      .then((res) => {        
         setEnabled(res.data.send_notification);
       });
   };

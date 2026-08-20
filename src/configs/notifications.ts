@@ -25,7 +25,7 @@ const configureNotificationsHandlers = async (signed: boolean) => {
           if (data.type === NotificationsTypes.CHAT_MESSAGE) {
             const isDM = data.group_type === "DIRECT";
             const name = data.friend_name;
-            const currentScreenName = getCurrentRoute().name;
+            const currentScreenName = getCurrentRoute()?.name;
 
             if (currentScreenName === "Chat") {
               setParams({

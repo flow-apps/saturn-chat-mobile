@@ -74,7 +74,7 @@ function App() {
     FiraCode_500Medium,
   });
 
-  OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.None);
+  OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
   OneSignal.initialize(secrets.OneSignalAppID);
 
   const configureExpoUpdates = async () => {
