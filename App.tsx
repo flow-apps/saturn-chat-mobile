@@ -76,7 +76,7 @@ function App() {
 
   OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
   OneSignal.initialize(secrets.OneSignalAppID);
-
+  
   const configureExpoUpdates = async () => {
     try {
       if (!isDevice || __DEV__) {

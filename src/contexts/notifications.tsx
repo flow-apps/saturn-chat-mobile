@@ -32,7 +32,7 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [enabled, setEnabled] = useState(true);
 
   const platform = useMemo(() => Platform.OS, []);
-  const language = useMemo(() => Localize.getLocales()[0].languageTag, []);
+  const language = useMemo(() => Localize.getLocales()[0].languageTag, []);  
 
   const { signed } = useAuth();
 
@@ -62,11 +62,14 @@ const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     configureNotificationsHandlers(signed);
     OneSignal.Notifications.clearAll();
+
+    const pushToken = await OneSignal.User.pushSubscription.getTokenAsync();
     
     await api
       .post("/users/notify/register", {
         platform,
         language,
+        pushToken
       })
       .then((res) => {        
         setEnabled(res.data.send_notification);

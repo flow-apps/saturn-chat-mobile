@@ -67,8 +67,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       websocket.query.token = headerToken;
       setToken(headerToken);
       setUser(parsedUser);
-
-      OneSignal.login(parsedUser.id);
     }
     setLoadingData(false);
   };
@@ -93,8 +91,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(data.user);
       },
     );
-
-    OneSignal.login(data.user.id);
   };
 
   const signIn = async (email: string, password: string) => {
@@ -112,7 +108,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await analytics().setUserId(userId);
 
         await updateUser(response.data);
-        OneSignal.User.addEmail(email);
         setLoginError(false);
         setInternalError({ has: false, reason: "" });
       })
@@ -140,7 +135,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         await updateUser(response.data);
 
-        OneSignal.User.addEmail(email);
         setRegisterError(false);
         setInternalError({ has: false, reason: "" });
       })
@@ -164,7 +158,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await api
           .delete(`/users/notify/unregister?platform=${Platform.OS}`)
           .finally(() => {
-            OneSignal.logout();
             api.defaults.headers["authorization"] = "";
             if (websocket.query) {
               websocket.query.token = "";
@@ -177,8 +170,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const getHeadersForAuthFiles = (url: string) => {
-    if (url.includes(configs.STORAGE_URL) || url.includes(configs.PROD_API_URL)) {
-      
+    if (
+      url.includes(configs.STORAGE_URL) ||
+      url.includes(configs.PROD_API_URL)
+    ) {
       return {
         Authorization: token,
       };

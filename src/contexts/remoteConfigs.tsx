@@ -61,7 +61,7 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       await remoteConfig().setDefaults({
-        api_url: appConfigs.API_URL,
+        api_url: appConfigs.PROD_API_URL,
         default_max_groups: 2,
         premium_max_groups: 10,
         default_file_upload: 12,
