@@ -27,6 +27,7 @@ import FriendsManager from "@pages/FriendsManager";
 import { useTheme } from "styled-components";
 import ManagePremium from "@pages/Configurations/ManagePremium";
 import SendFeedback from "@pages/Configurations/SendFeedback";
+import Report from "@pages/Report";
 
 const StackRoutes = createStackNavigator();
 
@@ -69,6 +70,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="PdfPreview" component={PdfPreview} />
       <StackRoutes.Screen name="Invite" component={Invite} />
       <StackRoutes.Screen name="SendFeedback" component={SendFeedback} />
+      <StackRoutes.Screen name="Report" component={Report} />
     </StackRoutes.Navigator>
   );
 };

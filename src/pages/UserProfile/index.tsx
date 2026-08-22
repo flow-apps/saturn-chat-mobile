@@ -15,7 +15,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { FriendData, UserData } from "@type/interfaces";
-import { FriendsStates, ParticipantStates } from "@type/enums";
+import { FriendsStates, ParticipantStates, ReportToType } from "@type/enums";
 import { View } from "react-native";
 import {
   Container,
@@ -144,7 +144,12 @@ const UserProfile: React.FC = () => {
     navigation.navigate("EditProfile");
   };
 
-  const handleReportUser = () => {};
+  const handleReportUser = () => {
+    navigation.navigate("Report", {
+      type: ReportToType.USER,
+      user_id: userInfos.id,
+    });
+  };
 
   if (loading) return <Loading />;
 

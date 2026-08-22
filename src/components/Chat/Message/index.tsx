@@ -28,7 +28,7 @@ import {
   MessageDateContainer,
 } from "./styles";
 import PremiumName from "@components/PremiumName";
-import { ParticipantRoles, ParticipantStates } from "@type/enums";
+import { ParticipantRoles, ParticipantStates, ReportToType } from "@type/enums";
 import { rolesForDeleteMessage } from "@utils/authorizedRoles";
 import MessageMark from "@components/Markdown/MessageMark";
 import SimpleToast from "react-native-simple-toast";
@@ -351,7 +351,12 @@ const Message = ({
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
 
-  const handleReportMessage = async () => {};
+  const handleReportMessage = async () => {
+    navigation.navigate("Report", {
+      type: ReportToType.MESSAGE,
+      message_id: message.id,
+    });
+  };
 
   useEffect(() => {
     (async () => {

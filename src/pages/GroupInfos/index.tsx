@@ -44,6 +44,7 @@ import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
 import { useAuth } from "@contexts/auth";
 import { HeaderButton } from "@components/Header/styles";
+import { ReportToType } from "@type/enums";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -99,13 +100,20 @@ const GroupInfos: React.FC = () => {
     });
   };
 
+  const handleReportGroup = () => {
+    navigation.navigate("Report", {
+      type: ReportToType.GROUP,
+      group_id: group?.id,
+    });
+  };
+
   if (loading || !group) return <Loading />;
 
   return (
     <>
       <Header title={group.name}>
         {group?.owner_id !== user?.id && (
-          <HeaderButton>
+          <HeaderButton onPress={handleReportGroup}>
             <Feather name="alert-octagon" size={22} color="#fff" />
           </HeaderButton>
         )}
