@@ -59,6 +59,7 @@ export const en = {
           translate_message: "Translate Message",
           part_opt: "Participant Options",
           delete: "Delete",
+          report: "Report message"
         },
       },
       RecordingAudio: {

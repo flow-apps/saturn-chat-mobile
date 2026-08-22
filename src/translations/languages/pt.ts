@@ -59,6 +59,7 @@ export const pt = {
           not_identified_lang: "Não foi possível identificar o idioma.",
           part_opt: "Opções do participante",
           delete: "Excluir",
+          report: "Denunciar mensagem"
         },
       },
       RecordingAudio: {

@@ -93,10 +93,13 @@ const Message = ({
   const linkUtils = new LinkUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const messageForDisplay = useMemo(() => ({
-    ...message,
-    message: displayedMessageContent,
-  }), [message, displayedMessageContent]);
+  const messageForDisplay = useMemo(
+    () => ({
+      ...message,
+      message: displayedMessageContent,
+    }),
+    [message, displayedMessageContent],
+  );
 
   useEffect(() => {
     setDisplayedMessageContent(message.message);
@@ -223,22 +226,25 @@ const Message = ({
 
     try {
       const messageLanguageTag = await FastTranslator.identify(message.message);
-      const safeMessageLanguageTag = typeof messageLanguageTag === 'string' ? messageLanguageTag : ''; // Garante que é uma string
-      const messageLanguage = FastTranslator.languageFromTag(safeMessageLanguageTag);
+      const safeMessageLanguageTag =
+        typeof messageLanguageTag === "string" ? messageLanguageTag : ""; // Garante que é uma string
+      const messageLanguage = FastTranslator.languageFromTag(
+        safeMessageLanguageTag,
+      );
 
       const userLanguage = FastTranslator.languageFromTag(
         getLocales()[0]?.languageCode || "",
       );
 
-    if (!messageLanguage || !userLanguage) {
-      SimpleToast.show(t("toasts.not_identified_lang"), SimpleToast.SHORT);
-      return;
-    }
+      if (!messageLanguage || !userLanguage) {
+        SimpleToast.show(t("toasts.not_identified_lang"), SimpleToast.SHORT);
+        return;
+      }
 
-    if (messageLanguage === userLanguage) {
-      SimpleToast.show(t("toasts.already_in_lang"), SimpleToast.SHORT);
-      return;
-    }
+      if (messageLanguage === userLanguage) {
+        SimpleToast.show(t("toasts.already_in_lang"), SimpleToast.SHORT);
+        return;
+      }
 
       if (!(await FastTranslator.isLanguageDownloaded(userLanguage))) {
         await FastTranslator.downloadLanguageModel(userLanguage);
@@ -250,7 +256,7 @@ const Message = ({
       await FastTranslator.prepare({
         source: messageLanguage,
         target: userLanguage,
-        downloadIfNeeded: true
+        downloadIfNeeded: true,
       });
       const translated = await FastTranslator.translate(message.message);
 
@@ -258,16 +264,18 @@ const Message = ({
       SimpleToast.show(t("toasts.translated_success"), SimpleToast.SHORT);
     } catch (error) {
       console.log("Translation error:", error);
-      SimpleToast.show("Erro ao traduzir mensagem. Tente novamente mais tarde.", SimpleToast.SHORT);
+      SimpleToast.show(
+        "Erro ao traduzir mensagem. Tente novamente mais tarde.",
+        SimpleToast.SHORT,
+      );
     }
   }, [message.message, displayedMessageContent, t]);
 
   const translateOptionContent = useMemo(
-    () => (
-      displayedMessageContent !== message.message ?
-        t("options.show_original_message") :
-        t("options.translate_message")
-    ),
+    () =>
+      displayedMessageContent !== message.message
+        ? t("options.show_original_message")
+        : t("options.translate_message"),
     [displayedMessageContent, message.message],
   );
 
@@ -342,6 +350,8 @@ const Message = ({
 
   const handleCloseMsgOptions = () => setMsgOptions(false);
   const handleOpenMsgOptions = () => setMsgOptions(true);
+
+  const handleReportMessage = async () => {};
 
   useEffect(() => {
     (async () => {
@@ -442,6 +452,16 @@ const Message = ({
                   onlyOwner: true,
                   authorizedRoles: rolesForDeleteMessage,
                   showInDM: true,
+                },
+                {
+                  iconName: "alert-octagon",
+                  content: t("options.report"),
+                  action: handleReportMessage,
+                  color: colors.red,
+                  onlyOwner: false,
+                  authorizedRoles: ["ALL"],
+                  showInDM: true,
+                  showForAuthor: true,
                 },
               ]}
             />

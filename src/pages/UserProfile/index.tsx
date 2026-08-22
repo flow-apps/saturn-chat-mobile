@@ -144,6 +144,8 @@ const UserProfile: React.FC = () => {
     navigation.navigate("EditProfile");
   };
 
+  const handleReportUser = () => {};
+
   if (loading) return <Loading />;
 
   return (
@@ -152,6 +154,11 @@ const UserProfile: React.FC = () => {
         {userInfos?.id === user?.id && (
           <HeaderButton onPress={handleGoEditProfile}>
             <Feather name="edit" size={22} color="#fff" />
+          </HeaderButton>
+        )}
+        {userInfos?.id !== user?.id && (
+          <HeaderButton onPress={handleReportUser}>
+            <Feather name="alert-octagon" size={22} color="#fff" />
           </HeaderButton>
         )}
       </Header>

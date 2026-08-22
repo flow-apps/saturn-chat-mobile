@@ -23,7 +23,7 @@ const MessageOptions = ({
   message,
   options = [],
   participant_role,
-  group
+  group,
 }: IMessageOptionsProps) => {
   const { user } = useAuth();
   const { t } = useTranslate("Components.Chat.ReplyingMessage");
@@ -44,7 +44,7 @@ const MessageOptions = ({
       return false;
     }
 
-    if (option.onlyOwner && authorId !== user.id && groupType === "DIRECT") {
+    if (option.onlyOwner && authorId !== user?.id && groupType === "DIRECT") {
       return false;
     }
 
@@ -54,13 +54,13 @@ const MessageOptions = ({
 
     if (
       option.onlyOwner &&
-      authorId !== user.id &&
+      authorId !== user?.id &&
       !roles.includes(participant_role)
     ) {
       return false;
     }
 
-    return true;
+    if (option.showForAuthor && message.author.id === user?.id) return true;
   };
 
   return (
@@ -83,9 +83,7 @@ const MessageOptions = ({
               <MessageAvatar uri={message.author?.avatar?.url} />
               <MessageInfos>
                 <UserName>{message.author.name}</UserName>
-                <MessageText
-                  textBreakStrategy="highQuality"
-                >
+                <MessageText textBreakStrategy="highQuality">
                   {!!message.message && message.message}
                 </MessageText>
               </MessageInfos>
@@ -119,7 +117,7 @@ const MessageOptions = ({
                       </OptionText>
                     </Option>
                   )
-                )
+                ),
               )}
             </MessageOptionsModal>
           </MessageOptionsContainer>

@@ -42,6 +42,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useAds } from "@contexts/ads";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
+import { useAuth } from "@contexts/auth";
+import { HeaderButton } from "@components/Header/styles";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -51,7 +53,7 @@ const GroupInfos: React.FC = () => {
 
   const { t } = useTranslate("GroupInfos");
   const { id } = useRoute().params as { id: string };
-  const { isPremium } = usePremium();
+  const { user } = useAuth();
 
   useEffect(() => {
     async function getGroup() {
@@ -101,7 +103,13 @@ const GroupInfos: React.FC = () => {
 
   return (
     <>
-      <Header title={group.name} />
+      <Header title={group.name}>
+        {group?.owner_id !== user?.id && (
+          <HeaderButton>
+            <Feather name="alert-octagon" size={22} color="#fff" />
+          </HeaderButton>
+        )}
+      </Header>
       <Container>
         <GroupContainer>
           <BasicInfosContainer>
@@ -112,7 +120,11 @@ const GroupInfos: React.FC = () => {
                 disabled={!group.group_avatar}
                 activeOpacity={0.7}
               >
-                <Avatar uri={group.group_avatar?.url} width={180} height={180} />
+                <Avatar
+                  uri={group.group_avatar?.url}
+                  width={180}
+                  height={180}
+                />
               </AvatarContainer>
             </ImagesContainer>
             <BasicInfos>

@@ -10,6 +10,7 @@ export interface IOptions {
   iconName?: keyof typeof Feather.glyphMap;
   color?: string;
   authorizedRoles: ParticipantRoles[] | string[];
+  showForAuthor?: boolean;
 }
 
 export interface IMessageOptionsProps {
