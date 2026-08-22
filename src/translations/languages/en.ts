@@ -278,8 +278,22 @@ export const en = {
       title: "About",
       guidelines: "Community Guidelines",
       privacy_policy: "Privacy Policy",
+      feedback: "Send Feedback",
     },
     sign_out: "Sign out",
+  },
+  SendFeedback: {
+    title: "Send Feedback",
+    feedback_type: {
+      bug: "Bugs",
+      suggestion: "Suggestions",
+      others: "Others",
+    },
+    labels: {
+      message: "Message",
+    },
+    done: "Send",
+    sent: "Feedback sent"
   },
   Search: {
     header_title: "Explorer",
@@ -493,7 +507,7 @@ export const en = {
         },
       },
       participant: {
-        send_notifications: "Receive new messages notifications"
+        send_notifications: "Receive new messages notifications",
       },
       danger_zone: {
         title: "Danger zone",

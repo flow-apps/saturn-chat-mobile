@@ -13,6 +13,7 @@ import Header from "@components/Header";
 import { useAuth } from "@contexts/auth";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Switcher from "@components/Switcher";
 import { useThemeController } from "@contexts/theme";
 import Button from "@components/Button";
@@ -21,7 +22,6 @@ import Alert from "@components/Alert";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { Platform } from "react-native";
 import * as Localize from "expo-localization";
 import Banner from "@components/Ads/Banner";
 import config from "../../config";
@@ -33,7 +33,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // Import 
 import { setApiBaseURL } from "@services/api"; // Import the function to set API base URL
 
 const API_PREFERENCE_KEY = "@SaturnChat:useDevApi"; // Same key as in api.ts
-const Configurations: React.FC = () => {
+const Settings: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
   const [useDevApi, setUseDevApi] = useState(false); // Estado para o switch da API de desenvolvimento
 
@@ -92,6 +92,10 @@ const Configurations: React.FC = () => {
     navigation.navigate("SwitchPassword");
   }, []);
 
+   const handleGoSendFeedback = useCallback(() => {
+    navigation.navigate("SendFeedback");
+  }, []);
+
   const handleGoPrivacyPolicie = async () => {
     await linkUtils.openLink(`${config.WEBSITE_URL}/privacy`);
   };
@@ -100,14 +104,9 @@ const Configurations: React.FC = () => {
     await linkUtils.openLink(`${config.WEBSITE_URL}/guidelines`);
   };
 
-  // Função para alternar o uso da API de desenvolvimento
   const handleToggleDevApi = async (value: boolean) => {
     setUseDevApi(value);
     await setApiBaseURL(value); // Update the API base URL
-    // Optionally, you might want to restart the app or clear some caches
-    // if the API change requires a full re-initialization of data.
-    // For example, if the user is logged in, you might want to sign them out
-    // or prompt them to restart the app.
   };
 
   return (
@@ -199,6 +198,11 @@ const Configurations: React.FC = () => {
                   <Feather name="info" size={16} /> {t("about.guidelines")}
                 </ConfigTitle>
               </ConfigContainer>
+              <ConfigContainer onPress={handleGoSendFeedback}>
+                <ConfigTitle>
+                  <Feather name="message-circle" size={16} /> {t("about.feedback")}
+                </ConfigTitle>
+              </ConfigContainer>
             </ConfigsContainer>
           </SectionContainer>
 
@@ -230,4 +234,4 @@ const Configurations: React.FC = () => {
   );
 };
 
-export default Configurations;
+export default Settings;

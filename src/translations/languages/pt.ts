@@ -279,8 +279,22 @@ export const pt = {
       title: "Sobre",
       guidelines: "Diretrizes da Comunidade",
       privacy_policy: "Politica de Privacidade",
+      feedback: "Enviar Feedback",
     },
     sign_out: "Sair da conta",
+  },
+  SendFeedback: {
+    title: "Enviar Feedback",
+    feedback_type: {
+      bug: "Bugs",
+      suggestion: "Sugestões",
+      others: "Outros",
+    },
+    labels: {
+      message: "Mensagem"
+    },
+    done: "Enviar",
+    sent: "Feedback enviado com sucesso"
   },
   Search: {
     header_title: "Explorar",
@@ -497,7 +511,7 @@ export const pt = {
         },
       },
       participant: {
-        send_notifications: "Receber notificações de novas mensagens"
+        send_notifications: "Receber notificações de novas mensagens",
       },
       danger_zone: {
         title: "Zona de perigo",

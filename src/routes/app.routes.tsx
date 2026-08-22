@@ -26,6 +26,7 @@ import InvitesManager from "@pages/InvitesManager";
 import FriendsManager from "@pages/FriendsManager";
 import { useTheme } from "styled-components";
 import ManagePremium from "@pages/Configurations/ManagePremium";
+import SendFeedback from "@pages/Configurations/SendFeedback";
 
 const StackRoutes = createStackNavigator();
 
@@ -67,6 +68,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="VideoPreview" component={VideoPreview} />
       <StackRoutes.Screen name="PdfPreview" component={PdfPreview} />
       <StackRoutes.Screen name="Invite" component={Invite} />
+      <StackRoutes.Screen name="SendFeedback" component={SendFeedback} />
     </StackRoutes.Navigator>
   );
 };

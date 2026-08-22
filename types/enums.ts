@@ -48,3 +48,39 @@ export enum SubscriptionPeriod {
   QUARTERLY = 1,
   YEARLY = 2
 }
+
+export enum ReportType {
+  SPAM = "SPAM",
+  VIOLENCE = "VIOLENCE",
+  SEXUAL = "SEXUAL",
+  BULLYING = "BULLYING",
+  RACISM = "RACISM",
+  SCAM = "SCAM",
+  FAKE = "FAKE_ACCOUNT",
+  DMCA = "DMCA",
+  OTHER = "OTHER",
+}
+
+export enum ReportToType {
+  GROUP = "GROUP",
+  USER = "USER",
+  MESSAGE = "MESSAGE"
+}
+
+export enum ReportStatus {
+  OPEN = "OPEN",
+  FINISHED = "FINISHED"
+}
+
+export enum PenaltyType {
+  WARNING = "WARNING", 
+  RESTRICTION = "RESTRICTION", 
+  TEMP_BAN = "TEMP_BAN", 
+  PERM_BAN = "BANNED"
+}
+
+export enum FeedbackType {
+  BUG = "BUG",
+  SUGGESTION = "SUGGESTION",
+  OTHER = "OTHER"
+}

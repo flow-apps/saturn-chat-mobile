@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   HeaderTitle,
@@ -9,13 +9,10 @@ import {
   HeaderContainer,
 } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
-import { useTheme } from "styled-components";
 import { useNavigation } from "@react-navigation/core";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar, StatusBarStyle } from "expo-status-bar";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useAds } from "@contexts/ads";
-import { usePremium } from "@contexts/premium";
-import { useAuth } from "@contexts/auth";
+import { useTheme } from "styled-components";
 
 interface HeaderProps {
   title: string;
@@ -32,33 +29,19 @@ const Header = ({
   bgColor,
   children,
 }: HeaderProps) => {
-  const { colors } = useTheme();
-  const { Interstitial } = useAds();
-  const { isPremium } = usePremium();
-  const { signed } = useAuth()
-
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { colors } = useTheme();
 
   const handleBack = async () => {
     if (!navigation.canGoBack()) return;
 
-    if (Interstitial.loaded && !isPremium && signed) {
-      Interstitial.show().then(() => {
-        navigation.goBack();
-      });
-    } else {
-      navigation.goBack();
-    }
+    navigation.goBack();
   };
 
   return (
     <Container bgColor={bgColor}>
+      <StatusBar  style="light" />
       <HeaderContainer>
-        <StatusBar
-          backgroundColor={colors.primary}
-          translucent={bgColor === "transparent"}
-          style="light"
-        />
         <RightContainer>
           {backButton && (
             <HeaderButton onPress={handleBack}>
