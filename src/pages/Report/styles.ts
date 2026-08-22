@@ -16,3 +16,9 @@ export const Subtitle = styled.Text`
   font-family: ${fonts["text"]};
   color: ${({ theme }) => theme.colors.black};
 `;
+
+export const FormContainer = styled.View``;
+
+export const InputContainer = styled.View`
+  margin: 10px 0px;
+`;

@@ -4,6 +4,7 @@ import * as resources from "./languages";
 import * as ExpoLocalization from "expo-localization";
 
 i18n.use(initReactI18next).init({
+  // @ts-ignore
   compatibilityJSON: "v3",
   interpolation: {
     escapeValue: false,
@@ -16,7 +17,7 @@ i18n.use(initReactI18next).init({
           translation: value,
         },
       }),
-      {}
+      {},
     ),
   },
   fallbackLng: "en",

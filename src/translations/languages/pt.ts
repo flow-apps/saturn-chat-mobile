@@ -665,4 +665,22 @@ export const pt = {
       error: "Não foi possível entrar no grupo!",
     },
   },
+  Report: {
+    header_title: "Denunciar",
+    title: "Faça sua denúncia",
+    subtitle: "Encontrou algo que não parece certo? Realize sua denúncia para que nós possamos analisar a situação e tomar as medidas cabíveis. Não se preocupe, sua denúncia é totalmente anônima.",
+    types: {
+      SPAM: "Spam e/ou mensagem indesejada",
+      VIOLENCE: "Práticas violentas, incentivo ao suicídio ou exibição de armas de fogo",
+      SEXUAL: "Contéudo sexual, pedofilia ou abuso de menores de idade",
+      BULLYING: "Bullying ou desrespeito aos usuários",
+      RACISM: "Discurso de ódio, racismo, xenofobia e semelhantes",
+      SCAM: "Golpe, falsos sorteios, estorção e semelhantes",
+      FAKE_ACCOUNT: "Conteúdo falso ou tentando se passar uma pessoa",
+      DMCA: "Conteúdo protegido por direitos autorais",
+      OTHER: "Outros"
+    },
+    done: "Denunciar",
+    sent: "Denúncia realizada com sucesso"
+  }
 };

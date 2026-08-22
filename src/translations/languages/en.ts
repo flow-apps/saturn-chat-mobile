@@ -59,7 +59,7 @@ export const en = {
           translate_message: "Translate Message",
           part_opt: "Participant Options",
           delete: "Delete",
-          report: "Report message"
+          report: "Report message",
         },
       },
       RecordingAudio: {
@@ -294,7 +294,7 @@ export const en = {
       message: "Message",
     },
     done: "Send",
-    sent: "Feedback sent"
+    sent: "Feedback sent",
   },
   Search: {
     header_title: "Explorer",
@@ -660,5 +660,25 @@ export const en = {
     toasts: {
       error: "Unable to join group!",
     },
+  },
+  Report: {
+    header_title: "Report",
+    title: "Submit your report",
+    subtitle:
+      "Found something that doesn't look right? Submit a report so we can review the situation and take appropriate action. Don't worry, your report is completely anonymous.",
+    types: {
+      SPAM: "Spam and/or unwanted messages",
+      VIOLENCE:
+        "Violent acts, encouragement of suicide, or display of firearms",
+      SEXUAL: "Sexual content, pedophilia, or minor abuse",
+      BULLYING: "Bullying or harassment of users",
+      RACISM: "Hate speech, racism, xenophobia, and similar behaviors",
+      SCAM: "Scams, fake giveaways, extortion, and similar activities",
+      FAKE_ACCOUNT: "Fake content or impersonating another person",
+      DMCA: "Copyright-protected content",
+      OTHER: "Other",
+    },
+    done: "Report",
+    sent: "Report submitted"
   },
 };
