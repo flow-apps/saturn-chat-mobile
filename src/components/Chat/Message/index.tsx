@@ -65,6 +65,9 @@ interface InvitesData {
   id: string;
 }
 
+// Instanciado fora do componente para evitar recriar o objeto a cada renderização
+const linkUtils = new LinkUtils();
+
 const Message = ({
   message,
   lastMessage,
@@ -78,7 +81,7 @@ const Message = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
   const [displayedMessageContent, setDisplayedMessageContent] = useState(
-    message.message,
+    message.message
   );
   const [hasInvite, setHasInvite] = useState(false);
   const [invitesData, setInvitesData] = useState<InvitesData[]>([]);
@@ -89,36 +92,39 @@ const Message = ({
   const { t } = useTranslate("Components.Chat.Message");
 
   const { handleDeleteMessage } = useChat();
-
-  const linkUtils = new LinkUtils();
   const navigation = useNavigation<StackNavigationProp<any>>();
+
+  useEffect(() => {
+    setDisplayedMessageContent(message.message);
+  }, [message.message]);
 
   const messageForDisplay = useMemo(
     () => ({
       ...message,
       message: displayedMessageContent,
     }),
-    [message, displayedMessageContent],
+    [message, displayedMessageContent]
   );
-
-  useEffect(() => {
-    setDisplayedMessageContent(message.message);
-  }, [message.message]);
 
   const isRight = useMemo(() => {
     return message.author.id === user?.id;
-  }, [message, user]);
+  }, [message.author.id, user?.id]);
 
   const sended = useMemo(() => {
     return isUndefined(message?.sended) ? true : message.sended;
-  }, [message]);
+  }, [message.sended]);
 
-  const handleGoParticipant = () => {
+  const handleGoParticipant = useCallback(() => {
     navigation.navigate("Participant", { participant: message.participant });
-  };
+  }, [navigation, message.participant]);
+
+  const formatHour = useCallback((date: string) => {
+    return moment(date).format("DD/MM/yy, HH:mm");
+  }, []);
 
   const renderAuthor = useCallback(() => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
+      const isAuthorUser = message.author?.id === user?.id;
       return (
         <MessageAuthorContainer
           onPress={handleGoParticipant}
@@ -134,18 +140,21 @@ const Message = ({
             name={message.author.name}
             nameSize={12}
             color={colors.light_heading}
-            hasPremium={
-              message.author?.id === user?.id
-                ? isPremium
-                : message.author.isPremium
-            }
+            hasPremium={isAuthorUser ? isPremium : message.author.isPremium}
           />
         </MessageAuthorContainer>
       );
-    } else {
-      return <></>;
     }
-  }, [message, lastMessage]);
+    return <></>;
+  }, [
+    lastMessage?.author.id,
+    message.author,
+    message.participant.state,
+    user?.id,
+    isPremium,
+    colors.light_heading,
+    handleGoParticipant,
+  ]);
 
   const renderDate = useCallback(() => {
     if (!lastMessage || lastMessage.author.id !== message.author.id) {
@@ -155,32 +164,29 @@ const Message = ({
         </MessageDateContainer>
       );
     } else {
-      const date = (date: string) => moment(date);
-      const same =
-        date(message.created_at).minutes() ===
-        date(lastMessage.created_at).minutes();
+      const isSameMinute =
+        moment(message.created_at).minutes() ===
+        moment(lastMessage.created_at).minutes();
 
-      if (!same) {
+      if (!isSameMinute) {
         return (
           <MessageDateContainer>
             <MessageDate>{formatHour(message.created_at)}</MessageDate>
           </MessageDateContainer>
         );
-      } else {
-        return <></>;
       }
+      return <></>;
     }
-  }, [message, lastMessage]);
+  }, [lastMessage?.author.id, lastMessage?.created_at, message.author.id, message.created_at, formatHour]);
 
-  const formatHour = useCallback((date: string) => {
-    const isoDate = moment(date);
-
-    return isoDate.format("DD/MM/yy, HH:mm");
-  }, []);
-
-  const deleteMessage = useCallback(async () => {
-    handleDeleteMessage({ message_id: message.id });
-  }, [message]);
+  const openLink = useCallback(
+    async (passedLink = "") => {
+      setShowLinkAlert(false);
+      await linkUtils.openLink(passedLink || linkUrl);
+      setLinkUrl("");
+    },
+    [linkUrl]
+  );
 
   const alertLink = useCallback(
     async (link: string) => {
@@ -193,29 +199,22 @@ const Message = ({
       setLinkUrl(link);
       setShowLinkAlert(true);
     },
-    [message],
-  );
-
-  const openLink = useCallback(
-    async (passedLink = "") => {
-      setShowLinkAlert(false);
-
-      await linkUtils.openLink(passedLink || linkUrl);
-
-      setLinkUrl("");
-    },
-    [linkUrl],
+    [openLink]
   );
 
   const closeLink = useCallback(() => {
     setLinkUrl("");
-    return setShowLinkAlert(false);
-  }, [linkUrl]);
+    setShowLinkAlert(false);
+  }, []);
+
+  const deleteMessage = useCallback(async () => {
+    handleDeleteMessage({ message_id: message.id });
+  }, [handleDeleteMessage, message.id]);
 
   const handleCopyMessage = useCallback(async () => {
     await Clipboard.setStringAsync(message.message);
     SimpleToast.show(t("toasts.copied_message"), SimpleToast.SHORT);
-  }, [message.message]);
+  }, [message.message, t]);
 
   const handleTranslateMessage = useCallback(async () => {
     if (displayedMessageContent !== message.message) {
@@ -227,13 +226,13 @@ const Message = ({
     try {
       const messageLanguageTag = await FastTranslator.identify(message.message);
       const safeMessageLanguageTag =
-        typeof messageLanguageTag === "string" ? messageLanguageTag : ""; // Garante que é uma string
+        typeof messageLanguageTag === "string" ? messageLanguageTag : "";
       const messageLanguage = FastTranslator.languageFromTag(
-        safeMessageLanguageTag,
+        safeMessageLanguageTag
       );
 
       const userLanguage = FastTranslator.languageFromTag(
-        getLocales()[0]?.languageCode || "",
+        getLocales()[0]?.languageCode || ""
       );
 
       if (!messageLanguage || !userLanguage) {
@@ -266,39 +265,36 @@ const Message = ({
       console.log("Translation error:", error);
       SimpleToast.show(
         "Erro ao traduzir mensagem. Tente novamente mais tarde.",
-        SimpleToast.SHORT,
+        SimpleToast.SHORT
       );
     }
-  }, [message.message, displayedMessageContent, t]);
+  }, [displayedMessageContent, message.message, t]);
 
   const translateOptionContent = useMemo(
     () =>
       displayedMessageContent !== message.message
         ? t("options.show_original_message")
         : t("options.translate_message"),
-    [displayedMessageContent, message.message],
+    [displayedMessageContent, message.message, t]
   );
 
   const renderVoiceMessage = useCallback(() => {
     if (!message.voice_message) return <></>;
-
     return <AudioPlayer audio={message.voice_message} />;
   }, [message.voice_message]);
 
   const renderFiles = useCallback(() => {
-    if (message.files) {
-      return message.files.map((file) => {
-        return (
-          <FilePreview
-            name={file.name}
-            original_name={file.original_name}
-            url={file.url}
-            size={file.size}
-            type={file.type}
-          />
-        );
-      });
-    }
+    if (!message.files) return null;
+    return message.files.map((file, idx) => (
+      <FilePreview
+        key={file.id || idx}
+        name={file.name}
+        original_name={file.original_name}
+        url={file.url}
+        size={file.size}
+        type={file.type}
+      />
+    ));
   }, [message.files]);
 
   const renderInvites = useCallback(() => {
@@ -307,7 +303,7 @@ const Message = ({
     return (
       <>
         {invitesData.map((invite, index) => (
-          <InviteInMessage key={index} inviteID={invite.id} />
+          <InviteInMessage key={`${invite.id}-${index}`} inviteID={invite.id} />
         ))}
       </>
     );
@@ -331,51 +327,125 @@ const Message = ({
         })}
       </>
     );
-  }, [message.links, hasInvite]);
+  }, [message.links, hasInvite, alertLink]);
 
-  const replyMessage = (direction?: "right" | "left") => {
-    if (disableReply) return;
+  const replyMessage = useCallback(
+    (direction?: "right" | "left") => {
+      if (disableReply) return;
 
-    if (!direction) {
+      if (!direction) {
+        onReplyMessage(message);
+        return;
+      }
+
+      if (direction === "left" && isRight) return;
+      if (direction === "right" && !isRight) return;
+
       onReplyMessage(message);
-      return;
-    }
+    },
+    [disableReply, onReplyMessage, message, isRight]
+  );
 
-    if (direction === "left" && isRight) return;
+  const handleCloseMsgOptions = useCallback(() => setMsgOptions(false), []);
+  const handleOpenMsgOptions = useCallback(() => setMsgOptions(true), []);
 
-    if (direction === "right" && !isRight) return;
-
-    onReplyMessage(message);
-  };
-
-  const handleCloseMsgOptions = () => setMsgOptions(false);
-  const handleOpenMsgOptions = () => setMsgOptions(true);
-
-  const handleReportMessage = async () => {
+  const handleReportMessage = useCallback(async () => {
     navigation.navigate("Report", {
       type: ReportToType.MESSAGE,
       message_id: message.id,
     });
-  };
+  }, [navigation, message.id]);
 
   useEffect(() => {
-    (async () => {
-      const allLinks = linkUtils.getAllLinksFromText(message.message);
+    const allLinks = linkUtils.getAllLinksFromText(message.message);
+    const foundInvites: InvitesData[] = [];
 
-      allLinks.map((link) => {
-        const { host, pathname } = new URLParser(link);
-        const { isInvite, inviteID } = linkUtils.isInviteLink(host, pathname);
+    allLinks.forEach((link) => {
+      const { host, pathname } = new URLParser(link);
+      const { isInvite, inviteID } = linkUtils.isInviteLink(host, pathname);
 
-        if (isInvite && inviteID) {
-          if (!hasInvite) {
-            setHasInvite(true);
-          }
+      if (isInvite && inviteID) {
+        foundInvites.push({ id: inviteID });
+      }
+    });
 
-          setInvitesData((old) => [...old, { id: inviteID }]);
-        }
-      });
-    })();
-  }, []);
+    if (foundInvites.length > 0) {
+      setHasInvite(true);
+      setInvitesData(foundInvites);
+    }
+  }, [message.message]);
+
+  const optionsList = useMemo(
+    () => [
+      {
+        iconName: "corner-up-right",
+        content: t("options.reply"),
+        action: replyMessage,
+        onlyOwner: false,
+        authorizedRoles: ["ALL" as ParticipantRoles],
+        showInDM: true,
+        showForAuthor: true,
+      },
+      {
+        iconName: "copy",
+        content: t("options.copy"),
+        action: handleCopyMessage,
+        onlyOwner: false,
+        authorizedRoles: ["ALL" as ParticipantRoles],
+        showInDM: true,
+        showForAuthor: true,
+      },
+      {
+        iconName: "globe",
+        content: translateOptionContent,
+        action: handleTranslateMessage,
+        onlyOwner: false,
+        authorizedRoles: ["ALL" as ParticipantRoles],
+        showInDM: true,
+        showForAuthor: true,
+      },
+      {
+        iconName: "user",
+        content: t("options.part_opt"),
+        action: handleGoParticipant,
+        onlyOwner: false,
+        authorizedRoles: ["ALL" as ParticipantRoles],
+        showInDM: false,
+        showForAuthor: true,
+      },
+      {
+        iconName: "trash-2",
+        content: t("options.delete"),
+        action: deleteMessage,
+        color: colors.red,
+        onlyOwner: true,
+        authorizedRoles: rolesForDeleteMessage,
+        showInDM: true,
+        showForAuthor: true,
+      },
+      {
+        iconName: "alert-octagon",
+        content: t("options.report"),
+        action: handleReportMessage,
+        color: colors.red,
+        onlyOwner: false,
+        authorizedRoles: ["ALL"],
+        showInDM: true,
+        showForAuthor: false,
+      },
+    ],
+    [
+      t,
+      replyMessage,
+      handleCopyMessage,
+      translateOptionContent,
+      handleTranslateMessage,
+      handleGoParticipant,
+      deleteMessage,
+      colors.red,
+      handleReportMessage,
+    ]
+  );
 
   return (
     <>
@@ -416,64 +486,7 @@ const Message = ({
               message={messageForDisplay}
               participant_role={participant.role}
               group={group}
-              options={[
-                {
-                  iconName: "corner-up-right",
-                  content: t("options.reply"),
-                  action: replyMessage,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                  showInDM: true,
-                  showForAuthor: true,
-                },
-                {
-                  iconName: "copy",
-                  content: t("options.copy"),
-                  action: handleCopyMessage,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                  showInDM: true,
-                  showForAuthor: true,
-                },
-                {
-                  iconName: "globe",
-                  content: translateOptionContent,
-                  action: handleTranslateMessage,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                  showInDM: true,
-                  showForAuthor: true,
-                },
-                {
-                  iconName: "user",
-                  content: t("options.part_opt"),
-                  action: handleGoParticipant,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL" as ParticipantRoles],
-                  showInDM: false,
-                  showForAuthor: true,
-                },
-                {
-                  iconName: "trash-2",
-                  content: t("options.delete"),
-                  action: deleteMessage,
-                  color: colors.red,
-                  onlyOwner: true,
-                  authorizedRoles: rolesForDeleteMessage,
-                  showInDM: true,
-                  showForAuthor: true,
-                },
-                {
-                  iconName: "alert-octagon",
-                  content: t("options.report"),
-                  action: handleReportMessage,
-                  color: colors.red,
-                  onlyOwner: false,
-                  authorizedRoles: ["ALL"],
-                  showInDM: true,
-                  showForAuthor: false,
-                },
-              ]}
+              options={optionsList}
             />
             <MessageMark
               key={messageForDisplay.message}
@@ -498,6 +511,12 @@ const Message = ({
 export default memo(Message, (prev, next) => {
   return (
     prev.message.id === next.message.id &&
-    prev.lastMessage?.id === next.lastMessage?.id
+    prev.message.sended === next.message.sended &&
+    prev.message.message === next.message.message &&
+    prev.disableReply === next.disableReply &&
+    prev.lastMessage?.id === next.lastMessage?.id &&
+    prev.participant.role === next.participant.role &&
+    prev.participant.state === next.participant.state &&
+    prev.participants.length === next.participants.length
   );
 });

@@ -39,8 +39,7 @@ const HomeRoutes = () => {
         tabBarStyle: {
           paddingTop: 10,
           elevation: 0,
-          // Soma a altura fixa do layout com a margem necessária da safe area inferior
-          height: 60 + insets.bottom,
+          height: 75 + insets.bottom,
           zIndex: 90,
           backgroundColor: `${colors.shape}`,
           paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
