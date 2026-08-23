@@ -77,6 +77,12 @@ import { ParticipantRoles } from "@type/enums";
 import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 import Mentions from "@components/Chat/Mentions";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { KeyboardAvoidingView } from "react-native";
+import { getStatusBarHeight } from "react-native-iphone-x-helper";
 
 const MESSAGES_LIMIT_REQUEST = 30;
 
@@ -95,7 +101,6 @@ const Chat: React.FC = () => {
     ...RecordingPresets.HIGH_QUALITY,
     isMeteringEnabled: true,
   });
-  const recordingState = useAudioRecorderState(audioRecorder);
 
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -106,12 +111,11 @@ const Chat: React.FC = () => {
     friendId: string;
   };
   const arrayUtils = new ArrayUtils();
+  const insets = useSafeAreaInsets();
 
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
-
-  const [flexKeyboard, setFlexKeyboard] = useState(1);
 
   const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -154,6 +158,7 @@ const Chat: React.FC = () => {
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   const { socket } = useWebsocket();
+  const headerHeight = getStatusBarHeight();
   const {
     handleJoinRoom,
     handleSetReadMessage,
@@ -171,6 +176,24 @@ const Chat: React.FC = () => {
 
   const appState = useAppState();
   const { t } = useTranslate("Chat");
+
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => setIsKeyboardVisible(true),
+    );
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setIsKeyboardVisible(false),
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const configureSocketListeners = useCallback(() => {
     onSendedUserMessage(({ msg, localReference }) => {
@@ -300,8 +323,6 @@ const Chat: React.FC = () => {
 
     const status = audioRecorder.getStatus();
     const duration = status.durationMillis;
-
-    console.log(duration);
 
     if (duration <= 1200) {
       return SimpleToast.show(
@@ -787,24 +808,10 @@ const Chat: React.FC = () => {
     }, [connected, socket, appState]),
   );
 
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      setFlexKeyboard(0);
-    });
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setFlexKeyboard(1);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
-
   if (loading) return <Loading />;
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <Alert
         title={t("alerts.file_size.title")}
         content={t("alerts.file_size.content", {
@@ -844,134 +851,147 @@ const Chat: React.FC = () => {
         </HeaderButton>
       </Header>
 
-      <Container
-        style={{
-          flex: flexKeyboard,
-          marginBottom: flexKeyboard ? 20 : 0,
-        }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? headerHeight : 0}
       >
-        <Typing typingUsers={typingUsers} />
-        <MessageContainer>
-          <FlashList
-            data={oldMessages}
-            extraData={oldMessages.length}
-            keyExtractor={(item, index) => `${item.id + index.toString()}`}
-            viewabilityConfig={{
-              minimumViewTime: 500,
-            }}
-            drawDistance={MESSAGES_LIMIT_REQUEST * 160}
-            estimatedItemSize={160}
-            renderItem={renderMessage}
-            ListFooterComponent={renderFooter}
-            onEndReached={fetchOldMessages}
-            onEndReachedThreshold={0.5}
-            showsVerticalScrollIndicator={false}
-            disableHorizontalListHeightMeasurement
-          />
-        </MessageContainer>
-        <FormContainer style={{ paddingHorizontal: canSendMessage ? 12 : 0 }}>
-          {isMentioning && (
-            <Mentions
-              query={mentionQuery}
-              groupId={id}
-              onUserSelect={handleUserSelect}
+        <Container style={{ flex: 1 }}>
+          <Typing typingUsers={typingUsers} />
+          <MessageContainer style={{ flex: 1 }}>
+            <FlashList
+              data={oldMessages}
+              extraData={oldMessages.length}
+              keyExtractor={(item, index) => `${item.id + index.toString()}`}
+              viewabilityConfig={{
+                minimumViewTime: 500,
+              }}
+              drawDistance={MESSAGES_LIMIT_REQUEST * 160}
+              estimatedItemSize={200}
+              renderItem={renderMessage}
+              ListFooterComponent={renderFooter}
+              onEndReached={fetchOldMessages}
+              onEndReachedThreshold={0.5}
+              showsVerticalScrollIndicator={false}
+              disableHorizontalListHeightMeasurement
             />
-          )}
-          <AnimatePresence>
-            {isRecording && (
-              <MotiView
-                from={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 40 }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{
-                  type: "timing",
-                  duration: 250,
-                }}
-              >
-                <RecordingAudio audioDuration={audioDuration} />
-              </MotiView>
-            )}
-          </AnimatePresence>
-
-          {files.length > 0 && !sendingFile && (
-            <SelectedFiles files={files} onFileRemove={removeFile} />
-          )}
-
-          {sendingFile && (
-            <FileSendedProgressContainer>
-              <FileSendedText>
-                <Feather name="upload" size={16} /> {sendedFileProgress}%{" "}
-                {t("sent")}
-              </FileSendedText>
-              <ProgressBar
-                progress={sendedFileProgress / 100}
-                color={colors.primary}
-                style={{ minWidth: "100%", height: 10, borderRadius: 10 }}
-              />
-            </FileSendedProgressContainer>
-          )}
-
-          <AnimatePresence>
-            {replyingMessage && (
-              <CurrentReplyingMessage
-                message={replyingMessage}
-                onRemoveReplying={handleRemoveReplyingMessage}
+          </MessageContainer>
+          <FormContainer
+            style={{
+              paddingHorizontal: canSendMessage ? 12 : 0,
+              paddingBottom: isKeyboardVisible
+                ? 8
+                : insets.bottom > 0
+                  ? insets.bottom - 40
+                  : 12,
+            }}
+          >
+            {isMentioning && (
+              <Mentions
+                query={mentionQuery}
+                groupId={id}
+                onUserSelect={handleUserSelect}
               />
             )}
-          </AnimatePresence>
+            <AnimatePresence>
+              {isRecording && (
+                <MotiView
+                  from={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 40 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{
+                    type: "timing",
+                    duration: 250,
+                  }}
+                >
+                  <RecordingAudio audioDuration={audioDuration} />
+                </MotiView>
+              )}
+            </AnimatePresence>
 
-          {canSendMessage ? (
-            <InputContainer>
-              <MessageInput
-                ref={messageInputRef}
-                as={TextInput}
-                cursorColor={colors.secondary}
-                placeholderTextColor={colors.dark_heading}
-                onChangeText={handleSetMessage}
-                onSelectionChange={({ nativeEvent: { selection } }) => {
-                  setCursorPosition(selection.start);
-                }}
-                maxLength={userConfigs?.messageLength || 500}
-                placeholder={isRecording ? t("drop_send") : t("type_message")}
-              />
-              <OptionsContainer>
-                <OptionsButton onPress={handleFileSelector}>
-                  <Feather name="file" size={24} color={colors.primary} />
-                </OptionsButton>
-                {(isTypingMessage || files.length > 0) && (
-                  <SendButton>
-                    <Feather
-                      name="send"
-                      size={26}
-                      color={colors.primary}
-                      onPress={handleMessageSubmit}
-                      style={{ transform: [{ rotate: "45deg" }] }}
-                    />
-                  </SendButton>
-                )}
-                {!isTypingMessage && files.length <= 0 && (
-                  <AudioContainer>
-                    <AudioButton
-                      onPressIn={recordAudio}
-                      onPressOut={stopRecordAudioAndSubmit}
-                    >
-                      <Feather name="mic" size={26} color={colors.secondary} />
-                    </AudioButton>
-                  </AudioContainer>
-                )}
-              </OptionsContainer>
-            </InputContainer>
-          ) : (
-            <NoSendMessageContainer>
-              <NoSendMessageText>
-                Você não pode enviar mensagens nesse grupo, mas ainda pode
-                vê-las e receber notificações.
-              </NoSendMessageText>
-            </NoSendMessageContainer>
-          )}
-        </FormContainer>
-      </Container>
-    </>
+            {files.length > 0 && !sendingFile && (
+              <SelectedFiles files={files} onFileRemove={removeFile} />
+            )}
+
+            {sendingFile && (
+              <FileSendedProgressContainer>
+                <FileSendedText>
+                  <Feather name="upload" size={16} /> {sendedFileProgress}%{" "}
+                  {t("sent")}
+                </FileSendedText>
+                <ProgressBar
+                  progress={sendedFileProgress / 100}
+                  color={colors.primary}
+                  style={{ minWidth: "100%", height: 10, borderRadius: 10 }}
+                />
+              </FileSendedProgressContainer>
+            )}
+
+            <AnimatePresence>
+              {replyingMessage && (
+                <CurrentReplyingMessage
+                  message={replyingMessage}
+                  onRemoveReplying={handleRemoveReplyingMessage}
+                />
+              )}
+            </AnimatePresence>
+            {canSendMessage ? (
+              <InputContainer>
+                <MessageInput
+                  ref={messageInputRef}
+                  as={TextInput}
+                  cursorColor={colors.secondary}
+                  placeholderTextColor={colors.dark_heading}
+                  onChangeText={handleSetMessage}
+                  onSelectionChange={({ nativeEvent: { selection } }) => {
+                    setCursorPosition(selection.start);
+                  }}
+                  maxLength={userConfigs?.messageLength || 500}
+                  placeholder={isRecording ? t("drop_send") : t("type_message")}
+                />
+                <OptionsContainer>
+                  <OptionsButton onPress={handleFileSelector}>
+                    <Feather name="file" size={24} color={colors.primary} />
+                  </OptionsButton>
+                  {(isTypingMessage || files.length > 0) && (
+                    <SendButton>
+                      <Feather
+                        name="send"
+                        size={26}
+                        color={colors.primary}
+                        onPress={handleMessageSubmit}
+                        style={{ transform: [{ rotate: "45deg" }] }}
+                      />
+                    </SendButton>
+                  )}
+                  {!isTypingMessage && files.length <= 0 && (
+                    <AudioContainer>
+                      <AudioButton
+                        onPressIn={recordAudio}
+                        onPressOut={stopRecordAudioAndSubmit}
+                      >
+                        <Feather
+                          name="mic"
+                          size={26}
+                          color={colors.secondary}
+                        />
+                      </AudioButton>
+                    </AudioContainer>
+                  )}
+                </OptionsContainer>
+              </InputContainer>
+            ) : (
+              <NoSendMessageContainer>
+                <NoSendMessageText>
+                  Você não pode enviar mensagens nesse grupo, mas ainda pode
+                  vê-las e receber notificações.
+                </NoSendMessageText>
+              </NoSendMessageContainer>
+            )}
+          </FormContainer>
+        </Container>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

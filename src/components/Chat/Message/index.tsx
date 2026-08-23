@@ -424,6 +424,7 @@ const Message = ({
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
                   showInDM: true,
+                  showForAuthor: true,
                 },
                 {
                   iconName: "copy",
@@ -432,6 +433,7 @@ const Message = ({
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
                   showInDM: true,
+                  showForAuthor: true,
                 },
                 {
                   iconName: "globe",
@@ -440,6 +442,7 @@ const Message = ({
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
                   showInDM: true,
+                  showForAuthor: true,
                 },
                 {
                   iconName: "user",
@@ -448,6 +451,7 @@ const Message = ({
                   onlyOwner: false,
                   authorizedRoles: ["ALL" as ParticipantRoles],
                   showInDM: false,
+                  showForAuthor: true,
                 },
                 {
                   iconName: "trash-2",
@@ -457,6 +461,7 @@ const Message = ({
                   onlyOwner: true,
                   authorizedRoles: rolesForDeleteMessage,
                   showInDM: true,
+                  showForAuthor: true,
                 },
                 {
                   iconName: "alert-octagon",
@@ -466,12 +471,12 @@ const Message = ({
                   onlyOwner: false,
                   authorizedRoles: ["ALL"],
                   showInDM: true,
-                  showForAuthor: true,
+                  showForAuthor: false,
                 },
               ]}
             />
             <MessageMark
-              key={messageForDisplay.message} // Adiciona uma key que muda com o conteúdo exibido
+              key={messageForDisplay.message}
               message={messageForDisplay}
               onPressLink={alertLink}
               user={user as UserData}

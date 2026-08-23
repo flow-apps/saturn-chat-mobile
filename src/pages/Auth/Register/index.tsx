@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@components/Button";
 import Header from "@components/Header";
@@ -7,8 +7,14 @@ import Loading from "@components/Loading";
 import formData from "form-data";
 
 import { Feather } from "@expo/vector-icons";
-import { Alert, Keyboard, KeyboardAvoidingView } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useTheme } from "styled-components";
 import { useAuth } from "@contexts/auth";
 import {
@@ -41,6 +47,7 @@ import {
   passwordValidation,
 } from "@utils/regex";
 import { LinkUtils } from "@utils/link";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Register: React.FC = () => {
   const [avatar, setAvatar] = useState<ImagePicker.ImagePickerAsset>();
@@ -63,7 +70,7 @@ const Register: React.FC = () => {
   const { signUp, loading, registerError, internalError } = useAuth();
   const { t } = useTranslate("Auth.CreateAccount");
 
-  const linkUtils = new LinkUtils()
+  const linkUtils = new LinkUtils();
 
   const nicknameErrors = {
     400: "O nome de usuário não está conforme os padrões esperados",
@@ -178,7 +185,7 @@ const Register: React.FC = () => {
 
       const newTimeout = setTimeout(async () => {
         await checkNickname(nickname);
-        clearTimeout(nicknameTimeout); // This line is already there
+        clearTimeout(nicknameTimeout);
         setNicknameTimeout(undefined);
       }, NICKNAME_TIMEOUT);
 
@@ -186,7 +193,7 @@ const Register: React.FC = () => {
     } else {
       const newTimeout = setTimeout(async () => {
         await checkNickname(nickname);
-        clearTimeout(nicknameTimeout); // This line is already there
+        clearTimeout(nicknameTimeout);
         setNicknameTimeout(undefined);
       }, NICKNAME_TIMEOUT);
 
@@ -272,140 +279,158 @@ const Register: React.FC = () => {
   return (
     <>
       <Header title={t("header_title")} />
-      <Container>
-        <Pressable onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView>
-            <FormContainer>
-              <SelectAvatarContainer>
-                <SelectAvatarButton onPress={handleSelectAvatar}>
-                  {avatar ? (
-                    <Avatar source={{ uri: avatar.uri }} />
-                  ) : (
-                    <Feather name="camera" size={55} color={colors.secondary} />
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1 }}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <Container>
+                <FormContainer>
+                  <SelectAvatarContainer>
+                    <SelectAvatarButton onPress={handleSelectAvatar}>
+                      {avatar ? (
+                        <Avatar source={{ uri: avatar.uri }} />
+                      ) : (
+                        <Feather
+                          name="camera"
+                          size={55}
+                          color={colors.secondary}
+                        />
+                      )}
+                    </SelectAvatarButton>
+                    <SelectAvatarTitle>
+                      {t("avatar_select_label")}
+                    </SelectAvatarTitle>
+                    <SelectAvatarSubtitle>
+                      {!avatar ? t("avatar_select_tip") : t("avatar_selected")}
+                    </SelectAvatarSubtitle>
+                  </SelectAvatarContainer>
+                  {registerError && !internalError.has && (
+                    <ErrorContainer>
+                      <ErrorText>{t("register_error")}</ErrorText>
+                    </ErrorContainer>
                   )}
-                </SelectAvatarButton>
-                <SelectAvatarTitle>
-                  {t("avatar_select_label")}
-                </SelectAvatarTitle>
-                <SelectAvatarSubtitle>
-                  {!avatar ? t("avatar_select_tip") : t("avatar_selected")}
-                </SelectAvatarSubtitle>
-              </SelectAvatarContainer>
-              {registerError && !internalError.has && (
-                <ErrorContainer>
-                  <ErrorText>{t("register_error")}</ErrorText>
-                </ErrorContainer>
-              )}
-              {registerError && internalError.has && (
-                <ErrorContainer>
-                  <ErrorText>
-                    Ocorreu um erro interno no servidor. Tente mais tarde.{" "}
-                    {internalError.reason}
-                  </ErrorText>
-                </ErrorContainer>
-              )}
-              <InputsContainer>
-                <FormField>
-                  <Label>{t("labels.name")}</Label>
-                  <Input
-                    autoCapitalize="words"
-                    placeholder="Ex.: Pedro Henrique"
-                    onChangeText={setName}
-                    value={name}
-                  />
-                </FormField>
-                <FormField>
-                  <Label>{t("labels.email.label")}</Label>
-                  <Input
-                    keyboardType="email-address"
-                    textContentType="emailAddress"
-                    placeholder="Ex.: usuario@exemplo.com"
-                    autoCapitalize="none"
-                    onChangeText={handleSetEmail}
-                    value={email}
-                  />
-                  {emailError && (
-                    <FieldError>{t("labels.email.error")}</FieldError>
+                  {registerError && internalError.has && (
+                    <ErrorContainer>
+                      <ErrorText>
+                        Ocorreu um erro interno no servidor. Tente mais tarde.{" "}
+                        {internalError.reason}
+                      </ErrorText>
+                    </ErrorContainer>
                   )}
-                </FormField>
-                <FormField>
-                  <Label>Nome de usuário</Label>
-                  <Input
-                    onChangeText={handleSetNickname}
-                    value={nickname}
-                    autoCapitalize="none"
-                    textContentType="nickname"
-                    placeholder="pedro_henrique"
+                  <InputsContainer>
+                    <FormField>
+                      <Label>{t("labels.name")}</Label>
+                      <Input
+                        autoCapitalize="words"
+                        placeholder="Ex.: Pedro Henrique"
+                        onChangeText={setName}
+                        value={name}
+                      />
+                    </FormField>
+                    <FormField>
+                      <Label>{t("labels.email.label")}</Label>
+                      <Input
+                        keyboardType="email-address"
+                        textContentType="emailAddress"
+                        placeholder="Ex.: usuario@exemplo.com"
+                        autoCapitalize="none"
+                        onChangeText={handleSetEmail}
+                        value={email}
+                      />
+                      {emailError && (
+                        <FieldError>{t("labels.email.error")}</FieldError>
+                      )}
+                    </FormField>
+                    <FormField>
+                      <Label>Nome de usuário</Label>
+                      <Input
+                        onChangeText={handleSetNickname}
+                        value={nickname}
+                        autoCapitalize="none"
+                        textContentType="nickname"
+                        placeholder="pedro_henrique"
+                      />
+                      {fetchingNickname && <SearchText>Buscando...</SearchText>}
+                      {nicknameError && (
+                        <FieldError>{nicknameErrorMessage}</FieldError>
+                      )}
+                      <FieldInfoContainer>
+                        <FieldInfo>
+                          Deve ser um nome único, contendo apenas números e
+                          letras. Apenas os símbolos de hífen (-) e underline
+                          (_) estão disponíveis. Se nenhum nome de usuário for
+                          fornecido será gerado um automaticamente para você.
+                        </FieldInfo>
+                      </FieldInfoContainer>
+                    </FormField>
+                    <FormField>
+                      <Label>{t("labels.password.label")}</Label>
+                      <Input
+                        onChangeText={handleSetPassword}
+                        value={password}
+                        autoCapitalize="none"
+                        textContentType="password"
+                        secureTextEntry
+                      />
+                      {passError && (
+                        <FieldError>{t("labels.password.error")}</FieldError>
+                      )}
+                      <FieldInfoContainer>
+                        <FieldInfo>{t("labels.password.info")}</FieldInfo>
+                      </FieldInfoContainer>
+                    </FormField>
+                    <FormField>
+                      <Label>{t("labels.password_again.label")}</Label>
+                      <Input
+                        value={passwordConfirm}
+                        onChangeText={handleSetPassConfirm}
+                        autoCapitalize="none"
+                        textContentType="password"
+                        secureTextEntry
+                      />
+                      {passConfirmError && password.length > 0 && (
+                        <FieldError>
+                          {t("labels.password_again.error")}
+                        </FieldError>
+                      )}
+                    </FormField>
+                  </InputsContainer>
+                  <Button
+                    enabled={
+                      !emailError &&
+                      !passError &&
+                      !passConfirmError &&
+                      !!name &&
+                      !nicknameError &&
+                      !fetchingNickname
+                    }
+                    title={t("register_button")}
+                    onPress={handleSubmit}
                   />
-                  {fetchingNickname && <SearchText>Buscando...</SearchText>}
-                  {nicknameError && (
-                    <FieldError>{nicknameErrorMessage}</FieldError>
-                  )}
-                  <FieldInfoContainer>
-                    <FieldInfo>
-                      Deve ser um nome único, contendo apenas números e letras.
-                      Apenas os símbolos de hífen (-) e underline (_) estão
-                      disponíveis. Se nenhum nome de usuário for fornecido será
-                      gerado um automaticamente para você.
-                    </FieldInfo>
-                  </FieldInfoContainer>
-                </FormField>
-                <FormField>
-                  <Label>{t("labels.password.label")}</Label>
-                  <Input
-                    onChangeText={handleSetPassword}
-                    value={password}
-                    autoCapitalize="none"
-                    textContentType="password"
-                    secureTextEntry
-                  />
-                  {passError && (
-                    <FieldError>{t("labels.password.error")}</FieldError>
-                  )}
-                  <FieldInfoContainer>
-                    <FieldInfo>{t("labels.password.info")}</FieldInfo>
-                  </FieldInfoContainer>
-                </FormField>
-                <FormField>
-                  <Label>{t("labels.password_again.label")}</Label>
-                  <Input
-                    value={passwordConfirm}
-                    onChangeText={handleSetPassConfirm}
-                    autoCapitalize="none"
-                    textContentType="password"
-                    secureTextEntry
-                  />
-                  {passConfirmError && password.length > 0 && (
-                    <FieldError>{t("labels.password_again.error")}</FieldError>
-                  )}
-                </FormField>
-              </InputsContainer>
-              <Button
-                enabled={
-                  !emailError &&
-                  !passError &&
-                  !passConfirmError &&
-                  !!name &&
-                  !nicknameError &&
-                  !fetchingNickname
-                }
-                title={t("register_button")}
-                onPress={handleSubmit}
-              />
-              <ConsentText>
-                {t("consent.line_0")}{" "}
-                <Link onPress={handleGoPrivacyPolicie}>
-                  {t("consent.privacy_policy")}
-                </Link>{" "}
-                {t("consent.line_1")}{" "}
-                <Link onPress={handleGoGuidelines}>
-                  {t("consent.guidelines")}
-                </Link>
-              </ConsentText>
-            </FormContainer>
-          </KeyboardAvoidingView>
-        </Pressable>
-      </Container>
+                  <ConsentText>
+                    {t("consent.line_0")}{" "}
+                    <Link onPress={handleGoPrivacyPolicie}>
+                      {t("consent.privacy_policy")}
+                    </Link>{" "}
+                    {t("consent.line_1")}{" "}
+                    <Link onPress={handleGoGuidelines}>
+                      {t("consent.guidelines")}
+                    </Link>
+                  </ConsentText>
+                </FormContainer>
+              </Container>
+            </ScrollView>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </>
   );
 };

@@ -14,13 +14,15 @@ import {
 
 import { usePersistedState } from "@hooks/usePersistedState";
 import { useTranslate } from "@hooks/useTranslate";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 const OnBoarding: React.FC = () => {
   const [hasBoarded, setHasBoarded] = usePersistedState<boolean>(
     "@SaturnChat:hasBoarded",
-    false
+    false,
   );
-  const { colors } = useTheme();
+  const { colors, title } = useTheme();
 
   const { t } = useTranslate("OnBoarding");
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -53,74 +55,71 @@ const OnBoarding: React.FC = () => {
   };
 
   return (
-    <Boarding
-      onDone={handleComplete}
-      onSkip={handleComplete}
-      DoneButtonComponent={DoneButton}
-      SkipButtonComponent={SkipButton}
-      bottomBarColor={colors.shape}
-      nextLabel=">>"
-      controlStatusBar={false}
-      imageContainerStyles={{ marginBottom: -30 }}
-      containerStyles={{
-        padding: 12,
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-      pages={[
-        {
-          backgroundColor: colors.background,
-          image: (
-            <BoardImage
-              source={require("@assets/group-chatting.json")}
-              autoPlay
-            />
-          ),
-          title: <BoardTitle>{t("pages.0.title")}</BoardTitle>,
-          subtitle: <BoardSubTitle>{t("pages.0.subtitle")}</BoardSubTitle>,
-        },
-        {
-          backgroundColor: colors.background,
-          image: (
-            <BoardImage
-              source={require("@assets/message.json")}
-              autoPlay
-            />
-          ),
-          title: <BoardTitle>{t("pages.1.title")}</BoardTitle>,
-          subtitle: <BoardSubTitle>{t("pages.1.subtitle")}</BoardSubTitle>,
-        },
-        {
-          backgroundColor: colors.background,
-          image: (
-            <BoardImage
-              source={require("@assets/lock.json")}
-              autoPlay
-            />
-          ),
-          title: <BoardTitle>{t("pages.2.title")}</BoardTitle>,
-          subtitle: <BoardSubTitle>{t("pages.2.subtitle")}</BoardSubTitle>,
-        },
-        {
-          backgroundColor: colors.background,
-          image: (
-            <BoardImage
-              source={require("@assets/star.json")}
-              speed={0.75}
-              autoPlay
-            />
-          ),
-          title: <BoardTitle>{t("pages.3.title")}</BoardTitle>,
-          subtitle: (
-            <>
-              <BoardSubTitle>{t("pages.3.subtitle")}</BoardSubTitle>
-              <DoneButton />
-            </>
-          ),
-        },
-      ]}
-    />
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar style={title === "light" ? "dark" : "light"} />
+      <Boarding
+        onDone={handleComplete}
+        onSkip={handleComplete}
+        DoneButtonComponent={DoneButton}
+        SkipButtonComponent={SkipButton}
+        bottomBarColor={colors.shape}
+        nextLabel=">>"
+        controlStatusBar={false}
+        imageContainerStyles={{ marginBottom: -30 }}
+        containerStyles={{
+          padding: 12,
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        pages={[
+          {
+            backgroundColor: colors.background,
+            image: (
+              <BoardImage
+                source={require("@assets/group-chatting.json")}
+                autoPlay
+              />
+            ),
+            title: <BoardTitle>{t("pages.0.title")}</BoardTitle>,
+            subtitle: <BoardSubTitle>{t("pages.0.subtitle")}</BoardSubTitle>,
+          },
+          {
+            backgroundColor: colors.background,
+            image: (
+              <BoardImage source={require("@assets/message.json")} autoPlay />
+            ),
+            title: <BoardTitle>{t("pages.1.title")}</BoardTitle>,
+            subtitle: <BoardSubTitle>{t("pages.1.subtitle")}</BoardSubTitle>,
+          },
+          {
+            backgroundColor: colors.background,
+            image: (
+              <BoardImage source={require("@assets/lock.json")} autoPlay />
+            ),
+            title: <BoardTitle>{t("pages.2.title")}</BoardTitle>,
+            subtitle: <BoardSubTitle>{t("pages.2.subtitle")}</BoardSubTitle>,
+          },
+          {
+            backgroundColor: colors.background,
+            image: (
+              <BoardImage
+                source={require("@assets/star.json")}
+                speed={0.75}
+                autoPlay
+              />
+            ),
+            title: <BoardTitle>{t("pages.3.title")}</BoardTitle>,
+            subtitle: (
+              <>
+                <BoardSubTitle>{t("pages.3.subtitle")}</BoardSubTitle>
+                <DoneButton />
+              </>
+            ),
+          },
+        ]}
+      />
+    </SafeAreaView>
   );
 };
 

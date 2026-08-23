@@ -108,144 +108,145 @@ const Home: React.FC = () => {
     useCallback(() => {
       handleCheckInvites();
       loadGroups();
-      if (!__DEV__)
-        StoreReview.requestReview();
+      if (!__DEV__) StoreReview.requestReview();
     }, []),
   );
 
   if (loading) return <Loading />;
 
   return (
-    <Container>
+    <>
       <Header title={t("header_title")} backButton={false}>
-        <>
-          <HeaderButton onPress={handleGoSearch}>
-            <Feather name="search" size={22} color="#fff" />
-          </HeaderButton>
-          <HeaderButton onPress={handleGoInvitesManager}>
-            <Feather name="mail" size={22} color="#fff" />
-            {hasInvites && <HasInvitesBullet />}
-          </HeaderButton>
-          <HeaderButton onPress={handleGoUserProfile}>
-            <Feather name="user" size={22} color="#fff" />
-          </HeaderButton>
-        </>
+        <HeaderButton onPress={handleGoSearch}>
+          <Feather name="search" size={22} color="#fff" />
+        </HeaderButton>
+        <HeaderButton onPress={handleGoInvitesManager}>
+          <Feather name="mail" size={22} color="#fff" />
+          {hasInvites && <HasInvitesBullet />}
+        </HeaderButton>
+        <HeaderButton onPress={handleGoUserProfile}>
+          <Feather name="user" size={22} color="#fff" />
+        </HeaderButton>
       </Header>
-      <QuickAccessGroupsContainer
-        from={{
-          opacity: 0.5,
-          translateY: 100,
-        }}
-        animate={{
-          opacity: 1,
-          translateY: 0,
-        }}
-        transition={{
-          type: "timing",
-          duration: 800,
-        }}
-      >
-        <QuickAccessTitle>{t("quick_access")}</QuickAccessTitle>
-        <QuickAccessGroupsScroll>
-          <FlatList
-            horizontal
-            ListHeaderComponent={() => (
-              <MotiView
-                from={{
-                  rotate: "90deg",
-                }}
-                animate={{
-                  rotate: "0deg",
-                }}
-                transition={{
-                  type: "timing",
-                  duration: 1000,
-                  delay: 800,
-                }}
-              >
-                <NewGroupButton onPress={handleGoNewGroup}>
-                  <Feather name="plus" size={35} color={colors.secondary} />
-                </NewGroupButton>
-              </MotiView>
-            )}
-            showsHorizontalScrollIndicator={false}
-            data={groups}
-            initialNumToRender={10}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-              <GroupButton
-                activeOpacity={0.5}
-                onPress={() => handleGoChat(item.id)}
-              >
-                <GroupImage uri={item.group_avatar?.url} />
-                {Number(item?.unreadMessagesAmount) > 0 && <GroupHasMessage />}
-              </GroupButton>
-            )}
-          />
-        </QuickAccessGroupsScroll>
-      </QuickAccessGroupsContainer>
-      <GroupsContainer>
-        <GroupsList>
-          <FlatList
-            data={groups}
-            ListEmptyComponent={() => (
-              <GroupsListEmptyContainer>
-                <GroupsListEmptyAnimation
-                  source={require("@assets/welcome.json")}
-                  speed={0.5}
-                  autoPlay
-                  loop={false}
-                />
-                <GroupsListEmptyTitle>
-                  {t("empty_list.title")}
-                </GroupsListEmptyTitle>
-                <GroupsListEmptySubTitle>
-                  {t("empty_list.search_text")}{" "}
-                  <Feather name="search" size={16} color={colors.secondary} />
-                  {t("empty_list.line_0")}{" "}
-                  <GroupsListEmptyLink onPress={handleGoOficialGroup}>
-                    {t("empty_list.official_group")}
-                  </GroupsListEmptyLink>
-                  !
-                </GroupsListEmptySubTitle>
-              </GroupsListEmptyContainer>
-            )}
-            ListHeaderComponent={() => (
-              <TitleWrapper>
-                <GroupsTitle>{t("groups_list.title")}</GroupsTitle>
-                <GroupsSubtitle>
-                  {t("groups_list.subtitle", { count: groups?.length })}
-                </GroupsSubtitle>
-                {groups.length > 0 && (
-                  <AdContainer>
-                    <Banner />
-                  </AdContainer>
-                )}
-              </TitleWrapper>
-            )}
-            endFillColor={colors.shape}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item, index }) => {
-              return (
-                <>
-                  <Group
-                    name={item.name}
-                    image={item.group_avatar && item.group_avatar.url}
-                    unreadMessages={item?.unreadMessagesAmount}
-                    activeOpacity={0.5}
-                    onPress={() => handleGoChat(item.id)}
+      <Container>
+        <QuickAccessGroupsContainer
+          from={{
+            opacity: 0.5,
+            translateY: 100,
+          }}
+          animate={{
+            opacity: 1,
+            translateY: 0,
+          }}
+          transition={{
+            type: "timing",
+            duration: 800,
+          }}
+        >
+          <QuickAccessTitle>{t("quick_access")}</QuickAccessTitle>
+          <QuickAccessGroupsScroll>
+            <FlatList
+              horizontal
+              ListHeaderComponent={() => (
+                <MotiView
+                  from={{
+                    rotate: "90deg",
+                  }}
+                  animate={{
+                    rotate: "0deg",
+                  }}
+                  transition={{
+                    type: "timing",
+                    duration: 1000,
+                    delay: 800,
+                  }}
+                >
+                  <NewGroupButton onPress={handleGoNewGroup}>
+                    <Feather name="plus" size={35} color={colors.secondary} />
+                  </NewGroupButton>
+                </MotiView>
+              )}
+              showsHorizontalScrollIndicator={false}
+              data={groups}
+              initialNumToRender={10}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => (
+                <GroupButton
+                  activeOpacity={0.5}
+                  onPress={() => handleGoChat(item.id)}
+                >
+                  <GroupImage uri={item.group_avatar?.url} />
+                  {Number(item?.unreadMessagesAmount) > 0 && (
+                    <GroupHasMessage />
+                  )}
+                </GroupButton>
+              )}
+            />
+          </QuickAccessGroupsScroll>
+        </QuickAccessGroupsContainer>
+        <GroupsContainer>
+          <GroupsList>
+            <FlatList
+              data={groups}
+              ListEmptyComponent={() => (
+                <GroupsListEmptyContainer>
+                  <GroupsListEmptyAnimation
+                    source={require("@assets/welcome.json")}
+                    speed={0.5}
+                    autoPlay
+                    loop={false}
                   />
-                  {index > 0 &&
-                    index % Number(allConfigs.ad_multiple_in_home) === 0 && (
+                  <GroupsListEmptyTitle>
+                    {t("empty_list.title")}
+                  </GroupsListEmptyTitle>
+                  <GroupsListEmptySubTitle>
+                    {t("empty_list.search_text")}{" "}
+                    <Feather name="search" size={16} color={colors.secondary} />
+                    {t("empty_list.line_0")}{" "}
+                    <GroupsListEmptyLink onPress={handleGoOficialGroup}>
+                      {t("empty_list.official_group")}
+                    </GroupsListEmptyLink>
+                    !
+                  </GroupsListEmptySubTitle>
+                </GroupsListEmptyContainer>
+              )}
+              ListHeaderComponent={() => (
+                <TitleWrapper>
+                  <GroupsTitle>{t("groups_list.title")}</GroupsTitle>
+                  <GroupsSubtitle>
+                    {t("groups_list.subtitle", { count: groups?.length })}
+                  </GroupsSubtitle>
+                  {groups.length > 0 && (
+                    <AdContainer>
                       <Banner />
-                    )}
-                </>
-              );
-            }}
-          />
-        </GroupsList>
-      </GroupsContainer>
-    </Container>
+                    </AdContainer>
+                  )}
+                </TitleWrapper>
+              )}
+              endFillColor={colors.shape}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item, index }) => {
+                return (
+                  <>
+                    <Group
+                      name={item.name}
+                      image={item.group_avatar && item.group_avatar.url}
+                      unreadMessages={item?.unreadMessagesAmount}
+                      activeOpacity={0.5}
+                      onPress={() => handleGoChat(item.id)}
+                    />
+                    {index > 0 &&
+                      index % Number(allConfigs.ad_multiple_in_home) === 0 && (
+                        <Banner />
+                      )}
+                  </>
+                );
+              }}
+            />
+          </GroupsList>
+        </GroupsContainer>
+      </Container>
+    </>
   );
 };
 

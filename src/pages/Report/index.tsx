@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-
+import {
+  Button,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import {
   Container,
   FormContainer,
@@ -14,7 +21,6 @@ import Radio from "@components/Radio";
 import { ReportToType, ReportType } from "@type/enums";
 import { useTheme } from "styled-components";
 import { useTranslate } from "@hooks/useTranslate";
-import { Button } from "react-native";
 import api from "@services/api";
 import SimpleToast from "react-native-simple-toast";
 
@@ -29,7 +35,7 @@ const Report: React.FC = () => {
   const { t } = useTranslate("Report");
 
   const handleReport = async () => {
-    const { status, data } = await api.post("/reports", {
+    const { status } = await api.post("/reports", {
       type: reportType,
       to_type: type,
       to_user_id: type === ReportToType.USER ? user_id : undefined,
@@ -47,39 +53,50 @@ const Report: React.FC = () => {
   return (
     <>
       <Header title={t("header_title")} />
-      <Container>
-        <Title>{t("title")}</Title>
-        <Subtitle>{t("subtitle")}</Subtitle>
-        <FormContainer>
-          <InputContainer>
-            {Object.values(ReportType).map((type, index) => {
-              return (
-                <Radio
-                  key={index}
-                  label={t(`types.${type}`)}
-                  selectedValue={reportType}
-                  onValueChange={(value) => setReportType(value)}
-                  value={type}
-                  color={colors.black}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Container>
+              <Title>{t("title")}</Title>
+              <Subtitle>{t("subtitle")}</Subtitle>
+              <FormContainer>
+                <InputContainer>
+                  {Object.values(ReportType).map((type, index) => (
+                    <Radio
+                      key={index}
+                      label={t(`types.${type}`)}
+                      selectedValue={reportType}
+                      onValueChange={(value) => setReportType(value)}
+                      value={type}
+                      color={colors.black}
+                    />
+                  ))}
+                </InputContainer>
+                <InputContainer>
+                  <Input
+                    value={message}
+                    onChangeText={setMessage}
+                    label="Informe mais detalhes (opcional)"
+                    multiline
+                  />
+                </InputContainer>
+                <Button
+                  title={t("done")}
+                  disabled={!reportType}
+                  onPress={handleReport}
                 />
-              );
-            })}
-          </InputContainer>
-          <InputContainer>
-            <Input
-              value={message}
-              onChangeText={setMessage}
-              label="Informe mais detalhes (opcional)"
-              multiline
-            />
-          </InputContainer>
-          <Button
-            title={t("done")}
-            disabled={!reportType}
-            onPress={handleReport}
-          />
-        </FormContainer>
-      </Container>
+              </FormContainer>
+            </Container>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </>
   );
 };

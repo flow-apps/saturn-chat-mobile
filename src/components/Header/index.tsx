@@ -40,7 +40,7 @@ const Header = ({
 
   return (
     <Container bgColor={bgColor}>
-      <StatusBar  style="light" />
+      <StatusBar style="light" />
       <HeaderContainer>
         <RightContainer>
           {backButton && (

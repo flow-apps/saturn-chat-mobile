@@ -8,88 +8,88 @@ import Home from "@pages/Home";
 import NewGroup from "@pages/NewGroup";
 import fonts from "@styles/fonts";
 import { useTranslate } from "@hooks/useTranslate";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const tabRoutes = createBottomTabNavigator();
 
 const HomeRoutes = () => {
   const { colors } = useTheme();
   const { t } = useTranslate("TabBar");
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.shape }}>
-      <tabRoutes.Navigator
-        screenOptions={{
-          // @ts-ignore
-          headerShown: false,
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.light_heading,
-          tabBarActiveBackgroundColor: "#00000000",
-          tabBarLabelPosition: "below-icon",
-          // @ts-ignore
-          tabBarKeyboardHidesTabBar: true,
-          tabBarIconStyle: {
-            transform: [{ scale: 0.9 }],
-            marginBottom: 5,
-          },
-          tabBarLabelStyle: {
-            fontSize: 10,
-            fontFamily: fonts["text-bold"],
-          },
-          tabBarStyle: {
-            padding: 15,
-            elevation: 0,
-            height: 70,
-            zIndex: 90,
-            backgroundColor: `${colors.shape}`,
-            paddingBottom: 5,
-          },
+    <tabRoutes.Navigator
+      screenOptions={{
+        // @ts-ignore
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.light_heading,
+        tabBarActiveBackgroundColor: "#00000000",
+        tabBarLabelPosition: "below-icon",
+        // @ts-ignore
+        tabBarKeyboardHidesTabBar: true,
+        tabBarIconStyle: {
+          transform: [{ scale: 0.9 }],
+          marginBottom: 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontFamily: fonts["text-bold"],
+        },
+        tabBarStyle: {
+          paddingTop: 10,
+          elevation: 0,
+          // Soma a altura fixa do layout com a margem necessária da safe area inferior
+          height: 60 + insets.bottom,
+          zIndex: 90,
+          backgroundColor: `${colors.shape}`,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
+        },
+      }}
+    >
+      <tabRoutes.Screen
+        component={Home}
+        name="GroupsChat"
+        options={{
+          title: t("groups"),
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="groups" size={size + 6} color={color} />
+          ),
         }}
-      >
-        <tabRoutes.Screen
-          component={Home}
-          name="GroupsChat"
-          options={{
-            title: t("groups"),
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name="groups" size={size + 6} color={color} />
-            ),
-          }}
-        />
+      />
 
-        <tabRoutes.Screen
-          component={Friends}
-          name="Friends"
-          options={{
-            title: t("friends"),
-            tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name="people" size={size + 6} color={color} />
-            ),
-          }}
-        />
+      <tabRoutes.Screen
+        component={Friends}
+        name="Friends"
+        options={{
+          title: t("friends"),
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="people" size={size + 6} color={color} />
+          ),
+        }}
+      />
 
-        <tabRoutes.Screen
-          component={NewGroup}
-          name="NewGroup"
-          options={{
-            title: t("new_group"),
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="plus-circle" size={size} color={color} />
-            ),
-          }}
-        />
-        <tabRoutes.Screen
-          component={Settings}
-          name="UserConfigs"
-          options={{
-            title: t("settings"),
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="cog" size={size} color={color} />
-            ),
-          }}
-        />
-      </tabRoutes.Navigator>
-    </SafeAreaView>
+      <tabRoutes.Screen
+        component={NewGroup}
+        name="NewGroup"
+        options={{
+          title: t("new_group"),
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="plus-circle" size={size} color={color} />
+          ),
+        }}
+      />
+      <tabRoutes.Screen
+        component={Settings}
+        name="UserConfigs"
+        options={{
+          title: t("settings"),
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="cog" size={size} color={color} />
+          ),
+        }}
+      />
+    </tabRoutes.Navigator>
   );
 };
 
