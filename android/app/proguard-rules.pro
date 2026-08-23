@@ -20,5 +20,8 @@
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
+-keep class expo.modules.updates.** { *; }
+-keep class com.facebook.react.devsupport.** { *; }
+
 
 # Add any project specific keep options here:
