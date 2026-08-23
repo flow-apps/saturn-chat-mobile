@@ -2,9 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
+  ScrollView,
   TouchableWithoutFeedback,
-  View,
 } from "react-native";
 import Header from "@components/Header";
 import perf from "@react-native-firebase/perf";
@@ -40,7 +41,6 @@ import Switcher from "@components/Switcher";
 import api from "@services/api";
 import { useNavigation } from "@react-navigation/core";
 import FormData from "form-data";
-import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import Loading from "@components/Loading";
 import Banner from "@components/Ads/Banner";
 import analytics from "@react-native-firebase/analytics";
@@ -74,7 +74,7 @@ const NewGroup: React.FC = () => {
 
     let counter = 0;
 
-    user.groups.map((group) => {
+    user.groups.forEach((group) => {
       if (group.owner_id === user.id && group.type === "GROUP") {
         counter++;
       }
@@ -142,8 +142,8 @@ const NewGroup: React.FC = () => {
       });
   };
 
-  const handleCheckFields = () => {
-    if (verifyBetweenValues(name.length, 0, 100)) return setIsSendable(true);
+  const handleCheckFields = (textName: string) => {
+    if (verifyBetweenValues(textName.length, 0, 100)) return setIsSendable(true);
     setIsSendable(false);
   };
 
@@ -170,10 +170,10 @@ const NewGroup: React.FC = () => {
       mediaTypes: ["images"],
     });
 
-    if (!photo.canceled) {
-      setGroupPhotoPreview(photo.assets.pop().uri);
-
-      return setGroupPhoto(photo.assets.pop());
+    if (!photo.canceled && photo.assets[0]) {
+      const selectedAsset = photo.assets[0];
+      setGroupPhotoPreview(selectedAsset.uri);
+      setGroupPhoto(selectedAsset);
     }
   };
 
@@ -219,11 +219,19 @@ const NewGroup: React.FC = () => {
   }
 
   return (
-    <>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    >
       <Header title={t("header_title")} backButton={false} />
-      <Container>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <Container style={{ flex: 1 }}>
             <AdWrapper>
               <Banner />
             </AdWrapper>
@@ -237,7 +245,11 @@ const NewGroup: React.FC = () => {
                 {groupPhotoPreview ? (
                   <GroupPhoto source={{ uri: groupPhotoPreview }} />
                 ) : (
-                  <Feather name="camera" size={55} color={colors.secondary} />
+                  <Feather
+                    name="camera"
+                    size={55}
+                    color={colors.secondary}
+                  />
                 )}
               </SelectGroupPhoto>
               <SelectGroupPhotoTitle>
@@ -250,18 +262,18 @@ const NewGroup: React.FC = () => {
               </SelectGroupPhotoSubtitle>
             </SelectGroupPhotoContainer>
             <Form>
-              <FormContainer
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-              >
+              <FormContainer>
                 <FormInput
                   label={t("form.labels.name.label")}
                   placeholder={t("form.labels.name.placeholder")}
                   maxLength={100}
                   selectionColor={colors.secondary}
-                  returnKeyType="go"
+                  returnKeyType="next"
                   value={name}
-                  onChangeText={setName}
-                  onChange={handleCheckFields}
+                  onChangeText={(text) => {
+                    setName(text);
+                    handleCheckFields(text);
+                  }}
                 />
                 <TextArea
                   label={t("form.labels.desc.label")}
@@ -271,7 +283,6 @@ const NewGroup: React.FC = () => {
                   maxLength={500}
                   value={description}
                   onChangeText={setDescription}
-                  onChange={handleCheckFields}
                 />
                 <TextArea
                   label={t("form.labels.tags.label")}
@@ -307,10 +318,10 @@ const NewGroup: React.FC = () => {
                 </ButtonWrapper>
               </FormContainer>
             </Form>
-          </View>
-        </TouchableWithoutFeedback>
-      </Container>
-    </>
+          </Container>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
