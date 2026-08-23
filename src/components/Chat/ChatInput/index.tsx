@@ -11,7 +11,7 @@ import { File } from "./types";
 import SelectedFiles from "@components/Chat/SelectedFiles";
 import CurrentReplyingMessage from "@components/Chat/CurrentReplyingMessage";
 import Mentions from "@components/Chat/Mentions";
-import { AudioRecordingBar } from "@components/AudioRecordingBar";
+import { AudioRecordingBar } from "@components/Chat/AudioRecordingBar";
 
 import {
   AudioButton,

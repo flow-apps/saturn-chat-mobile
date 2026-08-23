@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
-import CachedImage from "../CachedImage";
+import CachedImage from "@components/CachedImage";
 import lighten from "polished/lib/color/lighten";
 
 interface OptionTextProps {

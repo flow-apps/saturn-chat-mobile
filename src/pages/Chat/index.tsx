@@ -9,7 +9,7 @@ import {
   SafeAreaView,
 } from "react-native-safe-area-context";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import Feather from "@expo/vector-icons/Feather";
 import uuid from "react-native-uuid";
 import * as MimeTypes from "react-native-mime-types";
@@ -17,6 +17,7 @@ import FormData from "form-data";
 import crashlytics from "@react-native-firebase/crashlytics";
 import analytics from "@react-native-firebase/analytics";
 import _ from "lodash";
+import { MotiView } from "moti";
 
 import {
   GroupData,
@@ -47,10 +48,32 @@ import { OneSignal } from "@configs/notifications";
 import { File, ordernedRolesArray } from "./types";
 import { useChatMessages } from "@hooks/useChatMessages";
 import { useChatAudio } from "@hooks/useChatAudio";
-import { ChatInput } from "@components/ChatInput";
+import { ChatInput } from "@components/Chat/ChatInput";
 import { Container, MessageContainer } from "./styles";
 
 const MESSAGES_LIMIT_REQUEST = 50;
+
+// Componente animado para entrada suave das mensagens
+const AnimatedMessage: React.FC<{
+  children: React.ReactNode;
+  index: number;
+}> = ({ children, index }) => {
+  const delay = Math.min(index * 40, 320);
+
+  return (
+    <MotiView
+      from={{ opacity: 0, translateY: 12 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{
+        type: "timing",
+        duration: 250,
+        delay,
+      }}
+    >
+      {children}
+    </MotiView>
+  );
+};
 
 const Chat: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -376,6 +399,23 @@ const Chat: React.FC = () => {
     setReplyingMessage(undefined);
   };
 
+  const renderItem = useCallback(
+    ({ item, index }: ListRenderItemInfo<MessageData>) => (
+      <AnimatedMessage index={index}>
+        <Message
+          message={item}
+          participant={participant}
+          lastMessage={index !== 0 ? oldMessages[index - 1] : null}
+          onReplyMessage={setReplyingMessage}
+          group={group}
+          disableReply={!canSendMessage}
+          participants={participants}
+        />
+      </AnimatedMessage>
+    ),
+    [oldMessages, participant, group, canSendMessage, participants],
+  );
+
   useEffect(() => {
     if (currentGroupId !== id && connected) handleJoinRoom(id);
     return () => {
@@ -470,17 +510,7 @@ const Chat: React.FC = () => {
               keyExtractor={(item) => item.id || item.localReference}
               drawDistance={MESSAGES_LIMIT_REQUEST * 160}
               estimatedItemSize={200}
-              renderItem={({ item, index }) => (
-                <Message
-                  message={item}
-                  participant={participant}
-                  lastMessage={index !== 0 ? oldMessages[index - 1] : null}
-                  onReplyMessage={setReplyingMessage}
-                  group={group}
-                  disableReply={!canSendMessage}
-                  participants={participants}
-                />
-              )}
+              renderItem={renderItem}
               ListFooterComponent={() =>
                 fetching && !fetchedAll ? <LoadingIndicator /> : null
               }

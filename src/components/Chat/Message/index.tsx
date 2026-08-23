@@ -25,7 +25,7 @@ import * as Clipboard from "expo-clipboard";
 import Alert from "@components/Alert";
 import AudioPlayer from "@components/Chat/AudioPlayer";
 import FilePreview from "@components/Chat/FilePreview";
-import MessageOptions from "@components/MessageOptions";
+import MessageOptions from "@components/Chat/MessageOptions";
 import {
   Container,
   MessageAuthorContainer,
