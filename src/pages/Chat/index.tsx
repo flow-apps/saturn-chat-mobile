@@ -15,7 +15,6 @@ import {
   AudioRecorder,
   RecordingPresets,
   useAudioRecorder,
-  useAudioRecorderState,
 } from "expo-audio";
 import { useTheme } from "styled-components";
 import {
@@ -37,7 +36,6 @@ import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
 import api from "@services/api";
 import {
-  AdBannerWrapper,
   AudioButton,
   AudioContainer,
   Container,
@@ -72,7 +70,6 @@ import { FlashList } from "@shopify/flash-list";
 import { OneSignal } from "@configs/notifications";
 import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
-import Banner from "@components/Ads/Banner";
 import { ParticipantRoles } from "@type/enums";
 import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
@@ -179,6 +176,15 @@ const Chat: React.FC = () => {
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
+  // Ordena mensagens da mais recente para a mais antiga (ordem decrescente)
+  const sortMessages = useCallback((messages: MessageData[]): MessageData[] => {
+    return [...messages].sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return dateB - dateA;
+    });
+  }, []);
+
   useEffect(() => {
     const showSubscription = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
@@ -208,7 +214,7 @@ const Chat: React.FC = () => {
     onNewUserMessage((msg) => {
       if (arrayUtils.has(oldMessages, (oldMsg) => oldMsg.id === msg.id)) return;
 
-      setOldMessages((old) => [msg, ...old]);
+      setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));
       handleSetReadMessage(msg.id);
     });
 
@@ -237,7 +243,7 @@ const Chat: React.FC = () => {
 
       setOldMessages((old) => old.filter((msg) => msg.id !== result.id));
     });
-  }, [socket]);
+  }, [socket, oldMessages, typingUsers, replyingMessage, sortMessages]);
 
   const buildOptimisticMessage = useCallback(
     ({
@@ -351,20 +357,21 @@ const Chat: React.FC = () => {
         type: "audio/mp4",
       });
 
-      setOldMessages((old) => [
-        buildOptimisticMessage({
-          id: localReference,
-          localReference,
-          voice_message: {
-            name: `attachment_audio_${localReference}${audioExtension}`,
-            duration,
-            size: 0,
-            url: audioRecorder.uri!,
-          },
-          reply_to: replyingMessage,
-        }),
-        ...old,
-      ]);
+      const optimisticAudioMsg = buildOptimisticMessage({
+        id: localReference,
+        localReference,
+        voice_message: {
+          name: `attachment_audio_${localReference}${audioExtension}`,
+          duration,
+          size: 0,
+          url: audioRecorder.uri!,
+        },
+        reply_to: replyingMessage,
+      });
+
+      setOldMessages((old) =>
+        sortMessages(_.uniqBy([optimisticAudioMsg, ...old], "id")),
+      );
 
       const sendedAudio = await api.post(
         `/messages/SendAttachment/${id}?type=voice_message`,
@@ -446,25 +453,33 @@ const Chat: React.FC = () => {
     if (fetching || fetchedAll) return;
 
     setFetching(true);
-    const { data } = await api.get(
-      `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`,
-    );
+    try {
+      const { data } = await api.get(
+        `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`,
+      );
 
-    if (data.messages.length === 0) {
-      setFetchedAll(true);
+      if (data.messages.length === 0) {
+        setFetchedAll(true);
+        return;
+      }
+
+      if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
+        setFetchedAll(true);
+      }
+
+      setOldMessages((old) => {
+        const combined = [...old, ...data.messages];
+        const unique = _.uniqBy(combined, "id");
+        return sortMessages(unique);
+      });
+
+      setPage((old) => old + 1);
+    } catch (error) {
+      crashlytics().recordError(error as Error, "Chat: fetchOldMessages");
+    } finally {
       setFetching(false);
-      return;
     }
-
-    if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
-      setFetchedAll(true);
-    }
-
-    setOldMessages((old) => [...old, ...data.messages]);
-
-    setPage((old) => old + 1);
-    setFetching(false);
-  }, [fetchedAll, fetching, page, id]);
+  }, [fetchedAll, fetching, page, id, sortMessages]);
 
   const fetchParticipantAndGroup = useCallback(async () => {
     setLoading(true);
@@ -494,7 +509,7 @@ const Chat: React.FC = () => {
         setFetchedAll(true);
       }
 
-      setOldMessages(data.messages);
+      setOldMessages(sortMessages(_.uniqBy(data.messages, "id")));
       setPage(1);
     } catch (error) {
       crashlytics().recordError(
@@ -504,7 +519,7 @@ const Chat: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, sortMessages]);
 
   const handleDisconnectGroup = useCallback(() => {
     if (!socket) return;
@@ -598,24 +613,25 @@ const Chat: React.FC = () => {
 
     const localReference = uuid.v4() as string;
 
-    setOldMessages((old) => [
-      buildOptimisticMessage({
-        id: localReference,
-        localReference,
-        message,
-        files: files.map((file) => ({
-          id: file.file.name,
-          original_name: file.file.name,
-          name: file.file.name,
-          size: file.file.file?.size || 0,
-          type: file.type,
-          url: file.file.uri,
-        })),
-        reply_to: replyingMessage,
-        mentions: mentions.map((m) => m.id),
-      }),
-      ...old,
-    ]);
+    const optimisticMsg = buildOptimisticMessage({
+      id: localReference,
+      localReference,
+      message,
+      files: files.map((file) => ({
+        id: file.file.name,
+        original_name: file.file.name,
+        name: file.file.name,
+        size: file.file.file?.size || 0,
+        type: file.type,
+        url: file.file.uri,
+      })),
+      reply_to: replyingMessage,
+      mentions: mentions.map((m) => m.id),
+    });
+
+    setOldMessages((old) =>
+      sortMessages(_.uniqBy([optimisticMsg, ...old], "id")),
+    );
 
     if (files.length === 0) {
       const trace = perf().newTrace("send_message_without_file");
@@ -743,7 +759,7 @@ const Chat: React.FC = () => {
         />
       );
     },
-    [oldMessages.length],
+    [oldMessages, participant, group, canSendMessage, participants],
   );
 
   const renderFooter = () =>
@@ -861,11 +877,8 @@ const Chat: React.FC = () => {
           <MessageContainer style={{ flex: 1 }}>
             <FlashList
               data={oldMessages}
-              extraData={oldMessages.length}
-              keyExtractor={(item, index) => `${item.id + index.toString()}`}
-              viewabilityConfig={{
-                minimumViewTime: 500,
-              }}
+              extraData={oldMessages}
+              keyExtractor={(item) => item.id || item.localReference || ""}
               drawDistance={MESSAGES_LIMIT_REQUEST * 160}
               estimatedItemSize={200}
               renderItem={renderMessage}
