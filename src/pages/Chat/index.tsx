@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useAppState } from "@react-native-community/hooks";
 import {
   Keyboard,
@@ -78,6 +84,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const MESSAGES_LIMIT_REQUEST = 30;
 
@@ -91,6 +98,11 @@ type OptimisticMessageInput = {
   mentions?: string[];
 };
 
+// Instanciação estática para não recriar referências
+const arrayUtils = new ArrayUtils();
+const keyExtractor = (item: MessageData, index: number) =>
+  item.id ? `${item.id}-${index}` : `${item.localReference}-${index}`;
+
 const Chat: React.FC = () => {
   const audioRecorder = useAudioRecorder({
     ...RecordingPresets.HIGH_QUALITY,
@@ -100,14 +112,14 @@ const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
+  const headerHeight = useHeaderHeight();
   const { id, name, friendId } = route.params as {
     id: string;
     name?: string;
     friendId: string;
   };
-  const arrayUtils = new ArrayUtils();
-  const insets = useSafeAreaInsets();
 
+  const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
@@ -128,7 +140,6 @@ const Chat: React.FC = () => {
   const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout>();
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
-
   const [audioPermission, setAudioPermission] = useState(false);
   const [audioDuration, setAudioDuration] = useState(0);
 
@@ -151,7 +162,10 @@ const Chat: React.FC = () => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
 
-  const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
+  const fileService = useMemo(
+    () => new FileService(filesSizeUsed, userConfigs.fileUpload),
+    [filesSizeUsed, userConfigs.fileUpload],
+  );
 
   const { socket } = useWebsocket();
   const {
@@ -242,26 +256,23 @@ const Chat: React.FC = () => {
     [group, participant, user],
   );
 
-  const handleTypingTimeout = () => {
+  const handleTypingTimeout = useCallback(() => {
     setIsTyping(false);
     handleSetTyping({ action: "REMOVE" });
-  };
+  }, [handleSetTyping]);
 
-  const handleTyping = () => {
+  const handleTyping = useCallback(() => {
     if (!isTyping) {
       setIsTyping(true);
-
       handleSetTyping({ action: "ADD" });
-
       const timeout = setTimeout(handleTypingTimeout, 3000);
-
       setTypingTimeout(timeout);
       return;
     }
     clearTimeout(typingTimeout);
     const timeout = setTimeout(handleTypingTimeout, 3000);
     setTypingTimeout(timeout);
-  };
+  }, [isTyping, typingTimeout, handleSetTyping, handleTypingTimeout]);
 
   const recordAudio = async () => {
     const hasMessage = !!(messageInputRef.current?.value || "");
@@ -312,7 +323,6 @@ const Chat: React.FC = () => {
     const currentReplyingMessage = replyingMessage;
     const localReference = uuid.v4() as string;
 
-    // Injeção da UI Otimista de áudio imediata
     setOldMessages((old) => [
       buildOptimisticMessage({
         id: localReference,
@@ -412,15 +422,16 @@ const Chat: React.FC = () => {
       return setLargeFile(true);
   };
 
-  const removeFile = (position: number) => {
-    const file = arrayUtils.findFirst(files, (f, index) => index === position);
-    if (!file?.file?.size) return;
-
-    const fileSize = Math.trunc(file.file.size / 1000 / 1000);
-    const filteredFiles = files.filter((f, index) => index !== position);
-    setFiles(filteredFiles);
-    setFilesSizeUsed((used) => used - fileSize);
-  };
+  const removeFile = useCallback((position: number) => {
+    setFiles((prev) => {
+      const file = arrayUtils.findFirst(prev, (_, index) => index === position);
+      if (file?.file?.size) {
+        const fileSize = Math.trunc(file.file.size / 1000 / 1000);
+        setFilesSizeUsed((used) => used - fileSize);
+      }
+      return prev.filter((_, index) => index !== position);
+    });
+  }, []);
 
   const fetchOldMessages = useCallback(async () => {
     if (fetching || fetchedAll) return;
@@ -492,7 +503,7 @@ const Chat: React.FC = () => {
     socket?.emit("leave_chat");
     socket?.offAny();
     handleTypingTimeout();
-  }, [socket]);
+  }, [socket, handleTypingTimeout]);
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
@@ -538,25 +549,28 @@ const Chat: React.FC = () => {
     handleTyping();
   };
 
-  const handleUserSelect = (user: UserData) => {
-    const message = messageInputRef.current?.value || "";
-    const newMessage =
-      message.substring(0, mentionPosition.start) +
-      `@${user.nickname} ` +
-      message.substring(mentionPosition.end);
+  const handleUserSelect = useCallback(
+    (user: UserData) => {
+      const message = messageInputRef.current?.value || "";
+      const newMessage =
+        message.substring(0, mentionPosition.start) +
+        `@${user.nickname} ` +
+        message.substring(mentionPosition.end);
 
-    if (messageInputRef.current) {
-      messageInputRef.current.setNativeProps({ text: newMessage });
-      messageInputRef.current.value = newMessage;
-    }
+      if (messageInputRef.current) {
+        messageInputRef.current.setNativeProps({ text: newMessage });
+        messageInputRef.current.value = newMessage;
+      }
 
-    setMentions((prev) => [...prev, user]);
-    setIsMentioning(false);
-    setMentionQuery("");
-    setIsTypingMessage(true);
-    handleTyping();
-    messageInputRef.current?.focus();
-  };
+      setMentions((prev) => [...prev, user]);
+      setIsMentioning(false);
+      setMentionQuery("");
+      setIsTypingMessage(true);
+      handleTyping();
+      messageInputRef.current?.focus();
+    },
+    [mentionPosition, handleTyping],
+  );
 
   const handleMessageSubmit = async () => {
     const messageRefValue = messageInputRef.current?.value || "";
@@ -672,34 +686,34 @@ const Chat: React.FC = () => {
     }
   };
 
-  const handleGoGroupConfig = () => {
+  const handleGoGroupConfig = useCallback(() => {
     navigation.navigate("GroupConfig", { id });
-  };
+  }, [navigation, id]);
 
-  const handleGoGroupParticipants = () => {
+  const handleGoGroupParticipants = useCallback(() => {
     navigation.navigate("Participants", { id });
-  };
+  }, [navigation, id]);
 
-  const handleGoGroupInfos = () => {
+  const handleGoGroupInfos = useCallback(() => {
     navigation.navigate("GroupInfos", { id });
-  };
+  }, [navigation, id]);
 
-  const handleGoFriendInfos = () => {
+  const handleGoFriendInfos = useCallback(() => {
     navigation.navigate("UserProfile", { id: friendId });
-  };
+  }, [navigation, friendId]);
 
-  const handleGoStar = async () => {
+  const handleGoStar = useCallback(async () => {
     await analytics().logEvent("IncreaseUpload");
     navigation.navigate("PurchasePremium");
-  };
+  }, [navigation]);
 
-  const handleReplyMessage = async (message: MessageData) => {
+  const handleReplyMessage = useCallback((message: MessageData) => {
     setReplyingMessage(message);
-  };
+  }, []);
 
-  const handleRemoveReplyingMessage = async () => {
+  const handleRemoveReplyingMessage = useCallback(() => {
     setReplyingMessage(undefined);
-  };
+  }, []);
 
   const renderMessage = useCallback(
     ({ item, index }: ListRenderItem<MessageData> | any) => {
@@ -717,15 +731,43 @@ const Chat: React.FC = () => {
         />
       );
     },
-    [oldMessages.length],
+    [
+      oldMessages,
+      participant,
+      handleReplyMessage,
+      group,
+      canSendMessage,
+      participants,
+    ],
   );
 
-  const renderFooter = () =>
-    fetching && !fetchedAll ? <LoadingIndicator /> : null;
+  const renderFooter = useCallback(
+    () => (fetching && !fetchedAll ? <LoadingIndicator /> : null),
+    [fetching, fetchedAll],
+  );
 
-  const disableLargeFile = () => setLargeFile(false);
-  const disableIsSelectedFile = () => setIsSelectedFile(false);
-  const disableAudioPermission = () => setAudioPermission(false);
+  const disableLargeFile = useCallback(() => setLargeFile(false), []);
+  const disableIsSelectedFile = useCallback(() => setIsSelectedFile(false), []);
+  const disableAudioPermission = useCallback(
+    () => setAudioPermission(false),
+    [],
+  );
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => setIsKeyboardVisible(true),
+    );
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setIsKeyboardVisible(false),
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (currentGroupId !== id && connected) {
@@ -765,11 +807,7 @@ const Chat: React.FC = () => {
 
     const isMinimumRole = participantRoleIndex >= minimumRoleSendMessageIndex;
 
-    if (!isMinimumRole) {
-      setCanSendMessage(false);
-    } else {
-      setCanSendMessage(true);
-    }
+    setCanSendMessage(isMinimumRole);
   }, [participant, group]);
 
   useFocusEffect(
@@ -836,16 +874,15 @@ const Chat: React.FC = () => {
             <FlashList
               data={oldMessages}
               extraData={oldMessages.length}
-              keyExtractor={(item, index) => `${item.id + index.toString()}`}
+              keyExtractor={keyExtractor}
+              estimatedItemSize={200}
               viewabilityConfig={{
                 minimumViewTime: 500,
               }}
-              drawDistance={MESSAGES_LIMIT_REQUEST * 160}
-              estimatedItemSize={200}
               renderItem={renderMessage}
               ListFooterComponent={renderFooter}
               onEndReached={fetchOldMessages}
-              onEndReachedThreshold={0.5}
+              onEndReachedThreshold={0.3}
               showsVerticalScrollIndicator={false}
               disableHorizontalListHeightMeasurement
             />
@@ -856,7 +893,7 @@ const Chat: React.FC = () => {
               paddingBottom: isKeyboardVisible
                 ? 8
                 : insets.bottom > 0
-                  ? insets.bottom - 40
+                  ? insets.bottom
                   : 12,
             }}
           >
