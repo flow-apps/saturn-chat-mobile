@@ -27,11 +27,10 @@ const ImagePreview = () => {
     url: string;
   };
 
-
   const [dimensions, setDimensions] = useState<ImageDimensions>();
   const imageHeaders = useMemo(
     () => getHeadersForAuthFiles(url),
-    [getHeadersForAuthFiles]
+    [getHeadersForAuthFiles],
   );
 
   useEffect(() => {
@@ -48,13 +47,13 @@ const ImagePreview = () => {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
     }
   }, [url, imageHeaders]);
 
   const downloadFile = useCallback(async () => {
-    await fileService.downloadFile(url, original_name);
+    await fileService.downloadFile(url, original_name, imageHeaders);
   }, [original_name, url]);
 
   if (!dimensions) return <Loading />;
