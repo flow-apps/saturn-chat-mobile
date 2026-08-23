@@ -1,18 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  ListRenderItem,
-  Platform,
-  TextInput,
-} from "react-native";
+import { Keyboard, ListRenderItem, Platform, TextInput } from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -22,7 +10,13 @@ import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { AudioModule, RecordingPresets, useAudioRecorder } from "expo-audio";
+import {
+  AudioModule,
+  AudioRecorder,
+  RecordingPresets,
+  useAudioRecorder,
+  useAudioRecorderState,
+} from "expo-audio";
 import { useTheme } from "styled-components";
 import {
   GroupData,
@@ -43,6 +37,7 @@ import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
 import api from "@services/api";
 import {
+  AdBannerWrapper,
   AudioButton,
   AudioContainer,
   Container,
@@ -77,16 +72,19 @@ import { FlashList } from "@shopify/flash-list";
 import { OneSignal } from "@configs/notifications";
 import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
+import Banner from "@components/Ads/Banner";
 import { ParticipantRoles } from "@type/enums";
+import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 import Mentions from "@components/Chat/Mentions";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { useHeaderHeight } from "@react-navigation/elements";
+import { KeyboardAvoidingView } from "react-native";
+import { getStatusBarHeight } from "react-native-iphone-x-helper";
 
-const MESSAGES_LIMIT_REQUEST = 60;
+const MESSAGES_LIMIT_REQUEST = 30;
 
 type OptimisticMessageInput = {
   id: string;
@@ -98,17 +96,6 @@ type OptimisticMessageInput = {
   mentions?: string[];
 };
 
-const arrayUtils = new ArrayUtils();
-
-const keyExtractor = (item: MessageData) =>
-  item.id ? item.id : item.localReference || uuid.v4().toString();
-
-const getItemType = (item: MessageData) => {
-  if (item.voice_message) return "voice";
-  if (item.files && item.files.length > 0) return "file";
-  return "text";
-};
-
 const Chat: React.FC = () => {
   const audioRecorder = useAudioRecorder({
     ...RecordingPresets.HIGH_QUALITY,
@@ -118,19 +105,18 @@ const Chat: React.FC = () => {
   const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
-  const headerHeight = useHeaderHeight();
   const { id, name, friendId } = route.params as {
     id: string;
     name?: string;
     friendId: string;
   };
-
+  const arrayUtils = new ArrayUtils();
   const insets = useSafeAreaInsets();
+
   const { colors } = useTheme();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -146,6 +132,7 @@ const Chat: React.FC = () => {
   const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout>();
 
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
+
   const [audioPermission, setAudioPermission] = useState(false);
   const [audioDuration, setAudioDuration] = useState(0);
 
@@ -168,12 +155,10 @@ const Chat: React.FC = () => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
 
-  const fileService = useMemo(
-    () => new FileService(filesSizeUsed, userConfigs.fileUpload),
-    [filesSizeUsed, userConfigs.fileUpload],
-  );
+  const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   const { socket } = useWebsocket();
+  const headerHeight = getStatusBarHeight();
   const {
     handleJoinRoom,
     handleSetReadMessage,
@@ -191,6 +176,24 @@ const Chat: React.FC = () => {
 
   const appState = useAppState();
   const { t } = useTranslate("Chat");
+
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => setIsKeyboardVisible(true),
+    );
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setIsKeyboardVisible(false),
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const configureSocketListeners = useCallback(() => {
     onSendedUserMessage(({ msg, localReference }) => {
@@ -262,23 +265,26 @@ const Chat: React.FC = () => {
     [group, participant, user],
   );
 
-  const handleTypingTimeout = useCallback(() => {
+  const handleTypingTimeout = () => {
     setIsTyping(false);
     handleSetTyping({ action: "REMOVE" });
-  }, [handleSetTyping]);
+  };
 
-  const handleTyping = useCallback(() => {
+  const handleTyping = () => {
     if (!isTyping) {
       setIsTyping(true);
+
       handleSetTyping({ action: "ADD" });
+
       const timeout = setTimeout(handleTypingTimeout, 3000);
+
       setTypingTimeout(timeout);
       return;
     }
     clearTimeout(typingTimeout);
     const timeout = setTimeout(handleTypingTimeout, 3000);
     setTypingTimeout(timeout);
-  }, [isTyping, typingTimeout, handleSetTyping, handleTypingTimeout]);
+  };
 
   const recordAudio = async () => {
     const hasMessage = !!(messageInputRef.current?.value || "");
@@ -325,43 +331,40 @@ const Chat: React.FC = () => {
       );
     }
 
-    const recordedUri = audioRecorder.uri;
-    const currentReplyingMessage = replyingMessage;
-    const localReference = uuid.v4() as string;
-
-    setOldMessages((old) => [
-      buildOptimisticMessage({
-        id: localReference,
-        localReference,
-        voice_message: {
-          name: `attachment_audio_${localReference}${audioExtension}`,
-          duration,
-          size: 0,
-          url: recordedUri!,
-        },
-        reply_to: currentReplyingMessage,
-      }),
-      ...old,
-    ]);
-
-    setAudioDuration(0);
-    setIsRecording(false);
-    clearInterval(recordingInterval);
-    setRecordingInterval(undefined);
-    setReplyingMessage(undefined);
-
     await audioRecorder.stop();
 
     try {
+      setAudioDuration(0);
+      setIsRecording(false);
+      clearInterval(recordingInterval);
+      setRecordingInterval(undefined);
+
       SimpleToast.show(t("toasts.sending_voice"), SimpleToast.SHORT);
 
       const audioData = new FormData();
+      const localReference = uuid.v4() as string;
+
       audioData.append("duration", duration);
       audioData.append("attachment", {
-        uri: recordedUri,
+        uri: audioRecorder.uri,
         name: `attachment_audio${audioExtension}`,
         type: "audio/mp4",
       });
+
+      setOldMessages((old) => [
+        buildOptimisticMessage({
+          id: localReference,
+          localReference,
+          voice_message: {
+            name: `attachment_audio_${localReference}${audioExtension}`,
+            duration,
+            size: 0,
+            url: audioRecorder.uri!,
+          },
+          reply_to: replyingMessage,
+        }),
+        ...old,
+      ]);
 
       const sendedAudio = await api.post(
         `/messages/SendAttachment/${id}?type=voice_message`,
@@ -390,10 +393,11 @@ const Chat: React.FC = () => {
 
       handleSendVoiceMessage({
         audio: sendedAudio.data,
-        reply_to_id: currentReplyingMessage?.id ?? "",
+        reply_to_id: replyingMessage?.id ?? "",
         message: "",
         localReference,
       });
+      setReplyingMessage(undefined);
     } catch (error: any) {
       crashlytics().recordError(error, "Stop Record and Submit Error");
     }
@@ -428,16 +432,15 @@ const Chat: React.FC = () => {
       return setLargeFile(true);
   };
 
-  const removeFile = useCallback((position: number) => {
-    setFiles((prev) => {
-      const file = arrayUtils.findFirst(prev, (_, index) => index === position);
-      if (file?.file?.size) {
-        const fileSize = Math.trunc(file.file.size / 1000 / 1000);
-        setFilesSizeUsed((used) => used - fileSize);
-      }
-      return prev.filter((_, index) => index !== position);
-    });
-  }, []);
+  const removeFile = (position: number) => {
+    const file = arrayUtils.findFirst(files, (f, index) => index === position);
+    if (!file?.file?.size) return;
+
+    const fileSize = Math.trunc(file.file.size / 1000 / 1000);
+    const filteredFiles = files.filter((f, index) => index !== position);
+    setFiles(filteredFiles);
+    setFilesSizeUsed((used) => used - fileSize);
+  };
 
   const fetchOldMessages = useCallback(async () => {
     if (fetching || fetchedAll) return;
@@ -509,7 +512,7 @@ const Chat: React.FC = () => {
     socket?.emit("leave_chat");
     socket?.offAny();
     handleTypingTimeout();
-  }, [socket, handleTypingTimeout]);
+  }, [socket]);
 
   const handleSetMessage = (newMessage: string) => {
     if (newMessage.length >= userConfigs.messageLength) {
@@ -555,89 +558,91 @@ const Chat: React.FC = () => {
     handleTyping();
   };
 
-  const handleUserSelect = useCallback(
-    (user: UserData) => {
-      const message = messageInputRef.current?.value || "";
-      const newMessage =
-        message.substring(0, mentionPosition.start) +
-        `@${user.nickname} ` +
-        message.substring(mentionPosition.end);
+  const handleUserSelect = (user: UserData) => {
+    const message = messageInputRef.current?.value || "";
+    const newMessage =
+      message.substring(0, mentionPosition.start) +
+      `@${user.nickname} ` +
+      message.substring(mentionPosition.end);
 
-      if (messageInputRef.current) {
-        messageInputRef.current.setNativeProps({ text: newMessage });
-        messageInputRef.current.value = newMessage;
-      }
+    if (messageInputRef.current) {
+      messageInputRef.current.setNativeProps({ text: newMessage });
+      messageInputRef.current.value = newMessage;
+    }
 
-      setMentions((prev) => [...prev, user]);
-      setIsMentioning(false);
-      setMentionQuery("");
-      setIsTypingMessage(true);
-      handleTyping();
-      messageInputRef.current?.focus();
-    },
-    [mentionPosition, handleTyping],
-  );
+    setMentions((prev) => [...prev, user]);
+    setIsMentioning(false);
+    setMentionQuery("");
+    setIsTypingMessage(true);
+    handleTyping();
+    messageInputRef.current?.focus();
+  };
 
   const handleMessageSubmit = async () => {
     const messageRefValue = messageInputRef.current?.value || "";
-    const message = messageRefValue.trim();
+    const message = messageRefValue?.slice(0) || "";
 
-    if (id !== currentGroupId || !connected) return;
-    if (files.length === 0 && !message) return;
-
-    const localReference = uuid.v4() as string;
-    const currentFiles = [...files];
-    const currentMentions = [...mentions];
-    const currentReplyingMessage = replyingMessage;
-
-    if (messageInputRef.current) {
-      messageInputRef.current.clear();
-      messageInputRef.current.value = "";
+    if (id !== currentGroupId || !connected) {
+      return;
     }
-    setFiles([]);
-    setMentions([]);
-    setReplyingMessage(undefined);
-    setIsTypingMessage(false);
+
+    if (messageRefValue) {
+      messageInputRef.current?.clear();
+      if (messageInputRef.current) {
+        messageInputRef.current.value = "";
+      }
+    }
+
+    if (files.length === 0 && !message) return;
     handleTypingTimeout();
 
-    const optimisticMsg = buildOptimisticMessage({
-      id: localReference,
-      localReference,
-      message,
-      files: currentFiles.map((file) => ({
-        id: file.file.name,
-        original_name: file.file.name,
-        name: file.file.name,
-        size: file.file.file?.size || 0,
-        type: file.type,
-        url: file.file.uri,
-      })),
-      reply_to: currentReplyingMessage,
-      mentions: currentMentions.map((m) => m.id),
-    });
+    const localReference = uuid.v4() as string;
 
-    setOldMessages((old) => [optimisticMsg, ...old]);
+    setOldMessages((old) => [
+      buildOptimisticMessage({
+        id: localReference,
+        localReference,
+        message,
+        files: files.map((file) => ({
+          id: file.file.name,
+          original_name: file.file.name,
+          name: file.file.name,
+          size: file.file.file?.size || 0,
+          type: file.type,
+          url: file.file.uri,
+        })),
+        reply_to: replyingMessage,
+        mentions: mentions.map((m) => m.id),
+      }),
+      ...old,
+    ]);
 
-    if (currentFiles.length === 0) {
+    if (files.length === 0) {
       const trace = perf().newTrace("send_message_without_file");
-      await trace.start();
 
+      setIsTypingMessage(false);
+
+      await trace.start();
       handleSendMessage({
         withFiles: false,
-        reply_to_id: currentReplyingMessage?.id,
+        reply_to_id: replyingMessage?.id,
         message,
         localReference,
-        mentions: currentMentions.map((m) => m.id),
+        mentions: mentions.map((m) => m.id),
       });
 
+      if (replyingMessage) {
+        setReplyingMessage(undefined);
+      }
       await trace.stop();
     } else {
       setSendingFile(true);
       const filesData = new FormData();
       const trace = perf().newTrace("send_message_with_files");
 
-      arrayUtils.iterator(currentFiles, (file) => {
+      arrayUtils.iterator(files, (file) => {
         const type = MimeTypes.lookup(file.file.name);
+
         filesData.append("attachment", {
           name: file.file.name,
           uri: file.file.uri,
@@ -646,85 +651,85 @@ const Chat: React.FC = () => {
       });
 
       filesData.append("message", message);
-      if (currentReplyingMessage) {
-        filesData.append("reply_to_id", currentReplyingMessage.id);
-      }
-      if (currentMentions.length > 0) {
-        filesData.append(
-          "mentions",
-          JSON.stringify(currentMentions.map((m) => m.id)),
-        );
-      }
+      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
+      if (mentions.length > 0)
+        filesData.append("mentions", JSON.stringify(mentions.map((m) => m.id)));
 
       await trace.start();
 
-      try {
-        const res = await api.post(
-          `messages/SendAttachment/${id}?type=files`,
-          filesData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-            onUploadProgress: (event) => {
-              const total = event.total || event.loaded || 1;
-              const totalSended = Math.round((event.loaded * 100) / total);
-              setSendedFileProgress(totalSended);
-            },
+      await api
+        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-        );
+          onUploadProgress: (event) => {
+            const total = event.total || event.loaded || 1;
+            const totalSended = Math.round((event.loaded * 100) / total);
+            setSendedFileProgress(totalSended);
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            handleSendMessage({
+              message_id: res.data.message_id,
+              message,
+              withFiles: true,
+              localReference,
+              mentions: mentions.map((m) => m.id),
+            });
+          }
+        })
+        .catch((error) => {
+          crashlytics()?.recordError(new Error(error), "Send File Error");
+          console.log(JSON.stringify(error));
+        });
 
-        if (res.status === 200) {
-          handleSendMessage({
-            message_id: res.data.message_id,
-            message,
-            withFiles: true,
-            localReference,
-            mentions: currentMentions.map((m) => m.id),
-          });
-        }
-      } catch (error: any) {
-        crashlytics()?.recordError(new Error(error), "Send File Error");
-      } finally {
-        await trace.stop();
-        setSendingFile(false);
-        setSendedFileProgress(0);
-        setFilesSizeUsed(0);
-      }
+      await trace.stop();
+
+      setFiles([]);
+      setSendingFile(false);
+      setSendedFileProgress(0);
+      setFilesSizeUsed(0);
     }
+
+    if (replyingMessage) {
+      setReplyingMessage(undefined);
+    }
+    setMentions([]);
   };
 
-  const handleGoGroupConfig = useCallback(() => {
+  const handleGoGroupConfig = () => {
     navigation.navigate("GroupConfig", { id });
-  }, [navigation, id]);
+  };
 
-  const handleGoGroupParticipants = useCallback(() => {
+  const handleGoGroupParticipants = () => {
     navigation.navigate("Participants", { id });
-  }, [navigation, id]);
+  };
 
-  const handleGoGroupInfos = useCallback(() => {
+  const handleGoGroupInfos = () => {
     navigation.navigate("GroupInfos", { id });
-  }, [navigation, id]);
+  };
 
-  const handleGoFriendInfos = useCallback(() => {
+  const handleGoFriendInfos = () => {
     navigation.navigate("UserProfile", { id: friendId });
-  }, [navigation, friendId]);
+  };
 
-  const handleGoStar = useCallback(async () => {
+  const handleGoStar = async () => {
     await analytics().logEvent("IncreaseUpload");
     navigation.navigate("PurchasePremium");
-  }, [navigation]);
+  };
 
-  const handleReplyMessage = useCallback((message: MessageData) => {
+  const handleReplyMessage = async (message: MessageData) => {
     setReplyingMessage(message);
-  }, []);
+  };
 
-  const handleRemoveReplyingMessage = useCallback(() => {
+  const handleRemoveReplyingMessage = async () => {
     setReplyingMessage(undefined);
-  }, []);
+  };
 
-  const renderMessage: ListRenderItem<MessageData> = useCallback(
-    ({ item, index }) => {
-      const lastMessage =
-        index < oldMessages.length - 1 ? oldMessages[index + 1] : null;
+  const renderMessage = useCallback(
+    ({ item, index }: ListRenderItem<MessageData> | any) => {
+      const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
 
       return (
         <Message
@@ -738,43 +743,15 @@ const Chat: React.FC = () => {
         />
       );
     },
-    [
-      oldMessages,
-      participant,
-      handleReplyMessage,
-      group,
-      canSendMessage,
-      participants,
-    ],
+    [oldMessages.length],
   );
 
-  const renderFooter = useCallback(
-    () => (fetching && !fetchedAll ? <LoadingIndicator /> : null),
-    [fetching, fetchedAll],
-  );
+  const renderFooter = () =>
+    fetching && !fetchedAll ? <LoadingIndicator /> : null;
 
-  const disableLargeFile = useCallback(() => setLargeFile(false), []);
-  const disableIsSelectedFile = useCallback(() => setIsSelectedFile(false), []);
-  const disableAudioPermission = useCallback(
-    () => setAudioPermission(false),
-    [],
-  );
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
-      () => setIsKeyboardVisible(true),
-    );
-    const hideSubscription = Keyboard.addListener(
-      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
-      () => setIsKeyboardVisible(false),
-    );
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
+  const disableLargeFile = () => setLargeFile(false);
+  const disableIsSelectedFile = () => setIsSelectedFile(false);
+  const disableAudioPermission = () => setAudioPermission(false);
 
   useEffect(() => {
     if (currentGroupId !== id && connected) {
@@ -814,7 +791,11 @@ const Chat: React.FC = () => {
 
     const isMinimumRole = participantRoleIndex >= minimumRoleSendMessageIndex;
 
-    setCanSendMessage(isMinimumRole);
+    if (!isMinimumRole) {
+      setCanSendMessage(false);
+    } else {
+      setCanSendMessage(true);
+    }
   }, [participant, group]);
 
   useFocusEffect(
@@ -881,16 +862,18 @@ const Chat: React.FC = () => {
             <FlashList
               data={oldMessages}
               extraData={oldMessages.length}
-              keyExtractor={keyExtractor}
-              getItemType={getItemType}
-              estimatedItemSize={110}
-              drawDistance={1500}
+              keyExtractor={(item, index) => `${item.id + index.toString()}`}
+              viewabilityConfig={{
+                minimumViewTime: 500,
+              }}
+              drawDistance={MESSAGES_LIMIT_REQUEST * 160}
+              estimatedItemSize={200}
               renderItem={renderMessage}
               ListFooterComponent={renderFooter}
               onEndReached={fetchOldMessages}
-              onEndReachedThreshold={0.7}
+              onEndReachedThreshold={0.5}
               showsVerticalScrollIndicator={false}
-              removeClippedSubviews={Platform.OS === "android"}
+              disableHorizontalListHeightMeasurement
             />
           </MessageContainer>
           <FormContainer
@@ -899,7 +882,7 @@ const Chat: React.FC = () => {
               paddingBottom: isKeyboardVisible
                 ? 8
                 : insets.bottom > 0
-                  ? insets.bottom
+                  ? insets.bottom - 40
                   : 12,
             }}
           >

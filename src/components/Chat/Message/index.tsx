@@ -90,8 +90,8 @@ const Message = ({
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
-  const [displayedMessageContent, setDisplayedMessageContent] = useState(
-    message.message,
+  const [translatedContent, setTranslatedContent] = useState<string | null>(
+    null,
   );
   const [hasInvite, setHasInvite] = useState(false);
   const [invitesData, setInvitesData] = useState<InvitesData[]>([]);
@@ -106,16 +106,19 @@ const Message = ({
   const { handleDeleteMessage } = useChat();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
+  // Reseta estados locais sensíveis quando o ID ou localReference da mensagem muda
   useEffect(() => {
-    setDisplayedMessageContent(message.message);
-  }, [message.message]);
+    setTranslatedContent(null);
+  }, [message.id, message.localReference]);
+
+  const displayedMessageText = translatedContent ?? message.message;
 
   const messageForDisplay = useMemo(
     () => ({
       ...message,
-      message: displayedMessageContent,
+      message: displayedMessageText,
     }),
-    [message, displayedMessageContent],
+    [message, displayedMessageText],
   );
 
   const isRight = useMemo(() => {
@@ -235,8 +238,8 @@ const Message = ({
   }, [message.message, t]);
 
   const handleTranslateMessage = useCallback(async () => {
-    if (displayedMessageContent !== message.message) {
-      setDisplayedMessageContent(message.message);
+    if (translatedContent !== null) {
+      setTranslatedContent(null);
       SimpleToast.show(t("toasts.original_restored"), SimpleToast.SHORT);
       return;
     }
@@ -277,7 +280,7 @@ const Message = ({
       });
       const translated = await FastTranslator.translate(message.message);
 
-      setDisplayedMessageContent(translated);
+      setTranslatedContent(translated);
       SimpleToast.show(t("toasts.translated_success"), SimpleToast.SHORT);
     } catch (error) {
       console.log("Translation error:", error);
@@ -286,14 +289,14 @@ const Message = ({
         SimpleToast.SHORT,
       );
     }
-  }, [displayedMessageContent, message.message, t]);
+  }, [translatedContent, message.message, t]);
 
   const translateOptionContent = useMemo(
     () =>
-      displayedMessageContent !== message.message
+      translatedContent !== null
         ? t("options.show_original_message")
         : t("options.translate_message"),
-    [displayedMessageContent, message.message, t],
+    [translatedContent, t],
   );
 
   const renderVoiceMessage = useMemo(() => {
@@ -541,8 +544,10 @@ const Message = ({
 export default memo(Message, (prev, next) => {
   return (
     prev.message.id === next.message.id &&
+    prev.message.localReference === next.message.localReference &&
     prev.message.sended === next.message.sended &&
     prev.message.message === next.message.message &&
+    prev.message.author?.id === next.message.author?.id &&
     prev.disableReply === next.disableReply &&
     prev.lastMessage?.id === next.lastMessage?.id &&
     prev.participant?.role === next.participant?.role &&
