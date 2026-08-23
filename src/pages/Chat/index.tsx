@@ -86,7 +86,7 @@ import {
 } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 
-const MESSAGES_LIMIT_REQUEST = 30;
+const MESSAGES_LIMIT_REQUEST = 60;
 
 type OptimisticMessageInput = {
   id: string;
@@ -98,10 +98,16 @@ type OptimisticMessageInput = {
   mentions?: string[];
 };
 
-// Instanciação estática para não recriar referências
 const arrayUtils = new ArrayUtils();
-const keyExtractor = (item: MessageData, index: number) =>
-  item.id ? `${item.id}-${index}` : `${item.localReference}-${index}`;
+
+const keyExtractor = (item: MessageData) =>
+  item.id ? item.id : item.localReference || uuid.v4().toString();
+
+const getItemType = (item: MessageData) => {
+  if (item.voice_message) return "voice";
+  if (item.files && item.files.length > 0) return "file";
+  return "text";
+};
 
 const Chat: React.FC = () => {
   const audioRecorder = useAudioRecorder({
@@ -715,9 +721,10 @@ const Chat: React.FC = () => {
     setReplyingMessage(undefined);
   }, []);
 
-  const renderMessage = useCallback(
-    ({ item, index }: ListRenderItem<MessageData> | any) => {
-      const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
+  const renderMessage: ListRenderItem<MessageData> = useCallback(
+    ({ item, index }) => {
+      const lastMessage =
+        index < oldMessages.length - 1 ? oldMessages[index + 1] : null;
 
       return (
         <Message
@@ -875,16 +882,15 @@ const Chat: React.FC = () => {
               data={oldMessages}
               extraData={oldMessages.length}
               keyExtractor={keyExtractor}
-              estimatedItemSize={200}
-              viewabilityConfig={{
-                minimumViewTime: 500,
-              }}
+              getItemType={getItemType}
+              estimatedItemSize={110}
+              drawDistance={1500}
               renderItem={renderMessage}
               ListFooterComponent={renderFooter}
               onEndReached={fetchOldMessages}
-              onEndReachedThreshold={0.3}
+              onEndReachedThreshold={0.7}
               showsVerticalScrollIndicator={false}
-              disableHorizontalListHeightMeasurement
+              removeClippedSubviews={Platform.OS === "android"}
             />
           </MessageContainer>
           <FormContainer

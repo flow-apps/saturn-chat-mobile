@@ -1,4 +1,11 @@
-import React, { memo, useCallback, useState, useMemo, useEffect } from "react";
+import React, {
+  memo,
+  useCallback,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
 
 import config from "@config";
 import moment from "moment";
@@ -44,11 +51,15 @@ import URLParser from "url-parse";
 import InviteInMessage from "@components/Chat/RichContent/InviteInMessage";
 import LinkPreview from "@components/Chat/RichContent/LinkPreview";
 import { useChat } from "@contexts/chat";
-import Swipeable from "react-native-gesture-handler/Swipeable";
+import ReanimatedSwipeable, {
+  SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
 import FastTranslator from "fast-mlkit-translate-text";
 import { getLocales } from "expo-localization";
+import Feather from "@expo/vector-icons/Feather";
+import { View } from "react-native";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -65,7 +76,6 @@ interface InvitesData {
   id: string;
 }
 
-// Instanciado fora do componente para evitar recriar o objeto a cada renderização
 const linkUtils = new LinkUtils();
 
 const Message = ({
@@ -81,10 +91,12 @@ const Message = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [msgOptions, setMsgOptions] = useState(false);
   const [displayedMessageContent, setDisplayedMessageContent] = useState(
-    message.message
+    message.message,
   );
   const [hasInvite, setHasInvite] = useState(false);
   const [invitesData, setInvitesData] = useState<InvitesData[]>([]);
+
+  const swipeableRef = useRef<SwipeableMethods>(null);
 
   const { user } = useAuth();
   const { colors } = useTheme();
@@ -103,12 +115,12 @@ const Message = ({
       ...message,
       message: displayedMessageContent,
     }),
-    [message, displayedMessageContent]
+    [message, displayedMessageContent],
   );
 
   const isRight = useMemo(() => {
-    return message.author.id === user?.id;
-  }, [message.author.id, user?.id]);
+    return message.author?.id === user?.id;
+  }, [message.author?.id, user?.id]);
 
   const sended = useMemo(() => {
     return isUndefined(message?.sended) ? true : message.sended;
@@ -122,13 +134,13 @@ const Message = ({
     return moment(date).format("DD/MM/yy, HH:mm");
   }, []);
 
-  const renderAuthor = useCallback(() => {
-    if (!lastMessage || lastMessage.author.id !== message.author.id) {
+  const renderAuthor = useMemo(() => {
+    if (!lastMessage || lastMessage.author?.id !== message.author?.id) {
       const isAuthorUser = message.author?.id === user?.id;
       return (
         <MessageAuthorContainer
           onPress={handleGoParticipant}
-          disabled={message.participant.state !== ParticipantStates.JOINED}
+          disabled={message.participant?.state !== ParticipantStates.JOINED}
         >
           <MessageAvatar
             uri={message.author?.avatar?.url}
@@ -137,27 +149,27 @@ const Message = ({
             height={22}
           />
           <PremiumName
-            name={message.author.name}
+            name={message.author?.name || ""}
             nameSize={12}
             color={colors.light_heading}
-            hasPremium={isAuthorUser ? isPremium : message.author.isPremium}
+            hasPremium={isAuthorUser ? isPremium : message.author?.isPremium}
           />
         </MessageAuthorContainer>
       );
     }
-    return <></>;
+    return null;
   }, [
-    lastMessage?.author.id,
+    lastMessage?.author?.id,
     message.author,
-    message.participant.state,
+    message.participant?.state,
     user?.id,
     isPremium,
     colors.light_heading,
     handleGoParticipant,
   ]);
 
-  const renderDate = useCallback(() => {
-    if (!lastMessage || lastMessage.author.id !== message.author.id) {
+  const renderDate = useMemo(() => {
+    if (!lastMessage || lastMessage.author?.id !== message.author?.id) {
       return (
         <MessageDateContainer>
           <MessageDate>{formatHour(message.created_at)}</MessageDate>
@@ -175,9 +187,15 @@ const Message = ({
           </MessageDateContainer>
         );
       }
-      return <></>;
+      return null;
     }
-  }, [lastMessage?.author.id, lastMessage?.created_at, message.author.id, message.created_at, formatHour]);
+  }, [
+    lastMessage?.author?.id,
+    lastMessage?.created_at,
+    message.author?.id,
+    message.created_at,
+    formatHour,
+  ]);
 
   const openLink = useCallback(
     async (passedLink = "") => {
@@ -185,7 +203,7 @@ const Message = ({
       await linkUtils.openLink(passedLink || linkUrl);
       setLinkUrl("");
     },
-    [linkUrl]
+    [linkUrl],
   );
 
   const alertLink = useCallback(
@@ -199,7 +217,7 @@ const Message = ({
       setLinkUrl(link);
       setShowLinkAlert(true);
     },
-    [openLink]
+    [openLink],
   );
 
   const closeLink = useCallback(() => {
@@ -228,11 +246,11 @@ const Message = ({
       const safeMessageLanguageTag =
         typeof messageLanguageTag === "string" ? messageLanguageTag : "";
       const messageLanguage = FastTranslator.languageFromTag(
-        safeMessageLanguageTag
+        safeMessageLanguageTag,
       );
 
       const userLanguage = FastTranslator.languageFromTag(
-        getLocales()[0]?.languageCode || ""
+        getLocales()[0]?.languageCode || "",
       );
 
       if (!messageLanguage || !userLanguage) {
@@ -265,7 +283,7 @@ const Message = ({
       console.log("Translation error:", error);
       SimpleToast.show(
         "Erro ao traduzir mensagem. Tente novamente mais tarde.",
-        SimpleToast.SHORT
+        SimpleToast.SHORT,
       );
     }
   }, [displayedMessageContent, message.message, t]);
@@ -275,16 +293,16 @@ const Message = ({
       displayedMessageContent !== message.message
         ? t("options.show_original_message")
         : t("options.translate_message"),
-    [displayedMessageContent, message.message, t]
+    [displayedMessageContent, message.message, t],
   );
 
-  const renderVoiceMessage = useCallback(() => {
-    if (!message.voice_message) return <></>;
+  const renderVoiceMessage = useMemo(() => {
+    if (!message.voice_message) return null;
     return <AudioPlayer audio={message.voice_message} />;
   }, [message.voice_message]);
 
-  const renderFiles = useCallback(() => {
-    if (!message.files) return null;
+  const renderFiles = useMemo(() => {
+    if (!message.files || message.files.length === 0) return null;
     return message.files.map((file, idx) => (
       <FilePreview
         key={file.id || idx}
@@ -297,8 +315,8 @@ const Message = ({
     ));
   }, [message.files]);
 
-  const renderInvites = useCallback(() => {
-    if (!hasInvite || !message.links) return <></>;
+  const renderInvites = useMemo(() => {
+    if (!hasInvite || !message.links || invitesData.length === 0) return null;
 
     return (
       <>
@@ -309,8 +327,8 @@ const Message = ({
     );
   }, [hasInvite, invitesData, message.links]);
 
-  const renderLinks = useCallback(() => {
-    if (!message.links) return <></>;
+  const renderLinks = useMemo(() => {
+    if (!message.links || message.links.length === 0) return null;
 
     return (
       <>
@@ -318,9 +336,7 @@ const Message = ({
           if (hasInvite) {
             const { host, pathname } = new URLParser(link.link);
             const { isInvite } = linkUtils.isInviteLink(host, pathname);
-            if (isInvite) {
-              return <></>;
-            }
+            if (isInvite) return null;
           }
 
           return <LinkPreview key={index} link={link} openLink={alertLink} />;
@@ -329,22 +345,24 @@ const Message = ({
     );
   }, [message.links, hasInvite, alertLink]);
 
-  const replyMessage = useCallback(
-    (direction?: "right" | "left") => {
-      if (disableReply) return;
+  const triggerReply = useCallback(() => {
+    swipeableRef.current?.close();
+    onReplyMessage(message);
+  }, [onReplyMessage, message]);
 
-      if (!direction) {
-        onReplyMessage(message);
-        return;
-      }
-
-      if (direction === "left" && isRight) return;
-      if (direction === "right" && !isRight) return;
-
-      onReplyMessage(message);
-    },
-    [disableReply, onReplyMessage, message, isRight]
-  );
+  const renderReplyIcon = useCallback(() => {
+    return (
+      <View
+        style={{
+          width: 50,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Feather name="corner-up-right" size={20} color={colors.secondary} />
+      </View>
+    );
+  }, [colors.secondary]);
 
   const handleCloseMsgOptions = useCallback(() => setMsgOptions(false), []);
   const handleOpenMsgOptions = useCallback(() => setMsgOptions(true), []);
@@ -357,6 +375,12 @@ const Message = ({
   }, [navigation, message.id]);
 
   useEffect(() => {
+    if (!message.message || !message.message.includes("http")) {
+      setHasInvite(false);
+      setInvitesData([]);
+      return;
+    }
+
     const allLinks = linkUtils.getAllLinksFromText(message.message);
     const foundInvites: InvitesData[] = [];
 
@@ -372,6 +396,9 @@ const Message = ({
     if (foundInvites.length > 0) {
       setHasInvite(true);
       setInvitesData(foundInvites);
+    } else {
+      setHasInvite(false);
+      setInvitesData([]);
     }
   }, [message.message]);
 
@@ -380,7 +407,7 @@ const Message = ({
       {
         iconName: "corner-up-right",
         content: t("options.reply"),
-        action: replyMessage,
+        action: triggerReply,
         onlyOwner: false,
         authorizedRoles: ["ALL" as ParticipantRoles],
         showInDM: true,
@@ -436,7 +463,7 @@ const Message = ({
     ],
     [
       t,
-      replyMessage,
+      triggerReply,
       handleCopyMessage,
       translateOptionContent,
       handleTranslateMessage,
@@ -444,7 +471,7 @@ const Message = ({
       deleteMessage,
       colors.red,
       handleReportMessage,
-    ]
+    ],
   );
 
   return (
@@ -461,13 +488,17 @@ const Message = ({
         okButtonAction={openLink}
         visible={showLinkAlert}
       />
-      <Swipeable
-        overshootLeft={!isRight && !disableReply}
-        overshootRight={isRight && !disableReply}
-        overshootFriction={8}
-        onSwipeableWillClose={(direction) => replyMessage(direction)}
+      <ReanimatedSwipeable
+        ref={swipeableRef}
+        friction={2}
+        leftThreshold={80}
+        rightThreshold={80}
+        overshootLeft={false}
+        overshootRight={false}
+        renderLeftActions={!isRight ? renderReplyIcon : undefined}
+        renderRightActions={isRight ? renderReplyIcon : undefined}
+        onSwipeableWillOpen={triggerReply}
         containerStyle={{ transform: [{ rotate: "180deg" }] }}
-        cancelsTouchesInView
         enabled={!disableReply}
       >
         <Container isRight={isRight}>
@@ -486,24 +517,23 @@ const Message = ({
               message={messageForDisplay}
               participant_role={participant.role}
               group={group}
-              options={optionsList}
+              options={optionsList as any}
             />
             <MessageMark
-              key={messageForDisplay.message}
               message={messageForDisplay}
               onPressLink={alertLink}
               user={user as UserData}
               participants={participants}
             />
-            {renderVoiceMessage()}
-            {renderFiles()}
+            {renderVoiceMessage}
+            {renderFiles}
           </MessageContentContainer>
-          {renderInvites()}
-          {renderLinks()}
-          {renderDate()}
-          {renderAuthor()}
+          {renderInvites}
+          {renderLinks}
+          {renderDate}
+          {renderAuthor}
         </Container>
-      </Swipeable>
+      </ReanimatedSwipeable>
     </>
   );
 };
@@ -515,8 +545,8 @@ export default memo(Message, (prev, next) => {
     prev.message.message === next.message.message &&
     prev.disableReply === next.disableReply &&
     prev.lastMessage?.id === next.lastMessage?.id &&
-    prev.participant.role === next.participant.role &&
-    prev.participant.state === next.participant.state &&
+    prev.participant?.role === next.participant?.role &&
+    prev.participant?.state === next.participant?.state &&
     prev.participants.length === next.participants.length
   );
 });
