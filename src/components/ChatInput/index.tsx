@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
-import { TextInput } from "react-native";
-import { AnimatePresence, MotiView } from "moti";
+import { Keyboard, Platform, TextInput } from "react-native";
+import { AnimatePresence } from "moti";
 import { ProgressBar } from "react-native-paper";
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
@@ -11,7 +11,7 @@ import { File } from "./types";
 import SelectedFiles from "@components/Chat/SelectedFiles";
 import CurrentReplyingMessage from "@components/Chat/CurrentReplyingMessage";
 import Mentions from "@components/Chat/Mentions";
-import RecordingAudio from "@components/Chat/RecordingAudio";
+import { AudioRecordingBar } from "@components/AudioRecordingBar";
 
 import {
   AudioButton,
@@ -40,6 +40,7 @@ interface ChatInputProps {
   onSendMessage: (message: string, files: File[], mentions: string[]) => void;
   onRecordAudioStart: (hasMessage: boolean) => void;
   onRecordAudioStop: () => void;
+  onRecordAudioCancel?: () => void;
   onFileSelect: () => void;
   onRemoveFile: (index: number) => void;
   onRemoveReplying: () => void;
@@ -62,11 +63,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onSendMessage,
   onRecordAudioStart,
   onRecordAudioStop,
+  onRecordAudioCancel,
   onFileSelect,
   onRemoveFile,
   onRemoveReplying,
   onTyping,
-  onTypingTimeout,
   files,
   insetsBottom,
   isKeyboardVisible,
@@ -180,19 +181,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
       )}
 
-      <AnimatePresence>
-        {isRecording && (
-          <MotiView
-            from={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 40 }}
-            exit={{ opacity: 0, height: 0 }}
-          >
-            <RecordingAudio audioDuration={audioDuration} />
-          </MotiView>
-        )}
-      </AnimatePresence>
-
-      {files.length > 0 && !sendingFile && (
+      {files.length > 0 && !sendingFile && !isRecording && (
         <SelectedFiles files={files} onFileRemove={onRemoveFile} />
       )}
 
@@ -210,7 +199,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       )}
 
       <AnimatePresence>
-        {replyingMessage && (
+        {replyingMessage && !isRecording && (
           <CurrentReplyingMessage
             message={replyingMessage}
             onRemoveReplying={onRemoveReplying}
@@ -218,50 +207,55 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         )}
       </AnimatePresence>
 
-      <InputContainer>
-        <MessageInput
-          // @ts-ignore
-          ref={messageInputRef}
-          as={TextInput}
-          cursorColor={colors.secondary}
-          placeholderTextColor={colors.dark_heading}
-          onChangeText={handleSetText}
-          onSelectionChange={({ nativeEvent: { selection } }) =>
-            setCursorPosition(selection.start)
-          }
-          maxLength={maxMessageLength}
-          placeholder={
-            isRecording ? "Solte para enviar" : "Digite uma mensagem..."
-          }
+      {/* Exibe o componente de gravação se estiver gravando, caso contrário mostra o input padrão */}
+      {isRecording ? (
+        <AudioRecordingBar
+          audioDuration={audioDuration}
+          onCancel={onRecordAudioCancel || onRecordAudioStop}
+          onSend={onRecordAudioStop}
         />
-        <OptionsContainer>
-          <OptionsButton onPress={onFileSelect}>
-            <Feather name="file" size={24} color={colors.primary} />
-          </OptionsButton>
-          {isTypingMessage || files.length > 0 ? (
-            <SendButton>
-              <Feather
-                name="send"
-                size={26}
-                color={colors.primary}
-                onPress={handleSubmit}
-                style={{ transform: [{ rotate: "45deg" }] }}
-              />
-            </SendButton>
-          ) : (
-            <AudioContainer>
-              <AudioButton
-                onPressIn={() =>
-                  onRecordAudioStart(!!messageInputRef.current?.value)
-                }
-                onPressOut={onRecordAudioStop}
-              >
-                <Feather name="mic" size={26} color={colors.secondary} />
-              </AudioButton>
-            </AudioContainer>
-          )}
-        </OptionsContainer>
-      </InputContainer>
+      ) : (
+        <InputContainer>
+          <MessageInput
+            ref={messageInputRef}
+            as={TextInput}
+            cursorColor={colors.secondary}
+            placeholderTextColor={colors.dark_heading}
+            onChangeText={handleSetText}
+            onSelectionChange={({ nativeEvent: { selection } }) =>
+              setCursorPosition(selection.start)
+            }
+            maxLength={maxMessageLength}
+            placeholder="Digite uma mensagem..."
+          />
+          <OptionsContainer>
+            <OptionsButton onPress={onFileSelect}>
+              <Feather name="file" size={24} color={colors.primary} />
+            </OptionsButton>
+            {isTypingMessage || files.length > 0 ? (
+              <SendButton>
+                <Feather
+                  name="send"
+                  size={26}
+                  color={colors.primary}
+                  onPress={handleSubmit}
+                  style={{ transform: [{ rotate: "45deg" }] }}
+                />
+              </SendButton>
+            ) : (
+              <AudioContainer>
+                <AudioButton
+                  onPressIn={() =>
+                    onRecordAudioStart(!!messageInputRef.current?.value)
+                  }
+                >
+                  <Feather name="mic" size={26} color={colors.secondary} />
+                </AudioButton>
+              </AudioContainer>
+            )}
+          </OptionsContainer>
+        </InputContainer>
+      )}
     </FormContainer>
   );
 };

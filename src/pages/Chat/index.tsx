@@ -81,8 +81,13 @@ const Chat: React.FC = () => {
     setFetchedAll,
     setPage,
   } = useChatMessages(id);
-  const { isRecording, audioDuration, recordAudio, stopRecordAudioAndSubmit } =
-    useChatAudio((dur, uri) => handleSendVoice(dur, uri));
+  const {
+    isRecording,
+    audioDuration,
+    recordAudio,
+    stopRecordAudioAndSubmit,
+    cancelRecordAudio,
+  } = useChatAudio((dur, uri) => handleSendVoice(dur, uri));
 
   // Estados locais da tela
   const [files, setFiles] = useState<File[]>([]);
@@ -495,9 +500,9 @@ const Chat: React.FC = () => {
             sendedFileProgress={sendedFileProgress}
             isRecording={isRecording}
             audioDuration={audioDuration}
-            onSendMessage={handleMessageSubmit}
             onRecordAudioStart={(hasText) => recordAudio(hasText)}
             onRecordAudioStop={stopRecordAudioAndSubmit}
+            onRecordAudioCancel={cancelRecordAudio}
             onFileSelect={handleFileSelector}
             onRemoveFile={(idx) => setFiles(files.filter((_, i) => i !== idx))}
             onRemoveReplying={() => setReplyingMessage(undefined)}

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AudioModule, RecordingPresets, useAudioRecorder } from "expo-audio";
-import SimpleToast from "react-native-simple-toast";
 import crashlytics from "@react-native-firebase/crashlytics";
 
 export const useChatAudio = (
@@ -45,23 +44,36 @@ export const useChatAudio = (
     if (!isRecording) return;
     const duration = audioRecorder.getStatus().durationMillis;
 
-    if (duration <= 1200) {
-      return SimpleToast.show(
-        "Grave uma mensagem maior que 1 segundo",
-        SimpleToast.SHORT,
-      );
-    }
-
     await audioRecorder.stop();
     setAudioDuration(0);
     setIsRecording(false);
     clearInterval(recordingInterval);
     setRecordingInterval(undefined);
 
-    if (audioRecorder.uri) {
+    if (duration > 1200 && audioRecorder.uri) {
       await onSendAudio(duration, audioRecorder.uri);
     }
   };
 
-  return { isRecording, audioDuration, recordAudio, stopRecordAudioAndSubmit };
+  const cancelRecordAudio = async () => {
+    if (!isRecording) return;
+    try {
+      await audioRecorder.stop();
+    } catch (error) {
+      // Ignora erro caso já tenha parado
+    } finally {
+      setAudioDuration(0);
+      setIsRecording(false);
+      if (recordingInterval) clearInterval(recordingInterval);
+      setRecordingInterval(undefined);
+    }
+  };
+
+  return {
+    isRecording,
+    audioDuration,
+    recordAudio,
+    stopRecordAudioAndSubmit,
+    cancelRecordAudio,
+  };
 };
