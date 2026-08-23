@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppState } from "@react-native-community/hooks";
-import { Keyboard, ListRenderItem, Platform, TextInput } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  ListRenderItem,
+  Platform,
+  TextInput,
+} from "react-native";
 
 import perf from "@react-native-firebase/perf";
 import crashlytics from "@react-native-firebase/crashlytics";
@@ -10,13 +16,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import {
-  AudioModule,
-  AudioRecorder,
-  RecordingPresets,
-  useAudioRecorder,
-  useAudioRecorderState,
-} from "expo-audio";
+import { AudioModule, RecordingPresets, useAudioRecorder } from "expo-audio";
 import { useTheme } from "styled-components";
 import {
   GroupData,
@@ -37,7 +37,6 @@ import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
 import api from "@services/api";
 import {
-  AdBannerWrapper,
   AudioButton,
   AudioContainer,
   Container,
@@ -72,17 +71,13 @@ import { FlashList } from "@shopify/flash-list";
 import { OneSignal } from "@configs/notifications";
 import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
-import Banner from "@components/Ads/Banner";
 import { ParticipantRoles } from "@type/enums";
-import _ from "lodash";
 import { getSettingValue } from "@utils/settings";
 import Mentions from "@components/Chat/Mentions";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { KeyboardAvoidingView } from "react-native";
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
 
 const MESSAGES_LIMIT_REQUEST = 30;
 
@@ -117,6 +112,7 @@ const Chat: React.FC = () => {
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
 
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isTypingMessage, setIsTypingMessage] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -158,7 +154,6 @@ const Chat: React.FC = () => {
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
 
   const { socket } = useWebsocket();
-  const headerHeight = getStatusBarHeight();
   const {
     handleJoinRoom,
     handleSetReadMessage,
@@ -176,24 +171,6 @@ const Chat: React.FC = () => {
 
   const appState = useAppState();
   const { t } = useTranslate("Chat");
-
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
-      () => setIsKeyboardVisible(true),
-    );
-    const hideSubscription = Keyboard.addListener(
-      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
-      () => setIsKeyboardVisible(false),
-    );
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   const configureSocketListeners = useCallback(() => {
     onSendedUserMessage(({ msg, localReference }) => {
@@ -331,40 +308,44 @@ const Chat: React.FC = () => {
       );
     }
 
+    const recordedUri = audioRecorder.uri;
+    const currentReplyingMessage = replyingMessage;
+    const localReference = uuid.v4() as string;
+
+    // Injeção da UI Otimista de áudio imediata
+    setOldMessages((old) => [
+      buildOptimisticMessage({
+        id: localReference,
+        localReference,
+        voice_message: {
+          name: `attachment_audio_${localReference}${audioExtension}`,
+          duration,
+          size: 0,
+          url: recordedUri!,
+        },
+        reply_to: currentReplyingMessage,
+      }),
+      ...old,
+    ]);
+
+    setAudioDuration(0);
+    setIsRecording(false);
+    clearInterval(recordingInterval);
+    setRecordingInterval(undefined);
+    setReplyingMessage(undefined);
+
     await audioRecorder.stop();
 
     try {
-      setAudioDuration(0);
-      setIsRecording(false);
-      clearInterval(recordingInterval);
-      setRecordingInterval(undefined);
-
       SimpleToast.show(t("toasts.sending_voice"), SimpleToast.SHORT);
 
       const audioData = new FormData();
-      const localReference = uuid.v4() as string;
-
       audioData.append("duration", duration);
       audioData.append("attachment", {
-        uri: audioRecorder.uri,
+        uri: recordedUri,
         name: `attachment_audio${audioExtension}`,
         type: "audio/mp4",
       });
-
-      setOldMessages((old) => [
-        buildOptimisticMessage({
-          id: localReference,
-          localReference,
-          voice_message: {
-            name: `attachment_audio_${localReference}${audioExtension}`,
-            duration,
-            size: 0,
-            url: audioRecorder.uri!,
-          },
-          reply_to: replyingMessage,
-        }),
-        ...old,
-      ]);
 
       const sendedAudio = await api.post(
         `/messages/SendAttachment/${id}?type=voice_message`,
@@ -393,11 +374,10 @@ const Chat: React.FC = () => {
 
       handleSendVoiceMessage({
         audio: sendedAudio.data,
-        reply_to_id: replyingMessage?.id ?? "",
+        reply_to_id: currentReplyingMessage?.id ?? "",
         message: "",
         localReference,
       });
-      setReplyingMessage(undefined);
     } catch (error: any) {
       crashlytics().recordError(error, "Stop Record and Submit Error");
     }
@@ -580,69 +560,64 @@ const Chat: React.FC = () => {
 
   const handleMessageSubmit = async () => {
     const messageRefValue = messageInputRef.current?.value || "";
-    const message = messageRefValue?.slice(0) || "";
+    const message = messageRefValue.trim();
 
-    if (id !== currentGroupId || !connected) {
-      return;
-    }
-
-    if (messageRefValue) {
-      messageInputRef.current?.clear();
-      if (messageInputRef.current) {
-        messageInputRef.current.value = "";
-      }
-    }
-
+    if (id !== currentGroupId || !connected) return;
     if (files.length === 0 && !message) return;
-    handleTypingTimeout();
 
     const localReference = uuid.v4() as string;
+    const currentFiles = [...files];
+    const currentMentions = [...mentions];
+    const currentReplyingMessage = replyingMessage;
 
-    setOldMessages((old) => [
-      buildOptimisticMessage({
-        id: localReference,
-        localReference,
-        message,
-        files: files.map((file) => ({
-          id: file.file.name,
-          original_name: file.file.name,
-          name: file.file.name,
-          size: file.file.file?.size || 0,
-          type: file.type,
-          url: file.file.uri,
-        })),
-        reply_to: replyingMessage,
-        mentions: mentions.map((m) => m.id),
-      }),
-      ...old,
-    ]);
+    if (messageInputRef.current) {
+      messageInputRef.current.clear();
+      messageInputRef.current.value = "";
+    }
+    setFiles([]);
+    setMentions([]);
+    setReplyingMessage(undefined);
+    setIsTypingMessage(false);
+    handleTypingTimeout();
 
-    if (files.length === 0) {
+    const optimisticMsg = buildOptimisticMessage({
+      id: localReference,
+      localReference,
+      message,
+      files: currentFiles.map((file) => ({
+        id: file.file.name,
+        original_name: file.file.name,
+        name: file.file.name,
+        size: file.file.file?.size || 0,
+        type: file.type,
+        url: file.file.uri,
+      })),
+      reply_to: currentReplyingMessage,
+      mentions: currentMentions.map((m) => m.id),
+    });
+
+    setOldMessages((old) => [optimisticMsg, ...old]);
+
+    if (currentFiles.length === 0) {
       const trace = perf().newTrace("send_message_without_file");
-
-      setIsTypingMessage(false);
-
       await trace.start();
+
       handleSendMessage({
         withFiles: false,
-        reply_to_id: replyingMessage?.id,
+        reply_to_id: currentReplyingMessage?.id,
         message,
         localReference,
-        mentions: mentions.map((m) => m.id),
+        mentions: currentMentions.map((m) => m.id),
       });
 
-      if (replyingMessage) {
-        setReplyingMessage(undefined);
-      }
       await trace.stop();
     } else {
       setSendingFile(true);
       const filesData = new FormData();
       const trace = perf().newTrace("send_message_with_files");
 
-      arrayUtils.iterator(files, (file) => {
+      arrayUtils.iterator(currentFiles, (file) => {
         const type = MimeTypes.lookup(file.file.name);
-
         filesData.append("attachment", {
           name: file.file.name,
           uri: file.file.uri,
@@ -651,51 +626,50 @@ const Chat: React.FC = () => {
       });
 
       filesData.append("message", message);
-      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
-      if (mentions.length > 0)
-        filesData.append("mentions", JSON.stringify(mentions.map((m) => m.id)));
+      if (currentReplyingMessage) {
+        filesData.append("reply_to_id", currentReplyingMessage.id);
+      }
+      if (currentMentions.length > 0) {
+        filesData.append(
+          "mentions",
+          JSON.stringify(currentMentions.map((m) => m.id)),
+        );
+      }
 
       await trace.start();
 
-      await api
-        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
+      try {
+        const res = await api.post(
+          `messages/SendAttachment/${id}?type=files`,
+          filesData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            onUploadProgress: (event) => {
+              const total = event.total || event.loaded || 1;
+              const totalSended = Math.round((event.loaded * 100) / total);
+              setSendedFileProgress(totalSended);
+            },
           },
-          onUploadProgress: (event) => {
-            const total = event.total || event.loaded || 1;
-            const totalSended = Math.round((event.loaded * 100) / total);
-            setSendedFileProgress(totalSended);
-          },
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            handleSendMessage({
-              message_id: res.data.message_id,
-              message,
-              withFiles: true,
-              localReference,
-              mentions: mentions.map((m) => m.id),
-            });
-          }
-        })
-        .catch((error) => {
-          crashlytics()?.recordError(new Error(error), "Send File Error");
-          console.log(JSON.stringify(error));
-        });
+        );
 
-      await trace.stop();
-
-      setFiles([]);
-      setSendingFile(false);
-      setSendedFileProgress(0);
-      setFilesSizeUsed(0);
+        if (res.status === 200) {
+          handleSendMessage({
+            message_id: res.data.message_id,
+            message,
+            withFiles: true,
+            localReference,
+            mentions: currentMentions.map((m) => m.id),
+          });
+        }
+      } catch (error: any) {
+        crashlytics()?.recordError(new Error(error), "Send File Error");
+      } finally {
+        await trace.stop();
+        setSendingFile(false);
+        setSendedFileProgress(0);
+        setFilesSizeUsed(0);
+      }
     }
-
-    if (replyingMessage) {
-      setReplyingMessage(undefined);
-    }
-    setMentions([]);
   };
 
   const handleGoGroupConfig = () => {
