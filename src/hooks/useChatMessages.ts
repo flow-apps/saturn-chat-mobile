@@ -12,11 +12,20 @@ export const useChatMessages = (groupId: string) => {
   const [fetching, setFetching] = useState(false);
   const [fetchedAll, setFetchedAll] = useState(false);
 
-  const sortMessages = useCallback((messages: MessageData[]) => {
-    return [...messages].sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
+  const sortMessages = useCallback((messages: MessageData[]): MessageData[] => {
+    return [...messages].sort((a, b) => {
+      const dateA = a.created_at
+        ? new Date(a.created_at).getTime()
+        : Date.now();
+      const dateB = b.created_at
+        ? new Date(b.created_at).getTime()
+        : Date.now();
+
+      if (isNaN(dateA)) return -1;
+      if (isNaN(dateB)) return 1;
+
+      return dateB - dateA;
+    });
   }, []);
 
   const fetchOldMessages = useCallback(async () => {

@@ -1,28 +1,28 @@
-import React from "react";
-import { MotiView } from "moti";
+import React, { memo } from "react";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 interface AnimatedMessageProps {
   children: React.ReactNode;
   index: number;
+  messageId: string;
 }
 
-export const AnimatedMessage: React.FC<AnimatedMessageProps> = ({
-  children,
-  index,
-}) => {
-  const delay = Math.min(index * 40, 320);
+export const AnimatedMessage: React.FC<AnimatedMessageProps> = memo(
+  ({ children, index }) => {
+    const delay = index < 6 ? index * 30 : 0;
 
-  return (
-    <MotiView
-      from={{ opacity: 0, translateY: 12 }}
-      animate={{ opacity: 1, translateY: 0 }}
-      transition={{
-        type: "timing",
-        duration: 200,
-        delay,
-      }}
-    >
-      {children}
-    </MotiView>
-  );
-};
+    return (
+      <Animated.View
+        entering={FadeInUp.duration(180).delay(delay).springify().damping(18)}
+      >
+        {children}
+      </Animated.View>
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.messageId === nextProps.messageId &&
+      prevProps.index === nextProps.index
+    );
+  },
+);

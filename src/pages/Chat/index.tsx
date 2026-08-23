@@ -401,7 +401,7 @@ const Chat: React.FC = () => {
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<MessageData>) => (
-      <AnimatedMessage index={index}>
+      <AnimatedMessage index={index} messageId={item.id || item.localReference}>
         <Message
           message={item}
           participant={participant}
@@ -505,9 +505,8 @@ const Chat: React.FC = () => {
           <MessageContainer style={{ flex: 1 }}>
             <FlashList
               data={oldMessages}
-              extraData={oldMessages}
-              // @ts-ignore
-              keyExtractor={(item) => item.id || item.localReference}
+              extraData={oldMessages.length}
+              keyExtractor={(item) => item.id || item.localReference || ""}
               drawDistance={MESSAGES_LIMIT_REQUEST * 160}
               estimatedItemSize={200}
               renderItem={renderItem}
