@@ -530,6 +530,7 @@ const Chat: React.FC = () => {
             sendedFileProgress={sendedFileProgress}
             isRecording={isRecording}
             audioDuration={audioDuration}
+            onSendMessage={handleMessageSubmit}
             onRecordAudioStart={(hasText) => recordAudio(hasText)}
             onRecordAudioStop={stopRecordAudioAndSubmit}
             onRecordAudioCancel={cancelRecordAudio}
