@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRoute } from "@react-navigation/core";
 import {
   Container,
@@ -33,16 +33,15 @@ import { useAuth } from "@contexts/auth";
 const { convertToMillis } = new DateUtils();
 const TIME_FOR_HIDE_CONTROLS = convertToMillis(3, "SECONDS");
 
-
 const VideoPreview: React.FC = () => {
   const [play, setPlay] = useState(true);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [duration, setDuration] = useState(0);
   const [hiddenControls, setHiddenControls] = useState(true);
   const [hiddenControlsTimeout, setHiddenControlsTimeout] =
-    useState<number>();
+    useState<NodeJS.Timeout>();
 
-  const fileService = new FileService()
+  const fileService = new FileService();
   const navigation = useNavigation();
   const route = useRoute();
   const routeParams = route.params as {
@@ -52,9 +51,17 @@ const VideoPreview: React.FC = () => {
     poster: string;
   };
 
-  const { getHeadersForAuthFiles } = useAuth()
+  const { getHeadersForAuthFiles } = useAuth();
   const { colors } = useTheme();
-  const videoPlayer = useVideoPlayer({ uri: routeParams.url, headers: getHeadersForAuthFiles(routeParams.url) });
+
+  const videoHeaders = useMemo(
+    () => getHeadersForAuthFiles(routeParams.url),
+    [getHeadersForAuthFiles],
+  );
+  const videoPlayer = useVideoPlayer({
+    uri: routeParams.url,
+    headers: videoHeaders,
+  });
 
   useEffect(() => {
     SystemNavigationBar.stickyImmersive();
@@ -64,7 +71,6 @@ const VideoPreview: React.FC = () => {
   }, []);
 
   const handlePlayPause = async () => {
-
     if (videoPlayer.playing) {
       videoPlayer.pause();
     } else {
@@ -99,15 +105,19 @@ const VideoPreview: React.FC = () => {
   };
 
   const downloadFile = async () => {
-    await fileService.downloadFile(routeParams.url, routeParams.original_name)
+    await fileService.downloadFile(
+      routeParams.url,
+      routeParams.original_name,
+      videoHeaders,
+    );
   };
 
   useEffect(() => {
     videoPlayer.addListener("sourceLoad", (source) => {
       setDuration(videoPlayer.duration);
       setCurrentPosition(videoPlayer.currentTime);
-    })
-  }, [])
+    });
+  }, []);
 
   return (
     <>
@@ -117,15 +127,15 @@ const VideoPreview: React.FC = () => {
             <HeaderContainer
               from={{
                 translateY: -50,
-                opacity: 0
+                opacity: 0,
               }}
               animate={{
                 translateY: 0,
-                opacity: 1
+                opacity: 1,
               }}
               exit={{
                 translateY: -50,
-                opacity: 0
+                opacity: 0,
               }}
               transition={{
                 duration: 350,
