@@ -215,8 +215,6 @@ const GroupConfig: React.FC = () => {
 
   if (loading) return <Loading />;
 
-  console.log(participantSettings);
-
   return (
     <>
       <Header
@@ -393,42 +391,30 @@ const GroupConfig: React.FC = () => {
             </OptionContainer>
           ))}
         </OptionsContainer>
-        {group.type === "GROUP" &&
-          rolesForDeleteGroup.includes(participant.role) && (
-            <>
-              <SectionTitle color={colors.red}>
-                {t("options.danger_zone.title")}
-              </SectionTitle>
+        {group.type === "GROUP" && (
+          <>
+            <SectionTitle color={colors.red}>
+              {t("options.danger_zone.title")}
+            </SectionTitle>
+            {(participant.role === ParticipantRoles.OWNER ||
+              rolesForDeleteGroup.includes(participant.role)) && (
               <OptionContainer onPress={() => setShowDeleteGroupAlert(true)}>
                 <OptionText color={colors.red}>
                   <Feather name="trash" size={20} />{" "}
                   {t("options.danger_zone.delete_group")}
                 </OptionText>
               </OptionContainer>
-              {participant.role !== ParticipantRoles.OWNER && (
-                <OptionContainer onPress={() => setShowExitGroup(true)}>
-                  <OptionText color={colors.red}>
-                    <Feather name="log-out" size={20} />{" "}
-                    {t("options.danger_zone.exit_group")}
-                  </OptionText>
-                </OptionContainer>
-              )}
-            </>
-          )}
-        {group.type === "GROUP" &&
-          participant.role !== ParticipantRoles.OWNER && (
-            <>
-              <SectionTitle color={colors.red}>
-                {t("options.danger_zone.title")}
-              </SectionTitle>
+            )}
+            {participant.role !== ParticipantRoles.OWNER && (
               <OptionContainer onPress={() => setShowExitGroup(true)}>
                 <OptionText color={colors.red}>
                   <Feather name="log-out" size={20} />{" "}
                   {t("options.danger_zone.exit_group")}
                 </OptionText>
               </OptionContainer>
-            </>
-          )}
+            )}
+          </>
+        )}
       </Container>
       {(hasUpdateGroupSettings || hasUpdateParticipantSettings) && (
         <FAB
