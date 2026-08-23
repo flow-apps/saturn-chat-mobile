@@ -1,4 +1,11 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { LinkData } from "@type/interfaces";
 import {
   Container,
@@ -52,12 +59,13 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
   const { dimensions, loading, error } = useImageDimensions({
     uri: imageUri,
   });
+
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("Components.Chat.LinkPreview");
 
   const copyLink = useCallback(async () => {
     await Clipboard.setStringAsync(link.link);
-    SimpleToast.show(t("link_copied"),SimpleToast.SHORT);
+    SimpleToast.show(t("link_copied"), SimpleToast.SHORT);
   }, [link]);
 
   const handlePreview = useCallback(() => {
@@ -78,7 +86,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
         setVideoId(currentVideoId);
         try {
           const response = await fetch(
-            `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${currentVideoId}`
+            `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${currentVideoId}`,
           );
           const data = await response.json();
           if (data.title) {
@@ -95,12 +103,16 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
 
   if (loading) {
     return <></>;
-  }  
+  }
 
   return (
     <>
       {isYoutubeLink && (
-        <YouTubeIFrame ref={ytIFrameRef} title={displayTitle} videoUrl={link.link} />
+        <YouTubeIFrame
+          ref={ytIFrameRef}
+          title={displayTitle}
+          videoUrl={link.link}
+        />
       )}
       <Container>
         {!!link.siteName && (
@@ -115,12 +127,14 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
           >
             {!!link.favicon && (
               <WebsiteFaviconContainer>
-                <WebsiteFavicon width={75} height={75} uri={link.favicon} />
+                <WebsiteFavicon
+                  width={75}
+                  height={75}
+                  source={{ uri: link.favicon }}
+                />
               </WebsiteFaviconContainer>
             )}
-            <WebsiteTitle numberOfLines={2}>
-              {displayTitle}
-            </WebsiteTitle>
+            <WebsiteTitle numberOfLines={2}>{displayTitle}</WebsiteTitle>
           </WebsiteTitleContainer>
         </WebsiteHeaderContainer>
         {!!link.description && (
@@ -134,7 +148,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
           <WebsiteImageContainer onPress={handlePreview}>
             <WebsiteImage
               aspectRatio={dimensions?.aspectRatio}
-              uri={imageUri}
+              source={{ uri: imageUri }}
             />
             {isYoutubeLink && (
               <VideoIndicatorContainer

@@ -4,14 +4,14 @@ import CachedImage from "../../../CachedImage";
 
 export const Container = styled.View`
   background-color: ${(props) => props.theme.colors.shape};
-  padding: 12px;
+  padding: 15px;
   border-radius: 12px;
   width: 85%;
   margin-top: 5px;
 `;
 
 export const WebsiteNameContainer = styled.View`
-  margin-bottom: 5px;
+  margin: 10px 0px;
 `;
 
 export const WebsiteName = styled.Text`
@@ -23,17 +23,19 @@ export const WebsiteName = styled.Text`
 export const WebsiteHeaderContainer = styled.View`
   flex-direction: row;
   align-items: center;
+  margin: 5px 0px;
 `;
 
 export const WebsiteFaviconContainer = styled.View`
-  border-radius: 8px;
-  margin-right: 10px;
+  width: 35px;
+  height: 35px;
+  margin-right: 12px;
 `;
 
-export const WebsiteFavicon = styled(CachedImage)`
-  width: 45px;
-  height: 45px;
-  color: #fff;
+export const WebsiteFavicon = styled.Image`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
 export const WebsiteTitleContainer = styled.TouchableOpacity`
@@ -60,15 +62,16 @@ export const WebsiteDescription = styled.Text`
 `;
 
 export const WebsiteImageContainer = styled.TouchableOpacity`
-  margin-top: 10px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  margin: 10px 0px;
 `;
 
-export const WebsiteImage = styled(CachedImage)<{ aspectRatio?: number }>`
-
-  max-width: 100%;
-  aspect-ratio: ${(props) => props.aspectRatio};
-  border-radius: 8px;
-  margin: 0 auto;
+export const WebsiteImage = styled.Image<{ aspectRatio?: number }>`
+  width: 100%;
+  aspect-ratio: ${({ aspectRatio }) => aspectRatio || 16 / 9};
 `;
 
 export const VideoIndicatorContainer = styled.TouchableOpacity`
