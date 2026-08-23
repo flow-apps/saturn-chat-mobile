@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState } from "react";
 import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 import {
   BannerContainer,
@@ -6,7 +6,7 @@ import {
   RemoveBanner,
   RemoveBannerText,
 } from "./styles";
-import { Platform } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import config from "@config";
 import secrets from "@secrets";
@@ -17,6 +17,7 @@ import analytics from "@react-native-firebase/analytics";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
 import { AnimatePresence } from "moti";
+import { useTheme } from "styled-components";
 
 type BannerProps = {
   isPremium?: boolean;
@@ -24,11 +25,9 @@ type BannerProps = {
   size?: BannerAdSize;
 };
 
-const MAX_RETRIES = 5;
-const RETRY_DELAY = 30000; // 30 segundos
-
 const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const { name } = useRoute();
+  const { colors } = useTheme();
 
   const adUnitTestID = config.ADS.TEST_ADS_IDS.BANNER;
   const adUnitProdID = Platform.select({
@@ -38,13 +37,10 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const adUnitID = __DEV__ ? adUnitTestID : adUnitProdID;
 
   const navigation = useNavigation<StackNavigationProp<any>>();
-
   const { isPremium } = usePremium();
-
   const { t } = useTranslate("Components.Ads");
 
-  const [retryCount, setRetryCount] = useState(0);
-  const [retryKey, setRetryKey] = useState(0);
+  const [isAdLoaded, setIsAdLoaded] = useState(false);
 
   const handleGoPremium = async () => {
     navigation.navigate("PurchasePremium");
@@ -53,44 +49,25 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
     });
   };
 
-  const handleAdFailedToLoad = (error: any) => {
-    console.log("Erro ao carregar AD: ", error);
-    if (retryCount < MAX_RETRIES) {
-      console.log(
-        `Tentando recarregar o anúncio... Tentativa ${retryCount + 1}`,
-      );
-      setTimeout(() => {
-        setRetryCount((prev) => prev + 1);
-        setRetryKey((prev) => prev + 1);
-      }, RETRY_DELAY);
-    } else {
-      console.log(
-        "Número máximo de tentativas de carregamento de anúncio atingido.",
-      );
-    }
+  const handleAdLoaded = () => {
+    setIsAdLoaded(true);
   };
 
-  if (isPremium) return <></>;
+  const handleAdFailedToLoad = (error: any) => {
+    console.log("Erro ao carregar AD: ", error);
+    setIsAdLoaded(false);
+  };
+
+  if (isPremium) return null;
 
   return (
     <AnimatePresence>
       <Container
-        from={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
-        transition={{
-          type: "timing",
-          duration: 1200,
-        }}
+        from={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ type: "timing", duration: 500 }}
         style={{
-          transform: [
-            {
-              rotate: rotate ? "180deg" : "0deg",
-            },
-          ],
+          transform: [{ rotate: rotate ? "180deg" : "0deg" }],
         }}
       >
         <RemoveBanner onPress={handleGoPremium}>
@@ -98,12 +75,25 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
             <Feather name="info" /> {t("remove_ad")}
           </RemoveBannerText>
         </RemoveBanner>
+
         <BannerContainer>
+          {!isAdLoaded && (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                {
+                  backgroundColor: colors.shape,
+                  borderRadius: 4,
+                },
+              ]}
+            />
+          )}
+
           {adUnitID && (
             <BannerAd
-              key={retryKey}
               unitId={adUnitID}
               size={size}
+              onAdLoaded={handleAdLoaded}
               onAdFailedToLoad={handleAdFailedToLoad}
             />
           )}
