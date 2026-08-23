@@ -1,4 +1,9 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useMemo } from "react";
+import { TouchableOpacity, StatusBar } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import { useAuth } from "@contexts/auth";
+import { useTranslate } from "@hooks/useTranslate";
+import { IMessageOptionsProps, IOptions } from "./types";
 import {
   Container,
   MessageAvatar,
@@ -11,11 +16,6 @@ import {
   OptionText,
   UserName,
 } from "./styles";
-import Feather from "@expo/vector-icons/Feather";
-import { useAuth } from "@contexts/auth";
-import { TouchableOpacity, StatusBar } from "react-native";
-import { IMessageOptionsProps, IOptions } from "./types";
-import { useTranslate } from "@hooks/useTranslate";
 
 const MessageOptions = ({
   visible,
@@ -27,104 +27,99 @@ const MessageOptions = ({
 }: IMessageOptionsProps) => {
   const { user } = useAuth();
   const { t } = useTranslate("Components.Chat.ReplyingMessage");
-  const handleExecAction = useCallback((action: () => any) => {
-    close();
 
-    if (action) {
-      action();
-    }
-  }, []);
+  const handleExecAction = useCallback(
+    (action?: () => void) => {
+      close();
+      if (action) {
+        action();
+      }
+    },
+    [close],
+  );
 
-  const canShowOptionChecker = (option: IOptions) => {
-    const roles = option.authorizedRoles;
-    const groupType = group.type;
-    const authorId = message.author.id;
+  const canShowOptionChecker = useCallback(
+    (option: IOptions) => {
+      const roles = option.authorizedRoles;
+      const groupType = group?.type;
+      const authorId = message?.author?.id;
+      const currentUserId = user?.id;
 
-    if (!option.showInDM && groupType === "DIRECT") {
-      return false;
-    }
+      if (!option.showInDM && groupType === "DIRECT") return false;
+      if (
+        option.onlyOwner &&
+        authorId !== currentUserId &&
+        groupType === "DIRECT"
+      )
+        return false;
+      if (roles?.[0] === "ALL") return true;
+      if (
+        option.onlyOwner &&
+        authorId !== currentUserId &&
+        !roles?.includes(participant_role)
+      )
+        return false;
+      if (!option.showForAuthor && authorId === currentUserId) return false;
 
-    if (option.onlyOwner && authorId !== user?.id && groupType === "DIRECT") {
-      return false;
-    }
-
-    if (roles[0] === "ALL") {
       return true;
-    }
+    },
+    [group?.type, message?.author?.id, participant_role, user?.id],
+  );
 
-    if (
-      option.onlyOwner &&
-      authorId !== user?.id &&
-      !roles.includes(participant_role)
-    ) {
-      return false;
-    }
+  const visibleOptions = useMemo(() => {
+    return options.filter((option) => canShowOptionChecker(option));
+  }, [options, canShowOptionChecker]);
 
-    if (option.showForAuthor && message.author.id === user?.id) return true;
-  };
+  if (!visible) return null;
 
   return (
-    <>
-      <Container
-        visible={visible}
-        onRequestClose={close}
-        onDismiss={close}
-        animationType="fade"
-        statusBarTranslucent
-        transparent
+    <Container
+      visible={visible}
+      onRequestClose={close}
+      onDismiss={close}
+      animationType="fade"
+      statusBarTranslucent
+      transparent
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressOut={close}
+        style={{ flex: 1 }}
       >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPressOut={close}
-          style={{ flex: 1 }}
-        >
-          <MessageOptionsContainer>
-            <MessageInfosContainer>
-              <MessageAvatar uri={message.author?.avatar?.url} />
-              <MessageInfos>
-                <UserName>{message.author.name}</UserName>
-                <MessageText textBreakStrategy="highQuality">
-                  {!!message.message && message.message}
+        <MessageOptionsContainer>
+          <MessageInfosContainer>
+            <MessageAvatar uri={message.author?.avatar?.url} />
+            <MessageInfos>
+              <UserName>{message.author?.name}</UserName>
+              {!!message.message && (
+                <MessageText textBreakStrategy="highQuality" numberOfLines={3}>
+                  {message.message}
                 </MessageText>
-              </MessageInfos>
-            </MessageInfosContainer>
-            <MessageOptionsModal>
-              <StatusBar barStyle="light-content" />
-              {options.map((option, index) =>
-                canShowOptionChecker(option) ? (
-                  <Option
-                    key={index}
-                    onPress={() => handleExecAction(option.action)}
-                  >
-                    <OptionText color={option.color}>
-                      {option.iconName && (
-                        <Feather name={option.iconName} size={18} />
-                      )}{" "}
-                      {option.content}
-                    </OptionText>
-                  </Option>
-                ) : (
-                  !option.onlyOwner && (
-                    <Option
-                      key={index}
-                      onPress={() => handleExecAction(option.action)}
-                    >
-                      <OptionText color={option.color}>
-                        {option.iconName && (
-                          <Feather name={option.iconName} size={18} />
-                        )}{" "}
-                        {option.content}
-                      </OptionText>
-                    </Option>
-                  )
-                ),
               )}
-            </MessageOptionsModal>
-          </MessageOptionsContainer>
-        </TouchableOpacity>
-      </Container>
-    </>
+            </MessageInfos>
+          </MessageInfosContainer>
+
+          <MessageOptionsModal>
+            <StatusBar barStyle="light-content" />
+            {visibleOptions.map((option) => (
+              <Option
+                // @ts-ignore
+                key={option.id || option.content}
+                onPress={() => handleExecAction(option.action)}
+              >
+                <OptionText color={option.color}>
+                  {option.iconName && (
+                    <Feather name={option.iconName} size={18} />
+                  )}{" "}
+                  {option.content}
+                </OptionText>
+              </Option>
+            ))}
+          </MessageOptionsModal>
+        </MessageOptionsContainer>
+      </TouchableOpacity>
+    </Container>
   );
 };
 
-export default MessageOptions;
+export default memo(MessageOptions);

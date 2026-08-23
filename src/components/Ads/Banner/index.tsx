@@ -25,7 +25,7 @@ type BannerProps = {
 };
 
 const MAX_RETRIES = 5;
-const RETRY_DELAY = 5000;
+const RETRY_DELAY = 30000; // 30 segundos
 
 const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const { name } = useRoute();

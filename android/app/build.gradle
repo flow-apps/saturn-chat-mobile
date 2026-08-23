@@ -100,8 +100,8 @@ android {
         applicationId 'com.flowapps.saturnchat'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 63
-        versionName "0.1.39"
+        versionCode 64
+        versionName "0.1.40"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
@@ -152,7 +152,6 @@ android {
     productFlavors {
         beta {
             dimension "version"
-            applicationIdSuffix ".beta"
             manifestPlaceholders = [expoChannel: "preview"]
         }
         production {

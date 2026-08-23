@@ -12,8 +12,8 @@
     "build:aab": "cd android && ./gradlew bundleRelease",
     "build:clean": "cd android && ./gradlew clean",
     "build:stop": "cd android && ./gradlew --stop",
-    "build:beta": "./gradlew assembleBetaRelease",
-    "build:prod": "./gradlew assembleProductionRelease",
+    "build:beta": "cd android && ./gradlew bundleBetaRelease",
+    "build:prod": "cd android && ./gradlew bundleProductionRelease",
     "open-emulator:pixel5": "emulator -avd Pixel_5_API_34",
     "open-emulator:pixel4": "emulator -avd Pixel_4_API_30"
   },

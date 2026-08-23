@@ -6,26 +6,46 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-
-import config from "@config";
+import { View } from "react-native";
 import moment from "moment";
-
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTheme } from "styled-components";
+import * as Clipboard from "expo-clipboard";
+import SimpleToast from "react-native-simple-toast";
+import URLParser from "url-parse";
+import FastTranslator from "fast-mlkit-translate-text";
+import { getLocales } from "expo-localization";
+import ReanimatedSwipeable, {
+  SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
+import Feather from "@expo/vector-icons/Feather";
+
+import config from "@config";
 import {
   GroupData,
   MessageData,
   ParticipantsData,
   UserData,
 } from "@type/interfaces";
-
-import * as Clipboard from "expo-clipboard";
+import { ParticipantRoles, ParticipantStates, ReportToType } from "@type/enums";
+import { rolesForDeleteMessage } from "@utils/authorizedRoles";
+import { LinkUtils } from "@utils/link";
+import { useAuth } from "@contexts/auth";
+import { useChat } from "@contexts/chat";
+import { useTranslate } from "@hooks/useTranslate";
+import { usePremium } from "@contexts/premium";
 
 import Alert from "@components/Alert";
 import AudioPlayer from "@components/Chat/AudioPlayer";
 import FilePreview from "@components/Chat/FilePreview";
 import MessageOptions from "@components/Chat/MessageOptions";
+import PremiumName from "@components/PremiumName";
+import MessageMark from "@components/Markdown/MessageMark";
+import ReplyingMessage from "@components/Chat/ReplyingMessage";
+import InviteInMessage from "@components/Chat/RichContent/InviteInMessage";
+import LinkPreview from "@components/Chat/RichContent/LinkPreview";
+
 import {
   Container,
   MessageAuthorContainer,
@@ -34,32 +54,6 @@ import {
   MessageDate,
   MessageDateContainer,
 } from "./styles";
-import PremiumName from "@components/PremiumName";
-import { ParticipantRoles, ParticipantStates, ReportToType } from "@type/enums";
-import { rolesForDeleteMessage } from "@utils/authorizedRoles";
-import MessageMark from "@components/Markdown/MessageMark";
-import SimpleToast from "react-native-simple-toast";
-
-import { LinkUtils } from "@utils/link";
-import { useAuth } from "@contexts/auth";
-
-import isUndefined from "lodash/isUndefined";
-
-import ReplyingMessage from "@components/Chat/ReplyingMessage";
-
-import URLParser from "url-parse";
-import InviteInMessage from "@components/Chat/RichContent/InviteInMessage";
-import LinkPreview from "@components/Chat/RichContent/LinkPreview";
-import { useChat } from "@contexts/chat";
-import ReanimatedSwipeable, {
-  SwipeableMethods,
-} from "react-native-gesture-handler/ReanimatedSwipeable";
-import { useTranslate } from "@hooks/useTranslate";
-import { usePremium } from "@contexts/premium";
-import FastTranslator from "fast-mlkit-translate-text";
-import { getLocales } from "expo-localization";
-import Feather from "@expo/vector-icons/Feather";
-import { View } from "react-native";
 
 interface MessageProps {
   participant: ParticipantsData;
@@ -78,6 +72,42 @@ interface InvitesData {
 
 const linkUtils = new LinkUtils();
 
+const MessageAuthorHeader = memo(
+  ({
+    author,
+    participantState,
+    isPremium,
+    headingColor,
+    isAuthorUser,
+    onPress,
+  }: {
+    author: MessageData["author"];
+    participantState?: ParticipantStates;
+    isPremium: boolean;
+    headingColor: string;
+    isAuthorUser: boolean;
+    onPress: () => void;
+  }) => (
+    <MessageAuthorContainer
+      onPress={onPress}
+      disabled={participantState !== ParticipantStates.JOINED}
+    >
+      <MessageAvatar
+        uri={author?.avatar?.url}
+        placeholder={require("@assets/avatar-placeholder.jpg")}
+        width={22}
+        height={22}
+      />
+      <PremiumName
+        name={author?.name || ""}
+        nameSize={12}
+        color={headingColor}
+        hasPremium={isAuthorUser ? isPremium : author?.isPremium}
+      />
+    </MessageAuthorContainer>
+  ),
+);
+
 const Message = ({
   message,
   lastMessage,
@@ -93,7 +123,6 @@ const Message = ({
   const [translatedContent, setTranslatedContent] = useState<string | null>(
     null,
   );
-  const [hasInvite, setHasInvite] = useState(false);
   const [invitesData, setInvitesData] = useState<InvitesData[]>([]);
 
   const swipeableRef = useRef<SwipeableMethods>(null);
@@ -106,99 +135,40 @@ const Message = ({
   const { handleDeleteMessage } = useChat();
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  // Reseta estados locais sensíveis quando o ID ou localReference da mensagem muda
   useEffect(() => {
     setTranslatedContent(null);
   }, [message.id, message.localReference]);
 
-  const displayedMessageText = translatedContent ?? message.message;
+  useEffect(() => {
+    const text = message.message;
+    if (!text || !text.includes("http")) {
+      if (invitesData.length > 0) setInvitesData([]);
+      return;
+    }
 
-  const messageForDisplay = useMemo(
-    () => ({
-      ...message,
-      message: displayedMessageText,
-    }),
-    [message, displayedMessageText],
-  );
+    const allLinks = linkUtils.getAllLinksFromText(text);
+    const foundInvites: InvitesData[] = [];
 
-  const isRight = useMemo(() => {
-    return message.author?.id === user?.id;
-  }, [message.author?.id, user?.id]);
+    for (let i = 0; i < allLinks.length; i++) {
+      const { host, pathname } = new URLParser(allLinks[i]);
+      const { isInvite, inviteID } = linkUtils.isInviteLink(host, pathname);
+      if (isInvite && inviteID) {
+        foundInvites.push({ id: inviteID });
+      }
+    }
 
-  const sended = useMemo(() => {
-    return isUndefined(message?.sended) ? true : message.sended;
-  }, [message.sended]);
+    setInvitesData(foundInvites);
+  }, [message.message]);
+
+  const isRight = message.author?.id === user?.id;
+  const isSended = message?.sended ?? true;
+  const hasInvite = invitesData.length > 0;
+
+  const currentText = translatedContent ?? message.message;
 
   const handleGoParticipant = useCallback(() => {
     navigation.navigate("Participant", { participant: message.participant });
   }, [navigation, message.participant]);
-
-  const formatHour = useCallback((date: string) => {
-    return moment(date).format("DD/MM/yy, HH:mm");
-  }, []);
-
-  const renderAuthor = useMemo(() => {
-    if (!lastMessage || lastMessage.author?.id !== message.author?.id) {
-      const isAuthorUser = message.author?.id === user?.id;
-      return (
-        <MessageAuthorContainer
-          onPress={handleGoParticipant}
-          disabled={message.participant?.state !== ParticipantStates.JOINED}
-        >
-          <MessageAvatar
-            uri={message.author?.avatar?.url}
-            placeholder={require("@assets/avatar-placeholder.jpg")}
-            width={22}
-            height={22}
-          />
-          <PremiumName
-            name={message.author?.name || ""}
-            nameSize={12}
-            color={colors.light_heading}
-            hasPremium={isAuthorUser ? isPremium : message.author?.isPremium}
-          />
-        </MessageAuthorContainer>
-      );
-    }
-    return null;
-  }, [
-    lastMessage?.author?.id,
-    message.author,
-    message.participant?.state,
-    user?.id,
-    isPremium,
-    colors.light_heading,
-    handleGoParticipant,
-  ]);
-
-  const renderDate = useMemo(() => {
-    if (!lastMessage || lastMessage.author?.id !== message.author?.id) {
-      return (
-        <MessageDateContainer>
-          <MessageDate>{formatHour(message.created_at)}</MessageDate>
-        </MessageDateContainer>
-      );
-    } else {
-      const isSameMinute =
-        moment(message.created_at).minutes() ===
-        moment(lastMessage.created_at).minutes();
-
-      if (!isSameMinute) {
-        return (
-          <MessageDateContainer>
-            <MessageDate>{formatHour(message.created_at)}</MessageDate>
-          </MessageDateContainer>
-        );
-      }
-      return null;
-    }
-  }, [
-    lastMessage?.author?.id,
-    lastMessage?.created_at,
-    message.author?.id,
-    message.created_at,
-    formatHour,
-  ]);
 
   const openLink = useCallback(
     async (passedLink = "") => {
@@ -212,11 +182,9 @@ const Message = ({
   const alertLink = useCallback(
     async (link: string) => {
       const { hostname } = new URLParser(link);
-
       if (config.SATURN_CHAT_DOMAINS.includes(hostname)) {
         return await openLink(link);
       }
-
       setLinkUrl(link);
       setShowLinkAlert(true);
     },
@@ -233,14 +201,14 @@ const Message = ({
   }, [handleDeleteMessage, message.id]);
 
   const handleCopyMessage = useCallback(async () => {
-    await Clipboard.setStringAsync(message.message);
+    await Clipboard.setStringAsync(currentText);
     SimpleToast.show(t("toasts.copied_message"), SimpleToast.SHORT);
-  }, [message.message, t]);
+  }, [currentText, t]);
 
   const handleTranslateMessage = useCallback(async () => {
     if (translatedContent !== null) {
       setTranslatedContent(null);
-      SimpleToast.show(t("toasts.original_restored"), SimpleToast.SHORT);
+      SimpleToast.show(t("options.original_restored"), SimpleToast.SHORT);
       return;
     }
 
@@ -257,12 +225,12 @@ const Message = ({
       );
 
       if (!messageLanguage || !userLanguage) {
-        SimpleToast.show(t("toasts.not_identified_lang"), SimpleToast.SHORT);
+        SimpleToast.show(t("options.not_identified_lang"), SimpleToast.SHORT);
         return;
       }
 
       if (messageLanguage === userLanguage) {
-        SimpleToast.show(t("toasts.already_in_lang"), SimpleToast.SHORT);
+        SimpleToast.show(t("options.already_in_lang"), SimpleToast.SHORT);
         return;
       }
 
@@ -278,12 +246,15 @@ const Message = ({
         target: userLanguage,
         downloadIfNeeded: true,
       });
+
       const translated = await FastTranslator.translate(message.message);
 
-      setTranslatedContent(translated);
-      SimpleToast.show(t("toasts.translated_success"), SimpleToast.SHORT);
+      if (translated) {
+        setTranslatedContent(translated);
+        SimpleToast.show(t("options.translated_success"), SimpleToast.SHORT);
+      }
     } catch (error) {
-      console.log("Translation error:", error);
+      console.log("Erro ao traduzir mensagem: ", error);
       SimpleToast.show(
         "Erro ao traduzir mensagem. Tente novamente mais tarde.",
         SimpleToast.SHORT,
@@ -291,81 +262,21 @@ const Message = ({
     }
   }, [translatedContent, message.message, t]);
 
-  const translateOptionContent = useMemo(
-    () =>
-      translatedContent !== null
-        ? t("options.show_original_message")
-        : t("options.translate_message"),
-    [translatedContent, t],
-  );
-
-  const renderVoiceMessage = useMemo(() => {
-    if (!message.voice_message) return null;
-    return <AudioPlayer audio={message.voice_message} />;
-  }, [message.voice_message]);
-
-  const renderFiles = useMemo(() => {
-    if (!message.files || message.files.length === 0) return null;
-    return message.files.map((file, idx) => (
-      <FilePreview
-        key={file.id || idx}
-        name={file.name}
-        original_name={file.original_name}
-        url={file.url}
-        size={file.size}
-        type={file.type}
-      />
-    ));
-  }, [message.files]);
-
-  const renderInvites = useMemo(() => {
-    if (!hasInvite || !message.links || invitesData.length === 0) return null;
-
-    return (
-      <>
-        {invitesData.map((invite, index) => (
-          <InviteInMessage key={`${invite.id}-${index}`} inviteID={invite.id} />
-        ))}
-      </>
-    );
-  }, [hasInvite, invitesData, message.links]);
-
-  const renderLinks = useMemo(() => {
-    if (!message.links || message.links.length === 0) return null;
-
-    return (
-      <>
-        {message.links.map((link, index) => {
-          if (hasInvite) {
-            const { host, pathname } = new URLParser(link.link);
-            const { isInvite } = linkUtils.isInviteLink(host, pathname);
-            if (isInvite) return null;
-          }
-
-          return <LinkPreview key={index} link={link} openLink={alertLink} />;
-        })}
-      </>
-    );
-  }, [message.links, hasInvite, alertLink]);
-
   const triggerReply = useCallback(() => {
     swipeableRef.current?.close();
     onReplyMessage(message);
   }, [onReplyMessage, message]);
 
-  const renderReplyIcon = useCallback(() => {
-    return (
+  const renderReplyIcon = useCallback(
+    () => (
       <View
-        style={{
-          width: 50,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        style={{ width: 50, justifyContent: "center", alignItems: "center" }}
       >
         <Feather name="corner-up-right" size={20} color={colors.secondary} />
       </View>
-    );
-  }, [colors.secondary]);
+    ),
+    [colors.secondary],
+  );
 
   const handleCloseMsgOptions = useCallback(() => setMsgOptions(false), []);
   const handleOpenMsgOptions = useCallback(() => setMsgOptions(true), []);
@@ -376,34 +287,6 @@ const Message = ({
       message_id: message.id,
     });
   }, [navigation, message.id]);
-
-  useEffect(() => {
-    if (!message.message || !message.message.includes("http")) {
-      setHasInvite(false);
-      setInvitesData([]);
-      return;
-    }
-
-    const allLinks = linkUtils.getAllLinksFromText(message.message);
-    const foundInvites: InvitesData[] = [];
-
-    allLinks.forEach((link) => {
-      const { host, pathname } = new URLParser(link);
-      const { isInvite, inviteID } = linkUtils.isInviteLink(host, pathname);
-
-      if (isInvite && inviteID) {
-        foundInvites.push({ id: inviteID });
-      }
-    });
-
-    if (foundInvites.length > 0) {
-      setHasInvite(true);
-      setInvitesData(foundInvites);
-    } else {
-      setHasInvite(false);
-      setInvitesData([]);
-    }
-  }, [message.message]);
 
   const optionsList = useMemo(
     () => [
@@ -427,7 +310,10 @@ const Message = ({
       },
       {
         iconName: "globe",
-        content: translateOptionContent,
+        content:
+          translatedContent !== null
+            ? t("options.show_original_message")
+            : t("options.translate_message"),
         action: handleTranslateMessage,
         onlyOwner: false,
         authorizedRoles: ["ALL" as ParticipantRoles],
@@ -459,7 +345,6 @@ const Message = ({
         action: handleReportMessage,
         color: colors.red,
         onlyOwner: false,
-        authorizedRoles: ["ALL"],
         showInDM: true,
         showForAuthor: false,
       },
@@ -468,7 +353,7 @@ const Message = ({
       t,
       triggerReply,
       handleCopyMessage,
-      translateOptionContent,
+      translatedContent,
       handleTranslateMessage,
       handleGoParticipant,
       deleteMessage,
@@ -476,6 +361,8 @@ const Message = ({
       handleReportMessage,
     ],
   );
+
+  const isSameAuthorAsLast = lastMessage?.author?.id === message.author?.id;
 
   return (
     <>
@@ -508,33 +395,95 @@ const Message = ({
           {message.reply_to && (
             <ReplyingMessage replying_message={message.reply_to} />
           )}
+
           <MessageContentContainer
             isRight={isRight}
-            sended={sended}
+            sended={isSended}
             onLongPress={handleOpenMsgOptions}
             delayLongPress={200}
           >
             <MessageOptions
               close={handleCloseMsgOptions}
               visible={msgOptions}
-              message={messageForDisplay}
+              message={{
+                ...message,
+                message: currentText,
+              }}
               participant_role={participant.role}
               group={group}
               options={optionsList as any}
             />
+            {/* Forçamos a remontagem do MessageMark ao alterar o texto usando a chave 'key' */}
             <MessageMark
-              message={messageForDisplay}
+              key={`${message.id}-${translatedContent ? "translated" : "original"}`}
+              message={{
+                ...message,
+                message: currentText,
+              }}
               onPressLink={alertLink}
               user={user as UserData}
               participants={participants}
             />
-            {renderVoiceMessage}
-            {renderFiles}
+            {message.voice_message && (
+              <AudioPlayer audio={message.voice_message} />
+            )}
+            {message.files &&
+              message.files.map((file, idx) => (
+                <FilePreview
+                  key={file.id || idx}
+                  name={file.name}
+                  original_name={file.original_name}
+                  url={file.url}
+                  size={file.size}
+                  type={file.type}
+                />
+              ))}
           </MessageContentContainer>
-          {renderInvites}
-          {renderLinks}
-          {renderDate}
-          {renderAuthor}
+
+          {hasInvite &&
+            invitesData.map((invite, index) => (
+              <InviteInMessage
+                key={`${invite.id}-${index}`}
+                inviteID={invite.id}
+              />
+            ))}
+
+          {message.links &&
+            message.links.map((link, index) => {
+              if (hasInvite) {
+                const { host, pathname } = new URLParser(link.link);
+                const { isInvite } = linkUtils.isInviteLink(host, pathname);
+                if (isInvite) return null;
+              }
+              return (
+                <LinkPreview
+                  key={link.id || index}
+                  link={link}
+                  openLink={alertLink}
+                />
+              );
+            })}
+
+          {(!isSameAuthorAsLast ||
+            moment(message.created_at).minutes() !==
+              moment(lastMessage?.created_at).minutes()) && (
+            <MessageDateContainer>
+              <MessageDate>
+                {moment(message.created_at).format("DD/MM/yy, HH:mm")}
+              </MessageDate>
+            </MessageDateContainer>
+          )}
+
+          {!isSameAuthorAsLast && (
+            <MessageAuthorHeader
+              author={message.author}
+              participantState={message.participant?.state}
+              isPremium={isPremium}
+              headingColor={colors.light_heading}
+              isAuthorUser={isRight}
+              onPress={handleGoParticipant}
+            />
+          )}
         </Container>
       </ReanimatedSwipeable>
     </>
@@ -546,12 +495,11 @@ export default memo(Message, (prev, next) => {
     prev.message.id === next.message.id &&
     prev.message.localReference === next.message.localReference &&
     prev.message.sended === next.message.sended &&
-    prev.message.message === next.message.message &&
     prev.message.author?.id === next.message.author?.id &&
     prev.disableReply === next.disableReply &&
     prev.lastMessage?.id === next.lastMessage?.id &&
     prev.participant?.role === next.participant?.role &&
     prev.participant?.state === next.participant?.state &&
-    prev.participants.length === next.participants.length
+    prev.participants === next.participants
   );
 });

@@ -38,10 +38,6 @@ export const en = {
       Message: {
         toasts: {
           copied_message: "Copied message",
-          original_restored: "Original message restored",
-          already_in_lang: "The message is already translated",
-          translated_success: "Message translated!",
-          not_identified_lang: "Translate error",
         },
         alerts: {
           open_link: {
@@ -60,6 +56,10 @@ export const en = {
           part_opt: "Participant Options",
           delete: "Delete",
           report: "Report message",
+          original_restored: "Original message restored",
+          already_in_lang: "The message is already translated",
+          translated_success: "Message translated!",
+          not_identified_lang: "Translate error",
         },
       },
       RecordingAudio: {
@@ -679,6 +679,6 @@ export const en = {
       OTHER: "Other",
     },
     done: "Report",
-    sent: "Report submitted"
+    sent: "Report submitted",
   },
 };
