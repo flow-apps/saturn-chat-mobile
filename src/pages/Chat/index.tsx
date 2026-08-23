@@ -1,105 +1,58 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Keyboard, Platform, KeyboardAvoidingView } from "react-native";
 import { useAppState } from "@react-native-community/hooks";
-import { Keyboard, ListRenderItem, Platform, TextInput } from "react-native";
-
-import perf from "@react-native-firebase/perf";
-import crashlytics from "@react-native-firebase/crashlytics";
-
-import { ProgressBar } from "react-native-paper";
-import Feather from "@expo/vector-icons/Feather";
 import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import {
-  AudioModule,
-  AudioRecorder,
-  RecordingPresets,
-  useAudioRecorder,
-} from "expo-audio";
-import { useTheme } from "styled-components";
+  useSafeAreaInsets,
+  SafeAreaView,
+} from "react-native-safe-area-context";
+import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import { FlashList } from "@shopify/flash-list";
+import Feather from "@expo/vector-icons/Feather";
+import uuid from "react-native-uuid";
+import * as MimeTypes from "react-native-mime-types";
+import FormData from "form-data";
+import crashlytics from "@react-native-firebase/crashlytics";
+import analytics from "@react-native-firebase/analytics";
+import _ from "lodash";
+
 import {
   GroupData,
   MessageData,
   ParticipantsData,
   UserData,
 } from "@type/interfaces";
+import { ParticipantRoles } from "@type/enums";
 import { HeaderButton } from "@components/Header/styles";
-import { useAuth } from "@contexts/auth";
-import uuid from "react-native-uuid";
-
-import * as MimeTypes from "react-native-mime-types";
-
-import FormData from "form-data";
 import Alert from "@components/Alert";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
-import api from "@services/api";
-import {
-  AudioButton,
-  AudioContainer,
-  Container,
-  FileSendedProgressContainer,
-  FileSendedText,
-  FormContainer,
-  InputContainer,
-  MessageContainer,
-  MessageInput,
-  NoSendMessageContainer,
-  NoSendMessageText,
-  OptionsButton,
-  OptionsContainer,
-  SendButton,
-} from "./styles";
 import Typing from "@components/Chat/Typing";
-import RecordingAudio from "@components/Chat/RecordingAudio";
 import LoadingIndicator from "@components/LoadingIndicator";
-import SelectedFiles from "@components/Chat/SelectedFiles";
-import { FileService, FileServiceErrors } from "@services/file";
 
-import analytics from "@react-native-firebase/analytics";
+import api from "@services/api";
+import { FileService, FileServiceErrors } from "@services/file";
+import { useAuth } from "@contexts/auth";
 import { useRemoteConfigs } from "@contexts/remoteConfigs";
-import { AnimatePresence, MotiView } from "moti";
-import SimpleToast from "react-native-simple-toast";
-import CurrentReplyingMessage from "@components/Chat/CurrentReplyingMessage";
-import { ArrayUtils } from "@utils/array";
 import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
-
-import { FlashList } from "@shopify/flash-list";
-import { OneSignal } from "@configs/notifications";
-import { TextInputRef, File, ordernedRolesArray } from "./types";
 import { useTranslate } from "@hooks/useTranslate";
-import { ParticipantRoles } from "@type/enums";
-import _ from "lodash";
+import { ArrayUtils } from "@utils/array";
 import { getSettingValue } from "@utils/settings";
-import Mentions from "@components/Chat/Mentions";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import { KeyboardAvoidingView } from "react-native";
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
+import { OneSignal } from "@configs/notifications";
 
-const MESSAGES_LIMIT_REQUEST = 30;
+import { File, ordernedRolesArray } from "./types";
+import { useChatMessages } from "@hooks/useChatMessages";
+import { useChatAudio } from "@hooks/useChatAudio";
+import { ChatInput } from "@components/ChatInput";
+import { Container, MessageContainer } from "./styles";
 
-type OptimisticMessageInput = {
-  id: string;
-  localReference: string;
-  message?: string;
-  files?: MessageData["files"];
-  voice_message?: MessageData["voice_message"];
-  reply_to?: MessageData;
-  mentions?: string[];
-};
+const MESSAGES_LIMIT_REQUEST = 50;
 
 const Chat: React.FC = () => {
-  const audioRecorder = useAudioRecorder({
-    ...RecordingPresets.HIGH_QUALITY,
-    isMeteringEnabled: true,
-  });
-
-  const messageInputRef = useRef<TextInputRef>(null);
   const navigation = useNavigation<StackNavigationProp<any>>();
   const route = useRoute();
   const { id, name, friendId } = route.params as {
@@ -107,55 +60,49 @@ const Chat: React.FC = () => {
     name?: string;
     friendId: string;
   };
+
   const arrayUtils = new ArrayUtils();
   const insets = useSafeAreaInsets();
-
-  const { colors } = useTheme();
+  const headerHeight = getStatusBarHeight();
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
+  const { socket } = useWebsocket();
+  const appState = useAppState();
+  const { t } = useTranslate("Chat");
 
-  const [isTypingMessage, setIsTypingMessage] = useState(false);
+  // Custom Hooks
+  const {
+    oldMessages,
+    setOldMessages,
+    fetching,
+    fetchedAll,
+    fetchOldMessages,
+    sortMessages,
+    setFetchedAll,
+    setPage,
+  } = useChatMessages(id);
+  const { isRecording, audioDuration, recordAudio, stopRecordAudioAndSubmit } =
+    useChatAudio((dur, uri) => handleSendVoice(dur, uri));
+
+  // Estados locais da tela
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [sendingFile, setSendingFile] = useState(false);
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
-  const [oldMessages, setOldMessages] = useState<MessageData[]>([]);
   const [typingUsers, setTypingUsers] = useState<UserData[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<number | NodeJS.Timeout>();
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout>();
-
   const [replyingMessage, setReplyingMessage] = useState<MessageData>();
-
-  const [audioPermission, setAudioPermission] = useState(false);
-  const [audioDuration, setAudioDuration] = useState(0);
-
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [participant, setParticipant] = useState<ParticipantsData>(
     {} as ParticipantsData,
   );
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
-
-  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [fetching, setFetching] = useState(false);
-  const [fetchedAll, setFetchedAll] = useState(false);
-
   const [canSendMessage, setCanSendMessage] = useState(true);
-
-  const [mentionQuery, setMentionQuery] = useState("");
-  const [isMentioning, setIsMentioning] = useState(false);
-  const [mentions, setMentions] = useState<UserData[]>([]);
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
-
-  const { socket } = useWebsocket();
-  const headerHeight = getStatusBarHeight();
   const {
     handleJoinRoom,
     handleSetReadMessage,
@@ -171,345 +118,163 @@ const Chat: React.FC = () => {
     currentGroupId,
   } = useChat();
 
-  const appState = useAppState();
-  const { t } = useTranslate("Chat");
-
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
-  // Ordena mensagens da mais recente para a mais antiga (ordem decrescente)
-  const sortMessages = useCallback((messages: MessageData[]): MessageData[] => {
-    return [...messages].sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return dateB - dateA;
-    });
-  }, []);
-
   useEffect(() => {
-    const showSubscription = Keyboard.addListener(
+    const showSub = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
       () => setIsKeyboardVisible(true),
     );
-    const hideSubscription = Keyboard.addListener(
+    const hideSub = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => setIsKeyboardVisible(false),
     );
-
     return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
+      showSub.remove();
+      hideSub.remove();
     };
   }, []);
 
-  const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) => {
-      setOldMessages(
-        (old) =>
-          arrayUtils.iterator(old, (m) =>
-            m.localReference === localReference ? { ...msg, sended: true } : m,
-          ) || old,
-      );
-    });
-
-    onNewUserMessage((msg) => {
-      if (arrayUtils.has(oldMessages, (oldMsg) => oldMsg.id === msg.id)) return;
-
-      setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));
-      handleSetReadMessage(msg.id);
-    });
-
-    onNewUserTyping((newUser) => {
-      if (
-        newUser.id === user?.id ||
-        arrayUtils.has(typingUsers, (tp) => tp.id === newUser.id)
-      )
-        return;
-
-      setTypingUsers((old) => [...old, newUser]);
-    });
-
-    onDeletedUserTyping((removedUserID) => {
-      const filteredUsers = arrayUtils.removeOne(
-        typingUsers,
-        (user) => user.id === removedUserID,
-      );
-      setTypingUsers(filteredUsers || []);
-    });
-
-    onDeleteUserMessage(async (result) => {
-      if (replyingMessage?.id === result.id) {
-        setReplyingMessage(undefined);
-      }
-
-      setOldMessages((old) => old.filter((msg) => msg.id !== result.id));
-    });
-  }, [socket, oldMessages, typingUsers, replyingMessage, sortMessages]);
-
   const buildOptimisticMessage = useCallback(
-    ({
-      id,
-      localReference,
-      message = "",
-      files = [],
-      voice_message,
-      reply_to,
-      mentions,
-    }: OptimisticMessageInput): MessageData => ({
-      id,
+    (data: Partial<MessageData> & { localReference: string }): MessageData => ({
+      id: data.id || data.localReference,
       author: user as UserData,
       group,
       participant,
-      message,
-      files,
-      voice_message,
+      message: data.message || "",
+      files: data.files || [],
+      voice_message: data.voice_message,
       sended: false,
-      localReference,
-      reply_to,
-      mentions,
+      localReference: data.localReference,
+      reply_to: data.reply_to,
+      mentions: data.mentions,
       created_at: new Date().toISOString(),
     }),
     [group, participant, user],
   );
 
-  const handleTypingTimeout = () => {
-    setIsTyping(false);
-    handleSetTyping({ action: "REMOVE" });
-  };
+  const configureSocketListeners = useCallback(() => {
+    onSendedUserMessage(({ msg, localReference }) =>
+      setOldMessages(
+        (old) =>
+          arrayUtils.iterator(old, (m) =>
+            m.localReference === localReference ? { ...msg, sended: true } : m,
+          ) || old,
+      ),
+    );
+    onNewUserMessage((msg) => {
+      if (arrayUtils.has(oldMessages, (m) => m.id === msg.id)) return;
+      setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));
+      handleSetReadMessage(msg.id);
+    });
+    onNewUserTyping((newUser) => {
+      if (
+        newUser.id !== user?.id &&
+        !arrayUtils.has(typingUsers, (u) => u.id === newUser.id)
+      )
+        setTypingUsers((old) => [...old, newUser]);
+    });
+    onDeletedUserTyping((removedId) =>
+      setTypingUsers(
+        (old) => arrayUtils.removeOne(old, (u) => u.id === removedId) || [],
+      ),
+    );
+    onDeleteUserMessage((res) => {
+      if (replyingMessage?.id === res.id) setReplyingMessage(undefined);
+      setOldMessages((old) => old.filter((m) => m.id !== res.id));
+    });
+  }, [socket, oldMessages, typingUsers, replyingMessage, sortMessages]);
 
-  const handleTyping = () => {
-    if (!isTyping) {
-      setIsTyping(true);
-
-      handleSetTyping({ action: "ADD" });
-
-      const timeout = setTimeout(handleTypingTimeout, 3000);
-
-      setTypingTimeout(timeout);
-      return;
-    }
-    clearTimeout(typingTimeout);
-    const timeout = setTimeout(handleTypingTimeout, 3000);
-    setTypingTimeout(timeout);
-  };
-
-  const recordAudio = async () => {
-    const hasMessage = !!(messageInputRef.current?.value || "");
-
-    if (hasMessage || isRecording) return;
-
+  const handleSendVoice = async (duration: number, uri: string) => {
     try {
-      const permission = await AudioModule.getRecordingPermissionsAsync();
-
-      if (!permission.granted) {
-        await AudioModule.requestRecordingPermissionsAsync();
-        return;
-      }
-
-      await audioRecorder.prepareToRecordAsync({
-        ...RecordingPresets.HIGH_QUALITY,
-        isMeteringEnabled: true,
-      });
-      audioRecorder.record();
-      const recordTimer = setInterval(() => {
-        const newStatus = audioRecorder.getStatus();
-        setAudioDuration(newStatus.durationMillis);
-      }, 500);
-
-      setRecordingInterval(recordTimer);
-      setIsRecording(true);
-    } catch (error: any) {
-      crashlytics().recordError(error, "Record Audio Error");
-    }
-  };
-
-  const stopRecordAudioAndSubmit = async () => {
-    const audioExtension = ".m4a";
-
-    if (!isRecording) return;
-
-    const status = audioRecorder.getStatus();
-    const duration = status.durationMillis;
-
-    if (duration <= 1200) {
-      return SimpleToast.show(
-        "Grave uma mensagem maior que 1 segundo",
-        SimpleToast.SHORT,
-      );
-    }
-
-    await audioRecorder.stop();
-
-    try {
-      setAudioDuration(0);
-      setIsRecording(false);
-      clearInterval(recordingInterval);
-      setRecordingInterval(undefined);
-
-      SimpleToast.show(t("toasts.sending_voice"), SimpleToast.SHORT);
-
-      const audioData = new FormData();
       const localReference = uuid.v4() as string;
-
+      const audioData = new FormData();
       audioData.append("duration", duration);
       audioData.append("attachment", {
-        uri: audioRecorder.uri,
-        name: `attachment_audio${audioExtension}`,
+        uri,
+        name: `attachment_audio.m4a`,
         type: "audio/mp4",
       });
 
-      const optimisticAudioMsg = buildOptimisticMessage({
-        id: localReference,
+      const optimisticAudio = buildOptimisticMessage({
         localReference,
         voice_message: {
-          name: `attachment_audio_${localReference}${audioExtension}`,
+          name: `attachment_audio_${localReference}.m4a`,
           duration,
           size: 0,
-          url: audioRecorder.uri!,
+          url: uri,
         },
         reply_to: replyingMessage,
       });
 
       setOldMessages((old) =>
-        sortMessages(_.uniqBy([optimisticAudioMsg, ...old], "id")),
+        sortMessages(_.uniqBy([optimisticAudio, ...old], "id")),
       );
-
-      const sendedAudio = await api.post(
+      const res = await api.post(
         `/messages/SendAttachment/${id}?type=voice_message`,
         audioData,
-        {
-          headers: {
-            "Content-Type": `multipart/form-data`,
-          },
-        },
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
-
-      const sentAudioData = sendedAudio.data?.voice_message ?? sendedAudio.data;
 
       setOldMessages(
         (old) =>
-          arrayUtils.iterator(old, (message) =>
-            message.localReference === localReference
+          arrayUtils.iterator(old, (m) =>
+            m.localReference === localReference
               ? {
-                  ...message,
-                  voice_message: sentAudioData ?? message.voice_message,
+                  ...m,
+                  voice_message: res.data?.voice_message ?? res.data,
                   sended: true,
                 }
-              : message,
+              : m,
           ) || old,
       );
-
       handleSendVoiceMessage({
-        audio: sendedAudio.data,
+        audio: res.data,
         reply_to_id: replyingMessage?.id ?? "",
         message: "",
         localReference,
       });
       setReplyingMessage(undefined);
-    } catch (error: any) {
-      crashlytics().recordError(error, "Stop Record and Submit Error");
+    } catch (error) {
+      crashlytics().recordError(error as Error, "Send Voice Message Error");
     }
   };
 
   const handleFileSelector = async () => {
-    const fileRes = await fileService.get();
-
-    if (!fileRes.error) {
-      const newFile = fileRes.selectedFile;
-      if (!newFile) return;
-      const isSelected = arrayUtils.has(files, (f) => {
-        return (
-          f.file.uri === newFile.file.uri || f.file?.name === newFile.file.name
-        );
-      });
-
-      if (isSelected) return setIsSelectedFile(true);
-      if (fileRes.usageSize) setFilesSizeUsed(fileRes.usageSize);
-
-      setFiles((oldFiles) => [
-        { file: newFile.file, type: newFile.type },
-        ...oldFiles,
+    const res = await fileService.get();
+    if (!res.error && res.selectedFile) {
+      if (
+        arrayUtils.has(files, (f) => f.file.uri === res.selectedFile.file.uri)
+      )
+        return setIsSelectedFile(true);
+      if (res.usageSize) setFilesSizeUsed(res.usageSize);
+      setFiles((old) => [
+        { file: res.selectedFile.file, type: res.selectedFile.type },
+        ...old,
       ]);
-
-      return;
+    } else if (res.errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT) {
+      setLargeFile(true);
     }
-
-    const errorType = fileRes.errorType;
-
-    if (errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT)
-      return setLargeFile(true);
   };
-
-  const removeFile = (position: number) => {
-    const file = arrayUtils.findFirst(files, (f, index) => index === position);
-    if (!file?.file?.size) return;
-
-    const fileSize = Math.trunc(file.file.size / 1000 / 1000);
-    const filteredFiles = files.filter((f, index) => index !== position);
-    setFiles(filteredFiles);
-    setFilesSizeUsed((used) => used - fileSize);
-  };
-
-  const fetchOldMessages = useCallback(async () => {
-    if (fetching || fetchedAll) return;
-
-    setFetching(true);
-    try {
-      const { data } = await api.get(
-        `/messages/${id}?_page=${page}&_limit=${MESSAGES_LIMIT_REQUEST}`,
-      );
-
-      if (data.messages.length === 0) {
-        setFetchedAll(true);
-        return;
-      }
-
-      if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
-        setFetchedAll(true);
-      }
-
-      setOldMessages((old) => {
-        const combined = [...old, ...data.messages];
-        const unique = _.uniqBy(combined, "id");
-        return sortMessages(unique);
-      });
-
-      setPage((old) => old + 1);
-    } catch (error) {
-      crashlytics().recordError(error as Error, "Chat: fetchOldMessages");
-    } finally {
-      setFetching(false);
-    }
-  }, [fetchedAll, fetching, page, id, sortMessages]);
 
   const fetchParticipantAndGroup = useCallback(async () => {
     setLoading(true);
     try {
-      const [participantRes, messagesRes, participantsRes] = await Promise.all([
+      const [pRes, mRes, listRes] = await Promise.all([
         api.get(`/group/participant/${id}`),
         api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
         api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
       ]);
-
-      if (participantRes.status === 200) {
-        setParticipant(participantRes.data.participant);
-        setGroup(participantRes.data.participant.group);
+      if (pRes.status === 200) {
+        setParticipant(pRes.data.participant);
+        setGroup(pRes.data.participant.group);
       }
-
-      if (participantsRes.status === 200) {
-        setParticipants(participantsRes.data);
-      }
-
-      if (Platform.OS === "android") {
+      if (listRes.status === 200) setParticipants(listRes.data);
+      if (Platform.OS === "android")
         OneSignal.Notifications.removeGroupedNotifications(id);
-      }
 
-      const { data } = messagesRes;
-
-      if (data.messages.length < MESSAGES_LIMIT_REQUEST) {
+      if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
         setFetchedAll(true);
-      }
-
-      setOldMessages(sortMessages(_.uniqBy(data.messages, "id")));
+      // @ts-ignore
+      setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
       setPage(1);
     } catch (error) {
       crashlytics().recordError(
@@ -521,303 +286,117 @@ const Chat: React.FC = () => {
     }
   }, [id, sortMessages]);
 
-  const handleDisconnectGroup = useCallback(() => {
-    if (!socket) return;
-
-    socket?.emit("leave_chat");
-    socket?.offAny();
-    handleTypingTimeout();
-  }, [socket]);
-
-  const handleSetMessage = (newMessage: string) => {
-    if (newMessage.length >= userConfigs.messageLength) {
-      return SimpleToast.show(
-        t("limit_char", { count: userConfigs.messageLength }),
-        SimpleToast.SHORT,
-      );
-    }
-
-    if (newMessage.length > 0 && !isTypingMessage) {
-      setIsTypingMessage(true);
-    } else if (newMessage.length <= 0 && isTypingMessage) {
-      setIsTypingMessage(false);
-    }
-
-    const mentionRegex = /@(\w+)/g;
-    let match;
-    let isCurrentlyMentioning = false;
-    while ((match = mentionRegex.exec(newMessage)) !== null) {
-      const mentionStart = match.index;
-      const mentionEnd = mentionStart + match[0].length;
-      if (cursorPosition >= mentionStart && cursorPosition <= mentionEnd) {
-        setMentionQuery(match[1]);
-        setMentionPosition({ start: mentionStart, end: mentionEnd });
-        setIsMentioning(true);
-        isCurrentlyMentioning = true;
-        break;
-      }
-    }
-
-    if (!isCurrentlyMentioning) {
-      setIsMentioning(false);
-    }
-
-    const newMentions = mentions.filter((mention) =>
-      newMessage.includes(`@${mention.nickname}`),
-    );
-    setMentions(newMentions);
-
-    if (messageInputRef.current) {
-      messageInputRef.current.value = newMessage;
-    }
-    handleTyping();
-  };
-
-  const handleUserSelect = (user: UserData) => {
-    const message = messageInputRef.current?.value || "";
-    const newMessage =
-      message.substring(0, mentionPosition.start) +
-      `@${user.nickname} ` +
-      message.substring(mentionPosition.end);
-
-    if (messageInputRef.current) {
-      messageInputRef.current.setNativeProps({ text: newMessage });
-      messageInputRef.current.value = newMessage;
-    }
-
-    setMentions((prev) => [...prev, user]);
-    setIsMentioning(false);
-    setMentionQuery("");
-    setIsTypingMessage(true);
-    handleTyping();
-    messageInputRef.current?.focus();
-  };
-
-  const handleMessageSubmit = async () => {
-    const messageRefValue = messageInputRef.current?.value || "";
-    const message = messageRefValue?.slice(0) || "";
-
-    if (id !== currentGroupId || !connected) {
-      return;
-    }
-
-    if (messageRefValue) {
-      messageInputRef.current?.clear();
-      if (messageInputRef.current) {
-        messageInputRef.current.value = "";
-      }
-    }
-
-    if (files.length === 0 && !message) return;
-    handleTypingTimeout();
-
+  const handleMessageSubmit = async (
+    message: string,
+    selectedFiles: File[],
+    mentionIds: string[],
+  ) => {
+    if (id !== currentGroupId || !connected) return;
     const localReference = uuid.v4() as string;
 
     const optimisticMsg = buildOptimisticMessage({
-      id: localReference,
       localReference,
       message,
-      files: files.map((file) => ({
-        id: file.file.name,
-        original_name: file.file.name,
-        name: file.file.name,
-        size: file.file.file?.size || 0,
-        type: file.type,
-        url: file.file.uri,
+      files: selectedFiles.map((f) => ({
+        id: f.file.name,
+        original_name: f.file.name,
+        name: f.file.name,
+        size: f.file.file?.size || 0,
+        type: f.type,
+        url: f.file.uri,
       })),
       reply_to: replyingMessage,
-      mentions: mentions.map((m) => m.id),
+      mentions: mentionIds,
     });
 
     setOldMessages((old) =>
       sortMessages(_.uniqBy([optimisticMsg, ...old], "id")),
     );
 
-    if (files.length === 0) {
-      const trace = perf().newTrace("send_message_without_file");
-
-      setIsTypingMessage(false);
-
-      await trace.start();
+    if (selectedFiles.length === 0) {
       handleSendMessage({
         withFiles: false,
         reply_to_id: replyingMessage?.id,
         message,
         localReference,
-        mentions: mentions.map((m) => m.id),
+        mentions: mentionIds,
       });
-
-      if (replyingMessage) {
-        setReplyingMessage(undefined);
-      }
-      await trace.stop();
     } else {
       setSendingFile(true);
       const filesData = new FormData();
-      const trace = perf().newTrace("send_message_with_files");
-
-      arrayUtils.iterator(files, (file) => {
-        const type = MimeTypes.lookup(file.file.name);
-
+      selectedFiles.forEach((f) =>
         filesData.append("attachment", {
-          name: file.file.name,
-          uri: file.file.uri,
-          type,
-        });
-      });
-
+          name: f.file.name,
+          uri: f.file.uri,
+          type: MimeTypes.lookup(f.file.name),
+        }),
+      );
       filesData.append("message", message);
-      if (replyingMessage) filesData.append("reply_to_id", replyingMessage?.id);
-      if (mentions.length > 0)
-        filesData.append("mentions", JSON.stringify(mentions.map((m) => m.id)));
+      if (replyingMessage) filesData.append("reply_to_id", replyingMessage.id);
+      if (mentionIds.length > 0)
+        filesData.append("mentions", JSON.stringify(mentionIds));
 
-      await trace.start();
-
-      await api
-        .post(`messages/SendAttachment/${id}?type=files`, filesData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
+      try {
+        const res = await api.post(
+          `messages/SendAttachment/${id}?type=files`,
+          filesData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            onUploadProgress: (e) =>
+              setSendedFileProgress(
+                Math.round((e.loaded * 100) / (e.total || 1)),
+              ),
           },
-          onUploadProgress: (event) => {
-            const total = event.total || event.loaded || 1;
-            const totalSended = Math.round((event.loaded * 100) / total);
-            setSendedFileProgress(totalSended);
-          },
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            handleSendMessage({
-              message_id: res.data.message_id,
-              message,
-              withFiles: true,
-              localReference,
-              mentions: mentions.map((m) => m.id),
-            });
-          }
-        })
-        .catch((error) => {
-          crashlytics()?.recordError(new Error(error), "Send File Error");
-          console.log(JSON.stringify(error));
-        });
-
-      await trace.stop();
-
-      setFiles([]);
-      setSendingFile(false);
-      setSendedFileProgress(0);
-      setFilesSizeUsed(0);
+        );
+        if (res.status === 200)
+          handleSendMessage({
+            message_id: res.data.message_id,
+            message,
+            withFiles: true,
+            localReference,
+            mentions: mentionIds,
+          });
+      } catch (error) {
+        crashlytics().recordError(
+          new Error(error as string),
+          "Send File Error",
+        );
+      } finally {
+        setFiles([]);
+        setSendingFile(false);
+        setSendedFileProgress(0);
+        setFilesSizeUsed(0);
+      }
     }
-
-    if (replyingMessage) {
-      setReplyingMessage(undefined);
-    }
-    setMentions([]);
-  };
-
-  const handleGoGroupConfig = () => {
-    navigation.navigate("GroupConfig", { id });
-  };
-
-  const handleGoGroupParticipants = () => {
-    navigation.navigate("Participants", { id });
-  };
-
-  const handleGoGroupInfos = () => {
-    navigation.navigate("GroupInfos", { id });
-  };
-
-  const handleGoFriendInfos = () => {
-    navigation.navigate("UserProfile", { id: friendId });
-  };
-
-  const handleGoStar = async () => {
-    await analytics().logEvent("IncreaseUpload");
-    navigation.navigate("PurchasePremium");
-  };
-
-  const handleReplyMessage = async (message: MessageData) => {
-    setReplyingMessage(message);
-  };
-
-  const handleRemoveReplyingMessage = async () => {
     setReplyingMessage(undefined);
   };
 
-  const renderMessage = useCallback(
-    ({ item, index }: ListRenderItem<MessageData> | any) => {
-      const lastMessage = index !== 0 ? oldMessages[index - 1] : null;
-
-      return (
-        <Message
-          message={item}
-          participant={participant as ParticipantsData}
-          lastMessage={lastMessage}
-          onReplyMessage={handleReplyMessage}
-          group={group}
-          disableReply={!canSendMessage}
-          participants={participants}
-        />
-      );
-    },
-    [oldMessages, participant, group, canSendMessage, participants],
-  );
-
-  const renderFooter = () =>
-    fetching && !fetchedAll ? <LoadingIndicator /> : null;
-
-  const disableLargeFile = () => setLargeFile(false);
-  const disableIsSelectedFile = () => setIsSelectedFile(false);
-  const disableAudioPermission = () => setAudioPermission(false);
-
   useEffect(() => {
-    if (currentGroupId !== id && connected) {
-      handleDisconnectGroup();
-      handleJoinRoom(id);
-    }
-
+    if (currentGroupId !== id && connected) handleJoinRoom(id);
     return () => {
-      handleDisconnectGroup();
+      socket?.emit("leave_chat");
+      socket?.offAny();
     };
   }, [id]);
 
   useEffect(() => {
-    if (appState !== "active") {
-      handleDisconnectGroup();
-    }
-  }, [appState]);
-
-  useEffect(() => {
-    if (group?.id !== currentGroupId) {
-      fetchParticipantAndGroup();
-    }
+    if (group?.id !== currentGroupId) fetchParticipantAndGroup();
   }, [currentGroupId]);
 
   useEffect(() => {
     if (!participant || !group) return;
-
-    if (participant.role === ParticipantRoles.OWNER) {
-      setCanSendMessage(true);
-      return;
-    }
-
-    const participantRoleIndex = ordernedRolesArray.indexOf(participant.role);
-    const minimumRoleSendMessageIndex = ordernedRolesArray.indexOf(
+    if (participant.role === ParticipantRoles.OWNER)
+      return setCanSendMessage(true);
+    const pRoleIdx = ordernedRolesArray.indexOf(participant.role);
+    const minRoleIdx = ordernedRolesArray.indexOf(
       getSettingValue(group.group_settings, "minimum_role_for_send_message"),
     );
-
-    const isMinimumRole = participantRoleIndex >= minimumRoleSendMessageIndex;
-
-    if (!isMinimumRole) {
-      setCanSendMessage(false);
-    } else {
-      setCanSendMessage(true);
-    }
+    setCanSendMessage(pRoleIdx >= minRoleIdx);
   }, [participant, group]);
 
   useFocusEffect(
     useCallback(() => {
-      if (appState !== "active") return;
-      if (socket && !connected) {
+      if (appState === "active" && socket && !connected) {
         handleJoinRoom(id);
         configureSocketListeners();
       }
@@ -833,8 +412,11 @@ const Chat: React.FC = () => {
         content={t("alerts.file_size.content", {
           amount: userConfigs.fileUpload,
         })}
-        okButtonAction={disableLargeFile}
-        extraButtonAction={handleGoStar}
+        okButtonAction={() => setLargeFile(false)}
+        extraButtonAction={() => {
+          analytics().logEvent("IncreaseUpload");
+          navigation.navigate("PurchasePremium");
+        }}
         extraButtonText={t("alerts.file_size.extra_button_text")}
         extraButton
         visible={largeFile}
@@ -842,27 +424,28 @@ const Chat: React.FC = () => {
       <Alert
         title={t("alerts.same_file.title")}
         content={t("alerts.same_file.content")}
-        okButtonAction={disableIsSelectedFile}
+        okButtonAction={() => setIsSelectedFile(false)}
         visible={isSelectedFile}
       />
-      <Alert
-        title={t("alerts.mic_perm.title")}
-        content={t("alerts.mic_perm.content")}
-        okButtonAction={disableAudioPermission}
-        visible={audioPermission}
-      />
+
       <Header
         title={name || group.name}
         onPressTitle={
-          group.type === "GROUP" ? handleGoGroupInfos : handleGoFriendInfos
+          group.type === "GROUP"
+            ? () => navigation.navigate("GroupInfos", { id })
+            : () => navigation.navigate("UserProfile", { id: friendId })
         }
       >
         {group.type === "GROUP" && (
-          <HeaderButton onPress={handleGoGroupParticipants}>
+          <HeaderButton
+            onPress={() => navigation.navigate("Participants", { id })}
+          >
             <Feather name="users" size={22} color="#fff" />
           </HeaderButton>
         )}
-        <HeaderButton onPress={handleGoGroupConfig}>
+        <HeaderButton
+          onPress={() => navigation.navigate("GroupConfig", { id })}
+        >
           <Feather name="more-vertical" size={22} color="#fff" />
         </HeaderButton>
       </Header>
@@ -878,130 +461,52 @@ const Chat: React.FC = () => {
             <FlashList
               data={oldMessages}
               extraData={oldMessages}
-              keyExtractor={(item) => item.id || item.localReference || ""}
+              // @ts-ignore
+              keyExtractor={(item) => item.id || item.localReference}
               drawDistance={MESSAGES_LIMIT_REQUEST * 160}
               estimatedItemSize={200}
-              renderItem={renderMessage}
-              ListFooterComponent={renderFooter}
+              renderItem={({ item, index }) => (
+                <Message
+                  message={item}
+                  participant={participant}
+                  lastMessage={index !== 0 ? oldMessages[index - 1] : null}
+                  onReplyMessage={setReplyingMessage}
+                  group={group}
+                  disableReply={!canSendMessage}
+                  participants={participants}
+                />
+              )}
+              ListFooterComponent={() =>
+                fetching && !fetchedAll ? <LoadingIndicator /> : null
+              }
               onEndReached={fetchOldMessages}
               onEndReachedThreshold={0.5}
               showsVerticalScrollIndicator={false}
               disableHorizontalListHeightMeasurement
             />
           </MessageContainer>
-          <FormContainer
-            style={{
-              paddingHorizontal: canSendMessage ? 12 : 0,
-              paddingBottom: isKeyboardVisible
-                ? 8
-                : insets.bottom > 0
-                  ? insets.bottom - 40
-                  : 12,
-            }}
-          >
-            {isMentioning && (
-              <Mentions
-                query={mentionQuery}
-                groupId={id}
-                onUserSelect={handleUserSelect}
-              />
-            )}
-            <AnimatePresence>
-              {isRecording && (
-                <MotiView
-                  from={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 40 }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{
-                    type: "timing",
-                    duration: 250,
-                  }}
-                >
-                  <RecordingAudio audioDuration={audioDuration} />
-                </MotiView>
-              )}
-            </AnimatePresence>
 
-            {files.length > 0 && !sendingFile && (
-              <SelectedFiles files={files} onFileRemove={removeFile} />
-            )}
-
-            {sendingFile && (
-              <FileSendedProgressContainer>
-                <FileSendedText>
-                  <Feather name="upload" size={16} /> {sendedFileProgress}%{" "}
-                  {t("sent")}
-                </FileSendedText>
-                <ProgressBar
-                  progress={sendedFileProgress / 100}
-                  color={colors.primary}
-                  style={{ minWidth: "100%", height: 10, borderRadius: 10 }}
-                />
-              </FileSendedProgressContainer>
-            )}
-
-            <AnimatePresence>
-              {replyingMessage && (
-                <CurrentReplyingMessage
-                  message={replyingMessage}
-                  onRemoveReplying={handleRemoveReplyingMessage}
-                />
-              )}
-            </AnimatePresence>
-            {canSendMessage ? (
-              <InputContainer>
-                <MessageInput
-                  ref={messageInputRef}
-                  as={TextInput}
-                  cursorColor={colors.secondary}
-                  placeholderTextColor={colors.dark_heading}
-                  onChangeText={handleSetMessage}
-                  onSelectionChange={({ nativeEvent: { selection } }) => {
-                    setCursorPosition(selection.start);
-                  }}
-                  maxLength={userConfigs?.messageLength || 500}
-                  placeholder={isRecording ? t("drop_send") : t("type_message")}
-                />
-                <OptionsContainer>
-                  <OptionsButton onPress={handleFileSelector}>
-                    <Feather name="file" size={24} color={colors.primary} />
-                  </OptionsButton>
-                  {(isTypingMessage || files.length > 0) && (
-                    <SendButton>
-                      <Feather
-                        name="send"
-                        size={26}
-                        color={colors.primary}
-                        onPress={handleMessageSubmit}
-                        style={{ transform: [{ rotate: "45deg" }] }}
-                      />
-                    </SendButton>
-                  )}
-                  {!isTypingMessage && files.length <= 0 && (
-                    <AudioContainer>
-                      <AudioButton
-                        onPressIn={recordAudio}
-                        onPressOut={stopRecordAudioAndSubmit}
-                      >
-                        <Feather
-                          name="mic"
-                          size={26}
-                          color={colors.secondary}
-                        />
-                      </AudioButton>
-                    </AudioContainer>
-                  )}
-                </OptionsContainer>
-              </InputContainer>
-            ) : (
-              <NoSendMessageContainer>
-                <NoSendMessageText>
-                  Você não pode enviar mensagens nesse grupo, mas ainda pode
-                  vê-las e receber notificações.
-                </NoSendMessageText>
-              </NoSendMessageContainer>
-            )}
-          </FormContainer>
+          <ChatInput
+            groupId={id}
+            canSendMessage={canSendMessage}
+            maxMessageLength={userConfigs?.messageLength || 500}
+            replyingMessage={replyingMessage}
+            sendingFile={sendingFile}
+            sendedFileProgress={sendedFileProgress}
+            isRecording={isRecording}
+            audioDuration={audioDuration}
+            onSendMessage={handleMessageSubmit}
+            onRecordAudioStart={(hasText) => recordAudio(hasText)}
+            onRecordAudioStop={stopRecordAudioAndSubmit}
+            onFileSelect={handleFileSelector}
+            onRemoveFile={(idx) => setFiles(files.filter((_, i) => i !== idx))}
+            onRemoveReplying={() => setReplyingMessage(undefined)}
+            onTyping={() => handleSetTyping({ action: "ADD" })}
+            onTypingTimeout={() => handleSetTyping({ action: "REMOVE" })}
+            files={files}
+            insetsBottom={insets.bottom}
+            isKeyboardVisible={isKeyboardVisible}
+          />
         </Container>
       </KeyboardAvoidingView>
     </SafeAreaView>
