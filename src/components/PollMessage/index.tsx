@@ -1,12 +1,23 @@
 import React, { memo, useCallback, useMemo } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
+import { MotiView } from "moti";
 import { useAuth } from "@contexts/auth";
 import { useWebsocket } from "@contexts/websocket";
 import { PollData } from "@type/interfaces";
-import _ from "lodash";
-import fonts from "@styles/fonts";
+
+import {
+  Container,
+  QuestionText,
+  SubtitleText,
+  OptionsContainer,
+  OptionButton,
+  OptionContent,
+  OptionInfo,
+  OptionText,
+  PercentageText,
+  TotalVotesText,
+} from "./styles";
 
 export interface PollOptionData {
   id: string;
@@ -51,8 +62,6 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
       const votedIds = new Set<string>();
 
       poll.options.forEach((option) => {
-        console.log(option.votes);
-
         if (option.votes?.some((v) => v.user_id === user.id)) {
           votedIds.add(option.id);
         }
@@ -62,82 +71,53 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
     }, [poll?.options, user?.id]);
 
     return (
-      <View style={{ width: "100%", marginTop: 8, marginBottom: 4, gap: 10 }}>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: "bold",
-            fontFamily: fonts["text-bold"],
-            color: colors.light_heading || "#FFF",
-          }}
-        >
-          📊 {poll.question}
-        </Text>
+      <Container>
+        <QuestionText>📊 {poll.question}</QuestionText>
 
-        <Text
-          style={{
-            fontSize: 12,
-            color: colors.dark_heading || "#9CA3AF",
-            marginTop: -6,
-          }}
-        >
+        <SubtitleText>
           {poll.allows_multiple
             ? "Selecione uma ou mais opções"
             : "Selecione uma opção"}
-        </Text>
+        </SubtitleText>
 
-        <View style={{ gap: 8, marginTop: 4 }}>
+        <OptionsContainer>
           {poll.options.map((option) => {
             const votes = option.votes_count || 0;
             const percentage =
               totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
             const isSelected = userVotedOptionIds.has(option.id);
 
+            const progressBgColor = isSelected
+              ? colors.primary + "35"
+              : colors.secondary + "20";
+
             return (
-              <TouchableOpacity
+              <OptionButton
                 key={option.id}
                 onPress={() => handleVote(option.id)}
                 activeOpacity={0.7}
-                style={{
-                  position: "relative",
-                  backgroundColor: colors.shape || "#374151",
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  paddingVertical: 10,
-                  overflow: "hidden",
-                }}
               >
-                <View
+                {/* Barra de Progresso Animada com Moti */}
+                <MotiView
+                  animate={{
+                    width: `${percentage}%`,
+                    backgroundColor: progressBgColor,
+                  }}
+                  transition={{
+                    type: "timing",
+                    duration: 350,
+                  }}
                   style={{
                     position: "absolute",
                     left: 0,
                     top: 0,
                     bottom: 0,
-                    width: `${percentage}%`,
-                    backgroundColor: isSelected
-                      ? colors.primary + "35"
-                      : colors.secondary + "20",
                     borderRadius: 10,
                   }}
                 />
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    zIndex: 1,
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 8,
-                      flex: 1,
-                      marginRight: 8,
-                    }}
-                  >
+                <OptionContent>
+                  <OptionInfo>
                     <Feather
                       name={
                         isSelected
@@ -153,46 +133,24 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
                           : colors.dark_heading || "#9CA3AF"
                       }
                     />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: colors.light_heading || "#FFF",
-                        fontWeight: isSelected ? "600" : "normal",
-                        fontFamily: fonts["text-bold"],
-                      }}
-                    >
+                    <OptionText isSelected={isSelected}>
                       {option.option_text}
-                    </Text>
-                  </View>
+                    </OptionText>
+                  </OptionInfo>
 
-                  {/* Contagem / Porcentagem */}
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: "bold",
-                      color: colors.dark_heading || "#9CA3AF",
-                    }}
-                  >
+                  <PercentageText>
                     {percentage}% ({votes})
-                  </Text>
-                </View>
-              </TouchableOpacity>
+                  </PercentageText>
+                </OptionContent>
+              </OptionButton>
             );
           })}
-        </View>
+        </OptionsContainer>
 
-        {/* Rodapé com total de votos */}
-        <Text
-          style={{
-            fontSize: 11,
-            color: colors.dark_heading || "#9CA3AF",
-            textAlign: "right",
-            marginTop: 2,
-          }}
-        >
+        <TotalVotesText>
           {totalVotes} {totalVotes === 1 ? "voto" : "votos"}
-        </Text>
-      </View>
+        </TotalVotesText>
+      </Container>
     );
   },
 );
