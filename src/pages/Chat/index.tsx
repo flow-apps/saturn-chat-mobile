@@ -243,13 +243,10 @@ const Chat: React.FC = () => {
   );
 
   const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) => {
+    onSendedUserMessage(({ msg, localReference }) => {            
       setOldMessages((old) =>
         old.map((m) => {
-          if (
-            (m.localReference && m.localReference === localReference) ||
-            m.id === localReference
-          ) {
+          if (m.localReference === localReference) {
             return {
               ...msg,
               sended: true,

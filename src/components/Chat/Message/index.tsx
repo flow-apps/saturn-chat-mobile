@@ -367,8 +367,6 @@ const Message = ({
 
   const isSameAuthorAsLast = lastMessage?.author?.id === message.author?.id;
 
-  console.log(message);
-
   return (
     <>
       <Alert
