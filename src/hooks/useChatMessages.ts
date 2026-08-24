@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import _ from "lodash";
 import api from "@services/api";
 import crashlytics from "@react-native-firebase/crashlytics";
 import { MessageData } from "@type/interfaces";
+import { useWebsocket } from "@contexts/websocket";
 
 const MESSAGES_LIMIT_REQUEST = 30;
 
@@ -50,6 +51,85 @@ export const useChatMessages = (groupId: string) => {
       setFetching(false);
     }
   }, [fetching, fetchedAll, groupId, page, sortMessages]);
+
+  const { socket } = useWebsocket();
+
+  useEffect(() => {
+    function handlePollVotesUpdated(data: {
+      poll_id: string;
+      message_id: string;
+      options: Array<{ id: string; option_text: string; votes_count: number }>;
+      voted_by: { user_id: string; option_id: string };
+    }) {
+      setOldMessages((prevMessages) => {
+        const messageIndex = prevMessages.findIndex(
+          (msg) => msg.id === data.message_id || msg.poll?.id === data.poll_id,
+        );
+
+        if (messageIndex === -1) return prevMessages;
+
+        const updatedMessages = [...prevMessages];
+        const targetMessage = { ...updatedMessages[messageIndex] };
+
+        if (targetMessage.poll) {
+          const updatedOptions = targetMessage.poll.options.map((option) => {
+            const newOptionData = data.options.find(
+              (opt) => opt.id === option.id,
+            );
+
+            let updatedVotes = option.votes || [];
+
+            if (!targetMessage.poll?.allows_multiple) {
+              updatedVotes = updatedVotes.filter(
+                (v) => v.user_id !== data.voted_by.user_id,
+              );
+            }
+
+            if (option.id === data.voted_by.option_id) {
+              const alreadyVotedThisOption = updatedVotes.some(
+                (v) => v.user_id === data.voted_by.user_id,
+              );
+
+              if (!alreadyVotedThisOption) {
+                updatedVotes = [
+                  ...updatedVotes,
+                  {
+                    id: `temp_${Date.now()}`,
+                    poll_id: data.poll_id,
+                    option_id: option.id,
+                    user_id: data.voted_by.user_id,
+                    created_at: new Date().toISOString(),
+                  } as any,
+                ];
+              }
+            }
+
+            return {
+              ...option,
+              votes_count: newOptionData
+                ? newOptionData.votes_count
+                : option.votes_count,
+              votes: updatedVotes,
+            };
+          });
+
+          targetMessage.poll = {
+            ...targetMessage.poll,
+            options: updatedOptions,
+          };
+        }
+
+        updatedMessages[messageIndex] = targetMessage;
+        return updatedMessages;
+      });
+    }
+
+    socket?.on("poll_votes_updated", handlePollVotesUpdated);
+
+    return () => {
+      socket?.off("poll_votes_updated", handlePollVotesUpdated);
+    };
+  }, [socket]);
 
   return {
     oldMessages,

@@ -84,21 +84,21 @@ export interface MessageData {
   files?: FileData[] | File[];
   sended?: boolean;
   mentions?: string[];
-  polls?: PollData;
+  poll?: PollData;
   localReference?: string;
 }
 
-interface PollData {
+export interface PollData {
   id: string;
   message_id: string;
   message: MessageData;
   question: string;
-  allow_multiple: boolean;
+  allows_multiple: boolean;
   options: PollOptionData[];
   created_at: string;
 }
 
-interface PollOptionData {
+export interface PollOptionData {
   id: string;
   poll_id: string;
   option_text: string;

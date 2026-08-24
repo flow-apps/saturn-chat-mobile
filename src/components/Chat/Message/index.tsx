@@ -55,6 +55,8 @@ import {
   MessageDateContainer,
 } from "./styles";
 
+import { PollMessage } from "@components/PollMessage";
+
 interface MessageProps {
   participant: ParticipantsData;
   message: MessageData;
@@ -364,6 +366,9 @@ const Message = ({
 
   const isSameAuthorAsLast = lastMessage?.author?.id === message.author?.id;
 
+  console.log(message)
+  
+
   return (
     <>
       <Alert
@@ -413,26 +418,36 @@ const Message = ({
               group={group}
               options={optionsList as any}
             />
-            {/* Forçamos a remontagem do MessageMark ao alterar o texto usando a chave 'key' */}
-            <MessageMark
-              key={`${message.id}-${translatedContent ? "translated" : "original"}`}
-              message={{
-                ...message,
-                message: currentText,
-              }}
-              onPressLink={alertLink}
-              user={user as UserData}
-              participants={participants}
-            />
+            {message.message ? (
+              <MessageMark
+                key={`${message.id}-${translatedContent ? "translated" : "original"}`}
+                message={{
+                  ...message,
+                  message: currentText,
+                }}
+                onPressLink={alertLink}
+                user={user as UserData}
+                participants={participants}
+              />
+            ) : null}
+
+            {message.poll && (
+              <PollMessage poll={message.poll} groupId={group.id} />
+            )}
+
             {message.voice_message && (
               <AudioPlayer audio={message.voice_message} />
             )}
             {message.files &&
               message.files.map((file, idx) => (
+                // @ts-ignore
                 <FilePreview
+                  // @ts-ignore
                   key={file.id || idx}
                   name={file.name}
+                  // @ts-ignore
                   original_name={file.original_name}
+                  // @ts-ignore
                   url={file.url}
                   size={file.size}
                   type={file.type}
@@ -500,6 +515,7 @@ export default memo(Message, (prev, next) => {
     prev.lastMessage?.id === next.lastMessage?.id &&
     prev.participant?.role === next.participant?.role &&
     prev.participant?.state === next.participant?.state &&
-    prev.participants === next.participants
+    prev.participants === next.participants &&
+    JSON.stringify(prev.message.poll) === JSON.stringify(next.message.poll)
   );
 });
