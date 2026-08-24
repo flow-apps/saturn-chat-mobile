@@ -2,16 +2,13 @@ import React, { useRef, useState } from "react";
 import {
   Keyboard,
   Modal,
-  Platform,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
 } from "react-native";
 import { AnimatePresence } from "moti";
 import { ProgressBar } from "react-native-paper";
 import Feather from "@expo/vector-icons/Feather";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import SimpleToast from "react-native-simple-toast";
 
 import { UserData, MessageData } from "@type/interfaces";
@@ -22,20 +19,27 @@ import Mentions from "@components/Chat/Mentions";
 import { AudioRecordingBar } from "@components/Chat/AudioRecordingBar";
 
 import {
+  ActionIconContainer,
+  ActionItemButton,
+  ActionText,
   AudioButton,
   AudioContainer,
+  DragIndicator,
   FileSendedProgressContainer,
   FileSendedText,
   FormContainer,
   InputContainer,
   MessageInput,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   NoSendMessageContainer,
   NoSendMessageText,
   OptionsButton,
   OptionsContainer,
+  PlusButton,
   SendButton,
 } from "./styles";
-import fonts from "@styles/fonts";
 
 interface ChatInputProps {
   groupId: string;
@@ -228,83 +232,31 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         <TouchableWithoutFeedback
           onPress={() => setIsActionsModalVisible(false)}
         >
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              justifyContent: "flex-end",
-            }}
-          >
+          <ModalOverlay>
             <TouchableWithoutFeedback>
-              <View
-                style={{
-                  backgroundColor: colors.background || "#1F2937",
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  padding: 20,
-                  gap: 16,
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: 8,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 40,
-                      height: 4,
-                      backgroundColor: colors.dark_heading || "#4B5563",
-                      borderRadius: 2,
-                    }}
-                  />
-                </View>
+              <ModalContent>
+                <ModalHeader>
+                  <DragIndicator />
+                </ModalHeader>
 
-                <TouchableOpacity
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 12,
-                    paddingVertical: 12,
-                  }}
+                <ActionItemButton
                   onPress={() => {
                     setIsActionsModalVisible(false);
                     onOpenPollModal();
                   }}
                 >
-                  <View
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 22,
-                      backgroundColor: colors.primary + "20",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <ActionIconContainer bgColor={colors.primary + "20"}>
                     <Feather
                       name="bar-chart-2"
                       size={22}
                       color={colors.primary}
                     />
-                  </View>
-                  <FileSendedText
-                    style={{
-                      fontSize: 16,
-                      fontFamily: fonts["text-bold"],
-                      fontWeight: "600",
-                      marginTop: 10
-                    }}
-                  >
-                    Criar Enquete
-                  </FileSendedText>
-                </TouchableOpacity>
-              </View>
+                  </ActionIconContainer>
+                  <ActionText>Criar Enquete</ActionText>
+                </ActionItemButton>
+              </ModalContent>
             </TouchableWithoutFeedback>
-          </View>
+          </ModalOverlay>
         </TouchableWithoutFeedback>
       </Modal>
 
@@ -316,19 +268,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
       ) : (
         <InputContainer>
-          <TouchableOpacity
+          <PlusButton
             onPress={() => {
               Keyboard.dismiss();
               setIsActionsModalVisible(true);
             }}
-            style={{
-              paddingHorizontal: 8,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
           >
             <Feather name="plus" size={26} color={colors.primary} />
-          </TouchableOpacity>
+          </PlusButton>
 
           <MessageInput
             ref={messageInputRef}

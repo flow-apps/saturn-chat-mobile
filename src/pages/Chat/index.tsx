@@ -54,7 +54,6 @@ import { PollModal } from "@components/Chat/PollModal";
 
 const MESSAGES_LIMIT_REQUEST = 50;
 
-// Componente animado para entrada suave das mensagens
 const AnimatedMessage: React.FC<{
   children: React.ReactNode;
   index: number;
@@ -94,7 +93,6 @@ const Chat: React.FC = () => {
   const appState = useAppState();
   const { t } = useTranslate("Chat");
 
-  // Custom Hooks
   const {
     oldMessages,
     setOldMessages,
@@ -113,7 +111,6 @@ const Chat: React.FC = () => {
     cancelRecordAudio,
   } = useChatAudio((dur, uri) => handleSendVoice(dur, uri));
 
-  // Estados locais da tela
   const [isPollModalVisible, setIsPollModalVisible] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
@@ -173,6 +170,36 @@ const Chat: React.FC = () => {
 
       const localReference = uuid.v4() as string;
 
+      const optimisticPollMessage: MessageData = {
+        id: localReference,
+        localReference,
+        author: user as UserData,
+        group,
+        participant,
+        message: "",
+        sended: false,
+        created_at: new Date().toISOString(),
+        poll: {
+          id: `temp_poll_${localReference}`,
+          message_id: localReference,
+          question: pollData.question,
+          allows_multiple: pollData.allows_multiple,
+          options: pollData.options.map((optText, index) => ({
+            id: `temp_opt_${index}_${localReference}`,
+            poll_id: `temp_poll_${localReference}`,
+            option_text: optText,
+            votes_count: 0,
+            votes: [],
+            created_at: new Date().toISOString(),
+          })),
+          created_at: new Date().toISOString(),
+        } as any,
+      };
+
+      setOldMessages((old) =>
+        sortMessages(_.uniqBy([optimisticPollMessage, ...old], "id")),
+      );
+
       socket?.emit("new_poll", {
         group_id: id,
         question: pollData.question,
@@ -184,7 +211,17 @@ const Chat: React.FC = () => {
 
       setReplyingMessage(undefined);
     },
-    [id, currentGroupId, connected, socket, replyingMessage],
+    [
+      id,
+      currentGroupId,
+      connected,
+      socket,
+      replyingMessage,
+      user,
+      group,
+      participant,
+      sortMessages,
+    ],
   );
 
   const buildOptimisticMessage = useCallback(
@@ -206,14 +243,22 @@ const Chat: React.FC = () => {
   );
 
   const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) =>
-      setOldMessages(
-        (old) =>
-          arrayUtils.iterator(old, (m) =>
-            m.localReference === localReference ? { ...msg, sended: true } : m,
-          ) || old,
-      ),
-    );
+    onSendedUserMessage(({ msg, localReference }) => {
+      setOldMessages((old) =>
+        old.map((m) => {
+          if (
+            (m.localReference && m.localReference === localReference) ||
+            m.id === localReference
+          ) {
+            return {
+              ...msg,
+              sended: true,
+            };
+          }
+          return m;
+        }),
+      );
+    });
     onNewUserMessage((msg) => {
       if (arrayUtils.has(oldMessages, (m) => m.id === msg.id)) return;
       setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));

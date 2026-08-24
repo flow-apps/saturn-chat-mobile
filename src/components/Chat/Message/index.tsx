@@ -162,7 +162,8 @@ const Message = ({
     setInvitesData(foundInvites);
   }, [message.message]);
 
-  const isRight = message.author?.id === user?.id;
+  //@ts-ignore
+  const isRight = (message.author?.id || message.author_id) === user?.id;
   const isSended = message?.sended ?? true;
   const hasInvite = invitesData.length > 0;
 
@@ -366,8 +367,7 @@ const Message = ({
 
   const isSameAuthorAsLast = lastMessage?.author?.id === message.author?.id;
 
-  console.log(message)
-  
+  console.log(message);
 
   return (
     <>

@@ -76,39 +76,51 @@ export const useChatMessages = (groupId: string) => {
             const newOptionData = data.options.find(
               (opt) => opt.id === option.id,
             );
+            const currentVotesCount = option.votes_count || 0;
+            const newVotesCount = newOptionData
+              ? newOptionData.votes_count
+              : currentVotesCount;
 
-            let updatedVotes = option.votes || [];
+            let updatedVotes = option.votes ? [...option.votes] : [];
 
-            if (!targetMessage.poll?.allows_multiple) {
+            // 1. Se o número de votos diminuiu nesta opção, remove o voto do usuário (Toggle Off / Remoção)
+            if (newVotesCount < currentVotesCount) {
+              updatedVotes = updatedVotes.filter(
+                (v) => v.user_id !== data.voted_by.user_id,
+              );
+            }
+            // 2. Se o número de votos aumentou nesta opção (Voto Computado)
+            else if (
+              newVotesCount > currentVotesCount &&
+              option.id === data.voted_by.option_id
+            ) {
+              const alreadyVoted = updatedVotes.some(
+                (v) => v.user_id === data.voted_by.user_id,
+              );
+              if (!alreadyVoted) {
+                updatedVotes.push({
+                  id: `temp_${Date.now()}`,
+                  poll_id: data.poll_id,
+                  option_id: option.id,
+                  user_id: data.voted_by.user_id,
+                  created_at: new Date().toISOString(),
+                } as any);
+              }
+            }
+
+            // Se for enquete de escolha única, limpa votos das outras opções se o usuário mudou de opção
+            if (
+              !targetMessage.poll?.allows_multiple &&
+              option.id !== data.voted_by.option_id
+            ) {
               updatedVotes = updatedVotes.filter(
                 (v) => v.user_id !== data.voted_by.user_id,
               );
             }
 
-            if (option.id === data.voted_by.option_id) {
-              const alreadyVotedThisOption = updatedVotes.some(
-                (v) => v.user_id === data.voted_by.user_id,
-              );
-
-              if (!alreadyVotedThisOption) {
-                updatedVotes = [
-                  ...updatedVotes,
-                  {
-                    id: `temp_${Date.now()}`,
-                    poll_id: data.poll_id,
-                    option_id: option.id,
-                    user_id: data.voted_by.user_id,
-                    created_at: new Date().toISOString(),
-                  } as any,
-                ];
-              }
-            }
-
             return {
               ...option,
-              votes_count: newOptionData
-                ? newOptionData.votes_count
-                : option.votes_count,
+              votes_count: newVotesCount,
               votes: updatedVotes,
             };
           });

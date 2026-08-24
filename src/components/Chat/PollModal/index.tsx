@@ -3,15 +3,30 @@ import {
   Modal,
   ScrollView,
   Switch,
-  TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
-  Text,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import SimpleToast from "react-native-simple-toast";
+
+import {
+  ModalOverlay,
+  ModalContent,
+  Header,
+  Title,
+  CloseButton,
+  Label,
+  Input,
+  OptionRow,
+  OptionInput,
+  RemoveOptionButton,
+  AddOptionButton,
+  AddOptionText,
+  MultipleChoiceContainer,
+  MultipleChoiceText,
+  SubmitButton,
+  SubmitButtonText,
+} from "./styles";
 
 interface PollModalProps {
   visible: boolean;
@@ -108,120 +123,45 @@ export const PollModal: React.FC<PollModalProps> = ({
       onRequestClose={handleResetAndClose}
     >
       <TouchableWithoutFeedback onPress={handleResetAndClose}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.6)",
-            justifyContent: "flex-end",
-          }}
-        >
+        <ModalOverlay>
           <TouchableWithoutFeedback>
-            <View
-              style={{
-                backgroundColor: colors.background || "#1F2937",
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                maxHeight: "85%",
-                padding: 20,
-              }}
-            >
-              {/* Header do Modal */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 16,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "bold",
-                    color: colors.light_heading || "#FFF",
-                  }}
-                >
-                  Criar Enquete
-                </Text>
-                <TouchableOpacity onPress={handleResetAndClose}>
+            <ModalContent>
+              <Header>
+                <Title>Criar Enquete</Title>
+                <CloseButton onPress={handleResetAndClose}>
                   <Feather
                     name="x"
                     size={24}
                     color={colors.dark_heading || "#9CA3AF"}
                   />
-                </TouchableOpacity>
-              </View>
+                </CloseButton>
+              </Header>
 
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
               >
-                {/* Pergunta */}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.dark_heading || "#9CA3AF",
-                    marginBottom: 6,
-                  }}
-                >
-                  Pergunta
-                </Text>
-                <TextInput
+                <Label>Pergunta</Label>
+                <Input
                   value={question}
                   onChangeText={setQuestion}
                   placeholder="Ex: Qual o local do evento?"
                   placeholderTextColor={colors.dark_heading || "#6B7280"}
-                  style={{
-                    backgroundColor: colors.shape || "#374151",
-                    color: colors.light_heading || "#FFF",
-                    borderRadius: 10,
-                    paddingHorizontal: 12,
-                    paddingVertical: 10,
-                    fontSize: 15,
-                    marginBottom: 16,
-                  }}
                   maxLength={255}
                 />
 
-                {/* Opções */}
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.dark_heading || "#9CA3AF",
-                    marginBottom: 6,
-                  }}
-                >
-                  Opções
-                </Text>
-
+                <Label>Opções</Label>
                 {options.map((opt, index) => (
-                  <View
-                    key={`poll_option_input_${index}`}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 8,
-                      marginBottom: 10,
-                    }}
-                  >
-                    <TextInput
+                  <OptionRow key={`poll_option_input_${index}`}>
+                    <OptionInput
                       value={opt}
                       onChangeText={(text) => handleOptionChange(text, index)}
                       placeholder={`Opção ${index + 1}`}
                       placeholderTextColor={colors.dark_heading || "#6B7280"}
-                      style={{
-                        flex: 1,
-                        backgroundColor: colors.shape || "#374151",
-                        color: colors.light_heading || "#FFF",
-                        borderRadius: 10,
-                        paddingHorizontal: 12,
-                        paddingVertical: 10,
-                        fontSize: 15,
-                      }}
                       maxLength={255}
                     />
                     {options.length > 2 && (
-                      <TouchableOpacity
+                      <RemoveOptionButton
                         onPress={() => handleRemoveOption(index)}
                       >
                         <Feather
@@ -229,50 +169,22 @@ export const PollModal: React.FC<PollModalProps> = ({
                           size={20}
                           color={colors.red || "#EF4444"}
                         />
-                      </TouchableOpacity>
+                      </RemoveOptionButton>
                     )}
-                  </View>
+                  </OptionRow>
                 ))}
 
-                {/* Botão Adicionar Opção */}
                 {options.length < 10 && (
-                  <TouchableOpacity
-                    onPress={handleAddOption}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 8,
-                      paddingVertical: 10,
-                      marginBottom: 16,
-                    }}
-                  >
+                  <AddOptionButton onPress={handleAddOption}>
                     <Feather name="plus" size={18} color={colors.primary} />
-                    <Text style={{ color: colors.primary, fontWeight: "600" }}>
-                      Adicionar opção
-                    </Text>
-                  </TouchableOpacity>
+                    <AddOptionText>Adicionar opção</AddOptionText>
+                  </AddOptionButton>
                 )}
 
-                {/* Múltipla Escolha */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    paddingVertical: 12,
-                    borderTopWidth: 1,
-                    borderTopColor: colors.light_gray || "#374151",
-                    marginBottom: 20,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      color: colors.light_heading || "#FFF",
-                    }}
-                  >
+                <MultipleChoiceContainer>
+                  <MultipleChoiceText>
                     Permitir múltipla escolha
-                  </Text>
+                  </MultipleChoiceText>
                   <Switch
                     value={allowsMultiple}
                     onValueChange={setAllowsMultiple}
@@ -282,29 +194,15 @@ export const PollModal: React.FC<PollModalProps> = ({
                     }}
                     thumbColor={allowsMultiple ? colors.secondary : "#9CA3AF"}
                   />
-                </View>
+                </MultipleChoiceContainer>
 
-                {/* Botão de Enviar Enquete */}
-                <TouchableOpacity
-                  onPress={handleSubmit}
-                  style={{
-                    backgroundColor: colors.primary,
-                    paddingVertical: 12,
-                    borderRadius: 12,
-                    alignItems: "center",
-                    marginBottom: 12,
-                  }}
-                >
-                  <Text
-                    style={{ color: "#FFF", fontWeight: "bold", fontSize: 16 }}
-                  >
-                    Criar Enquete
-                  </Text>
-                </TouchableOpacity>
+                <SubmitButton onPress={handleSubmit}>
+                  <SubmitButtonText>Criar Enquete</SubmitButtonText>
+                </SubmitButton>
               </ScrollView>
-            </View>
+            </ModalContent>
           </TouchableWithoutFeedback>
-        </View>
+        </ModalOverlay>
       </TouchableWithoutFeedback>
     </Modal>
   );

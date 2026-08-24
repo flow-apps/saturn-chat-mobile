@@ -65,13 +65,13 @@ interface IChatContext {
   handleSendVoiceMessage: (data: IHandleSendVoiceMessage) => void;
   handleDeleteMessage: (data: IHandleDeleteMessage) => void;
   onSendedUserMessage: (
-    callback: (data: onSendedUserMessageCallbackType) => void
+    callback: (data: onSendedUserMessageCallbackType) => void,
   ) => void;
   onNewUserMessage: (callback: (data: MessageData) => void) => void;
   onNewUserTyping: (callback: (data: UserData) => void) => void;
   onDeletedUserTyping: (callback: (userId: string) => void) => void;
   onDeleteUserMessage: (
-    callback: (result: DeleteMessageResult) => void
+    callback: (result: DeleteMessageResult) => void,
   ) => void;
 }
 
@@ -93,20 +93,20 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
         setCurrentGroupId(groupId);
 
-        socket.emit("connect_in_chat", groupId);
+        socket?.emit("connect_in_chat", groupId);
       }
     },
-    [socket, connected, currentGroupId]
+    [socket, connected, currentGroupId],
   );
 
   const handleSetReadMessage = useCallback(
     (messageId: string) => {
-      socket.emit("set_read_message", {
+      socket?.emit("set_read_message", {
         message_id: messageId,
         group_id: currentGroupId,
       });
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const handleSetTyping = useCallback(
@@ -124,13 +124,13 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [socket, user, currentGroupId]
+    [socket, user, currentGroupId],
   );
 
   const handleSendMessage = useCallback(
     (data: IHandleSendMessage) => {
       if (!data.withFiles) {
-        socket.emit("new_user_message", {
+        socket?.emit("new_user_message", {
           localReference: data.localReference,
           reply_to_id: data.reply_to_id,
           group_id: currentGroupId,
@@ -146,12 +146,12 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const handleSendVoiceMessage = useCallback(
     (data: IHandleSendVoiceMessage) => {
-      socket.emit("new_voice_message", {
+      socket?.emit("new_voice_message", {
         audio: data.audio,
         reply_to_id: data.reply_to_id,
         message: data.message,
@@ -159,52 +159,52 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         group_id: currentGroupId,
       });
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const handleDeleteMessage = useCallback(
     (data: IHandleDeleteMessage) => {
-      socket.emit("delete_user_message", {
+      socket?.emit("delete_user_message", {
         message_id: data.message_id,
         group_id: currentGroupId,
       });
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const onSendedUserMessage = useCallback(
     (callback: (data: onSendedUserMessageCallbackType) => void) => {
-      socket.on("sended_user_message", callback);
+      socket?.on("sended_user_message", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onNewUserMessage = useCallback(
     (callback: (data: MessageData) => void) => {
-      socket.on("new_user_message", callback);
+      socket?.on("new_user_message", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onNewUserTyping = useCallback(
     (callback: (data: UserData) => void) => {
-      socket.on("new_user_typing", callback);
+      socket?.on("new_user_typing", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onDeletedUserTyping = useCallback(
     (callback: (userId: string) => void) => {
-      socket.on("deleted_user_typing", callback);
+      socket?.on("deleted_user_typing", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onDeleteUserMessage = useCallback(
     (callback: (result: DeleteMessageResult) => void) => {
-      socket.on("delete_user_message", callback);
+      socket?.on("delete_user_message", callback);
     },
-    [socket]
+    [socket],
   );
 
   useEffect(() => {

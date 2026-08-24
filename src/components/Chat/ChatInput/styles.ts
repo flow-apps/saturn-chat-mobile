@@ -99,3 +99,60 @@ export const SendAudioButton = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
 `;
+
+export const PlusButton = styled.TouchableOpacity`
+  padding-horizontal: 8px;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ModalOverlay = styled.View`
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: flex-end;
+`;
+
+export const ModalContent = styled.View`
+  background-color: ${({ theme }) => theme.colors.background || "#1F2937"};
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 20px;
+  gap: 16px;
+`;
+
+export const ModalHeader = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+export const DragIndicator = styled.View`
+  width: 40px;
+  height: 4px;
+  background-color: ${({ theme }) => theme.colors.dark_heading || "#4B5563"};
+  border-radius: 2px;
+`;
+
+export const ActionItemButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+`;
+
+export const ActionIconContainer = styled.View<{ bgColor?: string }>`
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background-color: ${({ bgColor }) => bgColor || "#ffffff1a"};
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ActionText = styled.Text`
+  font-size: 16px;
+  font-family: ${fonts["text-bold"]};
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.black || "#FFF"};
+`;
