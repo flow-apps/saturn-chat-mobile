@@ -50,6 +50,7 @@ import { useChatMessages } from "@hooks/useChatMessages";
 import { useChatAudio } from "@hooks/useChatAudio";
 import { ChatInput } from "@components/Chat/ChatInput";
 import { Container, MessageContainer } from "./styles";
+import { PollModal } from "@components/Chat/PollModal";
 
 const MESSAGES_LIMIT_REQUEST = 50;
 
@@ -113,6 +114,7 @@ const Chat: React.FC = () => {
   } = useChatAudio((dur, uri) => handleSendVoice(dur, uri));
 
   // Estados locais da tela
+  const [isPollModalVisible, setIsPollModalVisible] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [largeFile, setLargeFile] = useState(false);
   const [isSelectedFile, setIsSelectedFile] = useState(false);
@@ -160,6 +162,30 @@ const Chat: React.FC = () => {
       hideSub.remove();
     };
   }, []);
+
+  const handleCreatePoll = useCallback(
+    (pollData: {
+      question: string;
+      options: string[];
+      allows_multiple: boolean;
+    }) => {
+      if (id !== currentGroupId || !connected) return;
+
+      const localReference = uuid.v4() as string;
+
+      socket?.emit("new_poll", {
+        group_id: id,
+        question: pollData.question,
+        options: pollData.options,
+        allows_multiple: pollData.allows_multiple,
+        reply_to_id: replyingMessage?.id,
+        localReference,
+      });
+
+      setReplyingMessage(undefined);
+    },
+    [id, currentGroupId, connected, socket, replyingMessage],
+  );
 
   const buildOptimisticMessage = useCallback(
     (data: Partial<MessageData> & { localReference: string }): MessageData => ({
@@ -473,6 +499,12 @@ const Chat: React.FC = () => {
         visible={isSelectedFile}
       />
 
+      <PollModal
+        visible={isPollModalVisible}
+        onClose={() => setIsPollModalVisible(false)}
+        onSubmit={handleCreatePoll}
+      />
+
       <Header
         title={name || group.name}
         onPressTitle={
@@ -538,6 +570,7 @@ const Chat: React.FC = () => {
             onRemoveReplying={() => setReplyingMessage(undefined)}
             onTyping={() => handleSetTyping({ action: "ADD" })}
             onTypingTimeout={() => handleSetTyping({ action: "REMOVE" })}
+            onOpenPollModal={() => setIsPollModalVisible(true)}
             files={files}
             insetsBottom={insets.bottom}
             isKeyboardVisible={isKeyboardVisible}

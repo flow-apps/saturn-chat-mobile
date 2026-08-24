@@ -1,5 +1,13 @@
 import React, { useRef, useState } from "react";
-import { Keyboard, Platform, TextInput } from "react-native";
+import {
+  Keyboard,
+  Modal,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { AnimatePresence } from "moti";
 import { ProgressBar } from "react-native-paper";
 import Feather from "@expo/vector-icons/Feather";
@@ -27,6 +35,7 @@ import {
   OptionsContainer,
   SendButton,
 } from "./styles";
+import fonts from "@styles/fonts";
 
 interface ChatInputProps {
   groupId: string;
@@ -42,6 +51,7 @@ interface ChatInputProps {
   onRecordAudioStop: () => void;
   onRecordAudioCancel?: () => void;
   onFileSelect: () => void;
+  onOpenPollModal: () => void;
   onRemoveFile: (index: number) => void;
   onRemoveReplying: () => void;
   onTyping: () => void;
@@ -65,6 +75,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onRecordAudioStop,
   onRecordAudioCancel,
   onFileSelect,
+  onOpenPollModal,
   onRemoveFile,
   onRemoveReplying,
   onTyping,
@@ -86,6 +97,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [mentions, setMentions] = useState<UserData[]>([]);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
+  const [isActionsModalVisible, setIsActionsModalVisible] = useState(false);
 
   const handleSetText = (text: string) => {
     if (text.length >= maxMessageLength) {
@@ -207,7 +219,95 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Exibe o componente de gravação se estiver gravando, caso contrário mostra o input padrão */}
+      <Modal
+        visible={isActionsModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsActionsModalVisible(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => setIsActionsModalVisible(false)}
+        >
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              justifyContent: "flex-end",
+            }}
+          >
+            <TouchableWithoutFeedback>
+              <View
+                style={{
+                  backgroundColor: colors.background || "#1F2937",
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  padding: 20,
+                  gap: 16,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 8,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 40,
+                      height: 4,
+                      backgroundColor: colors.dark_heading || "#4B5563",
+                      borderRadius: 2,
+                    }}
+                  />
+                </View>
+
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                    paddingVertical: 12,
+                  }}
+                  onPress={() => {
+                    setIsActionsModalVisible(false);
+                    onOpenPollModal();
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 22,
+                      backgroundColor: colors.primary + "20",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Feather
+                      name="bar-chart-2"
+                      size={22}
+                      color={colors.primary}
+                    />
+                  </View>
+                  <FileSendedText
+                    style={{
+                      fontSize: 16,
+                      fontFamily: fonts["text-bold"],
+                      fontWeight: "600",
+                      marginTop: 10
+                    }}
+                  >
+                    Criar Enquete
+                  </FileSendedText>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {isRecording ? (
         <AudioRecordingBar
           audioDuration={audioDuration}
@@ -216,6 +316,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
       ) : (
         <InputContainer>
+          <TouchableOpacity
+            onPress={() => {
+              Keyboard.dismiss();
+              setIsActionsModalVisible(true);
+            }}
+            style={{
+              paddingHorizontal: 8,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Feather name="plus" size={26} color={colors.primary} />
+          </TouchableOpacity>
+
           <MessageInput
             ref={messageInputRef}
             as={TextInput}
@@ -233,12 +347,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               <Feather name="file" size={24} color={colors.primary} />
             </OptionsButton>
             {isTypingMessage || files.length > 0 ? (
-              <SendButton>
+              <SendButton onPress={handleSubmit}>
                 <Feather
                   name="send"
                   size={26}
                   color={colors.primary}
-                  onPress={handleSubmit}
                   style={{ transform: [{ rotate: "45deg" }] }}
                 />
               </SendButton>
