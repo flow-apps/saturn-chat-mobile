@@ -6,6 +6,7 @@ import { useAuth } from "@contexts/auth";
 import { useWebsocket } from "@contexts/websocket";
 import { PollData } from "@type/interfaces";
 import _ from "lodash";
+import fonts from "@styles/fonts";
 
 export interface PollOptionData {
   id: string;
@@ -66,6 +67,7 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
           style={{
             fontSize: 15,
             fontWeight: "bold",
+            fontFamily: fonts["text-bold"],
             color: colors.light_heading || "#FFF",
           }}
         >
@@ -103,11 +105,8 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
                   paddingHorizontal: 12,
                   paddingVertical: 10,
                   overflow: "hidden",
-                  borderWidth: isSelected ? 1.5 : 0,
-                  borderColor: colors.primary,
                 }}
               >
-                {/* Barra de Progresso do Percentual */}
                 <View
                   style={{
                     position: "absolute",
@@ -159,6 +158,7 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
                         fontSize: 14,
                         color: colors.light_heading || "#FFF",
                         fontWeight: isSelected ? "600" : "normal",
+                        fontFamily: fonts["text-bold"],
                       }}
                     >
                       {option.option_text}
