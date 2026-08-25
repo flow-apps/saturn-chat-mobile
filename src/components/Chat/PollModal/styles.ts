@@ -7,6 +7,10 @@ export const ModalOverlay = styled.View`
   justify-content: flex-end;
 `;
 
+export const KeyboardView = styled.KeyboardAvoidingView`
+  height: 100%;
+`;
+
 export const ModalContent = styled.View`
   background-color: ${({ theme }) => theme.colors.background || "#1F2937"};
   border-top-left-radius: 24px;

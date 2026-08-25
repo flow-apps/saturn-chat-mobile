@@ -402,6 +402,7 @@ const Message = ({
           <MessageContentContainer
             isRight={isRight}
             sended={isSended}
+            hasPoll={!!message.poll}
             onLongPress={handleOpenMsgOptions}
             delayLongPress={200}
           >

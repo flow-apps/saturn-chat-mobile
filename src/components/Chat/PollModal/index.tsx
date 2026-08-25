@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import {
   Modal,
+  Platform,
   ScrollView,
   Switch,
   TouchableWithoutFeedback,
@@ -11,6 +12,7 @@ import SimpleToast from "react-native-simple-toast";
 
 import {
   ModalOverlay,
+  KeyboardView,
   ModalContent,
   Header,
   Title,
@@ -122,88 +124,94 @@ export const PollModal: React.FC<PollModalProps> = ({
       animationType="slide"
       onRequestClose={handleResetAndClose}
     >
-      <TouchableWithoutFeedback onPress={handleResetAndClose}>
-        <ModalOverlay>
-          <TouchableWithoutFeedback>
-            <ModalContent>
-              <Header>
-                <Title>Criar Enquete</Title>
-                <CloseButton onPress={handleResetAndClose}>
-                  <Feather
-                    name="x"
-                    size={24}
-                    color={colors.dark_heading || "#9CA3AF"}
-                  />
-                </CloseButton>
-              </Header>
-
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-              >
-                <Label>Pergunta</Label>
-                <Input
-                  value={question}
-                  onChangeText={setQuestion}
-                  placeholder="Ex: Qual o local do evento?"
-                  placeholderTextColor={colors.dark_heading || "#6B7280"}
-                  maxLength={255}
-                />
-
-                <Label>Opções</Label>
-                {options.map((opt, index) => (
-                  <OptionRow key={`poll_option_input_${index}`}>
-                    <OptionInput
-                      value={opt}
-                      onChangeText={(text) => handleOptionChange(text, index)}
-                      placeholder={`Opção ${index + 1}`}
-                      placeholderTextColor={colors.dark_heading || "#6B7280"}
-                      maxLength={255}
+      <KeyboardView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <TouchableWithoutFeedback onPress={handleResetAndClose}>
+          <ModalOverlay>
+            <TouchableWithoutFeedback>
+              <ModalContent>
+                {/* Header do Modal */}
+                <Header>
+                  <Title>Criar Enquete</Title>
+                  <CloseButton onPress={handleResetAndClose}>
+                    <Feather
+                      name="x"
+                      size={24}
+                      color={colors.dark_heading || "#9CA3AF"}
                     />
-                    {options.length > 2 && (
-                      <RemoveOptionButton
-                        onPress={() => handleRemoveOption(index)}
-                      >
-                        <Feather
-                          name="trash-2"
-                          size={20}
-                          color={colors.red || "#EF4444"}
-                        />
-                      </RemoveOptionButton>
-                    )}
-                  </OptionRow>
-                ))}
+                  </CloseButton>
+                </Header>
 
-                {options.length < 10 && (
-                  <AddOptionButton onPress={handleAddOption}>
-                    <Feather name="plus" size={18} color={colors.primary} />
-                    <AddOptionText>Adicionar opção</AddOptionText>
-                  </AddOptionButton>
-                )}
-
-                <MultipleChoiceContainer>
-                  <MultipleChoiceText>
-                    Permitir múltipla escolha
-                  </MultipleChoiceText>
-                  <Switch
-                    value={allowsMultiple}
-                    onValueChange={setAllowsMultiple}
-                    trackColor={{
-                      false: "#4B5563",
-                      true: colors.secondary + "80",
-                    }}
-                    thumbColor={allowsMultiple ? colors.secondary : "#9CA3AF"}
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  {/* Pergunta */}
+                  <Label>Pergunta</Label>
+                  <Input
+                    value={question}
+                    onChangeText={setQuestion}
+                    placeholder="Ex: Qual o local do evento?"
+                    placeholderTextColor={colors.dark_heading || "#6B7280"}
+                    maxLength={255}
                   />
-                </MultipleChoiceContainer>
 
-                <SubmitButton onPress={handleSubmit}>
-                  <SubmitButtonText>Criar Enquete</SubmitButtonText>
-                </SubmitButton>
-              </ScrollView>
-            </ModalContent>
-          </TouchableWithoutFeedback>
-        </ModalOverlay>
-      </TouchableWithoutFeedback>
+                  {/* Opções */}
+                  <Label>Opções</Label>
+                  {options.map((opt, index) => (
+                    <OptionRow key={`poll_option_input_${index}`}>
+                      <OptionInput
+                        value={opt}
+                        onChangeText={(text) => handleOptionChange(text, index)}
+                        placeholder={`Opção ${index + 1}`}
+                        placeholderTextColor={colors.dark_heading || "#6B7280"}
+                        maxLength={255}
+                      />
+                      {options.length > 2 && (
+                        <RemoveOptionButton
+                          onPress={() => handleRemoveOption(index)}
+                        >
+                          <Feather
+                            name="trash-2"
+                            size={20}
+                            color={colors.red || "#EF4444"}
+                          />
+                        </RemoveOptionButton>
+                      )}
+                    </OptionRow>
+                  ))}
+
+                  {options.length < 10 && (
+                    <AddOptionButton onPress={handleAddOption}>
+                      <Feather name="plus" size={18} color={colors.primary} />
+                      <AddOptionText>Adicionar opção</AddOptionText>
+                    </AddOptionButton>
+                  )}
+
+                  {/* Múltipla Escolha */}
+                  <MultipleChoiceContainer>
+                    <MultipleChoiceText>
+                      Permitir múltipla escolha
+                    </MultipleChoiceText>
+                    <Switch
+                      value={allowsMultiple}
+                      onValueChange={setAllowsMultiple}
+                      trackColor={{
+                        false: "#4B5563",
+                        true: colors.secondary + "80",
+                      }}
+                      thumbColor={allowsMultiple ? colors.secondary : "#9CA3AF"}
+                    />
+                  </MultipleChoiceContainer>
+
+                  <SubmitButton onPress={handleSubmit}>
+                    <SubmitButtonText>Criar Enquete</SubmitButtonText>
+                  </SubmitButton>
+                </ScrollView>
+              </ModalContent>
+            </TouchableWithoutFeedback>
+          </ModalOverlay>
+        </TouchableWithoutFeedback>
+      </KeyboardView>
     </Modal>
   );
 };
