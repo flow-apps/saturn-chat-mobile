@@ -243,24 +243,29 @@ const Chat: React.FC = () => {
   );
 
   const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) => {            
+    onSendedUserMessage(({ msg, localReference }) => {
       setOldMessages((old) =>
         old.map((m) => {
-          if (m.localReference === localReference) {
+          if (
+            (m.localReference && m.localReference === localReference) ||
+            m.id === localReference
+          ) {
             return {
               ...msg,
-              sended: true,
+              sended: true, // Garante a flag de enviada
             };
           }
           return m;
         }),
       );
     });
+
     onNewUserMessage((msg) => {
       if (arrayUtils.has(oldMessages, (m) => m.id === msg.id)) return;
       setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));
       handleSetReadMessage(msg.id);
     });
+
     onNewUserTyping((newUser) => {
       if (
         newUser.id !== user?.id &&
@@ -268,16 +273,25 @@ const Chat: React.FC = () => {
       )
         setTypingUsers((old) => [...old, newUser]);
     });
+
     onDeletedUserTyping((removedId) =>
       setTypingUsers(
         (old) => arrayUtils.removeOne(old, (u) => u.id === removedId) || [],
       ),
     );
+
     onDeleteUserMessage((res) => {
       if (replyingMessage?.id === res.id) setReplyingMessage(undefined);
       setOldMessages((old) => old.filter((m) => m.id !== res.id));
     });
-  }, [socket, oldMessages, typingUsers, replyingMessage, sortMessages]);
+  }, [
+    socket,
+    oldMessages,
+    typingUsers,
+    replyingMessage,
+    sortMessages,
+    onSendedUserMessage,
+  ]);
 
   const handleSendVoice = async (duration: number, uri: string) => {
     try {
