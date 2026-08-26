@@ -64,9 +64,9 @@ const VideoPreview: React.FC = () => {
   });
 
   useEffect(() => {
-    SystemNavigationBar.stickyImmersive();
+    SystemNavigationBar.fullScreen(true);
     return () => {
-      SystemNavigationBar.navigationShow();
+      SystemNavigationBar.fullScreen(false);
     };
   }, []);
 
