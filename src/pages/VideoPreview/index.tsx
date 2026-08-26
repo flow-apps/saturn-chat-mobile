@@ -20,7 +20,7 @@ import {
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "styled-components";
 import { VideoView, useVideoPlayer } from "expo-video";
-import { millisToTime } from "@utils/format";
+import { millisToTime, secondsToTime } from "@utils/format";
 import { MotiView } from "moti";
 import { AnimatePresence } from "moti";
 import SystemNavigationBar from "react-native-system-navigation-bar";
@@ -161,6 +161,7 @@ const VideoPreview: React.FC = () => {
             player={videoPlayer}
             style={{ width: "100%", height: "100%" }}
             allowsPictureInPicture={false}
+            nativeControls={false}
           />
         </VideoPlayerWrapper>
         <PlayerControlsContainer onPress={handleHiddenControls}>
@@ -193,7 +194,7 @@ const VideoPreview: React.FC = () => {
                   <PlayerSeekContainer>
                     <PlayerPositionContainer>
                       <PlayerPosition>
-                        {millisToTime(currentPosition)}
+                        {secondsToTime(Math.ceil(currentPosition))}
                       </PlayerPosition>
                     </PlayerPositionContainer>
                     <PlayerSeek
@@ -207,7 +208,9 @@ const VideoPreview: React.FC = () => {
                       onSlidingComplete={handleSeek}
                     />
                     <PlayerPositionContainer>
-                      <PlayerPosition>{millisToTime(duration)}</PlayerPosition>
+                      <PlayerPosition>
+                        {secondsToTime(Math.ceil(duration))}
+                      </PlayerPosition>
                     </PlayerPositionContainer>
                   </PlayerSeekContainer>
                 </PlayerControls>

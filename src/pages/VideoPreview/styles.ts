@@ -4,8 +4,9 @@ import fonts from "@styles/fonts";
 import Slider from "@react-native-community/slider";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { MotiView } from "moti";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export const Container = styled.View`
+export const Container = styled(SafeAreaView)`
   flex: 1;
   background-color: #000000;
   flex-direction: column;
