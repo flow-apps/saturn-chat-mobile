@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
+import darken from "polished/lib/color/darken";
 
 export const Container = styled.View`
   width: 100%;
@@ -28,7 +29,7 @@ export const OptionsContainer = styled.View`
 
 export const OptionButton = styled.TouchableOpacity`
   position: relative;
-  background-color: ${({ theme }) => theme.colors.shape || "#374151"};
+  background-color: ${({ theme }) => darken(0.03, theme.colors.shape) || "#374151"};
   border-radius: 10px;
   padding: 10px 12px;
   overflow: hidden;
