@@ -96,11 +96,11 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
                 key={option.id}
                 onPress={() => handleVote(option.id)}
                 activeOpacity={0.7}
+                style={{ overflow: "hidden", position: "relative" }}
               >
-                {/* Barra de Progresso Animada com Moti */}
                 <MotiView
                   animate={{
-                    width: `${percentage}%`,
+                    width: `${percentage}%`, 
                     backgroundColor: progressBgColor,
                   }}
                   transition={{
@@ -112,6 +112,7 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
                     left: 0,
                     top: 0,
                     bottom: 0,
+                    right: percentage === 100 ? 0 : undefined,
                     borderRadius: 10,
                   }}
                 />

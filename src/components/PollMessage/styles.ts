@@ -31,7 +31,8 @@ export const OptionButton = styled.TouchableOpacity`
   position: relative;
   background-color: ${({ theme }) => darken(0.03, theme.colors.shape) || "#374151"};
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 10px 0px;
+  width: 100%;
   overflow: hidden;
 `;
 
@@ -40,6 +41,7 @@ export const OptionContent = styled.View`
   justify-content: space-between;
   align-items: center;
   z-index: 1;
+  padding: 0 15px;
 `;
 
 export const OptionInfo = styled.View`
