@@ -1,5 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Keyboard, Platform, KeyboardAvoidingView } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  Platform,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from "react-native";
 import { useAppState } from "@react-native-community/hooks";
 import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -17,7 +22,8 @@ import FormData from "form-data";
 import crashlytics from "@react-native-firebase/crashlytics";
 import analytics from "@react-native-firebase/analytics";
 import _ from "lodash";
-import { MotiView } from "moti";
+import { MotiView, AnimatePresence } from "moti";
+import { useTheme } from "styled-components/native";
 
 import {
   GroupData,
@@ -90,8 +96,13 @@ const Chat: React.FC = () => {
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
   const { socket } = useWebsocket();
+  const { colors } = useTheme();
   const appState = useAppState();
   const { t } = useTranslate("Chat");
+
+  // Ref da lista e estado de exibição do botão
+  const flashListRef = useRef<FlashList<MessageData>>(null);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
   const {
     oldMessages,
@@ -159,6 +170,16 @@ const Chat: React.FC = () => {
       hideSub.remove();
     };
   }, []);
+
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    // Exibe o botão se rolar mais de 300px para cima
+    setShowScrollToBottom(offsetY > 300);
+  };
+
+  const scrollToBottom = () => {
+    flashListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
 
   const handleCreatePoll = useCallback(
     (pollData: {
@@ -252,7 +273,7 @@ const Chat: React.FC = () => {
           ) {
             return {
               ...msg,
-              sended: true, // Garante a flag de enviada
+              sended: true,
             };
           }
           return m;
@@ -527,7 +548,14 @@ const Chat: React.FC = () => {
         handleJoinRoom(id);
         configureSocketListeners();
       }
-    }, [connected, socket, appState]),
+    }, [
+      connected,
+      socket,
+      appState,
+      handleJoinRoom,
+      configureSocketListeners,
+      id,
+    ]),
   );
 
   if (loading) return <Loading />;
@@ -588,10 +616,11 @@ const Chat: React.FC = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? headerHeight : 0}
       >
-        <Container style={{ flex: 1 }}>
+        <Container style={{ flex: 1, position: "relative" }}>
           <Typing typingUsers={typingUsers} />
           <MessageContainer style={{ flex: 1 }}>
             <FlashList
+              ref={flashListRef}
               data={oldMessages}
               extraData={oldMessages.length}
               keyExtractor={(item) => item.id || item.localReference || ""}
@@ -605,8 +634,48 @@ const Chat: React.FC = () => {
               onEndReachedThreshold={0.5}
               showsVerticalScrollIndicator={false}
               disableHorizontalListHeightMeasurement
+              onScroll={handleScroll}
             />
           </MessageContainer>
+
+          {/* Botão flutuante para voltar à mensagem mais recente */}
+          <AnimatePresence>
+            {showScrollToBottom && (
+              <MotiView
+                from={{ opacity: 0, scale: 0.8, translateY: 10 }}
+                animate={{ opacity: 1, scale: 1, translateY: 0 }}
+                exit={{ opacity: 0, scale: 0.8, translateY: 10 }}
+                transition={{ type: "timing", duration: 200 }}
+                style={{
+                  position: "absolute",
+                  right: 16,
+                  bottom: isKeyboardVisible ? 80 : 70,
+                  zIndex: 99,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={scrollToBottom}
+                  activeOpacity={0.8}
+                  style={{
+                    backgroundColor: colors.primary || "#0084ff",
+                    width: 42,
+                    height: 42,
+                    borderRadius: 21,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    elevation: 4,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    marginBottom: 15
+                  }}
+                >
+                  <Feather name="chevron-down" size={24} color="#FFF" />
+                </TouchableOpacity>
+              </MotiView>
+            )}
+          </AnimatePresence>
 
           <ChatInput
             groupId={id}

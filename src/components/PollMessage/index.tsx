@@ -45,13 +45,34 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
 
     const handleVote = useCallback(
       (optionId: string) => {
-        if (!socket || !user) return;
+        if (!user || !socket) return;
 
-        socket.emit("vote_poll", {
+        const payload = {
           poll_id: poll.id,
           option_id: optionId,
           group_id: groupId,
-        });
+        };
+
+        if (socket.connected) {
+          socket.emit("vote_poll", payload);
+          return;
+        }
+
+        console.log(
+          "Socket desconectado ao votar. Tentando reconectar e emitir...",
+        );
+        socket.connect();
+
+        const onConnectOnce = () => {
+          socket.emit("vote_poll", payload);
+          socket.off("connect", onConnectOnce);
+        };
+
+        socket.on("connect", onConnectOnce);
+
+        setTimeout(() => {
+          socket.off("connect", onConnectOnce);
+        }, 5000);
       },
       [socket, user, poll.id, groupId],
     );
@@ -100,7 +121,7 @@ export const PollMessage: React.FC<PollMessageProps> = memo(
               >
                 <MotiView
                   animate={{
-                    width: `${percentage}%`, 
+                    width: `${percentage}%`,
                     backgroundColor: progressBgColor,
                   }}
                   transition={{
