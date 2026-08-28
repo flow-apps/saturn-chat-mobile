@@ -4,8 +4,8 @@ const configs = {
   PROD_API_URL: "https://saturnchat.azurewebsites.net/",
   DEV_API_URL: "http://10.0.2.2:3000",
   STORAGE_URL: "https://saturnchatstorage.blob.core.windows.net/",
-  SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.app"],
-  WEBSITE_URL: "https://saturn-chat.vercel.app",
+  SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.com.br"],
+  WEBSITE_URL: "https://saturnchat.com.br",
   OFICIAL_GROUP_ID: "d10dfadb-08d1-4eb8-8a82-3a7b379604d3",
   PRODUCT_SKUS: Platform.select({
     android: ["star_plan"],
