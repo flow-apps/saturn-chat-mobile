@@ -35,7 +35,7 @@ const CurrentReplyingMessage = ({
     if (message.voice_message) {
       return (
         <ReplyingMessage textBreakStrategy="balanced" numberOfLines={2}>
-          <Feather name="mic" size={13} /> Mensagem de voz (
+          <Feather name="mic" size={13} /> {t("voice_message")} (
           {millisToTime(message.voice_message.duration)})
         </ReplyingMessage>
       );

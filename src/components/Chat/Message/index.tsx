@@ -161,7 +161,7 @@ const Message = ({
     setInvitesData(foundInvites);
   }, [message.message]);
 
-  const isRight = (message.author?.id || message.author_id) === user?.id;
+  const isRight = (message.author?.id || message?.author_id) === user?.id;
   const isSended = message?.sended ?? true;
   const hasInvite = invitesData.length > 0;
 
@@ -320,16 +320,22 @@ const Message = ({
       if (message.poll) {
         try {
           const parsed = JSON.parse(translatedContent);
-          return `📊 Enquete: ${parsed.question}`;
+          return t("poll", {
+            question: parsed.question,
+          });
         } catch {
-          return `📊 Enquete: ${message.poll.question}`;
+          return t("poll", {
+            question: message.poll.question,
+          });
         }
       }
       return translatedContent;
     }
 
     if (message.poll) {
-      return `📊 Enquete: ${message.poll.question}`;
+      return t("poll", {
+        question: message.poll.question,
+      });
     }
 
     return message.message;
@@ -431,8 +437,7 @@ const Message = ({
           question: parsedTranslation.question || message.poll.question,
           options: message.poll.options.map((opt) => ({
             ...opt,
-            option_text:
-              parsedTranslation.options?.[opt.id] || opt.option_text,
+            option_text: parsedTranslation.options?.[opt.id] || opt.option_text,
           })),
         };
       } catch {
@@ -499,7 +504,10 @@ const Message = ({
                 key={`${message.id}-${translatedContent ? "translated" : "original"}`}
                 message={{
                   ...message,
-                  message: translatedContent && !message.poll ? translatedContent : message.message,
+                  message:
+                    translatedContent && !message.poll
+                      ? translatedContent
+                      : message.message,
                 }}
                 onPressLink={alertLink}
                 user={user as UserData}

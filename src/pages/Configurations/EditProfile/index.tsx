@@ -38,22 +38,24 @@ const EditProfile: React.FC = () => {
   const [bio, setBio] = useState("");
 
   const [nickname, setNickname] = useState("");
-  const [nicknameTimeout, setNicknameTimeout] = useState<number>();
+  const [nicknameTimeout, setNicknameTimeout] = useState<NodeJS.Timeout>();
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [nicknameError, setNicknameError] = useState(false);
   const [fetchingNickname, setFetchingNickname] = useState(false);
+
+  const { t } = useTranslate("EditProfile");
+
   const nicknameErrors = {
-    400: "O nome de usuário não está conforme os padrões esperados",
-    404: "O nome de usuário não foi fornecido",
-    1000: "Não foi possível buscar o nome de usuário",
-    unavailable: "O nome de usuário não está disponível",
+    400: t("errors.400"),
+    404: t("errors.404"),
+    1000: t("errors.1000"),
+    unavailable: t("errors.unavailable"),
   };
 
   const [isSendable, setIsSendable] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateUser } = useAuth();
-  const { t } = useTranslate("EditProfile");
 
   const checkNickname = async (nick: string) => {
     if (fetchingNickname) return;
@@ -137,7 +139,7 @@ const EditProfile: React.FC = () => {
         console.log(error.response.data);
         SimpleToast.show(
           "Não foi possível atualizar o usuário",
-          SimpleToast.SHORT
+          SimpleToast.SHORT,
         );
         setLoading(false);
       });
@@ -317,14 +319,14 @@ const EditProfile: React.FC = () => {
             </FieldContainer>
             <FieldContainer>
               <Input
-                label={"Nome de usuário"}
+                label={t("labels.nickname")}
                 placeholder={"pedro_henrique"}
                 value={nickname}
                 onChangeText={handleSetNickname}
                 onChange={handleCheckFields}
                 maxLength={100}
               />
-              {fetchingNickname && <SearchText>Buscando...</SearchText>}
+              {fetchingNickname && <SearchText>{t("searching")}</SearchText>}
               {nicknameError && <FieldError>{nicknameErrorMessage}</FieldError>}
             </FieldContainer>
             <FieldContainer>

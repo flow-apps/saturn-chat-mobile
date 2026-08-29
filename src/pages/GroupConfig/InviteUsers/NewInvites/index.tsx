@@ -80,11 +80,11 @@ const NewInvites: React.FC = () => {
 
       if (response.status === 200) {
         setInvites((old) => [response.data, ...old]);
-        Toast.show("Convite criado com sucesso!", Toast.SHORT);
+        Toast.show(t("toasts.success_create"), Toast.SHORT);
       }
     } catch (error) {
       console.error("Erro ao criar convite:", error);
-      Toast.show("Não foi possível criar o convite.", Toast.SHORT);
+      Toast.show(t("toasts.error_create"), Toast.SHORT);
     }
   };
 
@@ -92,16 +92,16 @@ const NewInvites: React.FC = () => {
     try {
       await api.delete(`/invites/${id}`);
       setInvites((old) => old.filter((inv) => inv.id !== id));
-      Toast.show("Convite removido com sucesso!", Toast.SHORT);
+      Toast.show(t("toasts.success_remove"), Toast.SHORT);
     } catch (error) {
       console.error("Erro ao remover convite:", error);
-      Toast.show("Não foi possível remover o convite.", Toast.SHORT);
+      Toast.show(t("toasts.error_remove"), Toast.SHORT);
     }
   };
 
   const handleCopyLink = async (url: string) => {
     await Clipboard.setStringAsync(url);
-    Toast.show("Convite copiado!", Toast.SHORT);
+    Toast.show(t("toasts.copy_invite"), Toast.SHORT);
   };
 
   const { colors } = useTheme();
@@ -191,7 +191,8 @@ const NewInvites: React.FC = () => {
                             onPress={() => setExpireIn(value)}
                           >
                             <CreateInviteLinkOptionCardText>
-                              {String(value).padStart(2, "0")} {t("day")}
+                              {String(value).padStart(2, "0")}{" "}
+                              {t("day", { count: value })}
                             </CreateInviteLinkOptionCardText>
                           </CreateInviteLinkOptionCard>
                         ))}
@@ -214,7 +215,7 @@ const NewInvites: React.FC = () => {
                     numberOfLines={1}
                     onPress={() =>
                       handleCopyLink(
-                        config.WEBSITE_URL + "/invite/" + invite.invite_code
+                        config.WEBSITE_URL + "/invite/" + invite.invite_code,
                       )
                     }
                   >
