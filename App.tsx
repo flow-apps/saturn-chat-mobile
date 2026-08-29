@@ -1,49 +1,53 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Routes from "@routes/index";
-import { View, ActivityIndicator } from "react-native"; // Import ActivityIndicator
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
-import { Image, StyleSheet } from "react-native";
-import { AuthProvider } from "@contexts/auth";
+import { useFonts } from "expo-font";
+import * as Updates from "expo-updates";
+import { isDevice } from "expo-device";
+import { LogLevel, OneSignal } from "react-native-onesignal";
+
+import Routes from "@routes/index";
+import secrets from "./secrets.json";
+
+import { AuthProvider, useAuth } from "@contexts/auth";
 import { ThemeControllerProvider } from "@contexts/theme";
 import { NotificationsProvider } from "@contexts/notifications";
 import { AdsProvider } from "@contexts/ads";
 import { AudioPlayerProvider } from "@contexts/audioPlayer";
 import { FirebaseProvider } from "@contexts/firebase";
-import { RemoteConfigsProvider } from "@contexts/remoteConfigs";
+import {
+  RemoteConfigsProvider,
+  useRemoteConfigs,
+} from "@contexts/remoteConfigs";
 import { WebsocketProvider } from "@contexts/websocket";
-
-import { useFonts } from "expo-font";
+import { ChatProvider } from "@contexts/chat";
+import { HomeProvider } from "@contexts/home";
+import { PurchasesProvider } from "@contexts/purchases";
+import { PremiumProvider } from "@contexts/premium";
 
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
-
 import {
   RobotoMono_400Regular,
   RobotoMono_600SemiBold,
   RobotoMono_700Bold,
 } from "@expo-google-fonts/roboto-mono";
-
 import {
   Poppins_400Regular,
   Poppins_600SemiBold,
   Poppins_300Light_Italic,
 } from "@expo-google-fonts/poppins";
 
-import { ChatProvider } from "@contexts/chat";
-
-import { HomeProvider } from "@contexts/home";
-import { PurchasesProvider } from "@contexts/purchases";
-import {} from "react-native-iap";
-import { PremiumProvider } from "@contexts/premium";
-import { LogLevel, OneSignal } from "react-native-onesignal";
-import secrets from "./secrets.json";
-import { useAuth } from "@contexts/auth";
-import { useRemoteConfigs } from "@contexts/remoteConfigs";
-
-import { isDevice } from "expo-device";
-import * as Updates from "expo-updates";
-
 preventAutoHideAsync();
+
+OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
+OneSignal.initialize(secrets.OneSignalAppID);
 
 const InitializerGate: React.FC<{ onReady: () => void }> = ({ onReady }) => {
   const { loadingData: authLoading } = useAuth();
@@ -59,8 +63,10 @@ const InitializerGate: React.FC<{ onReady: () => void }> = ({ onReady }) => {
 };
 
 function App() {
-  const [readyForStart, setReadyForStart] = useState(false);
-  const [contextsAreReady, setContextsAreReady] = useState(false); // Novo estado para a prontidão dos contextos
+  const [contextsAreReady, setContextsAreReady] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const { isUpdateAvailable } = Updates.useUpdates();
 
   const [fontLoaded] = useFonts({
     Poppins_300Light_Italic,
@@ -74,39 +80,33 @@ function App() {
     FiraCode_500Medium,
   });
 
-  OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
-  OneSignal.initialize(secrets.OneSignalAppID);
-  
-  const configureExpoUpdates = async () => {
-    try {
-      if (!isDevice || __DEV__) {
-        return;
-      }
-
-      const { isAvailable: hasNewUpdate } = await Updates.checkForUpdateAsync();
-
-      if (hasNewUpdate) {
+  useEffect(() => {
+    const handleUpdate = async () => {
+      try {
+        setIsUpdating(true);
         await Updates.fetchUpdateAsync();
         await Updates.reloadAsync();
+      } catch (error) {
+        Alert.alert(
+          "Erro de Atualização",
+          "Não foi possível aplicar a nova versão.",
+        );
+        setIsUpdating(false);
       }
-    } catch (error) {
-      console.log(`Error fetching latest Expo update: ${error}`);
-    } finally {
-      setReadyForStart(true);
+    };
+
+    if (isUpdateAvailable && isDevice && !__DEV__) {
+      handleUpdate();
     }
-  };
+  }, [isUpdateAvailable]);
 
   useEffect(() => {
-    configureExpoUpdates();
-  }, []);
-
-  useEffect(() => {
-    if (fontLoaded && readyForStart && contextsAreReady) {
+    if (fontLoaded && contextsAreReady && !isUpdating) {
       hideAsync();
     }
-  }, [fontLoaded, readyForStart, contextsAreReady]);
+  }, [fontLoaded, contextsAreReady, isUpdating]);
 
-  if (!fontLoaded || !readyForStart) {
+  if (!fontLoaded || isUpdating) {
     return (
       <View style={styles.splashContainer}>
         <Image
