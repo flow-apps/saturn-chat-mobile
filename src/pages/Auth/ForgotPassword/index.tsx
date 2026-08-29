@@ -3,7 +3,6 @@ import {
   NativeSyntheticEvent,
   TextInput,
   TextInputKeyPressEventData,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import SimpleToast from "react-native-simple-toast";
@@ -20,10 +19,11 @@ import {
   FieldInfo,
   FieldInfoContainer,
 } from "./styles";
-import Header from "@components/Header";
 import Input from "@components/Input";
 import Button from "@components/Button";
+import Header from "@components/Header";
 import api from "@services/api";
+import CustomAlert from "@components/Alert";
 
 const ForgotPassword: React.FC = () => {
   const passwordValidation =
@@ -42,6 +42,28 @@ const ForgotPassword: React.FC = () => {
   const [passError, setPassError] = useState(true);
   const [confirmPassError, setConfirmPassError] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    content: string;
+  }>({
+    visible: false,
+    title: "",
+    content: "",
+  });
+
+  const showAlert = (title: string, content: string) => {
+    setAlertConfig({
+      visible: true,
+      title,
+      content,
+    });
+  };
+
+  const hideAlert = () => {
+    setAlertConfig((prev) => ({ ...prev, visible: false }));
+  };
 
   const inputRefs = useRef<Array<TextInput | null>>([]);
 
@@ -81,7 +103,7 @@ const ForgotPassword: React.FC = () => {
       setDisplayEmail(response.data.email || email);
       setStep("code");
     } catch (error: any) {
-      Alert.alert(
+      showAlert(
         "Erro",
         error?.response?.data?.message ||
           "Ocorreu um erro ao solicitar o código.",
@@ -145,7 +167,7 @@ const ForgotPassword: React.FC = () => {
   const handleVerifyCode = async () => {
     const fullCode = code.join("");
     if (fullCode.length < 6) {
-      Alert.alert("Atenção", "Informe o código de 6 dígitos completo.");
+      showAlert("Atenção", "Informe o código de 6 dígitos completo.");
       return;
     }
 
@@ -163,7 +185,7 @@ const ForgotPassword: React.FC = () => {
       setResetToken(response.data.reset_token);
       setStep("password");
     } catch (error: any) {
-      Alert.alert(
+      showAlert(
         "Erro",
         error?.response?.data?.message || "Código inválido ou expirado.",
       );
@@ -183,7 +205,7 @@ const ForgotPassword: React.FC = () => {
       SimpleToast.show("Senha alterada com sucesso!", SimpleToast.SHORT);
       nav.goBack();
     } catch (error: any) {
-      Alert.alert(
+      showAlert(
         "Erro",
         error?.response?.data?.message || "Não foi possível redefinir a senha.",
       );
@@ -193,19 +215,15 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <>
-      <Header
-        backButton
-        title="Recuperar senha"
-        onPressBack={() => {
-          if (step === "password") {
-            setStep("code");
-          } else if (step === "code") {
-            setStep("email");
-          } else {
-            nav.goBack();
-          }
-        }}
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        okButtonAction={hideAlert}
+        extraButton={false}
       />
+
+      <Header backButton title="Recuperar senha" />
       <Container>
         {step === "email" && (
           <>
@@ -250,6 +268,7 @@ const ForgotPassword: React.FC = () => {
                 {code.map((digit, index) => (
                   <CodeInput
                     key={index}
+                    // @ts-ignore
                     ref={(el) => (inputRefs.current[index] = el)}
                     value={digit}
                     onChangeText={(text) => handleCodeChange(text, index)}

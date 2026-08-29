@@ -47,6 +47,7 @@ export const AlertOkButtonText = styled.Text`
   font-family: ${fonts["text-bold"]};
   font-size: 14px;
   color: ${(props) => props.theme.colors.primary};
+  margin-left: auto;
 `;
 
 export const AlertCancelButton = styled(AlertOkButton)`
