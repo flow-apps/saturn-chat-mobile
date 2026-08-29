@@ -23,6 +23,7 @@ export const es = {
         file_amount_one: "archivo",
         file_amount_other: "archivos",
         replying_text: "Estás respondiendo a:",
+        voice_message: "Mensaje de voz",
       },
       FilePreview: {
         alerts: {
@@ -36,6 +37,7 @@ export const es = {
         },
       },
       Message: {
+        poll: "📊 Encuesta: {{question}}",
         toasts: {
           copied_message: "Mensaje copiado",
         },
@@ -97,6 +99,18 @@ export const es = {
         typing: "escribiendo",
         many: "Varios usuarios",
       },
+      Poll: {
+        max_options: "Máximo de {{count}} opciones alcanzado.",
+        min_options: "La encuesta debe tener al menos {{count}} opciones.",
+        type_poll_question: "Escribe la pregunta de la encuesta.",
+        create_poll: "Crear Encuesta",
+        options: "Opciones",
+        question_input_placeholder: "Ej: ¿Dónde es el evento?",
+        question_option_placeholder: "Opción {{count}}",
+        add_option: "Añadir opción",
+        multiple: "Permitir opción múltiple",
+        question: "Pregunta",
+      },
     },
     Modals: {
       EmblemModal: {
@@ -141,7 +155,8 @@ export const es = {
   Auth: {
     Home: {
       title: "¿Empezamos?",
-      subtitle: "¡Inicia sesión o crea tu cuenta para comenzar a usar la aplicación!",
+      subtitle:
+        "¡Inicia sesión o crea tu cuenta para comenzar a usar la aplicación!",
       login: "Iniciar sesión",
       new_account: "Crear cuenta",
     },
@@ -153,8 +168,14 @@ export const es = {
       avatar_selected: "🖼 ¡Esta foto es perfecta!",
       register_error:
         "No se pudo crear la cuenta. Posiblemente el correo electrónico ya esté en uso; intenta iniciar sesión.",
+      internal_error:
+        "Ocurrió un error interno en el servidor. Inténtalo más tarde.",
+      nickname_rules:
+        "Debe ser un nombre único, que contenga solo números y letras. Solo los símbolos de guion (-) y guion bajo (_) están disponibles. Si no se proporciona un nombre de usuario, se generará uno automáticamente para ti.",
+      searching: "Buscando...",
       labels: {
         name: "Nombre",
+        nickname: "Nombre de usuario",
         email: {
           label: "Correo electrónico",
           error: "Este correo electrónico no es válido",
@@ -187,7 +208,9 @@ export const es = {
       forgot_password: "¿Olvidaste tu contraseña?",
       login_button: "Entrar",
       register_button: "¿Eres nuevo aquí? ¡Crea una cuenta!",
-    }
+      internal_error:
+        "Ocurrió un error interno en el servidor. Inténtalo más tarde.",
+    },
   },
   TabBar: {
     groups: "Grupos",
@@ -335,6 +358,13 @@ export const es = {
   EditProfile: {
     header_title: "Editar perfil",
     switch_avatar: "Cambiar avatar",
+    searching: "Buscando...",
+    errors: {
+      "400": "El nombre de usuario no cumple con los estándares esperados",
+      "404": "No se proporcionó el nombre de usuario",
+      "1000": "No se pudo buscar el nombre de usuario",
+      unavailable: "El nombre de usuario no está disponible",
+    },
     toasts: {
       updated: "Perfil actualizado",
       update_avatar: "Actualizando avatar...",
@@ -343,6 +373,7 @@ export const es = {
         "¡Necesitamos permiso para acceder a tus fotos y poder cambiar tu avatar!",
     },
     labels: {
+      nickname: "Nombre de usuario",
       name: {
         label: "Nombre",
         placeholder: "máx. 100 caracteres",
@@ -445,6 +476,14 @@ export const es = {
     quarterly: "Trimestral",
     yearly: "Anual",
     button_text: "¡Quiero este!",
+    finished: {
+      success_title: "¡Suscripción realizada con éxito!",
+      error_title: "No se pudo procesar tu suscripción",
+      success_subtitle:
+        "¡Ahora puedes disfrutar de los diversos beneficios disponibles en el plan Star! Pero atención, puede tardar unos minutos hasta que todos los beneficios se desbloqueen por completo, así que no te preocupes.",
+      error_subtitle:
+        "Tu pago puede haber sido rechazado o tu compra cancelada por la tienda de aplicaciones. Verifica e inténtalo de nuevo más tarde.",
+    },
   },
   Chat: {
     alerts: {
@@ -471,6 +510,8 @@ export const es = {
     drop_send: "Suelta para enviar",
     sent: "Enviado",
     limit_char: "¡Límite de {{count}} caracteres alcanzado!",
+    no_send_message:
+      " No puedes enviar mensajes en este grupo, pero aún puedes verlos y recibir notificaciones.",
   },
   GroupConfig: {
     header_group_title: "Opciones del grupo",
@@ -513,12 +554,17 @@ export const es = {
       },
       participant: {
         send_notifications: "Recibir notificaciones de nuevos mensajes",
+        title: "Configuración del participante",
       },
       danger_zone: {
         title: "Zona de peligro",
         delete_group: "Eliminar grupo",
         exit_group: "Salir del grupo",
       },
+    },
+    toasts: {
+      submit_success: "Configuración actualizada con éxito",
+      submit_error: "No se pudieron guardar los cambios",
     },
   },
   Participants: {
@@ -628,13 +674,20 @@ export const es = {
     usage_other: "Usar como máximo {{count}} veces",
     expire_one: "Caduca en {{count}} día",
     expire_other: "Caduca en {{count}} días",
-    day: "Día",
-    day_plural: "Días",
+    day_one: "Día",
+    day_other: "Días",
     active_invites: "Invitaciones activas",
     generate: "Generar",
     expire_in: "Caduca en ",
     usage_amount_one: "Ha sido usado {{count}} vez de ",
     usage_amount_other: "Ha sido usado {{count}} veces de ",
+    toasts: {
+      error_create: "No se pudo crear la invitación.",
+      success_create: "¡Invitación creada con éxito!",
+      error_remove: "No se pudo eliminar la invitación.",
+      success_remove: "¡Invitación eliminada con éxito!",
+      copy_invite: "¡Invitación copiada!",
+    },
   },
   EditGroup: {
     toasts: {
@@ -679,8 +732,9 @@ export const es = {
       SEXUAL: "Contenido sexual, pedofilia o abuso de menores",
       BULLYING: "Acoso o falta de respeto a otros usuarios",
       RACISM: "Discurso de odio, racismo, xenofobia y similares",
-      SCAM: "Estafas, falsos sorteos, extorsión y similares",
-      FAKE_ACCOUNT: "Contenido falso o intento de hacerse pasar por otra persona",
+      SCAM: "Estafas, falsos sorteios, extorsión y similares",
+      FAKE_ACCOUNT:
+        "Contenido falso o intento de hacerse pasar por otra persona",
       DMCA: "Contenido protegido por derechos de autor",
       OTHER: "Otros",
     },

@@ -23,6 +23,7 @@ export const en = {
         file_amount_one: "file",
         file_amount_other: "files",
         replying_text: "You are replying to:",
+        voice_message: "Voice message",
       },
       FilePreview: {
         alerts: {
@@ -36,6 +37,7 @@ export const en = {
         },
       },
       Message: {
+        poll: "📊 Poll: {{question}}",
         toasts: {
           copied_message: "Message copied",
         },
@@ -97,6 +99,18 @@ export const en = {
         typing: "typing",
         many: "Several users",
       },
+      Poll: {
+        max_options: "Maximum of {{count}} options reached.",
+        min_options: "The poll must have at least {{count}} options.",
+        type_poll_question: "Type the poll question.",
+        create_poll: "Create Poll",
+        options: "Options",
+        question_input_placeholder: "Ex: Where is the event taking place?",
+        question_option_placeholder: "Option {{count}}",
+        add_option: "Add option",
+        multiple: "Allow multiple choice",
+        question: "Question",
+      },
     },
     Modals: {
       EmblemModal: {
@@ -151,8 +165,14 @@ export const en = {
       avatar_selected: "🖼 This photo is perfect!",
       register_error:
         "Could not create the account. The email may already be in use; try logging in.",
+      internal_error:
+        "An internal server error occurred. Please try again later.",
+      nickname_rules:
+        "Must be a unique name, containing only numbers and letters. Only hyphens (-) and underscores (_) are allowed. If no username is provided, one will be automatically generated for you.",
+      searching: "Searching...",
       labels: {
         name: "Name",
+        nickname: "Username",
         email: {
           label: "Email",
           error: "This email is invalid",
@@ -184,6 +204,8 @@ export const en = {
       forgot_password: "Forgot your password?",
       login_button: "Log in",
       register_button: "New here? Create an account!",
+      internal_error:
+        "An internal server error occurred. Please try again later.",
     },
   },
   TabBar: {
@@ -329,6 +351,13 @@ export const en = {
   EditProfile: {
     header_title: "Edit profile",
     switch_avatar: "Change avatar",
+    searching: "Searching...",
+    errors: {
+      "400": "The username does not match expected standards",
+      "404": "The username was not provided",
+      "1000": "Could not fetch username",
+      unavailable: "The username is not available",
+    },
     toasts: {
       updated: "Profile updated",
       update_avatar: "Updating avatar...",
@@ -337,6 +366,7 @@ export const en = {
         "We need permission to access your photos to change your avatar!",
     },
     labels: {
+      nickname: "Username",
       name: {
         label: "Name",
         placeholder: "max 100 characters",
@@ -439,6 +469,14 @@ export const en = {
     quarterly: "Quarterly",
     yearly: "Yearly",
     button_text: "I want this one!",
+    finished: {
+      success_title: "Subscription successful!",
+      error_title: "Could not process your subscription",
+      success_subtitle:
+        "You can now enjoy the various benefits available in the Star plan! Please note that it may take a few minutes for all benefits to be fully unlocked, so don't worry.",
+      error_subtitle:
+        "Your payment may have been declined or your purchase canceled by the app store. Please check and try again later.",
+    },
   },
   Chat: {
     alerts: {
@@ -465,6 +503,8 @@ export const en = {
     drop_send: "Drop to send",
     sent: "Sent",
     limit_char: "Limit of {{count}} characters reached!",
+    no_send_message:
+      " You cannot send messages in this group, but you can still view them and receive notifications.",
   },
   GroupConfig: {
     header_group_title: "Group options",
@@ -507,12 +547,17 @@ export const en = {
       },
       participant: {
         send_notifications: "Receive new message notifications",
+        title: "Participant settings",
       },
       danger_zone: {
         title: "Danger zone",
         delete_group: "Delete group",
         exit_group: "Leave group",
       },
+    },
+    toasts: {
+      submit_success: "Settings successfully updated",
+      submit_error: "Could not save changes",
     },
   },
   Participants: {
@@ -620,13 +665,20 @@ export const en = {
     usage_other: "Use at most {{count}} times",
     expire_one: "Expire in {{count}} day",
     expire_other: "Expire in {{count}} days",
-    day: "Day",
-    day_plural: "Days",
+    day_one: "Day",
+    day_other: "Days",
     active_invites: "Active invites",
     generate: "Generate",
     expire_in: "Expires in ",
     usage_amount_one: "Has been used {{count}} time out of ",
     usage_amount_other: "Has been used {{count}} times out of ",
+    toasts: {
+      error_create: "Could not create the invite.",
+      success_create: "Invite successfully created!",
+      error_remove: "Could not remove the invite.",
+      success_remove: "Invite successfully removed!",
+      copy_invite: "Invite copied!",
+    },
   },
   EditGroup: {
     toasts: {
