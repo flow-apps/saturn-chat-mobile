@@ -503,6 +503,7 @@ const Chat: React.FC = () => {
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<MessageData>) => (
+      // @ts-ignore
       <AnimatedMessage index={index} messageId={item.id || item.localReference}>
         <Message
           message={item}
