@@ -40,6 +40,7 @@ import {
   PlusButton,
   SendButton,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface ChatInputProps {
   groupId: string;
@@ -102,13 +103,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [cursorPosition, setCursorPosition] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
   const [isActionsModalVisible, setIsActionsModalVisible] = useState(false);
+  const { t } = useTranslate("Chat");
 
   const handleSetText = (text: string) => {
     if (text.length >= maxMessageLength) {
-      return SimpleToast.show(
-        `Limite de ${maxMessageLength} caracteres atingido.`,
-        SimpleToast.SHORT,
-      );
+      return SimpleToast.show(t("limit_char"), SimpleToast.SHORT);
     }
     setIsTypingMessage(text.length > 0);
 
@@ -170,10 +169,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   if (!canSendMessage) {
     return (
       <NoSendMessageContainer>
-        <NoSendMessageText>
-          Você não pode enviar mensagens nesse grupo, mas ainda pode vê-las e
-          receber notificações.
-        </NoSendMessageText>
+        <NoSendMessageText>{t("no_send_message")}</NoSendMessageText>
       </NoSendMessageContainer>
     );
   }
@@ -278,6 +274,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           </PlusButton>
 
           <MessageInput
+            //@ts-ignore
             ref={messageInputRef}
             as={TextInput}
             cursorColor={colors.secondary}
@@ -287,7 +284,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               setCursorPosition(selection.start)
             }
             maxLength={maxMessageLength}
-            placeholder="Digite uma mensagem..."
+            placeholder={t("type_message")}
           />
           <OptionsContainer>
             <OptionsButton onPress={onFileSelect}>

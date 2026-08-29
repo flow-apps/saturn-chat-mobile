@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
 import api from "@services/api";
-import { UserData } from "@type/interfaces";
 import { MentionsProps, MentionUser } from "./types";
 import {
   Container,
@@ -10,7 +9,6 @@ import {
   Nickname,
   NoResultsText,
 } from "./styles";
-import { useAuth } from "@contexts/auth";
 import { useTheme } from "styled-components";
 
 const Mentions: React.FC<MentionsProps> = ({
@@ -19,7 +17,6 @@ const Mentions: React.FC<MentionsProps> = ({
   onUserSelect,
 }) => {
   const [users, setUsers] = useState<MentionUser[]>([]);
-  const { getHeadersForAuthFiles } = useAuth();
   const { colors } = useTheme()
 
   useEffect(() => {

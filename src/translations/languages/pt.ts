@@ -23,6 +23,7 @@ export const pt = {
         file_amount_one: "arquivo",
         file_amount_other: "arquivos",
         replying_text: "Você está respondendo:",
+        voice_message: "Mensagem de voz",
       },
       FilePreview: {
         alerts: {
@@ -36,6 +37,7 @@ export const pt = {
         },
       },
       Message: {
+        poll: "📊 Enquete: {{question}}",
         toasts: {
           copied_message: "Mensagem copiada",
         },
@@ -96,6 +98,18 @@ export const pt = {
         typing_user_other: "estão ",
         typing: "digitando",
         many: "Vários usuários",
+      },
+      Poll: {
+        max_options: "Máximo de {{count}} opções atingido.",
+        min_options: "A enquete deve ter pelo menos {{count}} opções.",
+        type_poll_question: "Digite a pergunta da enquete.",
+        create_poll: "Criar Enquete",
+        options: "Opções",
+        question_input_placeholder: "Ex: Qual o local do evento?",
+        question_option_placeholder: "Opção {{count}}",
+        add_option: "Adicionar opção",
+        multiple: "Permitir múltipla escolha",
+        question: "Pergunta"
       },
     },
     Modals: {
@@ -493,6 +507,8 @@ export const pt = {
     drop_send: "Solte para enviar",
     sent: "Enviado",
     limit_char: "Limite de {{count}} caracteres atingido!",
+    no_send_message:
+      " Você não pode enviar mensagens nesse grupo, mas ainda pode vê-las e receber notificações.",
   },
   GroupConfig: {
     header_group_title: "Opções do grupo",
@@ -545,8 +561,8 @@ export const pt = {
     },
     toasts: {
       submit_success: "Configurações alteradas com sucesso",
-      submit_error: "Não foi possível salvar as alterações"
-    }
+      submit_error: "Não foi possível salvar as alterações",
+    },
   },
   Participants: {
     header_title_one: "{{count}} Participante",
@@ -668,7 +684,7 @@ export const pt = {
       error_remove: "Não foi possível remover o convite.",
       success_remove: "Convite removido com sucesso!",
       copy_invite: "Convite copiado!",
-    }
+    },
   },
   EditGroup: {
     toasts: {

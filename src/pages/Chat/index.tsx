@@ -100,7 +100,6 @@ const Chat: React.FC = () => {
   const appState = useAppState();
   const { t } = useTranslate("Chat");
 
-  // Ref da lista e estado de exibição do botão
   const flashListRef = useRef<FlashList<MessageData>>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
@@ -174,7 +173,6 @@ const Chat: React.FC = () => {
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
-    // Exibe o botão se rolar mais de 300px para cima
     setShowScrollToBottom(offsetY > 300);
   };
 

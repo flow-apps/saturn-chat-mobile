@@ -29,6 +29,7 @@ import {
   SubmitButton,
   SubmitButtonText,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface PollModalProps {
   visible: boolean;
@@ -49,11 +50,12 @@ export const PollModal: React.FC<PollModalProps> = ({
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState<string[]>(["", ""]);
   const [allowsMultiple, setAllowsMultiple] = useState(false);
+  const { t } = useTranslate("Components.Chat.Poll");
 
   const handleAddOption = useCallback(() => {
     if (options.length >= 10) {
       return SimpleToast.show(
-        "Máximo de 10 opções atingido.",
+        t("max_options", { count: 10 }),
         SimpleToast.SHORT,
       );
     }
@@ -64,7 +66,7 @@ export const PollModal: React.FC<PollModalProps> = ({
     (index: number) => {
       if (options.length <= 2) {
         return SimpleToast.show(
-          "A enquete deve ter pelo menos 2 opções.",
+          t("min_options", { count: 2 }),
           SimpleToast.SHORT,
         );
       }
@@ -95,15 +97,12 @@ export const PollModal: React.FC<PollModalProps> = ({
       .filter((opt) => opt.length > 0);
 
     if (!trimmedQuestion) {
-      return SimpleToast.show(
-        "Digite a pergunta da enquete.",
-        SimpleToast.SHORT,
-      );
+      return SimpleToast.show(t("type_poll_question"), SimpleToast.SHORT);
     }
 
     if (filledOptions.length < 2) {
       return SimpleToast.show(
-        "Preencha pelo menos duas opções válidas.",
+        t("min_options", { count: 2 }),
         SimpleToast.SHORT,
       );
     }
@@ -129,9 +128,8 @@ export const PollModal: React.FC<PollModalProps> = ({
           <ModalOverlay>
             <TouchableWithoutFeedback>
               <ModalContent>
-                {/* Header do Modal */}
                 <Header>
-                  <Title>Criar Enquete</Title>
+                  <Title>{t("create_poll")}</Title>
                   <CloseButton onPress={handleResetAndClose}>
                     <Feather
                       name="x"
@@ -145,24 +143,25 @@ export const PollModal: React.FC<PollModalProps> = ({
                   showsVerticalScrollIndicator={false}
                   keyboardShouldPersistTaps="handled"
                 >
-                  {/* Pergunta */}
-                  <Label>Pergunta</Label>
+                  <Label>{t("question")}</Label>
                   <Input
                     value={question}
                     onChangeText={setQuestion}
-                    placeholder="Ex: Qual o local do evento?"
+                    placeholder={t("question_input_placeholder")}
                     placeholderTextColor={colors.dark_heading || "#6B7280"}
                     maxLength={255}
                   />
 
                   {/* Opções */}
-                  <Label>Opções</Label>
+                  <Label>{t("options")}</Label>
                   {options.map((opt, index) => (
                     <OptionRow key={`poll_option_input_${index}`}>
                       <OptionInput
                         value={opt}
                         onChangeText={(text) => handleOptionChange(text, index)}
-                        placeholder={`Opção ${index + 1}`}
+                        placeholder={t("question_option_placeholder", {
+                          count: index + 1,
+                        })}
                         placeholderTextColor={colors.dark_heading || "#6B7280"}
                         maxLength={255}
                       />
@@ -183,15 +182,12 @@ export const PollModal: React.FC<PollModalProps> = ({
                   {options.length < 10 && (
                     <AddOptionButton onPress={handleAddOption}>
                       <Feather name="plus" size={18} color={colors.primary} />
-                      <AddOptionText>Adicionar opção</AddOptionText>
+                      <AddOptionText>{t("add_option")}</AddOptionText>
                     </AddOptionButton>
                   )}
 
-                  {/* Múltipla Escolha */}
                   <MultipleChoiceContainer>
-                    <MultipleChoiceText>
-                      Permitir múltipla escolha
-                    </MultipleChoiceText>
+                    <MultipleChoiceText>{t("multiple")}</MultipleChoiceText>
                     <Switch
                       value={allowsMultiple}
                       onValueChange={setAllowsMultiple}
@@ -204,7 +200,7 @@ export const PollModal: React.FC<PollModalProps> = ({
                   </MultipleChoiceContainer>
 
                   <SubmitButton onPress={handleSubmit}>
-                    <SubmitButtonText>Criar Enquete</SubmitButtonText>
+                    <SubmitButtonText>{t("create_poll")}</SubmitButtonText>
                   </SubmitButton>
                 </ScrollView>
               </ModalContent>
