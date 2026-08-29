@@ -48,6 +48,10 @@ const Login: React.FC = () => {
     });
   }
 
+  const handleForgotPassword = () => {
+    navigator.navigate("ForgotPassword");
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -68,7 +72,8 @@ const Login: React.FC = () => {
           {loginError && internalError.has && (
             <ErrorContainer>
               <ErrorText>
-                Ocorreu um erro interno no servidor. Tente mais tarde. {internalError.reason}
+                Ocorreu um erro interno no servidor. Tente mais tarde.{" "}
+                {internalError.reason}
               </ErrorText>
             </ErrorContainer>
           )}
@@ -99,7 +104,7 @@ const Login: React.FC = () => {
                   autoCapitalize="none"
                   secureTextEntry
                 />
-                <ForgotPassword>
+                <ForgotPassword onPress={handleForgotPassword}>
                   <ForgotPasswordText>
                     {t("forgot_password")}
                   </ForgotPasswordText>
