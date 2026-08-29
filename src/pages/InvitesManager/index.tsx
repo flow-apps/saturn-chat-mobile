@@ -83,6 +83,7 @@ const InvitesManager: React.FC = () => {
     action: "ACCEPT" | "REJECT"
   ) => {
     if (action === "ACCEPT") {
+      
       const res = await api.get(`/inv/join/${inviteID}`);
 
       if (res.status === 200) {
