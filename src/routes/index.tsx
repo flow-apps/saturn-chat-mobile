@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import AppRoutes from "@routes/app.routes";
 import {
   LinkingOptions,
@@ -14,6 +14,7 @@ import * as Linking from "expo-linking";
 
 import analytics from "@react-native-firebase/analytics";
 import { useTheme } from "styled-components";
+import { hideAsync } from "expo-splash-screen";
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
@@ -31,6 +32,10 @@ const Routes = () => {
   };
 
   const routeNameRef = useRef<string | undefined>("");
+
+  useEffect(() => {
+    if (!loadingData) hideAsync();
+  }, [loadingData]);
 
   if (loadingData) {
     return <Loading />;
@@ -59,7 +64,7 @@ const Routes = () => {
         }
         const previousRouteName = routeNameRef.current;
         const currentRouteName = navigationRef.current.getCurrentRoute()?.name;
-        
+
         if (previousRouteName !== currentRouteName) {
           await analytics().logEvent("screen_view", { currentRouteName });
         }

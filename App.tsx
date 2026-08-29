@@ -49,21 +49,7 @@ preventAutoHideAsync();
 OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
 OneSignal.initialize(secrets.OneSignalAppID);
 
-const InitializerGate: React.FC<{ onReady: () => void }> = ({ onReady }) => {
-  const { loadingData: authLoading } = useAuth();
-  const { loadingRemoteConfigs } = useRemoteConfigs();
-
-  useEffect(() => {
-    if (!authLoading && !loadingRemoteConfigs) {
-      onReady();
-    }
-  }, [authLoading, loadingRemoteConfigs, onReady]);
-
-  return null;
-};
-
 function App() {
-  const [contextsAreReady, setContextsAreReady] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const { isUpdateAvailable } = Updates.useUpdates();
@@ -87,10 +73,6 @@ function App() {
         await Updates.fetchUpdateAsync();
         await Updates.reloadAsync();
       } catch (error) {
-        Alert.alert(
-          "Erro de Atualização",
-          "Não foi possível aplicar a nova versão.",
-        );
         setIsUpdating(false);
       }
     };
@@ -99,12 +81,6 @@ function App() {
       handleUpdate();
     }
   }, [isUpdateAvailable]);
-
-  useEffect(() => {
-    if (fontLoaded && contextsAreReady && !isUpdating) {
-      hideAsync();
-    }
-  }, [fontLoaded, contextsAreReady, isUpdating]);
 
   if (!fontLoaded || isUpdating) {
     return (
@@ -137,25 +113,7 @@ function App() {
                         <AudioPlayerProvider>
                           <RemoteConfigsProvider>
                             <HomeProvider>
-                              <InitializerGate
-                                onReady={() => setContextsAreReady(true)}
-                              />
-                              {contextsAreReady ? (
-                                <Routes />
-                              ) : (
-                                <View style={styles.splashContainer}>
-                                  <Image
-                                    source={require("@assets/splash.jpg")}
-                                    style={styles.splashImage}
-                                    resizeMode="cover"
-                                  />
-                                  <ActivityIndicator
-                                    style={styles.activityIndicator}
-                                    size="large"
-                                    color="#FF9D00"
-                                  />
-                                </View>
-                              )}
+                              <Routes />
                             </HomeProvider>
                           </RemoteConfigsProvider>
                         </AudioPlayerProvider>
