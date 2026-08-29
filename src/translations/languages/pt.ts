@@ -153,8 +153,12 @@ export const pt = {
       avatar_selected: "🖼 Esta foto está perfeita!",
       register_error:
         "Não foi possível criar a conta. Possivelmente o e-mail já está em uso; tente fazer login.",
+      internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
+      nickname_rules: "Deve ser um nome único, contendo apenas números e letras. Apenas os símbolos de hífen (-) e underline (_) estão disponíveis. Se nenhum nome de usuário for fornecido será gerado um automaticamente para você.",
+      searching: "Buscando...",
       labels: {
         name: "Nome",
+        nickname: "Nome de usuário",
         email: {
           label: "E-mail",
           error: "Esse e-mail não é válido",
@@ -187,6 +191,7 @@ export const pt = {
       forgot_password: "Esqueceu sua senha?",
       login_button: "Entrar",
       register_button: "É novo por aqui? Crie uma conta!",
+      internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
     }
   },
   TabBar: {

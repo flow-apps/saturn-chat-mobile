@@ -61,7 +61,7 @@ const Register: React.FC = () => {
   const [passError, setPassError] = useState(false);
   const [passConfirmError, setPassConfirmError] = useState(true);
 
-  const [nicknameTimeout, setNicknameTimeout] = useState<number>();
+  const [nicknameTimeout, setNicknameTimeout] = useState<NodeJS.Timeout>();
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [nicknameError, setNicknameError] = useState(false);
   const [fetchingNickname, setFetchingNickname] = useState(false);
@@ -320,7 +320,7 @@ const Register: React.FC = () => {
                   {registerError && internalError.has && (
                     <ErrorContainer>
                       <ErrorText>
-                        Ocorreu um erro interno no servidor. Tente mais tarde.{" "}
+                        {t("internal_error")}
                         {internalError.reason}
                       </ErrorText>
                     </ErrorContainer>
@@ -350,7 +350,7 @@ const Register: React.FC = () => {
                       )}
                     </FormField>
                     <FormField>
-                      <Label>Nome de usuário</Label>
+                      <Label>{t("labels.nickname")}</Label>
                       <Input
                         onChangeText={handleSetNickname}
                         value={nickname}
@@ -358,17 +358,14 @@ const Register: React.FC = () => {
                         textContentType="nickname"
                         placeholder="pedro_henrique"
                       />
-                      {fetchingNickname && <SearchText>Buscando...</SearchText>}
+                      {fetchingNickname && (
+                        <SearchText>{t("searching")}</SearchText>
+                      )}
                       {nicknameError && (
                         <FieldError>{nicknameErrorMessage}</FieldError>
                       )}
                       <FieldInfoContainer>
-                        <FieldInfo>
-                          Deve ser um nome único, contendo apenas números e
-                          letras. Apenas os símbolos de hífen (-) e underline
-                          (_) estão disponíveis. Se nenhum nome de usuário for
-                          fornecido será gerado um automaticamente para você.
-                        </FieldInfo>
+                        <FieldInfo>{t("nickname_rules")}</FieldInfo>
                       </FieldInfoContainer>
                     </FormField>
                     <FormField>
