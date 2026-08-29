@@ -193,7 +193,7 @@ export const pt = {
     groups: "Grupos",
     friends: "Amigos",
     new_group: "Novo grupo",
-    settings: "Configurações",
+    settings: "Opções",
   },
   Home: {
     header_title: "Grupos",
