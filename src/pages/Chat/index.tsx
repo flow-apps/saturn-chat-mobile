@@ -143,12 +143,16 @@ const Chat: React.FC = () => {
     {} as ParticipantsData,
   );
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
+
+  // Controle de loading apenas para a montagem inicial da tela
   const [loading, setLoading] = useState(true);
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const prevAppState = useRef(appState);
 
-  // Estado unificado para controlar o CustomAlert
+  // Ref para indicar que o carregamento inicial já foi concluído
+  const initialLoadDone = useRef(false);
+
   const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
     visible: false,
     title: "",
@@ -210,7 +214,8 @@ const Chat: React.FC = () => {
           visible: true,
           title: t("alerts.error.title", { defaultValue: "Erro" }),
           content: t("alerts.error.connection", {
-            defaultValue: "Não foi possível conectar à sala para criar a enquete.",
+            defaultValue:
+              "Não foi possível conectar à sala para criar a enquete.",
           }),
         });
         return;
@@ -398,7 +403,8 @@ const Chat: React.FC = () => {
         visible: true,
         title: t("alerts.error.title", { defaultValue: "Erro" }),
         content: t("alerts.error.voice_message", {
-          defaultValue: "Não foi possível enviar a mensagem de voz. Tente novamente.",
+          defaultValue:
+            "Não foi possível enviar a mensagem de voz. Tente novamente.",
         }),
       });
     }
@@ -449,43 +455,51 @@ const Chat: React.FC = () => {
     }
   };
 
-  const fetchParticipantAndGroup = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [pRes, mRes, listRes] = await Promise.all([
-        api.get(`/group/participant/${id}`),
-        api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
-        api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
-      ]);
-      if (pRes.status === 200) {
-        setParticipant(pRes.data.participant);
-        setGroup(pRes.data.participant.group);
+  const fetchParticipantAndGroup = useCallback(
+    async (isSilent = false) => {
+      // Só ativa a tela inteira de loading na primeira execução
+      if (!isSilent && !initialLoadDone.current) {
+        setLoading(true);
       }
-      if (listRes.status === 200) setParticipants(listRes.data);
-      if (Platform.OS === "android")
-        OneSignal.Notifications.removeGroupedNotifications(id);
 
-      if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
-        setFetchedAll(true);
-      // @ts-ignore
-      setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
-      setPage(1);
-    } catch (error) {
-      crashlytics().recordError(
-        error as Error,
-        "Chat: fetchParticipantAndGroup",
-      );
-      setAlertConfig({
-        visible: true,
-        title: t("alerts.error.title", { defaultValue: "Erro" }),
-        content: t("alerts.error.load_chat", {
-          defaultValue: "Não foi possível carregar as informações do chat.",
-        }),
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [id, sortMessages, t]);
+      try {
+        const [pRes, mRes, listRes] = await Promise.all([
+          api.get(`/group/participant/${id}`),
+          api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
+          api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
+        ]);
+        if (pRes.status === 200) {
+          setParticipant(pRes.data.participant);
+          setGroup(pRes.data.participant.group);
+        }
+        if (listRes.status === 200) setParticipants(listRes.data);
+        if (Platform.OS === "android")
+          OneSignal.Notifications.removeGroupedNotifications(id);
+
+        if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
+          setFetchedAll(true);
+        // @ts-ignore
+        setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
+        setPage(1);
+      } catch (error) {
+        crashlytics().recordError(
+          error as Error,
+          "Chat: fetchParticipantAndGroup",
+        );
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.load_chat", {
+            defaultValue: "Não foi possível carregar as informações do chat.",
+          }),
+        });
+      } finally {
+        initialLoadDone.current = true;
+        setLoading(false);
+      }
+    },
+    [id, sortMessages, t],
+  );
 
   const handleMessageSubmit = async (
     message: string,
@@ -615,7 +629,9 @@ const Chat: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    if (group?.id !== currentGroupId) fetchParticipantAndGroup();
+    if (group?.id !== currentGroupId) {
+      fetchParticipantAndGroup(false);
+    }
   }, [currentGroupId]);
 
   useEffect(() => {
@@ -635,8 +651,9 @@ const Chat: React.FC = () => {
       appState === "active";
 
     if (appCameToForeground) {
+      // Sincroniza silenciosamente sem ativar a tela inteira de loading
       if (group?.id === id) {
-        fetchParticipantAndGroup();
+        fetchParticipantAndGroup(true);
       }
 
       if (socket && !connected) {
