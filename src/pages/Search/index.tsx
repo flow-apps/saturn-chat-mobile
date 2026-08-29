@@ -48,7 +48,7 @@ const Search: React.FC = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "groups" | "users">("all");
 
-  const [searchTimeout, setSearchTimeout] = useState<number | null>(null);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
 
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -133,20 +133,20 @@ const Search: React.FC = () => {
 
     if (searchTimeout) {
       clearTimeout(searchTimeout);
-      setSearchTimeout(null);
+      setSearchTimeout(undefined);
     }
 
     const newTimeout = setTimeout(() => {
       handleSearch();
-      setSearchTimeout(null);
-    }, 1000);
+      setSearchTimeout(undefined);
+    }, 800);
 
     setSearchTimeout(newTimeout);
   }, [query]);
 
   return (
     <>
-      <Header title={t("header_title")} />
+      <Header title={t("header_title")} backButton={false} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
           <SearchContainer>
@@ -222,7 +222,11 @@ const Search: React.FC = () => {
                 >
                   {item.search_type === "group" ? (
                     <GroupCard onPress={() => handleGoGroupInfos(item.id)}>
-                      <GroupImage uri={item.group_avatar?.url} width={80} height={80} />
+                      <GroupImage
+                        uri={item.group_avatar?.url}
+                        width={80}
+                        height={80}
+                      />
                       <GroupInfosContainer>
                         <GroupName numberOfLines={2}>{item.name}</GroupName>
                         <GroupDesc numberOfLines={3}>
@@ -238,7 +242,11 @@ const Search: React.FC = () => {
                     </GroupCard>
                   ) : (
                     <UserCard onPress={() => handleGoUserProfile(item.id)}>
-                      <UserAvatar uri={item?.avatar?.url} width={80} height={80} />
+                      <UserAvatar
+                        uri={item?.avatar?.url}
+                        width={80}
+                        height={80}
+                      />
                       <PremiumName
                         name={item.name}
                         nickname={item?.nickname}
