@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Button,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -23,6 +22,7 @@ import { useTheme } from "styled-components";
 import { useTranslate } from "@hooks/useTranslate";
 import api from "@services/api";
 import SimpleToast from "react-native-simple-toast";
+import Button from "@components/Button";
 
 const Report: React.FC = () => {
   const { params } = useRoute();
@@ -89,7 +89,7 @@ const Report: React.FC = () => {
                 </InputContainer>
                 <Button
                   title={t("done")}
-                  disabled={!reportType}
+                  enabled={!!reportType}
                   onPress={handleReport}
                 />
               </FormContainer>
