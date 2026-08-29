@@ -139,6 +139,7 @@ const Chat: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const prevAppState = useRef(appState);
 
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
   const {
@@ -542,6 +543,39 @@ const Chat: React.FC = () => {
     setCanSendMessage(pRoleIdx >= minRoleIdx);
   }, [participant, group]);
 
+  useEffect(() => {
+    const appCameToForeground =
+      prevAppState.current.match(/inactive|background/) &&
+      appState === "active";
+
+    if (appCameToForeground) {
+      console.log("App voltou para primeiro plano. Sincronizando chat...");
+
+      // Refaz o fetch APENAS no momento exato em que o app abre para recuperar mensagens
+      if (group?.id === id) {
+        fetchParticipantAndGroup();
+      }
+
+      // Garante que o socket reconecte na sala
+      if (socket && !connected) {
+        handleJoinRoom(id);
+        configureSocketListeners();
+      }
+    }
+
+    // Atualiza a referência para a próxima verificação
+    prevAppState.current = appState;
+  }, [
+    appState,
+    group?.id,
+    id,
+    connected,
+    socket,
+    handleJoinRoom,
+    configureSocketListeners,
+    fetchParticipantAndGroup,
+  ]);
+
   useFocusEffect(
     useCallback(() => {
       if (appState === "active" && socket && !connected) {
@@ -668,7 +702,7 @@ const Chat: React.FC = () => {
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.25,
                     shadowRadius: 3.84,
-                    marginBottom: 15
+                    marginBottom: 15,
                   }}
                 >
                   <Feather name="chevron-down" size={24} color="#FFF" />
