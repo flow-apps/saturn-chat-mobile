@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Header from "@components/Header";
-import Feather from "@expo/vector-icons/Feather";
 
 import {
   ButtonSearch,
