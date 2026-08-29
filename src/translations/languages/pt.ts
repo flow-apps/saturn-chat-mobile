@@ -154,7 +154,8 @@ export const pt = {
       register_error:
         "Não foi possível criar a conta. Possivelmente o e-mail já está em uso; tente fazer login.",
       internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
-      nickname_rules: "Deve ser um nome único, contendo apenas números e letras. Apenas os símbolos de hífen (-) e underline (_) estão disponíveis. Se nenhum nome de usuário for fornecido será gerado um automaticamente para você.",
+      nickname_rules:
+        "Deve ser um nome único, contendo apenas números e letras. Apenas os símbolos de hífen (-) e underline (_) estão disponíveis. Se nenhum nome de usuário for fornecido será gerado um automaticamente para você.",
       searching: "Buscando...",
       labels: {
         name: "Nome",
@@ -192,7 +193,7 @@ export const pt = {
       login_button: "Entrar",
       register_button: "É novo por aqui? Crie uma conta!",
       internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
-    }
+    },
   },
   TabBar: {
     groups: "Grupos",
@@ -340,6 +341,13 @@ export const pt = {
   EditProfile: {
     header_title: "Editar perfil",
     switch_avatar: "Trocar avatar",
+    searching: "Buscando...",
+    errors: {
+      "400": "O nome de usuário não está conforme os padrões esperados",
+      "404": "O nome de usuário não foi fornecido",
+      "1000": "Não foi possível buscar o nome de usuário",
+      unavailable: "O nome de usuário não está disponível",
+    },
     toasts: {
       updated: "Perfil atualizado",
       update_avatar: "Atualizando avatar...",
@@ -348,6 +356,7 @@ export const pt = {
         "Precisamos de permissão para acessar suas fotos para alterar seu avatar!",
     },
     labels: {
+      nickname: "Nome de usuário",
       name: {
         label: "Nome",
         placeholder: "máx. 100 caracteres",
@@ -450,6 +459,14 @@ export const pt = {
     quarterly: "Trimestral",
     yearly: "Anual",
     button_text: "Eu quero esse!",
+    finished: {
+      success_title: "Assinatura realizada com sucesso!",
+      error_title: "Não foi possível realizar sua assinatura",
+      success_subtitle:
+        "Você agora pode usufruir de vários benefícios disponíveis no plano Star! Mas atenção, pode demorar alguns minutos até que todos os benefícios sejam totalmente liberados, então não se preocupe.",
+      error_subtitle:
+        "Seu pagamento pode ter sido negado ou sua compra cancelada pela loja de aplicativos. Verifique e tente novamente mais tarde",
+    },
   },
   Chat: {
     alerts: {
@@ -518,6 +535,7 @@ export const pt = {
       },
       participant: {
         send_notifications: "Receber notificações de novas mensagens",
+        title: "Configurações do participante",
       },
       danger_zone: {
         title: "Zona de perigo",
@@ -525,6 +543,10 @@ export const pt = {
         exit_group: "Sair do grupo",
       },
     },
+    toasts: {
+      submit_success: "Configurações alteradas com sucesso",
+      submit_error: "Não foi possível salvar as alterações"
+    }
   },
   Participants: {
     header_title_one: "{{count}} Participante",
@@ -633,13 +655,20 @@ export const pt = {
     usage_other: "Usar no máximo {{count}} vezes",
     expire_one: "Expirar em {{count}} dia",
     expire_other: "Expirar em {{count}} dias",
-    day: "Dia",
-    day_plural: "Dias",
+    day_one: "Dia",
+    day_other: "Dias",
     active_invites: "Convites ativos",
     generate: "Gerar",
     expire_in: "Expira em ",
     usage_amount_one: "Foi usado {{count}} vez de ",
     usage_amount_other: "Foi usado {{count}} vezes de ",
+    toasts: {
+      error_create: "Não foi possível criar o convite.",
+      success_create: "Convite criado com sucesso!",
+      error_remove: "Não foi possível remover o convite.",
+      success_remove: "Convite removido com sucesso!",
+      copy_invite: "Convite copiado!",
+    }
   },
   EditGroup: {
     toasts: {

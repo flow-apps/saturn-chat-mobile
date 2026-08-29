@@ -168,19 +168,13 @@ const GroupConfig: React.FC = () => {
             setGroupSettings(res.data);
             setHasUpdateGroupSettings(false);
 
-            SimpleToast.show(
-              "Configurações alteradas com sucesso",
-              SimpleToast.SHORT,
-            );
+            SimpleToast.show(t("toasts.submit_success"), SimpleToast.SHORT);
           }
         })
         .catch((error) => {
           console.log(error.response.data);
 
-          SimpleToast.show(
-            "Não foi possível salvar as alterações",
-            SimpleToast.SHORT,
-          );
+          SimpleToast.show(t("toasts.submit_error"), SimpleToast.SHORT);
         });
     }
 
@@ -194,19 +188,13 @@ const GroupConfig: React.FC = () => {
             setParticipantSettings(res.data);
             setHasUpdateParticipantSettings(false);
 
-            SimpleToast.show(
-              "Configurações alteradas com sucesso",
-              SimpleToast.SHORT,
-            );
+            SimpleToast.show(t("toasts.submit_success"), SimpleToast.SHORT);
           }
         })
         .catch((error) => {
           console.log(error.response.data);
 
-          SimpleToast.show(
-            "Não foi possível salvar as alterações",
-            SimpleToast.SHORT,
-          );
+          SimpleToast.show(t("toasts.submit_error"), SimpleToast.SHORT);
         });
     }
 
@@ -358,7 +346,7 @@ const GroupConfig: React.FC = () => {
           )}
         </OptionsContainer>
         <OptionsContainer>
-          <SectionTitle>Configurações do participante</SectionTitle>
+          <SectionTitle>{t("options.participant.title")}</SectionTitle>
           {participantSettings?.map((setting) => (
             <OptionContainer
               style={{

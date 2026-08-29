@@ -672,7 +672,6 @@ const Chat: React.FC = () => {
             />
           </MessageContainer>
 
-          {/* Botão flutuante para voltar à mensagem mais recente */}
           <AnimatePresence>
             {showScrollToBottom && (
               <MotiView

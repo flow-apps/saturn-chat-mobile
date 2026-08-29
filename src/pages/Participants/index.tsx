@@ -29,7 +29,6 @@ import { useTheme } from "styled-components";
 import { ActivityIndicator } from "react-native";
 import Banner from "@components/Ads/Banner";
 import { AdBannerWrapper } from "../GroupInfos/styles";
-import PremiumName from "@components/PremiumName";
 import { ParticipantsData } from "@type/interfaces";
 import { useAuth } from "@contexts/auth";
 import { StackNavigationProp } from "@react-navigation/stack";
