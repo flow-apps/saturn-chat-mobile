@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AudioModule, RecordingPresets, useAudioRecorder } from "expo-audio";
 import crashlytics from "@react-native-firebase/crashlytics";
 
@@ -68,6 +68,14 @@ export const useChatAudio = (
       setRecordingInterval(undefined);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (recordingInterval) {
+        clearInterval(recordingInterval);
+      }
+    };
+  }, [recordingInterval]);
 
   return {
     isRecording,

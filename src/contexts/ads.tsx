@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useContext,
   useCallback,
+  useMemo,
 } from "react";
 import { Platform } from "react-native";
 import mobileAds, {
@@ -16,7 +17,8 @@ import { useAuth } from "./auth";
 
 interface ADSContextProps {
   unitID: string;
-  Interstitial: InterstitialAd | undefined;
+  interstitial: InterstitialAd | undefined;
+  isAdLoaded: boolean;
   showInterstitialAd: (onAdClosed?: () => void) => void;
 }
 
@@ -25,10 +27,15 @@ const AdsContext = createContext<ADSContextProps>({} as ADSContextProps);
 const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [unitID, setUnitID] = useState("");
-  const [Interstitial, setInterstitial] = useState<InterstitialAd>();
+  const [interstitial, setInterstitial] = useState<InterstitialAd>();
+  const [isAdLoaded, setIsAdLoaded] = useState(false);
 
   useEffect(() => {
-    (async () => {
+    let unsubscribeLoaded: (() => void) | undefined;
+    let unsubscribeClosed: (() => void) | undefined;
+    let adInstance: InterstitialAd;
+
+    const setupAds = async () => {
       await mobileAds().setRequestConfiguration({
         testDeviceIdentifiers: __DEV__ ? [secrets.AdsID.deviceTestID] : [],
       });
@@ -44,61 +51,74 @@ const AdsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
       if (adUnitID) {
         setUnitID(adUnitID);
-        const interstitial = InterstitialAd.createForAdRequest(adUnitID);
+        adInstance = InterstitialAd.createForAdRequest(adUnitID);
 
-        const closeListener = interstitial.addAdEventListener(
-          AdEventType.CLOSED,
+        unsubscribeLoaded = adInstance.addAdEventListener(
+          AdEventType.LOADED,
           () => {
-            // Recarrega o anúncio para a próxima vez
-            interstitial.load();
+            setIsAdLoaded(true);
           }
         );
 
-        interstitial.load();
-        setInterstitial(interstitial);
+        unsubscribeClosed = adInstance.addAdEventListener(
+          AdEventType.CLOSED,
+          () => {
+            setIsAdLoaded(false);
+            adInstance.load();
+          }
+        );
 
-        return () => {
-          closeListener();
-          interstitial.removeAllListeners();
-        };
+        adInstance.load();
+        setInterstitial(adInstance);
       }
-    })();
+    };
+
+    setupAds();
+
+    return () => {
+      if (unsubscribeLoaded) unsubscribeLoaded();
+      if (unsubscribeClosed) unsubscribeClosed();
+    };
   }, []);
 
   const showInterstitialAd = useCallback(
     (onAdClosed?: () => void) => {
-      if (Interstitial?.loaded && !user?.isPremium) {
-        const unsubscribe = Interstitial.addAdEventListener(
+      if (interstitial && isAdLoaded && !user?.isPremium) {
+        const unsubscribe = interstitial.addAdEventListener(
           AdEventType.CLOSED,
           () => {
             onAdClosed?.();
             unsubscribe();
           }
         );
-        Interstitial.show();
+        
+        interstitial.show();
       } else {
         onAdClosed?.();
       }
     },
-    [Interstitial, user]
+    [interstitial, isAdLoaded, user?.isPremium]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      unitID,
+      interstitial,
+      isAdLoaded,
+      showInterstitialAd,
+    }),
+    [unitID, interstitial, isAdLoaded, showInterstitialAd]
   );
 
   return (
-    <AdsContext.Provider
-      value={{
-        unitID,
-        Interstitial,
-        showInterstitialAd,
-      }}
-    >
+    <AdsContext.Provider value={contextValue}>
       {children}
     </AdsContext.Provider>
   );
 };
 
 const useAds = () => {
-  const adsContext = useContext(AdsContext);
-  return adsContext;
+  return useContext(AdsContext);
 };
 
 export { AdsProvider, useAds };

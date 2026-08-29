@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { MessageData, UserData } from "@type/interfaces";
@@ -82,19 +83,29 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [currentGroupId, setCurrentGroupId] = useState("");
   const [connected, setConnected] = useState(false);
+  const joiningRoomRef = useRef<string | null>(null);
 
   const { socket } = useWebsocket();
   const { user } = useAuth();
 
   const handleJoinRoom = useCallback(
     (groupId: string) => {
-      if (!connected) {
-        console.log(`Conectando o usuário ao grupo ${groupId}`);
-
-        setCurrentGroupId(groupId);
-
-        socket?.emit("connect_in_chat", groupId);
+      if (
+        (connected && currentGroupId === groupId) ||
+        joiningRoomRef.current === groupId
+      ) {
+        console.log(
+          `Conexão bloqueada: usuário já está (ou entrando) no grupo ${groupId}`,
+        );
+        return;
       }
+
+      console.log(`Conectando o usuário ao grupo ${groupId}`);
+
+      joiningRoomRef.current = groupId;
+      setCurrentGroupId(groupId);
+
+      socket?.emit("connect_in_chat", groupId);
     },
     [socket, connected, currentGroupId],
   );
@@ -209,47 +220,47 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (socket) {
-      socket.on("deleted_group", () => {
-        navigate("Groups");
-      });
-      socket.on("kicked_user", ({ group_id, user_id }) => {
-        if (group_id === currentGroupId) {
-          if (user_id === user?.id) {
-            navigate("Groups");
-          }
+      const onConnect = () => {
+        if (currentGroupId) {
+          console.log(
+            `Socket reconectado. Reentrando na sala ${currentGroupId}`,
+          );
+          socket.emit("connect_in_chat", currentGroupId);
         }
-      });
-      socket.on("banned_user", ({ group_id, user_id }) => {
-        if (group_id === currentGroupId) {
-          if (user_id === user?.id) {
-            navigate("Groups");
-          }
-        }
-      });
+      };
+
+      const onDisconnect = () => {
+        console.log("Socket caiu no ChatContext. Atualizando status.");
+        setConnected(false);
+      };
+
+      socket.on("connect", onConnect);
+      socket.on("disconnect", onDisconnect);
 
       socket.on("success_join", (groupID) => {
         console.log("Usuário conectado com sucesso ao grupo", groupID);
-
-        // setCurrentGroupId(groupID);
         setConnected(true);
       });
 
       socket.on("success_leave", (groupID) => {
         console.log("Usuário desconectado com sucesso do grupo", groupID);
-
         setCurrentGroupId("");
         setConnected(false);
+        joiningRoomRef.current = null;
       });
-    }
 
-    return () => {
-      socket?.off("kicked_user");
-      socket?.off("banned_user");
-      socket?.off("deleted_group");
-      socket?.off("success_join");
-      socket?.off("success_leave");
-    };
-  }, [socket]);
+      return () => {
+        socket?.emit("leave_chat", currentGroupId);
+        socket.off("connect", onConnect);
+        socket.off("disconnect", onDisconnect);
+        socket.off("kicked_user");
+        socket.off("banned_user");
+        socket.off("deleted_group");
+        socket.off("success_join");
+        socket.off("success_leave");
+      };
+    }
+  }, [socket, currentGroupId]);
 
   return (
     <ChatContext.Provider
