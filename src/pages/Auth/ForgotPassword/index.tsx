@@ -16,6 +16,9 @@ import {
   TitleContainer,
   CodeContainer,
   CodeInput,
+  FieldError,
+  FieldInfo,
+  FieldInfoContainer,
 } from "./styles";
 import Header from "@components/Header";
 import Input from "@components/Input";
@@ -23,6 +26,9 @@ import Button from "@components/Button";
 import api from "@services/api";
 
 const ForgotPassword: React.FC = () => {
+  const passwordValidation =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+
   const nav = useNavigation();
 
   const [step, setStep] = useState<"email" | "code" | "password">("email");
@@ -33,9 +39,34 @@ const ForgotPassword: React.FC = () => {
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passError, setPassError] = useState(true);
+  const [confirmPassError, setConfirmPassError] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const inputRefs = useRef<Array<TextInput | null>>([]);
+
+  const handleSetNewPassword = (value: string) => {
+    setNewPassword(value);
+
+    if (!passwordValidation.test(value)) {
+      setPassError(true);
+    } else {
+      if (value !== confirmPassword) setConfirmPassError(true);
+      else setConfirmPassError(false);
+
+      setPassError(false);
+    }
+  };
+
+  const handleSetConfirmNewPassword = (value: string) => {
+    setConfirmPassword(value);
+
+    if (newPassword !== value) {
+      setConfirmPassError(true);
+    } else {
+      setConfirmPassError(false);
+    }
+  };
 
   const handleSendEmail = async () => {
     if (!email.trim()) return;
@@ -47,7 +78,6 @@ const ForgotPassword: React.FC = () => {
         { emailOrNick: email },
       );
 
-      // Armazena o e-mail mascarado retornado pela API apenas para exibição
       setDisplayEmail(response.data.email || email);
       setStep("code");
     } catch (error: any) {
@@ -119,8 +149,6 @@ const ForgotPassword: React.FC = () => {
       return;
     }
 
-    console.log(fullCode, email);
-
     try {
       setLoading(true);
 
@@ -145,40 +173,39 @@ const ForgotPassword: React.FC = () => {
   };
 
   const handleResetPassword = async () => {
-    if (!newPassword || !confirmPassword) {
-      Alert.alert("Atenção", "Preencha todos os campos.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      Alert.alert("Atenção", "As senhas não coincidem.");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      Alert.alert("Atenção", "A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
     try {
       setLoading(true);
       await api.patch("/auth/password/reset", {
-        resetToken: resetToken,
+        resetToken,
         newPass: newPassword,
       });
 
-      SimpleToast.show("Senha alterada com sucesso", SimpleToast.SHORT);
+      SimpleToast.show("Senha alterada com sucesso!", SimpleToast.SHORT);
       nav.goBack();
     } catch (error: any) {
-      SimpleToast.show("Não foi possível alterar a senha", SimpleToast.SHORT);
-    } finally {
+      Alert.alert(
+        "Erro",
+        error?.response?.data?.message || "Não foi possível redefinir a senha.",
+      );
       setLoading(false);
     }
   };
 
   return (
     <>
-      <Header backButton title="Recuperar senha" />
+      <Header
+        backButton
+        title="Recuperar senha"
+        onPressBack={() => {
+          if (step === "password") {
+            setStep("code");
+          } else if (step === "code") {
+            setStep("email");
+          } else {
+            nav.goBack();
+          }
+        }}
+      />
       <Container>
         {step === "email" && (
           <>
@@ -204,6 +231,7 @@ const ForgotPassword: React.FC = () => {
               title="Próximo"
               onPress={handleSendEmail}
               loading={loading}
+              enabled={!!email.trim()}
             />
           </>
         )}
@@ -222,7 +250,6 @@ const ForgotPassword: React.FC = () => {
                 {code.map((digit, index) => (
                   <CodeInput
                     key={index}
-                    // @ts-ignore
                     ref={(el) => (inputRefs.current[index] = el)}
                     value={digit}
                     onChangeText={(text) => handleCodeChange(text, index)}
@@ -239,6 +266,7 @@ const ForgotPassword: React.FC = () => {
               title="Confirmar"
               onPress={handleVerifyCode}
               loading={loading}
+              enabled={code.join("").length === 6}
             />
           </>
         )}
@@ -257,21 +285,40 @@ const ForgotPassword: React.FC = () => {
               <Input
                 label="Nova senha"
                 value={newPassword}
-                onChangeText={setNewPassword}
+                onChangeText={handleSetNewPassword}
                 secureTextEntry
               />
+              {passError && !!newPassword && (
+                <FieldError>
+                  A senha deve conter ao menos 8 caracteres, 1 letra maiúscula,
+                  1 minúscula, 1 número e 1 caractere especial.
+                </FieldError>
+              )}
+              <FieldInfoContainer>
+                <FieldInfo>
+                  Mínimo de 8 caracteres contendo maiúscula, minúscula, número e
+                  símbolo.
+                </FieldInfo>
+              </FieldInfoContainer>
+            </InputContainer>
+
+            <InputContainer>
               <Input
                 label="Confirme a nova senha"
                 value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                onChangeText={handleSetConfirmNewPassword}
                 secureTextEntry
               />
+              {confirmPassError && !!confirmPassword && (
+                <FieldError>As senhas não coincidem.</FieldError>
+              )}
             </InputContainer>
 
             <Button
               title="Alterar Senha"
               onPress={handleResetPassword}
               loading={loading}
+              enabled={!passError && !confirmPassError && !!newPassword}
             />
           </>
         )}

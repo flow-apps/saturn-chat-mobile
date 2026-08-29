@@ -44,3 +44,21 @@ export const CodeInput = styled.TextInput`
   color: ${(props) => props.theme.colors.black};
   background-color: ${(props) => props.theme.colors.shape};
 `;
+
+export const FieldError = styled.Text`
+  font-size: 12px;
+  color: #ff3b30;
+  margin-top: 4px;
+  margin-left: 4px;
+`;
+
+export const FieldInfoContainer = styled.View`
+  margin-top: 6px;
+  margin-left: 4px;
+`;
+
+export const FieldInfo = styled.Text`
+  font-size: 12px;
+  color: #8e8e93;
+  line-height: 16px;
+`;
