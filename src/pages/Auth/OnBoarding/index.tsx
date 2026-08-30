@@ -20,7 +20,7 @@ import { StatusBar } from "expo-status-bar";
 const OnBoarding: React.FC = () => {
   const [hasBoarded, setHasBoarded] = usePersistedState<boolean>(
     "@SaturnChat:hasBoarded",
-    false,
+    true,
   );
   const { colors, title } = useTheme();
 
@@ -35,7 +35,6 @@ const OnBoarding: React.FC = () => {
 
   const handleComplete = async () => {
     setHasBoarded(true);
-    navigation.navigate("Home");
   };
 
   const DoneButton = () => {

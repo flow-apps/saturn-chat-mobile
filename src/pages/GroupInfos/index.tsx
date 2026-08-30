@@ -39,9 +39,7 @@ import analytics from "@react-native-firebase/analytics";
 
 import SimpleToast from "react-native-simple-toast";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useAds } from "@contexts/ads";
 import { useTranslate } from "@hooks/useTranslate";
-import { usePremium } from "@contexts/premium";
 import { useAuth } from "@contexts/auth";
 import { HeaderButton } from "@components/Header/styles";
 import { ReportToType } from "@type/enums";
@@ -95,8 +93,8 @@ const GroupInfos: React.FC = () => {
 
   const handleGoAvatar = () => {
     navigation.navigate("ImagePreview", {
-      name: group?.group_avatar.name,
-      url: group?.group_avatar.url,
+      name: group?.group_avatar?.name,
+      url: group?.group_avatar?.url,
     });
   };
 
@@ -163,31 +161,47 @@ const GroupInfos: React.FC = () => {
               <ParticipantsInfosContainer>
                 <ParticipantsContainer>
                   <ParticipantsNumber>
-                    {String(group?.participantsAmount).padStart(2, "0")}
+                    {String(group?.participantsAmount || 0).padStart(2, "0")}
                   </ParticipantsNumber>
-                  <ParticipantsTitle>{t("participants")}</ParticipantsTitle>
+                  <ParticipantsTitle>
+                    {t("participants", { count: group.participantsAmount })}
+                  </ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>
+
               <GroupTagsContainer>
                 <GroupTagsTitle>
                   <Feather name="tag" size={20} /> {t("tags")}
                 </GroupTagsTitle>
                 <GroupTagsScroll>
-                  {group.tags &&
+                  {group.tags && group.tags.length > 0 ? (
                     group.tags.map((tag, index) => (
                       <GroupTagContainer key={index}>
                         <GroupTagText>{tag}</GroupTagText>
                       </GroupTagContainer>
-                    ))}
+                    ))
+                  ) : (
+                    <GroupTagText style={{ opacity: 0.5, fontStyle: "italic" }}>
+                      {t("no_tags")}
+                    </GroupTagText>
+                  )}
                 </GroupTagsScroll>
               </GroupTagsContainer>
+
               <GroupDescContainer>
                 <GroupDescTitle>{t("desc")}</GroupDescTitle>
-                <GroupDesc>{group.description}</GroupDesc>
+                <GroupDesc
+                  style={
+                    !group.description?.trim()
+                      ? { opacity: 0.5, fontStyle: "italic" }
+                      : {}
+                  }
+                >
+                  {group.description?.trim()
+                    ? group.description
+                    : t("no_desc")}
+                </GroupDesc>
               </GroupDescContainer>
-              <AdBannerWrapper>
-                <AdBanner />
-              </AdBannerWrapper>
             </BasicInfos>
           </BasicInfosContainer>
         </GroupContainer>

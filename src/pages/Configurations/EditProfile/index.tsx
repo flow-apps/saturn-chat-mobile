@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import FormData from "form-data";
-import { Alert } from "react-native";
 import SimpleToast from "react-native-simple-toast";
 import { UserData } from "@type/interfaces";
 import Button from "@components/Button";
 import Header from "@components/Header";
 import Input from "@components/Input";
 import Loading from "@components/Loading";
+import CustomAlert from "@components/Alert";
 import { useAuth } from "@contexts/auth";
 import api from "@services/api";
 import {
@@ -30,6 +30,16 @@ import { nicknameValidation } from "@utils/regex";
 import _ from "lodash";
 import { FieldError, SearchText } from "@pages/Auth/Register/styles";
 
+interface AlertConfigState {
+  visible: boolean;
+  title: string;
+  content: string;
+  extraButton?: boolean;
+  extraButtonText?: string;
+  extraButtonAction?: () => void;
+  okButtonAction?: () => void;
+}
+
 const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [newAvatar, setNewAvatar] = useState("");
@@ -38,22 +48,35 @@ const EditProfile: React.FC = () => {
   const [bio, setBio] = useState("");
 
   const [nickname, setNickname] = useState("");
-  const [nicknameTimeout, setNicknameTimeout] = useState<number>();
+  const [nicknameTimeout, setNicknameTimeout] = useState<NodeJS.Timeout>();
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [nicknameError, setNicknameError] = useState(false);
   const [fetchingNickname, setFetchingNickname] = useState(false);
+
+  // Estado unificado para o CustomAlert
+  const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
+    visible: false,
+    title: "",
+    content: "",
+  });
+
+  const hideAlert = useCallback(() => {
+    setAlertConfig((prev) => ({ ...prev, visible: false }));
+  }, []);
+
+  const { t } = useTranslate("EditProfile");
+
   const nicknameErrors = {
-    400: "O nome de usuário não está conforme os padrões esperados",
-    404: "O nome de usuário não foi fornecido",
-    1000: "Não foi possível buscar o nome de usuário",
-    unavailable: "O nome de usuário não está disponível",
+    400: t("errors.400"),
+    404: t("errors.404"),
+    1000: t("errors.1000"),
+    unavailable: t("errors.unavailable"),
   };
 
   const [isSendable, setIsSendable] = useState(false);
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { updateUser } = useAuth();
-  const { t } = useTranslate("EditProfile");
 
   const checkNickname = async (nick: string) => {
     if (fetchingNickname) return;
@@ -79,7 +102,7 @@ const EditProfile: React.FC = () => {
         }
       })
       .catch((error) => {
-        const status = error.response.status;
+        const status = error?.response?.status;
 
         if (status === 404) {
           setNicknameError(false);
@@ -134,11 +157,14 @@ const EditProfile: React.FC = () => {
         }
       })
       .catch((error) => {
-        console.log(error.response.data);
-        SimpleToast.show(
-          "Não foi possível atualizar o usuário",
-          SimpleToast.SHORT
-        );
+        console.log(error?.response?.data);
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content:
+            error?.response?.data?.message ||
+            "Não foi possível atualizar as informações do perfil.",
+        });
         setLoading(false);
       });
   };
@@ -147,10 +173,16 @@ const EditProfile: React.FC = () => {
     const { granted } = await ImagePicker.getCameraPermissionsAsync();
 
     if (!granted) {
-      const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+      const { granted: requestGranted } =
+        await ImagePicker.requestCameraPermissionsAsync();
 
-      if (!granted) {
-        return Alert.alert(t("toasts.photo_permission"));
+      if (!requestGranted) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.permission.title", { defaultValue: "Atenção" }),
+          content: t("toasts.photo_permission"),
+        });
+        return;
       }
     }
 
@@ -187,6 +219,15 @@ const EditProfile: React.FC = () => {
           await updateUser(res.data);
           setNewAvatar(uri);
           SimpleToast.show(t("toasts.updated_avatar"), SimpleToast.SHORT);
+        })
+        .catch((error) => {
+          setAlertConfig({
+            visible: true,
+            title: t("alerts.error.title", { defaultValue: "Erro" }),
+            content:
+              error?.response?.data?.message ||
+              "Não foi possível atualizar a foto de perfil.",
+          });
         });
     }
   };
@@ -228,15 +269,24 @@ const EditProfile: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const res = await api.get("/users/@me");
+      try {
+        const res = await api.get("/users/@me");
 
-      if (res.status === 200) {
-        setUser(res.data);
-        setName(res.data.name);
-        setNickname(res.data?.nickname);
-        setBio(res.data.bio);
+        if (res.status === 200) {
+          setUser(res.data);
+          setName(res.data.name);
+          setNickname(res.data?.nickname);
+          setBio(res.data.bio);
+        }
+      } catch (error) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: "Não foi possível carregar os dados do seu perfil.",
+        });
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, []);
 
@@ -289,6 +339,16 @@ const EditProfile: React.FC = () => {
 
   return (
     <>
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        okButtonAction={alertConfig.okButtonAction || hideAlert}
+        extraButton={alertConfig.extraButton}
+        extraButtonText={alertConfig.extraButtonText}
+        extraButtonAction={alertConfig.extraButtonAction}
+      />
+
       <Header title={t("header_title")} />
       <Container>
         <FormContainer>
@@ -317,14 +377,14 @@ const EditProfile: React.FC = () => {
             </FieldContainer>
             <FieldContainer>
               <Input
-                label={"Nome de usuário"}
+                label={t("labels.nickname")}
                 placeholder={"pedro_henrique"}
                 value={nickname}
                 onChangeText={handleSetNickname}
                 onChange={handleCheckFields}
                 maxLength={100}
               />
-              {fetchingNickname && <SearchText>Buscando...</SearchText>}
+              {fetchingNickname && <SearchText>{t("searching")}</SearchText>}
               {nicknameError && <FieldError>{nicknameErrorMessage}</FieldError>}
             </FieldContainer>
             <FieldContainer>

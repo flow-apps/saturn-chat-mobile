@@ -20,9 +20,10 @@ export const pt = {
     Chat: {
       AudioPlayer: {},
       CurrentReplyingMessage: {
-        file_amount: "arquivo",
-        file_amount_plural: "arquivos",
+        file_amount_one: "arquivo",
+        file_amount_other: "arquivos",
         replying_text: "Você está respondendo:",
+        voice_message: "Mensagem de voz",
       },
       FilePreview: {
         alerts: {
@@ -36,6 +37,7 @@ export const pt = {
         },
       },
       Message: {
+        poll: "📊 Enquete: {{question}}",
         toasts: {
           copied_message: "Mensagem copiada",
         },
@@ -59,7 +61,7 @@ export const pt = {
           not_identified_lang: "Não foi possível identificar o idioma.",
           part_opt: "Opções do participante",
           delete: "Excluir",
-          report: "Denunciar mensagem"
+          report: "Denunciar mensagem",
         },
       },
       RecordingAudio: {
@@ -70,13 +72,13 @@ export const pt = {
         read_less: "Ler menos",
         replying: "Respondendo:",
         voice_message: "🎤 Mensagem de voz",
-        files: "arquivo",
-        files_plural: "arquivos",
+        files_one: "arquivo",
+        files_other: "arquivos",
       },
       InviteInMessage: {
         invalid_invite_title: "🚫 Convite inválido",
         invalid_invite_subtitle:
-          " O convite pode ter expirado, ter sido apagado ou ter atingido o número máximo de usos!",
+          "O convite pode ter expirado, ter sido apagado ou atingido o limite máximo de usos!",
         invite_title: "Convite para:",
         invite_screen_title: "Você foi convidado(a) para o grupo:",
         no_desc: "Sem descrição",
@@ -92,15 +94,27 @@ export const pt = {
         link_copied: "Link copiado",
       },
       Typing: {
-        typing_user: "está ",
-        typing_user_plural: "estão ",
+        typing_user_one: "está ",
+        typing_user_other: "estão ",
         typing: "digitando",
         many: "Vários usuários",
+      },
+      Poll: {
+        max_options: "Máximo de {{count}} opções atingido.",
+        min_options: "A enquete deve ter pelo menos {{count}} opções.",
+        type_poll_question: "Digite a pergunta da enquete.",
+        create_poll: "Criar Enquete",
+        options: "Opções",
+        question_input_placeholder: "Ex: Qual o local do evento?",
+        question_option_placeholder: "Opção {{count}}",
+        add_option: "Adicionar opção",
+        multiple: "Permitir múltipla escolha",
+        question: "Pergunta",
       },
     },
     Modals: {
       EmblemModal: {
-        title: "Emblema legal né?",
+        title: "Emblema legal, né?",
         content:
           "Ele é dado a pessoas muito especiais que apoiam o Saturn Chat com o plano Star.",
         premium_text:
@@ -119,7 +133,7 @@ export const pt = {
       0: {
         title: "Bem-vindo ao Saturn Chat!",
         subtitle:
-          "Aqui você encontrará uma enorme variedade de grupos (ou criar um grupo do jeito que quiser).",
+          "Aqui você encontrará uma enorme variedade de grupos (ou poderá criar um do jeito que quiser).",
       },
       1: {
         title: "Envie mensagens com facilidade!",
@@ -129,12 +143,12 @@ export const pt = {
       2: {
         title: "Você está seguro!",
         subtitle:
-          "Aqui sua privacidade está preservada, seus dados não serão vendidos a ninguém!",
+          "Aqui sua privacidade é preservada e seus dados não serão vendidos a ninguém!",
       },
       3: {
         title: "Seja uma Star!",
         subtitle:
-          "Quando estiver pronto, vá ao menu de configurações e obtenha o plano Star e aproveite ao máximo o Saturn Chat!",
+          "Quando estiver pronto, vá ao menu de configurações, obtenha o plano Star e aproveite o Saturn Chat ao máximo!",
       },
     },
   },
@@ -149,20 +163,25 @@ export const pt = {
       header_title: "Criar conta",
       avatar_select_label: "Escolha uma foto de perfil",
       avatar_select_tip:
-        "💡 Lembrando: Você deve selecionar uma imagem com no máximo 5MB.",
+        "💡 Lembrete: você deve selecionar uma imagem de no máximo 5 MB.",
       avatar_selected: "🖼 Esta foto está perfeita!",
       register_error:
-        "Não foi possível criar a conta, possivelmente o email já está em uso, tente fazer login",
+        "Não foi possível criar a conta. Possivelmente o e-mail já está em uso; tente fazer login.",
+      internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
+      nickname_rules:
+        "Deve ser um nome único, contendo apenas números e letras. Apenas os símbolos de hífen (-) e underline (_) estão disponíveis. Se nenhum nome de usuário for fornecido será gerado um automaticamente para você.",
+      searching: "Buscando...",
       labels: {
         name: "Nome",
+        nickname: "Nome de usuário",
         email: {
           label: "E-mail",
-          error: "Esse email não é válido",
+          error: "Esse e-mail não é válido",
         },
         password: {
           label: "Digite uma senha",
-          error: "A senha não segue os padrões segurança",
-          info: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
+          error: "A senha não segue os padrões de segurança",
+          info: "Sua senha deve conter no mínimo 8 caracteres (sendo ao menos 1 letra maiúscula), pelo menos 1 número e 1 símbolo.",
         },
         password_again: {
           label: "Confirme sua senha",
@@ -172,28 +191,59 @@ export const pt = {
       register_button: "Criar conta",
       consent: {
         guidelines: "Diretrizes da Comunidade",
-        privacy_policy: "Politica de Privacidade",
+        privacy_policy: "Política de Privacidade",
         line_0: 'Ao clicar em "Criar conta" você aceita a nossa',
-        line_1: "e também nossas",
+        line_1: "e também as nossas",
       },
     },
     Login: {
       header_title: "Faça o login",
       title: "Olá,\nBem-vindo de volta",
       login_error:
-        "Não foi possível fazer login, verifique seus dados ou crie uma conta",
+        "Não foi possível fazer login. Verifique seus dados ou crie uma conta.",
       email: "E-mail",
       password: "Senha",
       forgot_password: "Esqueceu sua senha?",
       login_button: "Entrar",
       register_button: "É novo por aqui? Crie uma conta!",
+      internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
+    },
+    ForgotPassword: {
+      alerts: {
+        error: "Ocorreu um erro",
+        warn: "Atenção",
+        code_error: "Ocorreu um erro ao solicitar o código.",
+        length_code: "Informe o código de 6 dígitos completo.",
+        invalid_code: "Código inválido ou expirado.",
+        reset_pass_error: "Não foi possível redefinir a senha.",
+      },
+      toasts: {
+        switched_password: "Senha alterada com sucesso!",
+      },
+      header_title: "Recuperar senha",
+      title: "Perdeu sua senha?",
+      subtitle:
+        "Não se preocupe! Ajudaremos você a retomar o acesso à sua conta em poucos minutos.",
+      email_placeholder: "E-mail ou Nome de usuário",
+      next_button: "Próximo",
+      verify_code: "Código de verificação",
+      verify_subtitle: "Insira o código de 6 dígitos enviado para {{masked}}.",
+      confirm: "Confirmar",
+      new_pass_title: "Crie uma nova senha",
+      new_pass_subtitle:
+        "Sua nova senha deve ser diferente das senhas utilizadas anteriormente.",
+      new_pass: "Nova senha",
+      pass_rules: "Sua senha deve conter no mínimo 8 caracteres (sendo ao menos 1 letra maiúscula), pelo menos 1 número e 1 símbolo.",
+      confirm_pass: "Confirme a nova senha",
+      confirm_pass_error: "As senhas não coincidem.",
+      switch_pass: "Alterar Senha"
     },
   },
   TabBar: {
     groups: "Grupos",
     friends: "Amigos",
     new_group: "Novo grupo",
-    settings: "Configurações",
+    settings: "Opções",
   },
   Home: {
     header_title: "Grupos",
@@ -206,8 +256,8 @@ export const pt = {
     },
     groups_list: {
       title: "Acessar os grupos",
-      subtitle: "Você está em {{count}} grupo",
-      subtitle_plural: "Você está em {{count}} grupos",
+      subtitle_one: "Você está em {{count}} grupo",
+      subtitle_other: "Você está em {{count}} grupos",
     },
   },
   Friends: {
@@ -220,14 +270,15 @@ export const pt = {
   NewGroup: {
     header_title: "Novo grupo",
     avatar_select_label: "Escolha uma foto de perfil",
-    avatar_select_tip: "Recomendamos uma imagem de 600x600 e de no máximo 5MB",
+    avatar_select_tip:
+      "Recomendamos uma imagem de 600x600 pixels e no máximo 5 MB",
     avatar_selected: "🖼 Esta foto está perfeita!",
     limit: {
       title: "Você atingiu o limite de {{count}} grupos!",
       subtitle:
-        "Esse limite é estipulado para que todos possam criar suas comunidades no Saturn Chat e também para evitar problemas chatos como spam.",
+        "Esse limite é estipulado para que todos possam criar suas comunidades no Saturn Chat e também para evitar problemas como spam.",
       premium:
-        "Você também pode se tornar uma Star e criar até {{groups}} grupos com {{participants}} participantes em cada",
+        "Você também pode se tornar uma Star e criar até {{groups}} grupos com {{participants}} participantes em cada.",
     },
     form: {
       labels: {
@@ -256,7 +307,7 @@ export const pt = {
       sign_out: {
         title: "😥 Quer mesmo sair?",
         subtitle:
-          "Ao sair você não receberá notificações de novas mensagens, convites e nada relacionado.",
+          "Ao sair, você não receberá notificações de novas mensagens, convites ou nada relacionado.",
         ok_text: "Sair",
         cancel_text: "Cancelar",
       },
@@ -279,7 +330,7 @@ export const pt = {
       use_dev_api: "Usar API de Desenvolvimento",
       title: "Sobre",
       guidelines: "Diretrizes da Comunidade",
-      privacy_policy: "Politica de Privacidade",
+      privacy_policy: "Política de Privacidade",
       feedback: "Enviar Feedback",
     },
     sign_out: "Sair da conta",
@@ -292,23 +343,23 @@ export const pt = {
       others: "Outros",
     },
     labels: {
-      message: "Mensagem"
+      message: "Mensagem",
     },
     done: "Enviar",
-    sent: "Feedback enviado com sucesso"
+    sent: "Feedback enviado com sucesso!",
   },
   Search: {
     header_title: "Explorar",
     input_placeholder: "O que procura hoje?",
     title: "Sem resultados no momento",
     subtitle:
-      "Tente buscar o nome de algum grupo ou tag relacionado a ele ou o nome de usuário",
+      "Tente buscar pelo nome de algum grupo, tag relacionada a ele ou nome de usuário.",
     loading: {
       title: "Buscando...",
       subtitle: "Isso pode demorar um pouco",
     },
-    participants: "participante",
-    participants_plural: "participantes",
+    participants_one: "participante",
+    participants_other: "participantes",
     filters: {
       all: "Todos",
       users: "Usuários",
@@ -316,9 +367,8 @@ export const pt = {
     },
   },
   InviteManager: {
-    header_title: "Convites e soliticitações",
-    subtitle:
-      "Gerencie seus convites e solicitações de amizade que você recebeu.",
+    header_title: "Convites e solicitações",
+    subtitle: "Gerencie seus convites e solicitações de amizade recebidas.",
     empty_text:
       "Não há convites para grupos nem solicitações de amizade. Volte mais tarde.",
     toasts: {
@@ -335,30 +385,38 @@ export const pt = {
   EditProfile: {
     header_title: "Editar perfil",
     switch_avatar: "Trocar avatar",
+    searching: "Buscando...",
+    errors: {
+      "400": "O nome de usuário não está conforme os padrões esperados",
+      "404": "O nome de usuário não foi fornecido",
+      "1000": "Não foi possível buscar o nome de usuário",
+      unavailable: "O nome de usuário não está disponível",
+    },
     toasts: {
-      updated: "Usuário atualizado",
+      updated: "Perfil atualizado",
       update_avatar: "Atualizando avatar...",
       updated_avatar: "Avatar atualizado",
       photo_permission:
-        "Precisamos da permissão para acessar suas fotos para alterar seu avatar!",
+        "Precisamos de permissão para acessar suas fotos para alterar seu avatar!",
     },
     labels: {
+      nickname: "Nome de usuário",
       name: {
         label: "Nome",
-        placeholder: "máx. 100 caractéres",
+        placeholder: "máx. 100 caracteres",
       },
       bio: {
         label: "Recado",
-        placeholder: "máx. 100 caractéres",
+        placeholder: "máx. 100 caracteres",
       },
     },
     done: "Concluir",
   },
   SwitchLanguage: {
     header_title: "Idiomas",
-    title: "Entenda como funciona os idiomas",
+    title: "Entenda como funcionam os idiomas",
     subtitle:
-      "O idioma do aplicativo é definido através do idioma padrão do dispositivo.\n\nPara trocar o idioma, basta entrar nas configurações do dispositivo e alterar o idioma, que o aplicativo trocará o idioma automaticamente.",
+      "O idioma do aplicativo é definido pelo padrão do seu dispositivo.\n\nPara alterá-lo, basta acessar as configurações do seu aparelho e realizar a troca; o aplicativo será atualizado automaticamente.",
   },
   SwitchPassword: {
     header_title: "Altere sua senha",
@@ -371,8 +429,8 @@ export const pt = {
       current_password: "Senha atual",
       new_password: {
         label: "Nova senha",
-        error: "A senha não segue os padrões segurança",
-        info: "Sua senha deve conter: no mínimo 8 caracteres (sendo ao menos 1 letra maiúsculo), pelo menos 1 número e pelo menos 1 símbolo",
+        error: "A senha não segue os padrões de segurança",
+        info: "Sua senha deve conter no mínimo 8 caracteres (sendo ao menos 1 letra maiúscula), pelo menos 1 número e 1 símbolo.",
       },
       confirm_pass: {
         label: "Confirme a nova senha",
@@ -385,21 +443,21 @@ export const pt = {
     header_title: "Faça parte da constelação!",
     be_star: "Seja uma Star!",
     title:
-      "Ganhe vantagens e recursos incríveis do Saturn Chat por um custo que cabe no seu bolso!",
+      "Ganhe vantagens e recursos incríveis no Saturn Chat por um custo que cabe no seu bolso!",
     subtitle:
-      "Aproveite ao máximo todos os recursos disponíveis como envio de arquivos maiores, criar mais grupos, remover todos os anúncios chatos, e mais!",
+      "Aproveite ao máximo todos os recursos disponíveis, como envio de arquivos maiores, criação de mais grupos, remoção de anúncios chatos e muito mais!",
     free_month: "Assine agora e ganhe 1 mês grátis!",
     buy_button: "Obter a partir de {{price}}",
     vantages_title: "Vantagens do plano Star:",
     advantages: {
       0: "Totalmente livre de anúncios chatos!",
-      1: "Aumente em {{multiple}}x o espaço para envio de arquivos, de {{default}}MB para incríveis {{premium}}MB de envio.",
-      2: "Aumente a quantidade de grupos que você pode criar de {{default}} para {{premium}} grupos.",
-      3: "Aumente a quantidade de participantes que você pode ter em seus grupos de {{default}} para {{premium}} participantes.",
-      4: "Ganhe um selo exclusivo ao lado do seu nome para sair ostentando!",
-      5: "Gosta de mandar textões? Então aumente suas mensagens de {{default}} caracteres para maravilhosos {{premium}} caracteres!",
-      6: "Apoia o desenvolvimento do aplicativo e a trazer muitas novidades de maneira rápida ❤",
-      7: "Exporte as mensagens de seus grupos em formato CSV.",
+      1: "Aumente em {{multiple}}x o espaço para envio de arquivos: de {{default}} MB para incríveis {{premium}} MB.",
+      2: "Aumente a quantidade de grupos que você pode criar: de {{default}} para {{premium}} grupos.",
+      3: "Aumente a quantidade de participantes que você pode ter em seus grupos: de {{default}} para {{premium}} participantes.",
+      4: "Ganhe um selo exclusivo ao lado do seu nome para ostentar!",
+      5: "Gosta de mandar textões? Aumente o limite das suas mensagens de {{default}} para maravilhosos {{premium}} caracteres!",
+      6: "Apoie o desenvolvimento do aplicativo e nos ajude a trazer novidades mais rápido ❤",
+      7: "Exporte as mensagens dos seus grupos em formato CSV.",
     },
   },
   ManagePremium: {
@@ -408,18 +466,18 @@ export const pt = {
       cancel_plan: {
         title: "❗ Tem certeza disso?",
         content:
-          "Ao cancelar sua assinatura você perde TODOS os beneficios concedidos pelo plano. Além disso, você NÃO RECEBERÁ O REEMBOLSO DO MÊS JÁ PAGO (mas poderá utilizar os benefícios até a data de renovação).",
+          "Ao cancelar sua assinatura, você perde TODOS os benefícios concedidos pelo plano. Além disso, você NÃO RECEBERÁ REEMBOLSO DO MÊS JÁ PAGO (mas poderá utilizar os benefícios até a data de renovação).",
         ok_text: "Manter plano",
         cancel_text: "Cancelar plano",
       },
     },
     title: "Gerencie seu plano Star",
     subtitle:
-      "Aqui você vê detalhes sobre seu plano como a data de renovação do plano, o status de pagamento. Você também pode cancelar sua assinatura a qualquer momento por aqui.",
+      "Aqui você vê detalhes sobre o seu plano, como a data de renovação e o status de pagamento. Você também pode cancelar sua assinatura a qualquer momento por aqui.",
     plan_labels: {
       plan: "Plano da assinatura:",
       status: "Status da assinatura",
-      start: "Data da aquisição",
+      start: "Data de aquisição",
       expire: "Data de renovação",
       resume: "Data de retorno",
     },
@@ -440,18 +498,26 @@ export const pt = {
     header_title: "Escolha seu plano",
     title: "Estamos quase lá!",
     subtitle:
-      "Agora você deve escolher qual plano você quer, podendo escolher entre os planos mensais, trimestrais ou anuais.",
+      "Agora você deve escolher qual plano você quer, podendo optar entre mensal, trimestral ou anual.",
     monthly: "Mensal",
     quarterly: "Trimestral",
     yearly: "Anual",
     button_text: "Eu quero esse!",
+    finished: {
+      success_title: "Assinatura realizada com sucesso!",
+      error_title: "Não foi possível realizar sua assinatura",
+      success_subtitle:
+        "Você agora pode usufruir de vários benefícios disponíveis no plano Star! Mas atenção, pode demorar alguns minutos até que todos os benefícios sejam totalmente liberados, então não se preocupe.",
+      error_subtitle:
+        "Seu pagamento pode ter sido negado ou sua compra cancelada pela loja de aplicativos. Verifique e tente novamente mais tarde",
+    },
   },
   Chat: {
     alerts: {
       file_size: {
-        title: "😱 Que coisa pesada!",
+        title: "😱 Que arquivo pesado!",
         content:
-          "Eu não consigo carregar algo tão pesado, tente algo de até {{amount}}MB!",
+          "Eu não consigo carregar algo tão grande; tente enviar um arquivo de até {{amount}} MB!",
         extra_button_text: "Obter plano Star",
       },
       same_file: {
@@ -461,7 +527,7 @@ export const pt = {
       mic_perm: {
         title: "🙂 Por favor",
         content:
-          "Eu preciso de permissão para usar seu microfone, assim eu poderei gravar áudios",
+          "Eu preciso de permissão para usar seu microfone, assim poderei gravar áudios.",
       },
     },
     toasts: {
@@ -469,8 +535,10 @@ export const pt = {
     },
     type_message: "Digite sua mensagem...",
     drop_send: "Solte para enviar",
-    sent: "enviado",
+    sent: "Enviado",
     limit_char: "Limite de {{count}} caracteres atingido!",
+    no_send_message:
+      " Você não pode enviar mensagens nesse grupo, mas ainda pode vê-las e receber notificações.",
   },
   GroupConfig: {
     header_group_title: "Opções do grupo",
@@ -479,14 +547,14 @@ export const pt = {
       delete_group: {
         title: "⚠ Cuidado, isso é perigoso!",
         content:
-          'Essa ação é IRREVERSÍVEL! Ao apagar o grupo "{{name}}" você também estará apagando todas as mensagens, arquivos e qualquer outra coisa que esteja mantendo nesse grupo!',
+          'Essa ação é IRREVERSÍVEL! Ao apagar o grupo "{{name}}", você também apagará todas as mensagens, arquivos e qualquer outra coisa que esteja salva nele!',
         ok_text: "Apagar",
         cancel_text: "Cancelar",
       },
       exit_group: {
-        title: "😥 Tem certeza que quer ir embora?",
+        title: "😥 Tem certeza de que quer ir embora?",
         content:
-          "Ao sair do grupo, suas mensagens serão mantidas, porém, você não receberá notificações de novas mensagens e precisará ser convidado(a) para entrar novamente ao grupo (caso seja privado)!",
+          "Ao sair do grupo, suas mensagens serão mantidas, porém você não receberá notificações de novas mensagens e precisará ser convidado(a) novamente para entrar (caso o grupo seja privado).",
         ok_text: "Sair",
       },
     },
@@ -498,12 +566,12 @@ export const pt = {
         edit_group: "Editar grupo",
         details: "Ver detalhes",
         notify_new_participants:
-          "Avisar ao dono do grupo quando novos participantes entrarem no grupo",
-        accepting_new_users: "Aceitar entrada de novos participantes",
+          "Avisar ao dono quando novos participantes entrarem no grupo",
+        accepting_new_users: "Aceitar a entrada de novos participantes",
         max_participants:
-          "Quantidade máxima de participantes (deixe em 0 para quantidade ilimitada)",
+          "Quantidade máxima de participantes (deixe 0 para ilimitado)",
         minimum_role_for_send_message:
-          "Cargo mínimo para enviar mensagens no grupo (cargos acima do selecionado não poderão enviar mensagens no grupo)",
+          "Cargo mínimo para enviar mensagens no grupo (cargos inferiores ao selecionado não poderão enviar mensagens)",
         roles: {
           participant: "Participante",
           moderator: "Moderador",
@@ -513,6 +581,7 @@ export const pt = {
       },
       participant: {
         send_notifications: "Receber notificações de novas mensagens",
+        title: "Configurações do participante",
       },
       danger_zone: {
         title: "Zona de perigo",
@@ -520,12 +589,16 @@ export const pt = {
         exit_group: "Sair do grupo",
       },
     },
+    toasts: {
+      submit_success: "Configurações alteradas com sucesso",
+      submit_error: "Não foi possível salvar as alterações",
+    },
   },
   Participants: {
-    header_title: "{{count}} Participante",
-    header_title_plural: "{{count}} Participantes",
+    header_title_one: "{{count}} Participante",
+    header_title_other: "{{count}} Participantes",
     title: "Todos os participantes",
-    created: "Criou em {{date}}",
+    created: "Criado em {{date}}",
     joined: "Entrou em {{date}}",
     online: "Online",
     last_seen: "Visto por último em {{date}}",
@@ -541,9 +614,9 @@ export const pt = {
   PunishParticipant: {
     title: "Tem certeza disso?",
     desc_kick:
-      'Você está prestes a expulsar o participante "{{userName}}" do grupo "{{groupName}}". Você tem certeza da sua escolha?',
+      'Você está prestes a expulsar o participante "{{userName}}" do grupo "{{groupName}}". Tem certeza da sua escolha?',
     desc_ban:
-      'Você está prestes a banir o participante "{{userName}}" do grupo "{{groupName}}". Você tem certeza da sua escolha?',
+      'Você está prestes a banir o participante "{{userName}}" do grupo "{{groupName}}". Tem certeza da sua escolha?',
     notify_text: "Notificar participante da punição",
     confirm_text_kick: "Sim, expulsar agora!",
     confirm_text_ban: "Sim, banir agora!",
@@ -557,7 +630,7 @@ export const pt = {
     header_title: "Alterar cargo",
     title: "Cargos",
     subtitle:
-      "Membros com cargos especiais podem ter controle em diversos recursos (como de gerenciamento de cargos e convites, edição do grupo, etc) do grupo. Dê cargos importantes para pessoas em que confia.",
+      "Membros com cargos especiais podem ter controle sobre diversos recursos do grupo (como gerenciamento de cargos e convites, edição, etc). Dê cargos importantes apenas para pessoas em que confia.",
     roles: {
       participant: {
         name: "Participante",
@@ -569,7 +642,7 @@ export const pt = {
       },
       manager: {
         name: "Gerente",
-        desc: "Os gerentes ajudam a gerenciar o grupo e a trazer novos usuários.",
+        desc: "Os gerentes ajudam a organizar o grupo e a trazer novos usuários.",
       },
       admin: {
         name: "Administrador",
@@ -577,15 +650,15 @@ export const pt = {
       },
     },
     permissions: {
-      create_invites: "Criar convites para convidar novos usuários",
-      punish_members: "Punir participantes bagunceiros",
+      create_invites: "Criar convites para chamar novos usuários",
+      punish_members: "Punir participantes que infringirem as regras",
       manage_roles: "Gerenciar cargos",
-      manage_messages: "Gerenciar mensagens (como apagar elas)",
-      edit_group: "Editar informações do grupo (nome, avatar, descrição)",
+      manage_messages: "Gerenciar mensagens (como apagá-las)",
+      edit_group: "Editar informações do grupo (nome, avatar e descrição)",
       delete_group: "Apagar o grupo",
     },
     toasts: {
-      success: "Cargo do usuário alterado com sucesso",
+      success: "Cargo do usuário alterado com sucesso!",
       error: "Erro ao alterar cargo. Tente novamente.",
     },
   },
@@ -594,7 +667,7 @@ export const pt = {
       unfriend: {
         title: "⚠️ Deseja desfazer a amizade?",
         content:
-          "Se você remover este usuário da lista de amigos, você não poderá mais enviar e receber mensagens diretas desse usuário. Todas as mensagens entre vocês serão apagadas para ambos.",
+          "Se você remover este usuário da lista de amigos, não poderá mais trocar mensagens diretas com ele. Todas as mensagens entre vocês serão apagadas para ambos.",
         ok_text: "Desfazer amizade",
       },
     },
@@ -604,9 +677,9 @@ export const pt = {
     header_title: "Convidar",
     empty_title:
       "Não há amigos para convidar. Tente compartilhar um convite através de links.",
-    title: "Convite do grupo",
+    title: "Convites do grupo",
     subtitle:
-      "Crie e gerencie todos os convites do grupo através do nosso gerenciador de convites",
+      "Crie e gerencie todos os convites do grupo através do nosso gerenciador.",
     new_invite_text: "Gerenciar convites",
     friends_invite_title: "Convide seus amigos",
     friends_invite_subtitle:
@@ -621,25 +694,32 @@ export const pt = {
   NewInvites: {
     header_title: "Criar convites",
     title: "Gerar convite",
-    subtitle: "Você pode gerar convites com essas configurações:",
+    subtitle: "Você pode gerar convites com estas configurações:",
     permanent: "Convite permanente",
     usage_unlimited: "Usos ilimitados",
-    usage: "Usar no máximo {{count}} vez",
-    usage_plural: "Usar no máximo {{count}} vezes",
-    expire: "Expirar em {{count}} dia",
-    expire_plural: "Expirar em {{count}} dias",
-    day: "Dia",
-    day_plural: "Dias",
+    usage_one: "Usar no máximo {{count}} vez",
+    usage_other: "Usar no máximo {{count}} vezes",
+    expire_one: "Expirar em {{count}} dia",
+    expire_other: "Expirar em {{count}} dias",
+    day_one: "Dia",
+    day_other: "Dias",
     active_invites: "Convites ativos",
     generate: "Gerar",
-    expire_in: "Expirar em ",
-    usage_amount: "Foi usado {{count}} vez de ",
-    usage_amount_plural: "Foi usado {{count}} vezes de ",
+    expire_in: "Expira em ",
+    usage_amount_one: "Foi usado {{count}} vez de ",
+    usage_amount_other: "Foi usado {{count}} vezes de ",
+    toasts: {
+      error_create: "Não foi possível criar o convite.",
+      success_create: "Convite criado com sucesso!",
+      error_remove: "Não foi possível remover o convite.",
+      success_remove: "Convite removido com sucesso!",
+      copy_invite: "Convite copiado!",
+    },
   },
   EditGroup: {
     toasts: {
       success: "Grupo editado com sucesso!",
-      avatar_permission: "Precisamos da permissão para acessar suas fotos!",
+      avatar_permission: "Precisamos de permissão para acessar suas fotos!",
       updating: "Atualizando avatar...",
       updated: "Avatar atualizado",
     },
@@ -655,12 +735,14 @@ export const pt = {
   GroupInfos: {
     join: "Participar",
     joined: "Participando",
-    participants: "Participante",
-    participants_plural: "Participantes",
+    participants_one: "Participante",
+    participants_other: "Participantes",
     tags: "Tags do grupo",
     desc: "Descrição",
+    no_desc: "Este grupo não possui uma descrição.",
+    no_tags: "Nenhuma tag definida",
     accepting_participants_text:
-      "Este grupo atingiu o número máximo de participantes",
+      "Este grupo atingiu o número máximo de participantes.",
     toasts: {
       error: "Não foi possível entrar no grupo!",
     },
@@ -668,19 +750,21 @@ export const pt = {
   Report: {
     header_title: "Denunciar",
     title: "Faça sua denúncia",
-    subtitle: "Encontrou algo que não parece certo? Realize sua denúncia para que nós possamos analisar a situação e tomar as medidas cabíveis. Não se preocupe, sua denúncia é totalmente anônima.",
+    subtitle:
+      "Encontrou algo que não parece certo? Realize sua denúncia para que possamos analisar a situação e tomar as medidas cabíveis. Não se preocupe, sua denúncia é totalmente anônima.",
     types: {
-      SPAM: "Spam e/ou mensagem indesejada",
-      VIOLENCE: "Práticas violentas, incentivo ao suicídio ou exibição de armas de fogo",
-      SEXUAL: "Contéudo sexual, pedofilia ou abuso de menores de idade",
-      BULLYING: "Bullying ou desrespeito aos usuários",
+      SPAM: "Spam e/ou mensagens indesejadas",
+      VIOLENCE:
+        "Práticas violentas, incentivo ao suicídio ou exibição de armas de fogo",
+      SEXUAL: "Conteúdo sexual, pedofilia ou abuso de menores",
+      BULLYING: "Bullying ou desrespeito a outros usuários",
       RACISM: "Discurso de ódio, racismo, xenofobia e semelhantes",
-      SCAM: "Golpe, falsos sorteios, estorção e semelhantes",
-      FAKE_ACCOUNT: "Conteúdo falso ou tentando se passar uma pessoa",
+      SCAM: "Golpes, falsos sorteios, extorsão e semelhantes",
+      FAKE_ACCOUNT: "Conteúdo falso ou tentando se passar por outra pessoa",
       DMCA: "Conteúdo protegido por direitos autorais",
-      OTHER: "Outros"
+      OTHER: "Outros",
     },
     done: "Denunciar",
-    sent: "Denúncia realizada com sucesso"
-  }
+    sent: "Denúncia realizada com sucesso!",
+  },
 };

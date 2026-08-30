@@ -80,8 +80,6 @@ const Home: React.FC = () => {
     setLoading(false);
   }, []);
 
-  const handleGoSearch = () => navigation.navigate("Search");
-
   const handleGoUserProfile = () => navigation.navigate("UserProfile");
 
   const handleGoInvitesManager = () => navigation.navigate("InvitesManager");
@@ -117,9 +115,6 @@ const Home: React.FC = () => {
   return (
     <>
       <Header title={t("header_title")} backButton={false}>
-        <HeaderButton onPress={handleGoSearch}>
-          <Feather name="search" size={22} color="#fff" />
-        </HeaderButton>
         <HeaderButton onPress={handleGoInvitesManager}>
           <Feather name="mail" size={22} color="#fff" />
           {hasInvites && <HasInvitesBullet />}

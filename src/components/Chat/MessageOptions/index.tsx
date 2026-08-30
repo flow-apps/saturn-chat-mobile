@@ -2,7 +2,6 @@ import React, { memo, useCallback, useMemo } from "react";
 import { TouchableOpacity, StatusBar } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useAuth } from "@contexts/auth";
-import { useTranslate } from "@hooks/useTranslate";
 import { IMessageOptionsProps, IOptions } from "./types";
 import {
   Container,
@@ -26,7 +25,6 @@ const MessageOptions = ({
   group,
 }: IMessageOptionsProps) => {
   const { user } = useAuth();
-  const { t } = useTranslate("Components.Chat.ReplyingMessage");
 
   const handleExecAction = useCallback(
     (action?: () => void) => {

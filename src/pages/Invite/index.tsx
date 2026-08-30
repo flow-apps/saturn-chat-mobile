@@ -11,7 +11,6 @@ import {
   InviteAnimationContainer,
   InviteInvalidReason,
 } from "./styles";
-import { StatusBar } from "expo-status-bar";
 import {
   useFocusEffect,
   useNavigation,
@@ -67,7 +66,7 @@ const Invite: React.FC = () => {
             setLoading(false);
           });
       })();
-    }, [inviteID])
+    }, [inviteID]),
   );
 
   if (loading) return <Loading />;
@@ -75,7 +74,6 @@ const Invite: React.FC = () => {
   if (!invite) {
     return (
       <>
-        <StatusBar translucent />
         <Container
           colors={["#0061ff", "#0059ff"]}
           start={{ x: 0, y: 0 }}
@@ -86,7 +84,6 @@ const Invite: React.FC = () => {
               <InviteAnimation
                 source={require("@assets/crying.json")}
                 autoPlay
-                autoSize
                 loop
               />
             </InviteAnimationContainer>
@@ -121,7 +118,6 @@ const Invite: React.FC = () => {
 
   return (
     <>
-      <StatusBar backgroundColor="#0061ff" />
       <Container
         colors={["#0061ff", "#0059ff"]}
         start={{ x: 0, y: 0 }}

@@ -33,7 +33,7 @@ import {
 } from "@type/interfaces";
 import { ParticipantRoles } from "@type/enums";
 import { HeaderButton } from "@components/Header/styles";
-import Alert from "@components/Alert";
+import CustomAlert from "@components/Alert";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
@@ -59,6 +59,16 @@ import { Container, MessageContainer } from "./styles";
 import { PollModal } from "@components/Chat/PollModal";
 
 const MESSAGES_LIMIT_REQUEST = 50;
+
+interface AlertConfigState {
+  visible: boolean;
+  title: string;
+  content: string;
+  extraButton?: boolean;
+  extraButtonText?: string;
+  extraButtonAction?: () => void;
+  okButtonAction?: () => void;
+}
 
 const AnimatedMessage: React.FC<{
   children: React.ReactNode;
@@ -100,7 +110,6 @@ const Chat: React.FC = () => {
   const appState = useAppState();
   const { t } = useTranslate("Chat");
 
-  // Ref da lista e estado de exibição do botão
   const flashListRef = useRef<FlashList<MessageData>>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
@@ -124,8 +133,6 @@ const Chat: React.FC = () => {
 
   const [isPollModalVisible, setIsPollModalVisible] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [largeFile, setLargeFile] = useState(false);
-  const [isSelectedFile, setIsSelectedFile] = useState(false);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [sendingFile, setSendingFile] = useState(false);
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
@@ -136,9 +143,25 @@ const Chat: React.FC = () => {
     {} as ParticipantsData,
   );
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
+
+  // Controle de loading apenas para a montagem inicial da tela
   const [loading, setLoading] = useState(true);
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const prevAppState = useRef(appState);
+
+  // Ref para indicar que o carregamento inicial já foi concluído
+  const initialLoadDone = useRef(false);
+
+  const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
+    visible: false,
+    title: "",
+    content: "",
+  });
+
+  const hideAlert = useCallback(() => {
+    setAlertConfig((prev) => ({ ...prev, visible: false }));
+  }, []);
 
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
   const {
@@ -173,7 +196,6 @@ const Chat: React.FC = () => {
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
-    // Exibe o botão se rolar mais de 300px para cima
     setShowScrollToBottom(offsetY > 300);
   };
 
@@ -187,7 +209,17 @@ const Chat: React.FC = () => {
       options: string[];
       allows_multiple: boolean;
     }) => {
-      if (id !== currentGroupId || !connected) return;
+      if (id !== currentGroupId || !connected) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.connection", {
+            defaultValue:
+              "Não foi possível conectar à sala para criar a enquete.",
+          }),
+        });
+        return;
+      }
 
       const localReference = uuid.v4() as string;
 
@@ -242,6 +274,7 @@ const Chat: React.FC = () => {
       group,
       participant,
       sortMessages,
+      t,
     ],
   );
 
@@ -366,6 +399,14 @@ const Chat: React.FC = () => {
       setReplyingMessage(undefined);
     } catch (error) {
       crashlytics().recordError(error as Error, "Send Voice Message Error");
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: t("alerts.error.voice_message", {
+          defaultValue:
+            "Não foi possível enviar a mensagem de voz. Tente novamente.",
+        }),
+      });
     }
   };
 
@@ -374,55 +415,107 @@ const Chat: React.FC = () => {
     if (!res.error && res.selectedFile) {
       if (
         arrayUtils.has(files, (f) => f.file.uri === res.selectedFile.file.uri)
-      )
-        return setIsSelectedFile(true);
+      ) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.same_file.title"),
+          content: t("alerts.same_file.content"),
+          extraButton: false,
+        });
+        return;
+      }
       if (res.usageSize) setFilesSizeUsed(res.usageSize);
       setFiles((old) => [
         { file: res.selectedFile.file, type: res.selectedFile.type },
         ...old,
       ]);
     } else if (res.errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT) {
-      setLargeFile(true);
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.file_size.title"),
+        content: t("alerts.file_size.content", {
+          amount: userConfigs.fileUpload,
+        }),
+        extraButton: true,
+        extraButtonText: t("alerts.file_size.extra_button_text"),
+        extraButtonAction: () => {
+          hideAlert();
+          analytics().logEvent("IncreaseUpload");
+          navigation.navigate("PurchasePremium");
+        },
+      });
+    } else if (res.error) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: t("alerts.error.file_selection", {
+          defaultValue: "Não foi possível selecionar o arquivo.",
+        }),
+      });
     }
   };
 
-  const fetchParticipantAndGroup = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [pRes, mRes, listRes] = await Promise.all([
-        api.get(`/group/participant/${id}`),
-        api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
-        api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
-      ]);
-      if (pRes.status === 200) {
-        setParticipant(pRes.data.participant);
-        setGroup(pRes.data.participant.group);
+  const fetchParticipantAndGroup = useCallback(
+    async (isSilent = false) => {
+      // Só ativa a tela inteira de loading na primeira execução
+      if (!isSilent && !initialLoadDone.current) {
+        setLoading(true);
       }
-      if (listRes.status === 200) setParticipants(listRes.data);
-      if (Platform.OS === "android")
-        OneSignal.Notifications.removeGroupedNotifications(id);
 
-      if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
-        setFetchedAll(true);
-      // @ts-ignore
-      setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
-      setPage(1);
-    } catch (error) {
-      crashlytics().recordError(
-        error as Error,
-        "Chat: fetchParticipantAndGroup",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [id, sortMessages]);
+      try {
+        const [pRes, mRes, listRes] = await Promise.all([
+          api.get(`/group/participant/${id}`),
+          api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
+          api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
+        ]);
+        if (pRes.status === 200) {
+          setParticipant(pRes.data.participant);
+          setGroup(pRes.data.participant.group);
+        }
+        if (listRes.status === 200) setParticipants(listRes.data);
+        if (Platform.OS === "android")
+          OneSignal.Notifications.removeGroupedNotifications(id);
+
+        if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
+          setFetchedAll(true);
+        // @ts-ignore
+        setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
+        setPage(1);
+      } catch (error) {
+        crashlytics().recordError(
+          error as Error,
+          "Chat: fetchParticipantAndGroup",
+        );
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.load_chat", {
+            defaultValue: "Não foi possível carregar as informações do chat.",
+          }),
+        });
+      } finally {
+        initialLoadDone.current = true;
+        setLoading(false);
+      }
+    },
+    [id, sortMessages, t],
+  );
 
   const handleMessageSubmit = async (
     message: string,
     selectedFiles: File[],
     mentionIds: string[],
   ) => {
-    if (id !== currentGroupId || !connected) return;
+    if (id !== currentGroupId || !connected) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: t("alerts.error.connection", {
+          defaultValue: "Sem conexão com o chat no momento.",
+        }),
+      });
+      return;
+    }
     const localReference = uuid.v4() as string;
 
     const optimisticMsg = buildOptimisticMessage({
@@ -492,6 +585,13 @@ const Chat: React.FC = () => {
           new Error(error as string),
           "Send File Error",
         );
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.send_file", {
+            defaultValue: "Não foi possível enviar os arquivos anexados.",
+          }),
+        });
       } finally {
         setFiles([]);
         setSendingFile(false);
@@ -504,6 +604,7 @@ const Chat: React.FC = () => {
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<MessageData>) => (
+      // @ts-ignore
       <AnimatedMessage index={index} messageId={item.id || item.localReference}>
         <Message
           message={item}
@@ -528,7 +629,9 @@ const Chat: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    if (group?.id !== currentGroupId) fetchParticipantAndGroup();
+    if (group?.id !== currentGroupId) {
+      fetchParticipantAndGroup(false);
+    }
   }, [currentGroupId]);
 
   useEffect(() => {
@@ -541,6 +644,35 @@ const Chat: React.FC = () => {
     );
     setCanSendMessage(pRoleIdx >= minRoleIdx);
   }, [participant, group]);
+
+  useEffect(() => {
+    const appCameToForeground =
+      prevAppState.current.match(/inactive|background/) &&
+      appState === "active";
+
+    if (appCameToForeground) {
+      // Sincroniza silenciosamente sem ativar a tela inteira de loading
+      if (group?.id === id) {
+        fetchParticipantAndGroup(true);
+      }
+
+      if (socket && !connected) {
+        handleJoinRoom(id);
+        configureSocketListeners();
+      }
+    }
+
+    prevAppState.current = appState;
+  }, [
+    appState,
+    group?.id,
+    id,
+    connected,
+    socket,
+    handleJoinRoom,
+    configureSocketListeners,
+    fetchParticipantAndGroup,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
@@ -562,25 +694,14 @@ const Chat: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
-      <Alert
-        title={t("alerts.file_size.title")}
-        content={t("alerts.file_size.content", {
-          amount: userConfigs.fileUpload,
-        })}
-        okButtonAction={() => setLargeFile(false)}
-        extraButtonAction={() => {
-          analytics().logEvent("IncreaseUpload");
-          navigation.navigate("PurchasePremium");
-        }}
-        extraButtonText={t("alerts.file_size.extra_button_text")}
-        extraButton
-        visible={largeFile}
-      />
-      <Alert
-        title={t("alerts.same_file.title")}
-        content={t("alerts.same_file.content")}
-        okButtonAction={() => setIsSelectedFile(false)}
-        visible={isSelectedFile}
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        okButtonAction={alertConfig.okButtonAction || hideAlert}
+        extraButton={alertConfig.extraButton}
+        extraButtonText={alertConfig.extraButtonText}
+        extraButtonAction={alertConfig.extraButtonAction}
       />
 
       <PollModal
@@ -638,7 +759,6 @@ const Chat: React.FC = () => {
             />
           </MessageContainer>
 
-          {/* Botão flutuante para voltar à mensagem mais recente */}
           <AnimatePresence>
             {showScrollToBottom && (
               <MotiView
@@ -668,7 +788,7 @@ const Chat: React.FC = () => {
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.25,
                     shadowRadius: 3.84,
-                    marginBottom: 15
+                    marginBottom: 15,
                   }}
                 >
                   <Feather name="chevron-down" size={24} color="#FFF" />

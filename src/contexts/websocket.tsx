@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AppState, AppStateStatus } from "react-native";
 import websocketConfig from "../configs/websocket";
 import config from "../config";
@@ -24,37 +30,35 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const { token } = useAuth();
 
   useEffect(() => {
+    let isCancelled = false;
     let activeSocket: Socket | null = null;
 
     const setupSocket = async () => {
       if (!token) {
-        if (socket) {
-          socket.offAny();
-          socket.disconnect();
-          setSocket(null);
-        }
-        return;
-      }
-
-      if (socket && socket.connected) {
+        setSocket(null);
         return;
       }
 
       if (isConnecting) return;
-
       setIsConnecting(true);
 
       let currentBaseURL = config.PROD_API_URL;
 
       try {
         const storedPreference = await AsyncStorage.getItem(API_PREFERENCE_KEY);
-        const useDev = storedPreference && __DEV__ ? JSON.parse(storedPreference) : false;
+        const useDev =
+          storedPreference && __DEV__ ? JSON.parse(storedPreference) : false;
         currentBaseURL = useDev ? config.DEV_API_URL : config.PROD_API_URL;
       } catch (error) {
-        console.error("Failed to load API preference from AsyncStorage in websocket context", error);
+        console.error("Erro AsyncStorage", error);
       }
 
-      console.log(`Criando novo socket e conectando ao servidor em ${currentBaseURL}`);
+      if (isCancelled) {
+        setIsConnecting(false);
+        return;
+      }
+
+      console.log(`Criando novo socket e conectando em ${currentBaseURL}`);
       activeSocket = io(currentBaseURL, {
         ...websocketConfig,
         query: { token },
@@ -82,9 +86,10 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        console.log("App voltou para primeiro plano. Verificando reconexão do socket...");
+        console.log("App voltou para primeiro plano. Verificando socket...");
         setSocket((currentSocket) => {
-          if (currentSocket && !currentSocket.connected) {
+          if (currentSocket) {
+            currentSocket.disconnect();
             currentSocket.connect();
           } else if (!currentSocket && token) {
             setupSocket();
@@ -96,9 +101,9 @@ const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     return () => {
+      isCancelled = true;
       subscription.remove();
       if (activeSocket) {
-        activeSocket.offAny();
         activeSocket.disconnect();
       }
     };
