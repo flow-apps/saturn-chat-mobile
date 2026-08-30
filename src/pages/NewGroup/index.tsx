@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -36,6 +35,7 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
 import Button from "@components/Button";
+import CustomAlert from "@components/Alert";
 import * as ImagePicker from "expo-image-picker";
 import Switcher from "@components/Switcher";
 import api from "@services/api";
@@ -50,6 +50,16 @@ import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 
+interface AlertConfigState {
+  visible: boolean;
+  title: string;
+  content: string;
+  extraButton?: boolean;
+  extraButtonText?: string;
+  extraButtonAction?: () => void;
+  okButtonAction?: () => void;
+}
+
 const NewGroup: React.FC = () => {
   const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -62,6 +72,16 @@ const NewGroup: React.FC = () => {
   const [user, setUser] = useState<UserData>({} as UserData);
 
   const [isSendable, setIsSendable] = useState(false);
+
+  const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
+    visible: false,
+    title: "",
+    content: "",
+  });
+
+  const hideAlert = useCallback(() => {
+    setAlertConfig((prev) => ({ ...prev, visible: false }));
+  }, []);
 
   const { colors } = useTheme();
   const { userConfigs, allConfigs } = useRemoteConfigs();
@@ -86,13 +106,23 @@ const NewGroup: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const res = await api.get("/users/@me");
+      try {
+        const res = await api.get("/users/@me");
 
-      if (res.status === 200) {
-        setUser(res.data);
+        if (res.status === 200) {
+          setUser(res.data);
+        }
+      } catch (error: any) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content:
+            error?.response?.data?.message ||
+            "Não foi possível carregar as informações do usuário.",
+        });
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     })();
   }, []);
 
@@ -121,25 +151,33 @@ const NewGroup: React.FC = () => {
     setCreating(true);
     const trace = await perf()?.startTrace("create_group");
     await trace.start();
-    api
-      .post("/groups", data, {
+
+    try {
+      const response = await api.post("/groups", data, {
         headers: {
           "Content-Type": `multipart/form-data`,
         },
-      })
-      .then(async (response) => {
-        if (response.status === 200) {
-          trace.putAttribute("group_id", response.data.id);
-          await analytics().logEvent("created_group", {
-            group_id: response.data.id,
-          });
-          navigator.navigate("GroupsChat");
-        }
-      })
-      .finally(async () => {
-        await trace.stop();
-        setCreating(false);
       });
+
+      if (response.status === 200) {
+        trace.putAttribute("group_id", response.data.id);
+        await analytics().logEvent("created_group", {
+          group_id: response.data.id,
+        });
+        navigator.navigate("GroupsChat");
+      }
+    } catch (error: any) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content:
+          error?.response?.data?.message ||
+          "Não foi possível criar o grupo. Tente novamente.",
+      });
+    } finally {
+      await trace.stop();
+      setCreating(false);
+    }
   };
 
   const handleCheckFields = (textName: string) => {
@@ -155,25 +193,39 @@ const NewGroup: React.FC = () => {
     const { granted } = await ImagePicker.getCameraPermissionsAsync();
 
     if (!granted) {
-      const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+      const { granted: requestGranted } =
+        await ImagePicker.requestCameraPermissionsAsync();
 
-      if (!granted) {
-        return Alert.alert("Precisamos da permissão para acessar suas fotos!");
+      if (!requestGranted) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.permission.title", { defaultValue: "Atenção" }),
+          content: "Precisamos da permissão para acessar suas fotos!",
+        });
+        return;
       }
     }
 
-    const photo = await ImagePicker.launchImageLibraryAsync({
-      aspect: [600, 600],
-      allowsEditing: true,
-      quality: 0.7,
-      allowsMultipleSelection: false,
-      mediaTypes: ["images"],
-    });
+    try {
+      const photo = await ImagePicker.launchImageLibraryAsync({
+        aspect: [600, 600],
+        allowsEditing: true,
+        quality: 0.7,
+        allowsMultipleSelection: false,
+        mediaTypes: ["images"],
+      });
 
-    if (!photo.canceled && photo.assets[0]) {
-      const selectedAsset = photo.assets[0];
-      setGroupPhotoPreview(selectedAsset.uri);
-      setGroupPhoto(selectedAsset);
+      if (!photo.canceled && photo.assets[0]) {
+        const selectedAsset = photo.assets[0];
+        setGroupPhotoPreview(selectedAsset.uri);
+        setGroupPhoto(selectedAsset);
+      }
+    } catch (error) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: "Não foi possível carregar a imagem selecionada.",
+      });
     }
   };
 
@@ -184,6 +236,16 @@ const NewGroup: React.FC = () => {
   if (amountGroups >= userConfigs.amountGroups) {
     return (
       <Container>
+        <CustomAlert
+          visible={alertConfig.visible}
+          title={alertConfig.title}
+          content={alertConfig.content}
+          okButtonAction={alertConfig.okButtonAction || hideAlert}
+          extraButton={alertConfig.extraButton}
+          extraButtonText={alertConfig.extraButtonText}
+          extraButtonAction={alertConfig.extraButtonAction}
+        />
+
         <ReachedLimitContainer>
           <AnimationContainer>
             <Animation
@@ -224,6 +286,16 @@ const NewGroup: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        okButtonAction={alertConfig.okButtonAction || hideAlert}
+        extraButton={alertConfig.extraButton}
+        extraButtonText={alertConfig.extraButtonText}
+        extraButtonAction={alertConfig.extraButtonAction}
+      />
+
       <Header title={t("header_title")} backButton={false} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView

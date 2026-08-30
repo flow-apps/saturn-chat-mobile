@@ -47,7 +47,8 @@ const Input = ({
           {...rest}
         />
 
-        {textContentType === "password" && (
+        {/* @ts-ignore*/}
+        {["newPassword", "password"].includes(textContentType) && (
           <ShowPasswordContainer onPress={() => setShowPassword((old) => !old)}>
             <Feather
               name={showPassword ? "eye-off" : "eye"}

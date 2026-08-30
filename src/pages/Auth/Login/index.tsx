@@ -47,6 +47,10 @@ const Login: React.FC = () => {
     });
   }
 
+  const handleForgotPassword = () => {
+    navigator.navigate("ForgotPassword");
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -67,7 +71,8 @@ const Login: React.FC = () => {
           {loginError && internalError.has && (
             <ErrorContainer>
               <ErrorText>
-                {t("internal_error")} {internalError.reason}
+                {t("internal_error")}{" "}
+                {internalError.reason}
               </ErrorText>
             </ErrorContainer>
           )}
@@ -98,7 +103,7 @@ const Login: React.FC = () => {
                   autoCapitalize="none"
                   secureTextEntry
                 />
-                <ForgotPassword>
+                <ForgotPassword onPress={handleForgotPassword}>
                   <ForgotPasswordText>
                     {t("forgot_password")}
                   </ForgotPasswordText>

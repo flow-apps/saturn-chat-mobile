@@ -8,3 +8,4 @@ export function verifyBetweenValues(
 
   return value > min && value < max
 }
+

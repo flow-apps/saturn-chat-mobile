@@ -5,6 +5,7 @@ import Register from "@pages/Auth/Register";
 import Login from "@pages/Auth/Login";
 import OnBoarding from "@pages/Auth/OnBoarding";
 import { useTheme } from "styled-components";
+import ForgotPassword from "@pages/Auth/ForgotPassword";
 
 const stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ const AuthRoutes = () => {
       <stack.Screen name="Home" component={Home} />
       <stack.Screen name="Register" component={Register} />
       <stack.Screen name="Login" component={Login} />
+      <stack.Screen name="ForgotPassword" component={ForgotPassword} />
     </stack.Navigator>
   );
 };

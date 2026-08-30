@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@components/Button";
 import Header from "@components/Header";
 import Input from "@components/Input";
 import Loading from "@components/Loading";
 import Switcher from "@components/Switcher";
+import CustomAlert from "@components/Alert";
 import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
 import api from "@services/api";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Alert } from "react-native";
 import { GroupData } from "@type/interfaces";
 import {
   AvatarContainer,
@@ -27,6 +27,16 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 
+interface AlertConfigState {
+  visible: boolean;
+  title: string;
+  content: string;
+  extraButton?: boolean;
+  extraButtonText?: string;
+  extraButtonAction?: () => void;
+  okButtonAction?: () => void;
+}
+
 const EditGroup: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [group, setGroup] = useState<GroupData>();
@@ -36,6 +46,17 @@ const EditGroup: React.FC = () => {
   const [isPublicGroup, setIsPublicGroup] = useState<boolean>(false);
   const [newAvatar, setNewAvatar] = useState<string | undefined>();
   const [isSendable, setIsSendable] = useState(false);
+
+  // Estado unificado para o CustomAlert
+  const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
+    visible: false,
+    title: "",
+    content: "",
+  });
+
+  const hideAlert = useCallback(() => {
+    setAlertConfig((prev) => ({ ...prev, visible: false }));
+  }, []);
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -51,28 +72,43 @@ const EditGroup: React.FC = () => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    await api
-      .patch(`/group/${id}`, {
+    try {
+      await api.patch(`/group/${id}`, {
         name,
         description,
         privacy: isPublicGroup ? "PUBLIC" : "PRIVATE",
         tags,
-      })
-      .then(() => {
-        SimpleToast.show(t("toasts.success"),SimpleToast.SHORT);
-        navigation.goBack();
       });
-    setLoading(false);
+
+      SimpleToast.show(t("toasts.success"), SimpleToast.SHORT);
+      navigation.goBack();
+    } catch (error: any) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content:
+          error?.response?.data?.message ||
+          "Não foi possível atualizar as informações do grupo.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSwitchAvatar = async () => {
     const { granted } = await ImagePicker.getCameraPermissionsAsync();
 
     if (!granted) {
-      const { granted } = await ImagePicker.requestCameraPermissionsAsync();
+      const { granted: requestGranted } =
+        await ImagePicker.requestCameraPermissionsAsync();
 
-      if (!granted) {
-        return Alert.alert(t("toasts.avatar_permission"));
+      if (!requestGranted) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.permission.title", { defaultValue: "Atenção" }),
+          content: t("toasts.avatar_permission"),
+        });
+        return;
       }
     }
 
@@ -87,7 +123,7 @@ const EditGroup: React.FC = () => {
     });
 
     if (!photo.canceled) {
-      SimpleToast.show(t("toasts.updating"),SimpleToast.SHORT);
+      SimpleToast.show(t("toasts.updating"), SimpleToast.SHORT);
       const uri = photo.assets[0].uri;
       const uriParts = uri.split(".");
       const fileType = uriParts.pop();
@@ -99,16 +135,24 @@ const EditGroup: React.FC = () => {
         type: `image/${fileType}`,
       });
 
-      await api
-        .patch(`/group/avatar/${id}`, data, {
+      try {
+        await api.patch(`/group/avatar/${id}`, data, {
           headers: {
             "Content-Type": `multipart/form-data`,
           },
-        })
-        .then(() => {
-          setNewAvatar(uri);
-          SimpleToast.show(t("toasts.updated"),SimpleToast.SHORT);
         });
+
+        setNewAvatar(uri);
+        SimpleToast.show(t("toasts.updated"), SimpleToast.SHORT);
+      } catch (error: any) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content:
+            error?.response?.data?.message ||
+            "Não foi possível atualizar o avatar do grupo.",
+        });
+      }
     }
   };
 
@@ -139,24 +183,45 @@ const EditGroup: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const response = await api.get(`/group/${id}`);
+      try {
+        const response = await api.get(`/group/${id}`);
 
-      if (response.status === 200) {
-        setGroup(response.data);
+        if (response.status === 200) {
+          setGroup(response.data);
 
-        setName(response.data.name);
-        setDescription(response.data.description);
-        setTags(response.data.tags.join(", "));
-        handleIsPublic(response.data.privacy === "PUBLIC");
+          setName(response.data.name);
+          setDescription(response.data.description);
+          setTags(response.data.tags.join(", "));
+          handleIsPublic(response.data.privacy === "PUBLIC");
+        }
+      } catch (error: any) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content:
+            error?.response?.data?.message ||
+            "Não foi possível carregar os dados do grupo.",
+        });
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
-  }, []);
+  }, [id]);
 
   if (loading) return <Loading />;
 
   return (
     <>
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        okButtonAction={alertConfig.okButtonAction || hideAlert}
+        extraButton={alertConfig.extraButton}
+        extraButtonText={alertConfig.extraButtonText}
+        extraButtonAction={alertConfig.extraButtonAction}
+      />
+
       <Header title={t("header_title")} />
       <Container>
         <FormContainer>
