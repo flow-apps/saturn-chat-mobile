@@ -24,12 +24,14 @@ import Button from "@components/Button";
 import Header from "@components/Header";
 import api from "@services/api";
 import CustomAlert from "@components/Alert";
+import { useTranslate } from "@hooks/useTranslate";
 
 const ForgotPassword: React.FC = () => {
   const passwordValidation =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
 
   const nav = useNavigation();
+  const { t } = useTranslate("Auth.ForgotPassword");
 
   const [step, setStep] = useState<"email" | "code" | "password">("email");
   const [email, setEmail] = useState("");
@@ -103,11 +105,7 @@ const ForgotPassword: React.FC = () => {
       setDisplayEmail(response.data.email || email);
       setStep("code");
     } catch (error: any) {
-      showAlert(
-        "Erro",
-        error?.response?.data?.message ||
-          "Ocorreu um erro ao solicitar o código.",
-      );
+      showAlert(t("alerts.error"), t("alerts.code_error"));
     } finally {
       setLoading(false);
     }
@@ -167,7 +165,7 @@ const ForgotPassword: React.FC = () => {
   const handleVerifyCode = async () => {
     const fullCode = code.join("");
     if (fullCode.length < 6) {
-      showAlert("Atenção", "Informe o código de 6 dígitos completo.");
+      showAlert(t("alerts.warn"), t("alerts.length_code"));
       return;
     }
 
@@ -185,10 +183,7 @@ const ForgotPassword: React.FC = () => {
       setResetToken(response.data.reset_token);
       setStep("password");
     } catch (error: any) {
-      showAlert(
-        "Erro",
-        error?.response?.data?.message || "Código inválido ou expirado.",
-      );
+      showAlert(t("alerts.error"), t("alerts.invalid_code"));
     } finally {
       setLoading(false);
     }
@@ -202,13 +197,10 @@ const ForgotPassword: React.FC = () => {
         newPass: newPassword,
       });
 
-      SimpleToast.show("Senha alterada com sucesso!", SimpleToast.SHORT);
+      SimpleToast.show(t("toasts.switched_password"), SimpleToast.SHORT);
       nav.goBack();
     } catch (error: any) {
-      showAlert(
-        "Erro",
-        error?.response?.data?.message || "Não foi possível redefinir a senha.",
-      );
+      showAlert(t("alerts.error"), t("alerts.reset_pass_error"));
       setLoading(false);
     }
   };
@@ -223,21 +215,18 @@ const ForgotPassword: React.FC = () => {
         extraButton={false}
       />
 
-      <Header backButton title="Recuperar senha" />
+      <Header backButton title={t("header_title")} />
       <Container>
         {step === "email" && (
           <>
             <TitleContainer>
-              <Title>Perdeu sua senha?</Title>
-              <Subtitle>
-                Não se preocupe! Ajudaremos você a retomar o acesso à sua conta
-                em poucos minutos.
-              </Subtitle>
+              <Title>{t("title")}</Title>
+              <Subtitle>{t("subtitle")}</Subtitle>
             </TitleContainer>
 
             <InputContainer>
               <Input
-                label="E-mail ou Nome de usuário"
+                label={t("email_placeholder")}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -246,7 +235,7 @@ const ForgotPassword: React.FC = () => {
             </InputContainer>
 
             <Button
-              title="Próximo"
+              title={t("next_button")}
               onPress={handleSendEmail}
               loading={loading}
               enabled={!!email.trim()}
@@ -257,9 +246,9 @@ const ForgotPassword: React.FC = () => {
         {step === "code" && (
           <>
             <TitleContainer>
-              <Title>Código de verificação</Title>
+              <Title>{t("verify_code")}</Title>
               <Subtitle>
-                Insira o código de 6 dígitos enviado para {displayEmail}.
+                {t("verify_subtitle", { masked: displayEmail })}
               </Subtitle>
             </TitleContainer>
 
@@ -282,7 +271,7 @@ const ForgotPassword: React.FC = () => {
             </InputContainer>
 
             <Button
-              title="Confirmar"
+              title={t("confirm")}
               onPress={handleVerifyCode}
               loading={loading}
               enabled={code.join("").length === 6}
@@ -293,48 +282,38 @@ const ForgotPassword: React.FC = () => {
         {step === "password" && (
           <>
             <TitleContainer>
-              <Title>Crie uma nova senha</Title>
-              <Subtitle>
-                Sua nova senha deve ser diferente das senhas utilizadas
-                anteriormente.
-              </Subtitle>
+              <Title>{t("new_pass_title")}</Title>
+              <Subtitle>{t("new_pass_subtitle")}</Subtitle>
             </TitleContainer>
 
             <InputContainer>
               <Input
-                label="Nova senha"
+                textContentType="newPassword"
+                label={t("new_pass")}
                 value={newPassword}
                 onChangeText={handleSetNewPassword}
                 secureTextEntry
               />
               {passError && !!newPassword && (
-                <FieldError>
-                  A senha deve conter ao menos 8 caracteres, 1 letra maiúscula,
-                  1 minúscula, 1 número e 1 caractere especial.
-                </FieldError>
+                <FieldError>{t("pass_rules")}</FieldError>
               )}
-              <FieldInfoContainer>
-                <FieldInfo>
-                  Mínimo de 8 caracteres contendo maiúscula, minúscula, número e
-                  símbolo.
-                </FieldInfo>
-              </FieldInfoContainer>
             </InputContainer>
 
             <InputContainer>
               <Input
-                label="Confirme a nova senha"
+                textContentType="password"
+                label={t("confirm_pass")}
                 value={confirmPassword}
                 onChangeText={handleSetConfirmNewPassword}
                 secureTextEntry
               />
               {confirmPassError && !!confirmPassword && (
-                <FieldError>As senhas não coincidem.</FieldError>
+                <FieldError>{t("confirm_pass_error")}</FieldError>
               )}
             </InputContainer>
 
             <Button
-              title="Alterar Senha"
+              title={t("switch_pass")}
               onPress={handleResetPassword}
               loading={loading}
               enabled={!passError && !confirmPassError && !!newPassword}

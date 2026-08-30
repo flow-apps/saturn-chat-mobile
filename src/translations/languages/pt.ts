@@ -109,7 +109,7 @@ export const pt = {
         question_option_placeholder: "Opção {{count}}",
         add_option: "Adicionar opção",
         multiple: "Permitir múltipla escolha",
-        question: "Pergunta"
+        question: "Pergunta",
       },
     },
     Modals: {
@@ -207,6 +207,36 @@ export const pt = {
       login_button: "Entrar",
       register_button: "É novo por aqui? Crie uma conta!",
       internal_error: "Ocorreu um erro interno no servidor. Tente mais tarde.",
+    },
+    ForgotPassword: {
+      alerts: {
+        error: "Ocorreu um erro",
+        warn: "Atenção",
+        code_error: "Ocorreu um erro ao solicitar o código.",
+        length_code: "Informe o código de 6 dígitos completo.",
+        invalid_code: "Código inválido ou expirado.",
+        reset_pass_error: "Não foi possível redefinir a senha.",
+      },
+      toasts: {
+        switched_password: "Senha alterada com sucesso!",
+      },
+      header_title: "Recuperar senha",
+      title: "Perdeu sua senha?",
+      subtitle:
+        "Não se preocupe! Ajudaremos você a retomar o acesso à sua conta em poucos minutos.",
+      email_placeholder: "E-mail ou Nome de usuário",
+      next_button: "Próximo",
+      verify_code: "Código de verificação",
+      verify_subtitle: "Insira o código de 6 dígitos enviado para {{masked}}.",
+      confirm: "Confirmar",
+      new_pass_title: "Crie uma nova senha",
+      new_pass_subtitle:
+        "Sua nova senha deve ser diferente das senhas utilizadas anteriormente.",
+      new_pass: "Nova senha",
+      pass_rules: "Sua senha deve conter no mínimo 8 caracteres (sendo ao menos 1 letra maiúscula), pelo menos 1 número e 1 símbolo.",
+      confirm_pass: "Confirme a nova senha",
+      confirm_pass_error: "As senhas não coincidem.",
+      switch_pass: "Alterar Senha"
     },
   },
   TabBar: {

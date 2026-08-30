@@ -35,7 +35,6 @@ const OnBoarding: React.FC = () => {
 
   const handleComplete = async () => {
     setHasBoarded(true);
-    navigation.navigate("Home");
   };
 
   const DoneButton = () => {
