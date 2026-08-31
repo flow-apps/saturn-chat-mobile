@@ -28,6 +28,7 @@ import { useTheme } from "styled-components";
 import ManagePremium from "@pages/Configurations/ManagePremium";
 import SendFeedback from "@pages/Configurations/SendFeedback";
 import Report from "@pages/Report";
+import Call from "@pages/Call";
 
 const StackRoutes = createStackNavigator();
 
@@ -70,6 +71,7 @@ const AppRoutes = () => {
       <StackRoutes.Screen name="Invite" component={Invite} />
       <StackRoutes.Screen name="SendFeedback" component={SendFeedback} />
       <StackRoutes.Screen name="Report" component={Report} />
+      <StackRoutes.Screen name="Call" component={Call} />
     </StackRoutes.Navigator>
   );
 };
