@@ -10,6 +10,7 @@ const configs = {
   PRODUCT_SKUS: Platform.select({
     android: ["star_plan"],
   }),
+  ICE_SERVERS: [{ urls: "stun:stun.l.google.com:19302" }],
   ADS: {
     TEST_ADS_IDS: {
       BANNER: "ca-app-pub-3940256099942544/2934735716",

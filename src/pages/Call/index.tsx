@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Feather } from '@expo/vector-icons';
+import React, { useState } from "react";
+import { Feather } from "@expo/vector-icons";
 
 import {
   Container,
@@ -18,7 +18,9 @@ import {
   ControlsBar,
   ControlButton,
   EndCallButton,
-} from './styles';
+} from "./styles";
+import { useCallRoom } from "@hooks/useCallRoom";
+import { useWebsocket } from "@contexts/websocket";
 
 interface Participant {
   id: string;
@@ -26,14 +28,14 @@ interface Participant {
 }
 
 const PARTICIPANTS_DATA: Participant[] = [
-  { id: '1', name: 'Ana Silva' },
-  { id: '2', name: 'Carlos Oliveira' },
-  { id: '3', name: 'Beatriz Souza' },
-  { id: '4', name: 'João Pedro' },
-  { id: '5', name: 'Mariana Costa' },
-  { id: '6', name: 'Lucas Mendes' },
-  { id: '7', name: 'Fernanda Lima' },
-  { id: '8', name: 'Gabriel Santos' },
+  { id: "1", name: "Ana Silva" },
+  { id: "2", name: "Carlos Oliveira" },
+  { id: "3", name: "Beatriz Souza" },
+  { id: "4", name: "João Pedro" },
+  { id: "5", name: "Mariana Costa" },
+  { id: "6", name: "Lucas Mendes" },
+  { id: "7", name: "Fernanda Lima" },
+  { id: "8", name: "Gabriel Santos" },
 ];
 
 const MAX_DISPLAY = 6;
@@ -54,7 +56,7 @@ const Call: React.FC = () => {
   const remainingCount = totalParticipants - (MAX_DISPLAY - 1);
 
   const handleOpenMoreParticipants = () => {
-    console.log('Abrir lista de participantes');
+    console.log("Abrir lista de participantes");
   };
 
   const handleToggleMute = () => {
@@ -70,8 +72,11 @@ const Call: React.FC = () => {
   };
 
   const handleEndCall = () => {
-    console.log('Encerrar chamada');
+    console.log("Encerrar chamada");
   };
+
+  const { socket } = useWebsocket();
+  const {} = useCallRoom("123");
 
   return (
     <Container>
@@ -103,16 +108,23 @@ const Call: React.FC = () => {
       <ControlsBar>
         {/* Controle Mute */}
         <ControlButton onPress={handleToggleMute} isActive={isMuted}>
-          <Feather name={isMuted ? 'mic-off' : 'mic'} size={24} color="#FFF" />
+          <Feather name={isMuted ? "mic-off" : "mic"} size={24} color="#FFF" />
         </ControlButton>
 
         {/* Controle Vídeo */}
         <ControlButton onPress={handleToggleVideo} isActive={isVideoOn}>
-          <Feather name={isVideoOn ? 'video' : 'video-off'} size={24} color="#FFF" />
+          <Feather
+            name={isVideoOn ? "video" : "video-off"}
+            size={24}
+            color="#FFF"
+          />
         </ControlButton>
 
         {/* Controle Compartilhar Tela */}
-        <ControlButton onPress={handleToggleScreenShare} isActive={isScreenSharing}>
+        <ControlButton
+          onPress={handleToggleScreenShare}
+          isActive={isScreenSharing}
+        >
           <Feather name="tv" size={24} color="#FFF" />
         </ControlButton>
 

@@ -3,7 +3,9 @@
     "name": "Saturn Chat",
     "slug": "SaturnChat",
     "version": "0.1.41",
-    "platforms": ["android"],
+    "platforms": [
+      "android"
+    ],
     "scheme": "saturnchat",
     "android": {
       "package": "com.flowapps.saturnchat",
@@ -32,7 +34,8 @@
       "expo-audio",
       "expo-video",
       "expo-splash-screen",
-      "expo-status-bar"
+      "expo-status-bar",
+      "@config-plugins/react-native-webrtc"
     ]
   },
   "react-native-google-mobile-ads": {

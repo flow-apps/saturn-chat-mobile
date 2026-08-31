@@ -43,11 +43,13 @@ import {
   Poppins_600SemiBold,
   Poppins_300Light_Italic,
 } from "@expo-google-fonts/poppins";
+import { registerGlobals } from "@stream-io/react-native-webrtc";
 
 preventAutoHideAsync();
 
 OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
 OneSignal.initialize(secrets.OneSignalAppID);
+registerGlobals();
 
 function App() {
   const [isUpdating, setIsUpdating] = useState(false);
