@@ -13,14 +13,14 @@ export const AlertContainer = styled.View`
 export const AlertTitle = styled.Text`
   font-family: ${fonts.heading};
   color: ${(props) => props.theme.colors.black};
-  font-size: 18px;
+  font-size: 22px;
   margin-bottom: 15px;
 `;
 
 export const AlertContent = styled.Text`
   color: ${(props) => props.theme.colors.black};
   font-family: ${fonts.text};
-  font-size: 14px;
+  font-size: 16px;
 `;
 
 export const AlertModal = styled.View`
@@ -47,6 +47,7 @@ export const AlertOkButtonText = styled.Text`
   font-family: ${fonts["text-bold"]};
   font-size: 14px;
   color: ${(props) => props.theme.colors.primary};
+  margin-left: auto;
 `;
 
 export const AlertCancelButton = styled(AlertOkButton)`

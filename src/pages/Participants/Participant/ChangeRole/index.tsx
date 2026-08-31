@@ -38,7 +38,7 @@ const ChangeRole: React.FC = () => {
   };
   const { colors } = useTheme();
   const [role, setRole] = useState<Roles>(
-    participant.role.toLocaleLowerCase() as Roles
+    participant.role.toLocaleLowerCase() as Roles,
   );
   const { name, description, permissions } = roles[role];
   const {
@@ -88,16 +88,16 @@ const ChangeRole: React.FC = () => {
       .post(
         `/group/participant/role/set/${
           participant.id
-        }?role=${role.toUpperCase()}&group_id=${participant.group.id}`
+        }?role=${role.toUpperCase()}&group_id=${participant.group.id}`,
       )
       .then((res) => {
         if (res.status === 204) {
-          SimpleToast.show(t("toasts.success"),SimpleToast.SHORT);
+          SimpleToast.show(t("toasts.success"), SimpleToast.SHORT);
           navigation.navigate("Chat", { id: participant.group.id });
         }
       })
       .catch((res) => {
-        SimpleToast.show(t("toasts.error"),SimpleToast.SHORT);
+        SimpleToast.show(t("toasts.error"), SimpleToast.SHORT);
       });
   };
 
@@ -113,6 +113,7 @@ const ChangeRole: React.FC = () => {
           {rolesData.map((r, index) => (
             <RoleContainer key={index}>
               <Radio
+                label={r.name}
                 value={r.radioValue}
                 color={r.color}
                 selectedValue={role}

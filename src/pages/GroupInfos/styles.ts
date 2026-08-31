@@ -7,6 +7,7 @@ import CachedImage from "@components/CachedImage";
 export const Container = styled.ScrollView.attrs({
   contentContainerStyle: {
     paddingBottom: 15,
+    flexGrow: 1,
   },
 })`
   flex: 1;
@@ -17,7 +18,9 @@ export const GroupContainer = styled.View`
   flex: 1;
 `;
 
-export const BasicInfosContainer = styled.View``;
+export const BasicInfosContainer = styled.View`
+  flex: 1;
+`;
 
 export const ImagesContainer = styled.View`
   width: 100%;
@@ -43,6 +46,7 @@ export const Avatar = styled(CachedImage)`
 `;
 
 export const BasicInfos = styled.View`
+  flex: 1;
   margin-top: -80px;
 `;
 
@@ -109,9 +113,10 @@ export const GroupTagText = styled.Text`
 `;
 
 export const GroupDescContainer = styled.View`
+  flex: 1;
   background-color: ${(props) => darken(0.02, props.theme.colors.shape)};
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-top: 15px;
 `;
 

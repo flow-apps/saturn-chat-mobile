@@ -10,7 +10,7 @@ import { View } from "react-native";
 import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import * as Clipboard from "expo-clipboard";
 import SimpleToast from "react-native-simple-toast";
 import URLParser from "url-parse";
@@ -45,6 +45,7 @@ import MessageMark from "@components/Markdown/MessageMark";
 import ReplyingMessage from "@components/Chat/ReplyingMessage";
 import InviteInMessage from "@components/Chat/RichContent/InviteInMessage";
 import LinkPreview from "@components/Chat/RichContent/LinkPreview";
+import { PollMessage } from "@components/PollMessage";
 
 import {
   Container,
@@ -160,11 +161,9 @@ const Message = ({
     setInvitesData(foundInvites);
   }, [message.message]);
 
-  const isRight = message.author?.id === user?.id;
+  const isRight = (message.author?.id || message?.author_id) === user?.id;
   const isSended = message?.sended ?? true;
   const hasInvite = invitesData.length > 0;
-
-  const currentText = translatedContent ?? message.message;
 
   const handleGoParticipant = useCallback(() => {
     navigation.navigate("Participant", { participant: message.participant });
@@ -201,9 +200,10 @@ const Message = ({
   }, [handleDeleteMessage, message.id]);
 
   const handleCopyMessage = useCallback(async () => {
-    await Clipboard.setStringAsync(currentText);
+    if (!message.message) return;
+    await Clipboard.setStringAsync(message.message);
     SimpleToast.show(t("toasts.copied_message"), SimpleToast.SHORT);
-  }, [currentText, t]);
+  }, [message.message, t]);
 
   const handleTranslateMessage = useCallback(async () => {
     if (translatedContent !== null) {
@@ -212,8 +212,13 @@ const Message = ({
       return;
     }
 
+    const isPoll = !!message.poll;
+    const textToTranslate = isPoll ? message.poll?.question : message.message;
+
+    if (!textToTranslate) return;
+
     try {
-      const messageLanguageTag = await FastTranslator.identify(message.message);
+      const messageLanguageTag = await FastTranslator.identify(textToTranslate);
       const safeMessageLanguageTag =
         typeof messageLanguageTag === "string" ? messageLanguageTag : "";
       const messageLanguage = FastTranslator.languageFromTag(
@@ -247,12 +252,34 @@ const Message = ({
         downloadIfNeeded: true,
       });
 
-      const translated = await FastTranslator.translate(message.message);
+      if (isPoll && message.poll) {
+        const [translatedQuestion, ...translatedOptionsTexts] =
+          await Promise.all([
+            FastTranslator.translate(message.poll.question),
+            ...message.poll.options.map((opt) =>
+              FastTranslator.translate(opt.option_text),
+            ),
+          ]);
 
-      if (translated) {
-        setTranslatedContent(translated);
-        SimpleToast.show(t("options.translated_success"), SimpleToast.SHORT);
+        const optionsMap: Record<string, string> = {};
+        message.poll.options.forEach((opt, idx) => {
+          optionsMap[opt.id] = translatedOptionsTexts[idx] || opt.option_text;
+        });
+
+        const translationData = {
+          question: translatedQuestion,
+          options: optionsMap,
+        };
+
+        setTranslatedContent(JSON.stringify(translationData));
+      } else {
+        const translated = await FastTranslator.translate(message.message);
+        if (translated) {
+          setTranslatedContent(translated);
+        }
       }
+
+      SimpleToast.show(t("options.translated_success"), SimpleToast.SHORT);
     } catch (error) {
       console.log("Erro ao traduzir mensagem: ", error);
       SimpleToast.show(
@@ -260,7 +287,7 @@ const Message = ({
         SimpleToast.SHORT,
       );
     }
-  }, [translatedContent, message.message, t]);
+  }, [translatedContent, message.message, message.poll, t]);
 
   const triggerReply = useCallback(() => {
     swipeableRef.current?.close();
@@ -288,8 +315,36 @@ const Message = ({
     });
   }, [navigation, message.id]);
 
-  const optionsList = useMemo(
-    () => [
+  const messagePreviewText = useMemo(() => {
+    if (translatedContent !== null) {
+      if (message.poll) {
+        try {
+          const parsed = JSON.parse(translatedContent);
+          return t("poll", {
+            question: parsed.question,
+          });
+        } catch {
+          return t("poll", {
+            question: message.poll.question,
+          });
+        }
+      }
+      return translatedContent;
+    }
+
+    if (message.poll) {
+      return t("poll", {
+        question: message.poll.question,
+      });
+    }
+
+    return message.message;
+  }, [translatedContent, message.poll, message.message]);
+
+  const optionsList = useMemo(() => {
+    const isPoll = !!message.poll;
+
+    const list = [
       {
         iconName: "corner-up-right",
         content: t("options.reply"),
@@ -299,15 +354,19 @@ const Message = ({
         showInDM: true,
         showForAuthor: true,
       },
-      {
-        iconName: "copy",
-        content: t("options.copy"),
-        action: handleCopyMessage,
-        onlyOwner: false,
-        authorizedRoles: ["ALL" as ParticipantRoles],
-        showInDM: true,
-        showForAuthor: true,
-      },
+      ...(!isPoll
+        ? [
+            {
+              iconName: "copy",
+              content: t("options.copy"),
+              action: handleCopyMessage,
+              onlyOwner: false,
+              authorizedRoles: ["ALL" as ParticipantRoles],
+              showInDM: true,
+              showForAuthor: true,
+            },
+          ]
+        : []),
       {
         iconName: "globe",
         content:
@@ -348,21 +407,46 @@ const Message = ({
         showInDM: true,
         showForAuthor: false,
       },
-    ],
-    [
-      t,
-      triggerReply,
-      handleCopyMessage,
-      translatedContent,
-      handleTranslateMessage,
-      handleGoParticipant,
-      deleteMessage,
-      colors.red,
-      handleReportMessage,
-    ],
-  );
+    ];
+
+    return list;
+  }, [
+    message.poll,
+    t,
+    triggerReply,
+    handleCopyMessage,
+    translatedContent,
+    handleTranslateMessage,
+    handleGoParticipant,
+    deleteMessage,
+    colors.red,
+    handleReportMessage,
+  ]);
 
   const isSameAuthorAsLast = lastMessage?.author?.id === message.author?.id;
+
+  const parsedPollData = useMemo(() => {
+    if (!message.poll) return undefined;
+
+    if (translatedContent !== null) {
+      try {
+        const parsedTranslation = JSON.parse(translatedContent);
+
+        return {
+          ...message.poll,
+          question: parsedTranslation.question || message.poll.question,
+          options: message.poll.options.map((opt) => ({
+            ...opt,
+            option_text: parsedTranslation.options?.[opt.id] || opt.option_text,
+          })),
+        };
+      } catch {
+        return message.poll;
+      }
+    }
+
+    return message.poll;
+  }, [message.poll, translatedContent]);
 
   return (
     <>
@@ -399,6 +483,7 @@ const Message = ({
           <MessageContentContainer
             isRight={isRight}
             sended={isSended}
+            hasPoll={!!message.poll}
             onLongPress={handleOpenMsgOptions}
             delayLongPress={200}
           >
@@ -407,26 +492,37 @@ const Message = ({
               visible={msgOptions}
               message={{
                 ...message,
-                message: currentText,
+                message: messagePreviewText,
               }}
               participant_role={participant.role}
               group={group}
               options={optionsList as any}
             />
-            {/* Forçamos a remontagem do MessageMark ao alterar o texto usando a chave 'key' */}
-            <MessageMark
-              key={`${message.id}-${translatedContent ? "translated" : "original"}`}
-              message={{
-                ...message,
-                message: currentText,
-              }}
-              onPressLink={alertLink}
-              user={user as UserData}
-              participants={participants}
-            />
+
+            {message.message ? (
+              <MessageMark
+                key={`${message.id}-${translatedContent ? "translated" : "original"}`}
+                message={{
+                  ...message,
+                  message:
+                    translatedContent && !message.poll
+                      ? translatedContent
+                      : message.message,
+                }}
+                onPressLink={alertLink}
+                user={user as UserData}
+                participants={participants}
+              />
+            ) : null}
+
+            {parsedPollData && (
+              <PollMessage poll={parsedPollData} groupId={group.id} />
+            )}
+
             {message.voice_message && (
               <AudioPlayer audio={message.voice_message} />
             )}
+
             {message.files &&
               message.files.map((file, idx) => (
                 <FilePreview
@@ -500,6 +596,7 @@ export default memo(Message, (prev, next) => {
     prev.lastMessage?.id === next.lastMessage?.id &&
     prev.participant?.role === next.participant?.role &&
     prev.participant?.state === next.participant?.state &&
-    prev.participants === next.participants
+    prev.participants === next.participants &&
+    JSON.stringify(prev.message.poll) === JSON.stringify(next.message.poll)
   );
 });

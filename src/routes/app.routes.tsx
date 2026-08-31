@@ -59,7 +59,6 @@ const AppRoutes = () => {
         component={PunishParticipant}
       />
       <StackRoutes.Screen name="UserProfile" component={UserProfile} />
-      <StackRoutes.Screen name="Search" component={Search} />
       <StackRoutes.Screen name="GroupConfig" component={GroupConfig} />
       <StackRoutes.Screen name="EditGroup" component={EditGroup} />
       <StackRoutes.Screen name="InviteUsers" component={InviteUsers} />

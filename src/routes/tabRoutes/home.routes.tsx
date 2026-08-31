@@ -9,6 +9,7 @@ import NewGroup from "@pages/NewGroup";
 import fonts from "@styles/fonts";
 import { useTranslate } from "@hooks/useTranslate";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Search from "@pages/Search";
 
 const tabRoutes = createBottomTabNavigator();
 
@@ -67,6 +68,16 @@ const HomeRoutes = () => {
           ),
         }}
       />
+      <tabRoutes.Screen
+        component={Search}
+        name="Search"
+        options={{
+          title: "Explorar",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="compass" size={size} color={color} />
+          ),
+        }}
+      />
 
       <tabRoutes.Screen
         component={NewGroup}
@@ -78,6 +89,7 @@ const HomeRoutes = () => {
           ),
         }}
       />
+
       <tabRoutes.Screen
         component={Settings}
         name="UserConfigs"

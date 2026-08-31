@@ -1,9 +1,14 @@
 import React, { useRef, useState } from "react";
-import { Keyboard, Platform, TextInput } from "react-native";
+import {
+  Keyboard,
+  Modal,
+  TextInput,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { AnimatePresence } from "moti";
 import { ProgressBar } from "react-native-paper";
 import Feather from "@expo/vector-icons/Feather";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import SimpleToast from "react-native-simple-toast";
 
 import { UserData, MessageData } from "@type/interfaces";
@@ -14,19 +19,28 @@ import Mentions from "@components/Chat/Mentions";
 import { AudioRecordingBar } from "@components/Chat/AudioRecordingBar";
 
 import {
+  ActionIconContainer,
+  ActionItemButton,
+  ActionText,
   AudioButton,
   AudioContainer,
+  DragIndicator,
   FileSendedProgressContainer,
   FileSendedText,
   FormContainer,
   InputContainer,
   MessageInput,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   NoSendMessageContainer,
   NoSendMessageText,
   OptionsButton,
   OptionsContainer,
+  PlusButton,
   SendButton,
 } from "./styles";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface ChatInputProps {
   groupId: string;
@@ -42,6 +56,7 @@ interface ChatInputProps {
   onRecordAudioStop: () => void;
   onRecordAudioCancel?: () => void;
   onFileSelect: () => void;
+  onOpenPollModal: () => void;
   onRemoveFile: (index: number) => void;
   onRemoveReplying: () => void;
   onTyping: () => void;
@@ -65,6 +80,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onRecordAudioStop,
   onRecordAudioCancel,
   onFileSelect,
+  onOpenPollModal,
   onRemoveFile,
   onRemoveReplying,
   onTyping,
@@ -86,13 +102,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [mentions, setMentions] = useState<UserData[]>([]);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
+  const [isActionsModalVisible, setIsActionsModalVisible] = useState(false);
+  const { t } = useTranslate("Chat");
 
   const handleSetText = (text: string) => {
     if (text.length >= maxMessageLength) {
-      return SimpleToast.show(
-        `Limite de ${maxMessageLength} caracteres atingido.`,
-        SimpleToast.SHORT,
-      );
+      return SimpleToast.show(t("limit_char"), SimpleToast.SHORT);
     }
     setIsTypingMessage(text.length > 0);
 
@@ -154,10 +169,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   if (!canSendMessage) {
     return (
       <NoSendMessageContainer>
-        <NoSendMessageText>
-          Você não pode enviar mensagens nesse grupo, mas ainda pode vê-las e
-          receber notificações.
-        </NoSendMessageText>
+        <NoSendMessageText>{t("no_send_message")}</NoSendMessageText>
       </NoSendMessageContainer>
     );
   }
@@ -207,7 +219,43 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Exibe o componente de gravação se estiver gravando, caso contrário mostra o input padrão */}
+      <Modal
+        visible={isActionsModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsActionsModalVisible(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => setIsActionsModalVisible(false)}
+        >
+          <ModalOverlay>
+            <TouchableWithoutFeedback>
+              <ModalContent>
+                <ModalHeader>
+                  <DragIndicator />
+                </ModalHeader>
+
+                <ActionItemButton
+                  onPress={() => {
+                    setIsActionsModalVisible(false);
+                    onOpenPollModal();
+                  }}
+                >
+                  <ActionIconContainer bgColor={colors.primary + "20"}>
+                    <Feather
+                      name="bar-chart-2"
+                      size={22}
+                      color={colors.primary}
+                    />
+                  </ActionIconContainer>
+                  <ActionText>Criar Enquete</ActionText>
+                </ActionItemButton>
+              </ModalContent>
+            </TouchableWithoutFeedback>
+          </ModalOverlay>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {isRecording ? (
         <AudioRecordingBar
           audioDuration={audioDuration}
@@ -216,7 +264,17 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         />
       ) : (
         <InputContainer>
+          <PlusButton
+            onPress={() => {
+              Keyboard.dismiss();
+              setIsActionsModalVisible(true);
+            }}
+          >
+            <Feather name="plus" size={26} color={colors.primary} />
+          </PlusButton>
+
           <MessageInput
+            //@ts-ignore
             ref={messageInputRef}
             as={TextInput}
             cursorColor={colors.secondary}
@@ -226,19 +284,18 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               setCursorPosition(selection.start)
             }
             maxLength={maxMessageLength}
-            placeholder="Digite uma mensagem..."
+            placeholder={t("type_message")}
           />
           <OptionsContainer>
             <OptionsButton onPress={onFileSelect}>
               <Feather name="file" size={24} color={colors.primary} />
             </OptionsButton>
             {isTypingMessage || files.length > 0 ? (
-              <SendButton>
+              <SendButton onPress={handleSubmit}>
                 <Feather
                   name="send"
                   size={26}
                   color={colors.primary}
-                  onPress={handleSubmit}
                   style={{ transform: [{ rotate: "45deg" }] }}
                 />
               </SendButton>

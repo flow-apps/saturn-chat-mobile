@@ -1,8 +1,7 @@
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
-import { Keyboard } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Keyboard, Pressable } from "react-native";
 import Button from "@components/Button";
 import Header from "@components/Header";
 import Input from "@components/Input";
@@ -48,6 +47,10 @@ const Login: React.FC = () => {
     });
   }
 
+  const handleForgotPassword = () => {
+    navigator.navigate("ForgotPassword");
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -56,7 +59,7 @@ const Login: React.FC = () => {
     <>
       <Header title={t("header_title")} />
       <Container>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Pressable onPress={Keyboard.dismiss}>
           <WelcomeContainer>
             <WelcomeTitle>{t("title")}</WelcomeTitle>
           </WelcomeContainer>
@@ -68,7 +71,8 @@ const Login: React.FC = () => {
           {loginError && internalError.has && (
             <ErrorContainer>
               <ErrorText>
-                Ocorreu um erro interno no servidor. Tente mais tarde. {internalError.reason}
+                {t("internal_error")}{" "}
+                {internalError.reason}
               </ErrorText>
             </ErrorContainer>
           )}
@@ -99,7 +103,7 @@ const Login: React.FC = () => {
                   autoCapitalize="none"
                   secureTextEntry
                 />
-                <ForgotPassword>
+                <ForgotPassword onPress={handleForgotPassword}>
                   <ForgotPasswordText>
                     {t("forgot_password")}
                   </ForgotPasswordText>
@@ -111,7 +115,7 @@ const Login: React.FC = () => {
               <CreateAccountText>{t("register_button")}</CreateAccountText>
             </CreateAccountContainer>
           </FormContainer>
-        </TouchableWithoutFeedback>
+        </Pressable>
       </Container>
     </>
   );

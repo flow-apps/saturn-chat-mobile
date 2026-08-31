@@ -84,7 +84,37 @@ export interface MessageData {
   files?: FileData[] | File[];
   sended?: boolean;
   mentions?: string[];
+  poll?: PollData;
   localReference?: string;
+}
+
+export interface PollData {
+  id: string;
+  message_id: string;
+  message: MessageData;
+  question: string;
+  allows_multiple: boolean;
+  options: PollOptionData[];
+  created_at: string;
+}
+
+export interface PollOptionData {
+  id: string;
+  poll_id: string;
+  option_text: string;
+  votes_count: number;
+  poll: PollData;
+  votes: PollVoteData[];
+}
+
+interface PollVoteData {
+  id: string;
+  poll_id: string;
+  option_id: string;
+  user_id: string;
+  created_at: string;
+  poll: PollData;
+  option: PollOptionData;
 }
 
 export interface FileData {

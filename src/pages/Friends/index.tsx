@@ -25,7 +25,6 @@ import {
   FriendAvatar,
   FriendContainer,
   FriendLeftContainer,
-  FriendName,
   PresentationContainer,
   PresentationSubtitle,
   PresentationTitle,
@@ -34,7 +33,6 @@ import {
 } from "./styles";
 import { useTranslate } from "@hooks/useTranslate";
 import PremiumName from "@components/PremiumName";
-import fonts from "@styles/fonts";
 import { useTheme } from "styled-components";
 import _ from "lodash";
 
@@ -98,9 +96,9 @@ const Friends: React.FC = () => {
             </EmptyListContainer>
           )}
           renderItem={({ item }) => {
-            const friendName = getFriendName(user.id, item);
-            const friendId = getFriendID(user.id, item);
-            const friendNickname = getFriendNickname(user.id, item);
+            const friendName = getFriendName(user?.id, item);
+            const friendId = getFriendID(user?.id, item);
+            const friendNickname = getFriendNickname(user?.id, item);
 
             return (
               <FriendContainer

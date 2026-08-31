@@ -100,8 +100,8 @@ android {
         applicationId 'com.flowapps.saturnchat'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 65
-        versionName "0.1.41"
+        versionCode 74
+        versionName "0.1.50"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }

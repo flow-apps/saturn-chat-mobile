@@ -10,56 +10,58 @@ export const en = {
     FriendActionButtons: {
       title: "wants to be your friend",
       accept: "Accept",
-      reject: "Reject",
+      reject: "Decline",
     },
     AddFriendButton: {
       friends: "Friends",
       requested: "Request sent",
-      request: "Add to friends",
+      request: "Add friend",
     },
     Chat: {
       AudioPlayer: {},
+      CurrentReplyingMessage: {
+        file_amount_one: "file",
+        file_amount_other: "files",
+        replying_text: "You are replying to:",
+        voice_message: "Voice message",
+      },
       FilePreview: {
         alerts: {
           download: {
-            title: "❗ Be very careful",
+            title: "❗ Be careful",
             content:
-              "Are you sure you want to download the file? Malicious files can damage your phone!\n\n📁 File name: {{name}}",
+              "Are you sure you want to download this file? Malicious files can harm your phone!\n\n📁 File name: {{name}}",
             ok_text: "Download",
             cancel_text: "Cancel",
           },
         },
       },
-      CurrentReplyingMessage: {
-        file_amount: "file",
-        file_amount_plural: "files",
-        replying_text: "You are replying:",
-      },
       Message: {
+        poll: "📊 Poll: {{question}}",
         toasts: {
-          copied_message: "Copied message",
+          copied_message: "Message copied",
         },
         alerts: {
           open_link: {
-            title: "⚠ Be careful, it can be dangerous",
+            title: "⚠ Caution, this may be dangerous",
             content:
-              "Are you sure you want to access this link? We cannot guarantee your security when accessing it.\n\n{{url}}",
-            ok_text: "Access",
+              "Are you sure you want to open this link? We cannot guarantee your safety when visiting it.\n\n{{url}}",
+            ok_text: "Open link",
             cancel_text: "No",
           },
         },
         options: {
           reply: "Reply",
           copy: "Copy",
-          show_original_message: "Original Message",
-          translate_message: "Translate Message",
-          part_opt: "Participant Options",
+          show_original_message: "Show original message",
+          translate_message: "Translate message",
+          original_restored: "Original message restored.",
+          already_in_lang: "The message is already in your language.",
+          translated_success: "Message translated!",
+          not_identified_lang: "Could not identify the language.",
+          part_opt: "Participant options",
           delete: "Delete",
           report: "Report message",
-          original_restored: "Original message restored",
-          already_in_lang: "The message is already translated",
-          translated_success: "Message translated!",
-          not_identified_lang: "Translate error",
         },
       },
       RecordingAudio: {
@@ -68,43 +70,54 @@ export const en = {
       ReplyingMessage: {
         read_more: "Read more",
         read_less: "Read less",
-        replying: "Replying:",
+        replying: "Replying to:",
         voice_message: "🎤 Voice message",
-        files: "file",
-        files_plural: "files",
+        files_one: "file",
+        files_other: "files",
       },
       InviteInMessage: {
-        invalid_invite_title: "🚫 Invalid Invite",
+        invalid_invite_title: "🚫 Invalid invite",
         invalid_invite_subtitle:
-          "The invite may have expired, been deleted or reached the maximum number of uses!",
+          "The invite may have expired, been deleted, or reached its maximum usage limit!",
         invite_title: "Invite to:",
-        invite_screen_title: "You have been invited to the group:",
+        invite_screen_title: "You were invited to the group:",
         no_desc: "No description",
-        joined_text: "You're already in!",
-        join_text: "Join the group",
+        joined_text: "You have already joined!",
+        join_text: "Join group",
         toasts: {
-          joined: "You've joined the '{{name}}' group!",
-          error: "Unable to use invite",
+          joined: "You joined the group '{{name}}'!",
+          error: "Could not use the invite",
         },
       },
       LinkPreview: {
-        watch_text: "Toque aqui para assistir",
+        watch_text: "Tap here to watch",
         link_copied: "Link copied",
       },
       Typing: {
-        typing_user: "is ",
-        typing_user_plural: "are ",
+        typing_user_one: "is ",
+        typing_user_other: "are ",
         typing: "typing",
-        many: "Many users",
+        many: "Multiple users",
+      },
+      Poll: {
+        max_options: "Maximum of {{count}} options reached.",
+        min_options: "The poll must have at least {{count}} options.",
+        type_poll_question: "Enter the poll question.",
+        create_poll: "Create Poll",
+        options: "Options",
+        question_input_placeholder: "Ex: Where is the event taking place?",
+        question_option_placeholder: "Option {{count}}",
+        add_option: "Add option",
+        multiple: "Allow multiple choices",
+        question: "Question",
       },
     },
     Modals: {
       EmblemModal: {
-        title: "Cool emblem, right?",
+        title: "Cool badge, right?",
         content:
-          "It is given to very special people who support Saturn Chat with the Star plan.",
-        premium_text:
-          "Do you want to have one like it? So come and be part of the constellation!",
+          "It is awarded to very special people who support Saturn Chat with the Star plan.",
+        premium_text: "Want one too? Come join the constellation!",
         be_star: "Get Star",
       },
     },
@@ -113,100 +126,140 @@ export const en = {
     },
   },
   OnBoarding: {
-    done: "Done",
+    done: "Get Started",
     skip: "Skip",
     pages: {
       0: {
         title: "Welcome to Saturn Chat!",
         subtitle:
-          "Here you will find a most variety of groups (or create one in your own way).",
+          "Here you will find a huge variety of groups (or you can create one just the way you like).",
       },
       1: {
-        title: "Send messages with ease!",
+        title: "Send messages easily!",
         subtitle:
-          "With just a few clicks you can send and receive messages with photos, videos and even voice messages.",
+          "With just a few clicks, you can send and receive messages with photos, videos, and even voice messages.",
       },
       2: {
-        title: "You're safe!",
+        title: "You are safe!",
         subtitle:
-          "Here your privacy is preserved, your data will not be sold to nobody!",
+          "Your privacy is preserved here, and your data will never be sold to anyone!",
       },
       3: {
-        title: "Be a Star!",
+        title: "Become a Star!",
         subtitle:
-          "When you're ready, go to the settings menu and get the Star plan and enjoy the Saturn Chat!",
+          "When you are ready, head over to settings, get the Star plan, and enjoy Saturn Chat to the fullest!",
       },
     },
   },
   Auth: {
     Home: {
-      title: "Let's start?",
-      subtitle: "Access or create your account to start using the app!",
-      login: "Login",
+      title: "Let's get started?",
+      subtitle: "Log in or create an account to start using the app!",
+      login: "Log in",
       new_account: "Create account",
     },
     CreateAccount: {
       header_title: "Create account",
-      avatar_select_label: "Choose a profile photo",
+      avatar_select_label: "Choose a profile picture",
       avatar_select_tip:
-        "💡 Remember: You must select an image with a maximum of 5MB.",
-      avatar_selected: "🖼 This photo is perfect!",
+        "💡 Reminder: you must select an image of at most 5 MB.",
+      avatar_selected: "🖼 This photo looks perfect!",
       register_error:
-        "Unable to create account, email may already be in use, try logging in",
+        "Could not create account. The email might already be in use; try logging in.",
+      internal_error:
+        "An internal server error occurred. Please try again later.",
+      nickname_rules:
+        "Must be a unique name containing only letters and numbers. Only hyphens (-) and underscores (_) are allowed. If no username is provided, one will be automatically generated for you.",
+      searching: "Searching...",
       labels: {
         name: "Name",
+        nickname: "Username",
         email: {
-          label: "E-mail",
-          error: "This email is not valid",
+          label: "Email",
+          error: "This email is invalid",
         },
         password: {
           label: "Enter a password",
-          error: "The password does not meet security standards",
-          info: "Your password must contain: at least 8 characters (with least 1 capital letter), at least 1 number and at least 1 symbol",
+          error: "Password does not meet security requirements",
+          info: "Your password must contain at least 8 characters (including at least 1 uppercase letter), at least 1 number, and 1 symbol.",
         },
         password_again: {
           label: "Confirm your password",
-          error: "The passwords do not match",
+          error: "Passwords do not match",
         },
       },
       register_button: "Create account",
       consent: {
         guidelines: "Community Guidelines",
         privacy_policy: "Privacy Policy",
-        line_0: 'On click in "Create account" you accept our',
+        line_0: 'By clicking "Create account" you accept our',
         line_1: "and also our",
       },
     },
     Login: {
       header_title: "Log in",
       title: "Hello,\nWelcome back",
-      login_error: "Unable to log in, check your login or create an account",
-      email: "E-mail",
+      login_error:
+        "Could not log in. Check your credentials or create an account.",
+      email: "Email",
       password: "Password",
       forgot_password: "Forgot your password?",
-      login_button: "Login",
-      register_button: "Are you new here? Create an account!",
+      login_button: "Log in",
+      register_button: "New here? Create an account!",
+      internal_error:
+        "An internal server error occurred. Please try again later.",
+    },
+    ForgotPassword: {
+      alerts: {
+        error: "An error occurred",
+        warn: "Warning",
+        code_error: "An error occurred while requesting the code.",
+        length_code: "Please enter the complete 6-digit code.",
+        invalid_code: "Invalid or expired code.",
+        reset_pass_error: "Could not reset password.",
+      },
+      toasts: {
+        switched_password: "Password successfully changed!",
+      },
+      header_title: "Recover password",
+      title: "Lost your password?",
+      subtitle:
+        "Don't worry! We will help you regain access to your account in a few minutes.",
+      email_placeholder: "Email or Username",
+      next_button: "Next",
+      verify_code: "Verification code",
+      verify_subtitle: "Enter the 6-digit code sent to {{masked}}.",
+      confirm: "Confirm",
+      new_pass_title: "Create a new password",
+      new_pass_subtitle:
+        "Your new password must be different from previously used passwords.",
+      new_pass: "New password",
+      pass_rules:
+        "Your password must contain at least 8 characters (including at least 1 uppercase letter), at least 1 number, and 1 symbol.",
+      confirm_pass: "Confirm new password",
+      confirm_pass_error: "Passwords do not match.",
+      switch_pass: "Change Password",
     },
   },
   TabBar: {
     groups: "Groups",
     friends: "Friends",
-    new_group: "New Group",
+    new_group: "New group",
     settings: "Settings",
   },
   Home: {
     header_title: "Groups",
     quick_access: "Quick access",
     empty_list: {
-      title: "How about starting by joining a group?",
-      search_text: "Access the tab",
-      line_0: "and search for something or join our",
+      title: "How about joining a group to get started?",
+      search_text: "Go to the",
+      line_0: "tab and search for something, or join our",
       official_group: "Official Group",
     },
     groups_list: {
       title: "Access groups",
-      subtitle: "You are in {{count}} group",
-      subtitle_plural: "You are in {{count}} groups",
+      subtitle_one: "You are in {{count}} group",
+      subtitle_other: "You are in {{count}} groups",
     },
   },
   Friends: {
@@ -214,19 +267,19 @@ export const en = {
     title: "Direct messages",
     subtitle:
       "Send private messages to your friends. You can only talk to people on your friends list.",
-    empty_list_text: "You don't have any friends. Add new friends.",
+    empty_list_text: "You have no friends yet. Add new friends.",
   },
   NewGroup: {
-    header_title: "New Group",
-    avatar_select_label: "Choose a profile photo",
-    avatar_select_tip: "We recommend a 600x600 image and a maximum of 5MB",
-    avatar_selected: "🖼 This photo is perfect!",
+    header_title: "New group",
+    avatar_select_label: "Choose a profile picture",
+    avatar_select_tip: "We recommend a 600x600 pixels image and up to 5 MB",
+    avatar_selected: "🖼 This photo looks perfect!",
     limit: {
-      title: "You have reached the {{count}} group limit!",
+      title: "You have reached the limit of {{count}} groups!",
       subtitle:
-        "This limit is set so that everyone can create their communities on Saturn Chat and also to avoid annoying problems like spam.",
+        "This limit is set so everyone can create their communities on Saturn Chat and to prevent spam.",
       premium:
-        "You can also become a Star and create up to {{groups}} groups with {{participants}} participants in each",
+        "You can also become a Star and create up to {{groups}} groups with {{participants}} participants each.",
     },
     form: {
       labels: {
@@ -240,29 +293,29 @@ export const en = {
         },
         tags: {
           label: "Group tags",
-          placeholder: "separate by comma",
+          placeholder: "separate with commas",
         },
         public: "Public",
         private: "Private",
       },
       create_group: "Create group",
     },
-    star: "Becoming a Star",
+    star: "Become a Star",
   },
   Settings: {
     header_title: "Settings",
     alerts: {
       sign_out: {
-        title: "😥 Do you really want to leave your account?",
+        title: "😥 Are you sure you want to leave?",
         subtitle:
-          "When you sign out you will not receive notifications of new messages, invites or anything related.",
-        ok_text: "Sign out",
+          "By logging out, you won't receive notifications for new messages, invites, or anything related.",
+        ok_text: "Log out",
         cancel_text: "Cancel",
       },
     },
     general: {
       title: "General",
-      star: "Be a Star",
+      star: "Become a Star",
       manage_star: "Manage Star plan",
       edit_profile: "Edit profile",
       languages: "Languages",
@@ -270,18 +323,18 @@ export const en = {
       notifications: "Notifications",
     },
     account: {
-      title: "Account and privacy",
-      edit_password: "Change Password",
+      title: "Account & Privacy",
+      edit_password: "Change password",
     },
     about: {
-      developer_options: "Opções de Desenvolvedor",
-      use_dev_api: "Usar API de Desenvolvimento",
+      developer_options: "Developer Options",
+      use_dev_api: "Use Developer API",
       title: "About",
       guidelines: "Community Guidelines",
       privacy_policy: "Privacy Policy",
       feedback: "Send Feedback",
     },
-    sign_out: "Sign out",
+    sign_out: "Log out",
   },
   SendFeedback: {
     title: "Send Feedback",
@@ -294,20 +347,19 @@ export const en = {
       message: "Message",
     },
     done: "Send",
-    sent: "Feedback sent",
+    sent: "Feedback successfully sent!",
   },
   Search: {
-    header_title: "Explorer",
+    header_title: "Explore",
     input_placeholder: "What are you looking for today?",
     title: "No results at the moment",
-    subtitle:
-      "Try searching for the name of a group or tag related to it or user nickname",
+    subtitle: "Try searching for a group name, related tag, or username.",
     loading: {
       title: "Searching...",
-      subtitle: "This may take a while",
+      subtitle: "This might take a moment",
     },
-    participants: "participant",
-    participants_plural: "participants",
+    participants_one: "participant",
+    participants_other: "participants",
     filters: {
       all: "All",
       users: "Users",
@@ -315,15 +367,15 @@ export const en = {
     },
   },
   InviteManager: {
-    header_title: "Invites and requests",
-    subtitle: "Manage your Invites and friend requests that you have received.",
+    header_title: "Invites & Requests",
+    subtitle: "Manage your received group invites and friend requests.",
     empty_text:
-      "There are no group invites or friend requests. Come back later.",
+      "There are no group invites or friend requests. Check back later.",
     toasts: {
       invite_accept: "Invite accepted!",
-      invite_reject: "Invite rejected :(",
-      request_accept: "Request accepted successfully!",
-      request_reject: "Request successfully rejected",
+      invite_reject: "Invite declined :(",
+      request_accept: "Friend request successfully accepted!",
+      request_reject: "Friend request successfully rejected",
     },
   },
   Profile: {
@@ -333,20 +385,28 @@ export const en = {
   EditProfile: {
     header_title: "Edit profile",
     switch_avatar: "Change avatar",
+    searching: "Searching...",
+    errors: {
+      "400": "Username does not meet the expected standards",
+      "404": "Username was not provided",
+      "1000": "Could not fetch username",
+      unavailable: "Username is not available",
+    },
     toasts: {
-      updated: "User updated",
+      updated: "Profile updated",
       update_avatar: "Updating avatar...",
-      updated_avatar: "Updated Avatar",
+      updated_avatar: "Avatar updated",
       photo_permission:
         "We need permission to access your photos to change your avatar!",
     },
     labels: {
+      nickname: "Username",
       name: {
         label: "Name",
         placeholder: "max. 100 characters",
       },
       bio: {
-        label: "Message",
+        label: "Bio",
         placeholder: "max. 100 characters",
       },
     },
@@ -354,136 +414,147 @@ export const en = {
   },
   SwitchLanguage: {
     header_title: "Languages",
-    title: "Understand how languages ​​work",
+    title: "Understand how languages work",
     subtitle:
-      "The application language is set using the device's default language.\n\nTo change the language, simply go to the device settings and change the language, and the application will automatically change the language.",
+      "The app language is set by your device default.\n\nTo change it, simply access your device settings and make the change; the app will update automatically.",
   },
   SwitchPassword: {
     header_title: "Change your password",
     toasts: {
       updated_pass: "Password changed successfully!",
-      incorrect_pass: "Incorrect old password!",
+      incorrect_pass: "Incorrect current password!",
       error_pass: "Error changing password!",
     },
     labels: {
-      current_password: "Old password",
+      current_password: "Current password",
       new_password: {
         label: "New password",
-        error: "The password does not meet security standards",
-        info: "Your password must contain: at least 8 characters (at least 1 capital letter), at least 1 number and at least 1 symbol",
+        error: "Password does not meet security requirements",
+        info: "Your password must contain at least 8 characters (including at least 1 uppercase letter), at least 1 number, and 1 symbol.",
       },
       confirm_pass: {
         label: "Confirm new password",
-        error: "The passwords do not match",
+        error: "Passwords do not match",
       },
     },
-    done: "Change Password",
+    done: "Change password",
   },
   Premium: {
-    header_title: "Be part of the Constellation!",
-    be_star: "Be a Star!",
-    title: "Get amazing Saturn Chat features for a low cost!",
+    header_title: "Join the constellation!",
+    be_star: "Become a Star!",
+    title:
+      "Get amazing perks and features in Saturn Chat at an affordable price!",
     subtitle:
-      "Make the most of all available resources such as sending bigger files, create more groups, remove all annoying ads, and more!",
+      "Make the most of all available features, such as sending larger files, creating more groups, removing annoying ads, and much more!",
     free_month: "Subscribe now and get 1 month free!",
-    buy_button: "Get from {{price}}",
-    vantages_title: "Advantages of the Star plan:",
+    buy_button: "Get starting from {{price}}",
+    vantages_title: "Perks of the Star plan:",
     advantages: {
-      0: "Totally boring ads free!",
-      1: "Increase the space for uploading files by {{multiple}}x, from {{default}}MB to an incredible {{premium}}MB.",
-      2: "Increase the number of groups you can create from {{default}} to {{premium}} groups.",
-      3: "Increase the amount of participants you can have in your groups from {{default}} to {{premium}} participants.",
-      4: "Get an exclusive badge next to your name!",
-      5: "Do you like sending big texts? So increase your messages from {{default}} characters to wonderful {{premium}} characters!",
-      6: "Supports app development and brings many features quickly ❤",
-      7: "Export your group messages in CSV format.",
+      0: "Completely free of annoying ads!",
+      1: "Increase file upload storage by {{multiple}}x: from {{default}} MB to an incredible {{premium}} MB.",
+      2: "Increase the limit of groups you can create: from {{default}} to {{premium}} groups.",
+      3: "Increase the participant limit for your groups: from {{default}} to {{premium}} participants.",
+      4: "Get an exclusive badge next to your name to show off!",
+      5: "Love sending long texts? Increase your message character limit from {{default}} to a wonderful {{premium}} characters!",
+      6: "Support the development of the app and help us bring updates faster ❤",
+      7: "Export your group chat messages in CSV format.",
     },
   },
   ManagePremium: {
     header_title: "Manage Star plan",
     alerts: {
       cancel_plan: {
-        title: "❗ Are you sure about this?",
+        title: "❗ Are you sure?",
         content:
-          "When you cancel your subscription you lose ALL benefits granted by the plan. Furthermore, you WILL NOT RECEIVE A REFUND FOR THE MONTH ALREADY PAID (but you will be able to use the benefits until the renewal date).",
+          "By cancelling your subscription, you will lose ALL benefits granted by the plan. Additionally, YOU WILL NOT RECEIVE A REFUND FOR THE ALREADY PAID MONTH (but you can use the benefits until the renewal date).",
         ok_text: "Keep plan",
         cancel_text: "Cancel plan",
       },
     },
     title: "Manage your Star plan",
     subtitle:
-      "Here you see details about your plan such as plan renewal date, payment status. You can also cancel your subscription at any time here.",
+      "Here you can see details about your plan, such as renewal date and payment status. You can also cancel your subscription at any time here.",
     plan_labels: {
       plan: "Subscription plan:",
       status: "Subscription status",
-      start: "Acquisition date",
+      start: "Purchase date",
       expire: "Renewal date",
-      resume: "Resume date",
+      resume: "Return date",
     },
     payments: {
-      0: "Pendent",
+      0: "Pending",
       1: "Paid",
-      2: "Test",
-      3: "Updated plan",
+      2: "Trial",
+      3: "Plan updated",
     },
     periods: {
       0: "Monthly",
-      1: "Quartely",
+      1: "Quarterly",
       2: "Yearly",
     },
     cancel_text: "Cancel subscription",
   },
   ChoosePlan: {
     header_title: "Choose your plan",
-    title: "We are almost there!",
+    title: "We're almost there!",
     subtitle:
-      "Now you must choose which plan you want, being able to choose between monthly, quarterly or annual plans.",
+      "Now choose the plan you want, with monthly, quarterly, or yearly options.",
     monthly: "Monthly",
     quarterly: "Quarterly",
     yearly: "Yearly",
-    button_text: "I want this!",
+    button_text: "I want this one!",
+    finished: {
+      success_title: "Subscription successful!",
+      error_title: "Could not complete subscription",
+      success_subtitle:
+        "You can now enjoy all the benefits available in the Star plan! Note that it may take a few minutes for all benefits to be fully unlocked.",
+      error_subtitle:
+        "Your payment may have been declined or cancelled by the app store. Check and try again later.",
+    },
   },
   Chat: {
     alerts: {
       file_size: {
-        title: "😱 So heavy!",
+        title: "😱 Such a heavy file!",
         content:
-          "I can't carry something that heavy, try something up to {{amount}}MB!",
+          "I can't upload something this large; try sending a file up to {{amount}} MB!",
         extra_button_text: "Get Star plan",
       },
       same_file: {
         title: "🤔 I've seen this before",
-        content: "You have already chosen this file to be sent!",
+        content: "You have already selected this file to be sent!",
       },
       mic_perm: {
         title: "🙂 Please",
         content:
-          "I need permission to use your microphone so i can record audio",
+          "I need permission to use your microphone so I can record audio.",
       },
     },
     toasts: {
       sending_voice: "Sending voice message...",
     },
     type_message: "Type your message...",
-    drop_send: "Drop to send",
-    sent: "sent",
-    limit_char: "Limite de {{count}} caracteres atingido!",
+    drop_send: "Release to send",
+    sent: "Sent",
+    limit_char: "Limit of {{count}} characters reached!",
+    no_send_message:
+      " You cannot send messages in this group, but you can still view them and receive notifications.",
   },
   GroupConfig: {
     header_group_title: "Group options",
     header_chat_title: "Chat options",
     alerts: {
       delete_group: {
-        title: "⚠ Be careful, this is dangerous!",
+        title: "⚠ Caution, this is dangerous!",
         content:
-          'This action is IRREVERSIBLE! By deleting the "{{name}}" group you will also be deleting all messages, files and anything else you are keeping in that group!',
+          'This action is IRREVERSIBLE! Deleting the group "{{name}}" will also delete all messages, files, and everything saved in it!',
         ok_text: "Delete",
         cancel_text: "Cancel",
       },
       exit_group: {
         title: "😥 Are you sure you want to leave?",
         content:
-          "When leaving the group, your messages will be maintained, however, you will not receive notifications of new messages and will need to be invited to rejoin the group (if it is private)!",
+          "Leaving the group will keep your messages, but you won't receive notifications for new messages and will need an invite to rejoin (if private).",
         ok_text: "Leave",
       },
     },
@@ -494,38 +565,43 @@ export const en = {
         invite_users: "Invite users",
         edit_group: "Edit group",
         details: "View details",
-        notify_new_participants:
-          "Notify the group owner when new participants join the group",
-        accepting_new_users: "Accept join of new participants",
-        max_participants: "Maximum number of participants",
+        notify_new_participants: "Notify owner when new participants join",
+        accepting_new_users: "Allow new participants to join",
+        max_participants:
+          "Maximum amount of participants (leave 0 for unlimited)",
         minimum_role_for_send_message:
-          "Minimum role to send messages in the group (role above those selected will not be able to send messages in the group)",
+          "Minimum role required to send messages in group",
         roles: {
           participant: "Participant",
           moderator: "Moderator",
           manager: "Manager",
-          admin: "Admin",
+          admin: "Administrator",
         },
       },
       participant: {
-        send_notifications: "Receive new messages notifications",
+        send_notifications: "Receive notifications for new messages",
+        title: "Participant settings",
       },
       danger_zone: {
         title: "Danger zone",
         delete_group: "Delete group",
-        exit_group: "Leave the group",
+        exit_group: "Leave group",
       },
+    },
+    toasts: {
+      submit_success: "Settings successfully updated",
+      submit_error: "Could not save changes",
     },
   },
   Participants: {
-    header_title: "{{count}} Participant",
-    header_title_plural: "{{count}} Participants",
+    header_title_one: "{{count}} Participant",
+    header_title_other: "{{count}} Participants",
     title: "All participants",
     created: "Created on {{date}}",
     joined: "Joined on {{date}}",
-    owner: "Owner",
     online: "Online",
-    last_seen: "Last seen at {{date}}",
+    last_seen: "Last seen on {{date}}",
+    owner: "Owner",
   },
   Participant: {
     title: "Participant options",
@@ -535,62 +611,62 @@ export const en = {
     ban: "Ban participant",
   },
   PunishParticipant: {
-    title: "Are you sure about that?",
+    title: "Are you sure?",
     desc_kick:
-      'You are about to kick the participant "{{userName}}" from the group "{{groupName}}". Are you sure of your choice?',
+      'You are about to kick participant "{{userName}}" from group "{{groupName}}". Are you sure?',
     desc_ban:
-      'You are about to ban participant "{{userName}}" from the group "{{groupName}}". Are you sure of your choice?',
+      'You are about to ban participant "{{userName}}" from group "{{groupName}}". Are you sure?',
     notify_text: "Notify participant of punishment",
-    confirm_text_kick: "Yes, kick out now!",
+    confirm_text_kick: "Yes, kick now!",
     confirm_text_ban: "Yes, ban now!",
     cancel_text: "No, I changed my mind",
     toasts: {
       success: "User successfully punished!",
-      error: "Unable to punish user. Please try again.",
+      error: "Could not punish user. Try again.",
     },
   },
   ChangeRole: {
     header_title: "Change role",
     title: "Roles",
     subtitle:
-      "Members with special roles can have control over various resources (such as managing roles and invites, group editing, etc.) of the group. Give important roles to people you trust.",
+      "Members with special roles can manage various group features. Grant important roles only to trusted people.",
     roles: {
       participant: {
         name: "Participant",
-        desc: "This role does not give the participant special powers.",
+        desc: "This role grants no special powers to the participant.",
       },
       mod: {
         name: "Moderator",
-        desc: "Moderators are those who take care of the group's security.",
+        desc: "Moderators maintain group safety and order.",
       },
       manager: {
         name: "Manager",
-        desc: "Managers help manage the group and bring in new users.",
+        desc: "Managers help organize the group and bring in new members.",
       },
       admin: {
-        name: "Administrador",
-        desc: "Allows the participant to have the same powers as the group owner.",
+        name: "Administrator",
+        desc: "Grants the participant full group ownership powers.",
       },
     },
     permissions: {
       create_invites: "Create invites to invite new users",
-      punish_members: "Punish messy participants",
+      punish_members: "Punish participants breaking rules",
       manage_roles: "Manage roles",
-      manage_messages: "Manage messages (how to delete them)",
-      edit_group: "Edit group information (name, avatar, description)",
+      manage_messages: "Manage messages (like deleting them)",
+      edit_group: "Edit group info (name, avatar, description)",
       delete_group: "Delete group",
     },
     toasts: {
-      success: "User role successfully changed",
-      error: "Error changing role. Try again.",
+      success: "User role updated successfully!",
+      error: "Error updating role. Try again.",
     },
   },
   FriendsManager: {
     alerts: {
       unfriend: {
-        title: "⚠️ Do you want to unfriend?",
+        title: "⚠️ Unfriend user?",
         content:
-          "If you remove this user from your friends list, you will no longer be able to send and receive direct messages from this user. All messages between you will be deleted for both of you.",
+          "If you remove this user from your friends list, you can no longer exchange direct messages. All existing direct messages will be deleted for both.",
         ok_text: "Unfriend",
       },
     },
@@ -598,87 +674,94 @@ export const en = {
   },
   InviteUsers: {
     header_title: "Invite",
-    empty_title:
-      "There are no friends to invite. Try sharing an invitation via links.",
+    empty_title: "No friends to invite. Try sharing an invite via link.",
     title: "Group invites",
-    subtitle: "Create and manage all group invites through our invites manager",
+    subtitle: "Create and manage all group invites using our manager.",
     new_invite_text: "Manage invites",
     friends_invite_title: "Invite your friends",
     friends_invite_subtitle:
-      "Only friends who are not in the group appear here. They will need to accept the invites to join.",
+      "Only friends not currently in the group appear here.",
     invite: "Invite",
     invited: "Invited",
     toasts: {
-      success: "Invitation sent successfully!",
-      error: "Unable to invite your friend!",
+      success: "Invite sent successfully!",
+      error: "Could not invite your friend!",
     },
   },
   NewInvites: {
     header_title: "Create invites",
     title: "Generate invite",
-    subtitle: "You can generate invite with these settings:",
+    subtitle: "You can generate invites with these settings:",
     permanent: "Permanent invite",
     usage_unlimited: "Unlimited uses",
-    usage: "Use a maximum of {{count}} time",
-    usage_plural: "Use a maximum of {{count}} times",
-    expire: "Expire in {{count}} day",
-    expire_plural: "Expire in {{count}} days",
-    day: "Day",
-    day_plural: "Days",
+    usage_one: "Use up to {{count}} time",
+    usage_other: "Use up to {{count}} times",
+    expire_one: "Expire in {{count}} day",
+    expire_other: "Expire in {{count}} days",
+    day_one: "Day",
+    day_other: "Days",
     active_invites: "Active invites",
     generate: "Generate",
-    expire_in: "Expire in ",
-    usage_amount: "{{count}} time of ",
-    usage_amount_plural: "{{count}} times of ",
+    expire_in: "Expires in ",
+    usage_amount_one: "Used {{count}} time out of ",
+    usage_amount_other: "Used {{count}} times out of ",
+    toasts: {
+      error_create: "Could not create invite.",
+      success_create: "Invite created successfully!",
+      error_remove: "Could not remove invite.",
+      success_remove: "Invite removed successfully!",
+      copy_invite: "Invite copied!",
+    },
   },
   EditGroup: {
     toasts: {
       success: "Group edited successfully!",
-      avatar_permission:
-        "We need permission to access your photos to update your avatar!",
+      avatar_permission: "Permission required to access photos!",
       updating: "Updating avatar...",
-      updated: "Updated Avatar",
+      updated: "Avatar updated",
     },
     header_title: "Edit group",
     switch_avatar: "Change avatar",
     inputs: {
       name: "Name",
       desc: "Description",
-      public: "Turn public",
+      public: "Make public",
     },
     done: "Done",
   },
   GroupInfos: {
     join: "Join",
     joined: "Joined",
-    participants: "Participant",
-    participants_plural: "Participants",
+    participants_one: "Participant",
+    participants_other: "Participants",
     tags: "Group tags",
     desc: "Description",
+    no_desc: "This group does not have a description.",
+    no_tags: "No tags defined",
     accepting_participants_text:
-      "This group has reached the maximum number of participants",
+      "This group reached the maximum participant capacity.",
     toasts: {
-      error: "Unable to join group!",
+      error: "Could not join group!",
     },
   },
   Report: {
     header_title: "Report",
-    title: "Submit your report",
+    title: "Submit report",
     subtitle:
-      "Found something that doesn't look right? Submit a report so we can review the situation and take appropriate action. Don't worry, your report is completely anonymous.",
+      "Found something inappropriate? Submit a report so we can review it anonymously.",
     types: {
       SPAM: "Spam and/or unwanted messages",
       VIOLENCE:
-        "Violent acts, encouragement of suicide, or display of firearms",
-      SEXUAL: "Sexual content, pedophilia, or minor abuse",
-      BULLYING: "Bullying or harassment of users",
-      RACISM: "Hate speech, racism, xenophobia, and similar behaviors",
-      SCAM: "Scams, fake giveaways, extortion, and similar activities",
-      FAKE_ACCOUNT: "Fake content or impersonating another person",
-      DMCA: "Copyright-protected content",
+        "Violent practices, encouragement of suicide, or display of firearms",
+      SEXUAL: "Sexual content, pedophilia, or child abuse",
+      BULLYING: "Bullying or disrespect towards other users",
+      RACISM: "Hate speech, racism, xenophobia, and similar",
+      SCAM: "Scams, fake giveaways, extortion, and similar",
+      FAKE_ACCOUNT: "Fake content or trying to impersonate another person",
+      DMCA: "Copyrighted content",
       OTHER: "Other",
     },
     done: "Report",
-    sent: "Report submitted",
+    sent: "Report successfully submitted!",
   },
 };

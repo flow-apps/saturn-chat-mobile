@@ -1,10 +1,8 @@
 import Header from "@components/Header";
 import React, { useState } from "react";
-import { Button, View } from "react-native";
 import { Container, FormContainer, InputContainer } from "./styles";
 import { useTranslate } from "@hooks/useTranslate";
 import Input from "@components/Input";
-import Radio from "@components/Radio";
 import { FeedbackType } from "@type/enums";
 import { useTheme } from "styled-components";
 import RNPickerSelect from "react-native-picker-select";
@@ -12,6 +10,7 @@ import api from "@services/api";
 
 import SimpleToast from "react-native-simple-toast";
 import { useNavigation } from "@react-navigation/native";
+import Button from "@components/Button";
 
 const SendFeedback: React.FC = () => {
   const { colors } = useTheme();
@@ -90,7 +89,7 @@ const SendFeedback: React.FC = () => {
           </InputContainer>
           <Button
             title={t("done")}
-            disabled={!feedbackType || !message}
+            enabled={!!feedbackType || !!message}
             onPress={handleSendFeedback}
           />
         </FormContainer>

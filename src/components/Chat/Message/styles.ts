@@ -5,20 +5,20 @@ import CachedImage from "../../CachedImage";
 interface IMessageProps {
   isRight?: boolean;
   sended?: boolean;
+  hasPoll?: boolean;
 }
 export const Container = styled.View<IMessageProps>`
   align-items: ${(props) => (props.isRight ? "flex-end" : "flex-start")};
   width: 100%;
   padding: 0 10px;
   margin: 5px 3px 5px;
-  /* transform: rotate(180deg); */
 `;
 
 export const MessageAuthorContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-top: 5px;
-  opacity: ${props => props.disabled ? 0.5 : 1};
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 
 export const MessageAvatar = styled(CachedImage)`
@@ -36,9 +36,10 @@ export const MessageAuthorName = styled.Text`
 
 export const MessageContentContainer = styled.Pressable<IMessageProps>`
   position: relative;
+  width: ${({ hasPoll }) => (hasPoll ? "100%" : "auto")};
   background-color: ${(props) =>
     !props.isRight ? props.theme.colors.shape : props.theme.colors.primary};
-  opacity: ${props => props.sended ? 1 : 0.5};
+  opacity: ${(props) => (props.sended ? 1 : 0.5)};
   padding: 10px;
   border-radius: 8px;
   min-width: 30%;

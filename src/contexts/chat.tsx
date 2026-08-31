@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { MessageData, UserData } from "@type/interfaces";
@@ -65,13 +66,13 @@ interface IChatContext {
   handleSendVoiceMessage: (data: IHandleSendVoiceMessage) => void;
   handleDeleteMessage: (data: IHandleDeleteMessage) => void;
   onSendedUserMessage: (
-    callback: (data: onSendedUserMessageCallbackType) => void
+    callback: (data: onSendedUserMessageCallbackType) => void,
   ) => void;
   onNewUserMessage: (callback: (data: MessageData) => void) => void;
   onNewUserTyping: (callback: (data: UserData) => void) => void;
   onDeletedUserTyping: (callback: (userId: string) => void) => void;
   onDeleteUserMessage: (
-    callback: (result: DeleteMessageResult) => void
+    callback: (result: DeleteMessageResult) => void,
   ) => void;
 }
 
@@ -82,31 +83,41 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [currentGroupId, setCurrentGroupId] = useState("");
   const [connected, setConnected] = useState(false);
+  const joiningRoomRef = useRef<string | null>(null);
 
   const { socket } = useWebsocket();
   const { user } = useAuth();
 
   const handleJoinRoom = useCallback(
     (groupId: string) => {
-      if (!connected) {
-        console.log(`Conectando o usuário ao grupo ${groupId}`);
-
-        setCurrentGroupId(groupId);
-
-        socket.emit("connect_in_chat", groupId);
+      if (
+        (connected && currentGroupId === groupId) ||
+        joiningRoomRef.current === groupId
+      ) {
+        console.log(
+          `Conexão bloqueada: usuário já está (ou entrando) no grupo ${groupId}`,
+        );
+        return;
       }
+
+      console.log(`Conectando o usuário ao grupo ${groupId}`);
+
+      joiningRoomRef.current = groupId;
+      setCurrentGroupId(groupId);
+
+      socket?.emit("connect_in_chat", groupId);
     },
-    [socket, connected, currentGroupId]
+    [socket, connected, currentGroupId],
   );
 
   const handleSetReadMessage = useCallback(
     (messageId: string) => {
-      socket.emit("set_read_message", {
+      socket?.emit("set_read_message", {
         message_id: messageId,
         group_id: currentGroupId,
       });
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const handleSetTyping = useCallback(
@@ -124,13 +135,13 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [socket, user, currentGroupId]
+    [socket, user, currentGroupId],
   );
 
   const handleSendMessage = useCallback(
     (data: IHandleSendMessage) => {
       if (!data.withFiles) {
-        socket.emit("new_user_message", {
+        socket?.emit("new_user_message", {
           localReference: data.localReference,
           reply_to_id: data.reply_to_id,
           group_id: currentGroupId,
@@ -146,12 +157,12 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const handleSendVoiceMessage = useCallback(
     (data: IHandleSendVoiceMessage) => {
-      socket.emit("new_voice_message", {
+      socket?.emit("new_voice_message", {
         audio: data.audio,
         reply_to_id: data.reply_to_id,
         message: data.message,
@@ -159,97 +170,97 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         group_id: currentGroupId,
       });
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const handleDeleteMessage = useCallback(
     (data: IHandleDeleteMessage) => {
-      socket.emit("delete_user_message", {
+      socket?.emit("delete_user_message", {
         message_id: data.message_id,
         group_id: currentGroupId,
       });
     },
-    [socket, currentGroupId]
+    [socket, currentGroupId],
   );
 
   const onSendedUserMessage = useCallback(
     (callback: (data: onSendedUserMessageCallbackType) => void) => {
-      socket.on("sended_user_message", callback);
+      socket?.on("sended_user_message", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onNewUserMessage = useCallback(
     (callback: (data: MessageData) => void) => {
-      socket.on("new_user_message", callback);
+      socket?.on("new_user_message", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onNewUserTyping = useCallback(
     (callback: (data: UserData) => void) => {
-      socket.on("new_user_typing", callback);
+      socket?.on("new_user_typing", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onDeletedUserTyping = useCallback(
     (callback: (userId: string) => void) => {
-      socket.on("deleted_user_typing", callback);
+      socket?.on("deleted_user_typing", callback);
     },
-    [socket]
+    [socket],
   );
 
   const onDeleteUserMessage = useCallback(
     (callback: (result: DeleteMessageResult) => void) => {
-      socket.on("delete_user_message", callback);
+      socket?.on("delete_user_message", callback);
     },
-    [socket]
+    [socket],
   );
 
   useEffect(() => {
     if (socket) {
-      socket.on("deleted_group", () => {
-        navigate("Groups");
-      });
-      socket.on("kicked_user", ({ group_id, user_id }) => {
-        if (group_id === currentGroupId) {
-          if (user_id === user?.id) {
-            navigate("Groups");
-          }
+      const onConnect = () => {
+        if (currentGroupId) {
+          console.log(
+            `Socket reconectado. Reentrando na sala ${currentGroupId}`,
+          );
+          socket.emit("connect_in_chat", currentGroupId);
         }
-      });
-      socket.on("banned_user", ({ group_id, user_id }) => {
-        if (group_id === currentGroupId) {
-          if (user_id === user?.id) {
-            navigate("Groups");
-          }
-        }
-      });
+      };
+
+      const onDisconnect = () => {
+        console.log("Socket caiu no ChatContext. Atualizando status.");
+        setConnected(false);
+      };
+
+      socket.on("connect", onConnect);
+      socket.on("disconnect", onDisconnect);
 
       socket.on("success_join", (groupID) => {
         console.log("Usuário conectado com sucesso ao grupo", groupID);
-
-        // setCurrentGroupId(groupID);
         setConnected(true);
       });
 
       socket.on("success_leave", (groupID) => {
         console.log("Usuário desconectado com sucesso do grupo", groupID);
-
         setCurrentGroupId("");
         setConnected(false);
+        joiningRoomRef.current = null;
       });
-    }
 
-    return () => {
-      socket?.off("kicked_user");
-      socket?.off("banned_user");
-      socket?.off("deleted_group");
-      socket?.off("success_join");
-      socket?.off("success_leave");
-    };
-  }, [socket]);
+      return () => {
+        socket?.emit("leave_chat", currentGroupId);
+        socket.off("connect", onConnect);
+        socket.off("disconnect", onDisconnect);
+        socket.off("kicked_user");
+        socket.off("banned_user");
+        socket.off("deleted_group");
+        socket.off("success_join");
+        socket.off("success_leave");
+      };
+    }
+  }, [socket, currentGroupId]);
 
   return (
     <ChatContext.Provider

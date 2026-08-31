@@ -42,7 +42,7 @@ const ChoosePlan: React.FC = () => {
   const { t } = useTranslate("ChoosePlan");
 
   const planTokens = useMemo(() => {
-    let tokens: { [key: string]: string } = {};    
+    let tokens: { [key: string]: string } = {};
 
     subscriptions.map((sub) => {
       if (sub.platform === "android") {
@@ -82,14 +82,12 @@ const ChoosePlan: React.FC = () => {
         )}
 
         <BuyFinishedTitle>
-          {purchaseSuccess && "Assinatura realizada com sucesso!"}
-          {purchaseError && "Não foi possível realizar sua assinatura"}
+          {purchaseSuccess && t("finished.success_title")}
+          {purchaseError && t("finished.error_title")}
         </BuyFinishedTitle>
         <BuyFinishedSubtitle>
-          {purchaseSuccess &&
-            "Você agora pode usufruir de vários benefícios disponíveis no plano Star! Mas atenção, pode demorar alguns minutos até que todos os benefícios sejam totalmente liberados, então não se preocupe."}
-          {purchaseError &&
-            "Seu pagamento pode ter sido negado ou sua compra cancelada pela loja de aplicativos. Verifique e tente novamente mais tarde"}
+          {purchaseSuccess && t("finished.success_subtitle")}
+          {purchaseError && t("finished.error_subtitle")}
         </BuyFinishedSubtitle>
         <Button
           title="Avançar"
@@ -123,14 +121,16 @@ const ChoosePlan: React.FC = () => {
           <PlanContainer>
             <PlanTitle>{t("monthly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice>R$ 9{Localize.getLocales()[0].decimalSeparator}99</PlanPrice>
+              <PlanPrice>
+                R$ 9{Localize.getLocales()[0].decimalSeparator}99
+              </PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
                 handleBuySubscription(
                   "star_plan",
                   planTokens.monthly,
-                  "MONTHLY"
+                  "MONTHLY",
                 )
               }
             >
@@ -144,14 +144,16 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor={colors.primary}>{t("quarterly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanPrice planColor={colors.primary}>R$ 29{Localize.getLocales()[0].decimalSeparator}99</PlanPrice>
+              <PlanPrice planColor={colors.primary}>
+                R$ 29{Localize.getLocales()[0].decimalSeparator}99
+              </PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>
                 handleBuySubscription(
                   "star_plan",
                   planTokens.quarterly,
-                  "QUARTERLY"
+                  "QUARTERLY",
                 )
               }
             >
@@ -165,8 +167,13 @@ const ChoosePlan: React.FC = () => {
           >
             <PlanTitle planColor="#FF5E0D">{t("yearly")}</PlanTitle>
             <PlanPriceContainer>
-              <PlanDiscountText> R$ 119{Localize.getLocales()[0].decimalSeparator}99 </PlanDiscountText>
-              <PlanPrice planColor="#FF5E0D">R$ 99{Localize.getLocales()[0].decimalSeparator}99</PlanPrice>
+              <PlanDiscountText>
+                {" "}
+                R$ 119{Localize.getLocales()[0].decimalSeparator}99{" "}
+              </PlanDiscountText>
+              <PlanPrice planColor="#FF5E0D">
+                R$ 99{Localize.getLocales()[0].decimalSeparator}99
+              </PlanPrice>
             </PlanPriceContainer>
             <PlanBuyButton
               onPress={() =>

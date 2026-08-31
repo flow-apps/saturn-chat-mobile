@@ -8,6 +8,7 @@ import { convertBytesToMB } from "@utils/convertSize";
 import Alert from "@components/Alert";
 import FastImage from "react-native-fast-image";
 import * as MimeTypes from "react-native-mime-types";
+import { createVideoPlayer } from "expo-video";
 
 import {
   Container,
@@ -22,7 +23,6 @@ import {
   FilePreviewContainer,
   FileSize,
 } from "./styles";
-import { createThumbnail } from "react-native-create-thumbnail";
 import AudioPreview from "./AudioPreview";
 import { FileService } from "@services/file";
 import { useTranslate } from "@hooks/useTranslate";
@@ -51,33 +51,50 @@ const FilePreview = ({
 
   const fileService = new FileService();
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const mimeType = useMemo(() => MimeTypes.lookup(name), []);
+  const mimeType = useMemo(() => MimeTypes.lookup(name), [name]);
 
   const { t } = useTranslate("Components.Chat.FilePreview");
   const { getHeadersForAuthFiles } = useAuth();
 
   useEffect(() => {
-    (async () => {
-      if (type === "image") {
-        FastImage.preload([
-          {
-            uri: url,
-            headers: getHeadersForAuthFiles(url),
-            cache: "immutable",
-            priority: "normal",
-          },
-        ]);
-      } else if (type === "video") {
-        const thumb = await createThumbnail({
-          url,
-          headers: getHeadersForAuthFiles(url),
-          format: "jpeg",
-        });
+    let isMounted = true;
 
-        setVideoThumb(thumb.path);
+    const generateVideoThumbnail = async () => {
+      try {
+        const player = createVideoPlayer({
+          uri: url,
+          headers: getHeadersForAuthFiles(url),
+        });
+        
+        const thumbnails = await player.generateThumbnailsAsync([1]);
+        console.log(thumbnails);
+        
+
+        if (isMounted && thumbnails && thumbnails.length > 0) {
+          setVideoThumb(thumbnails[0].uri);
+        }
+      } catch (error) {
+        console.warn("Erro ao gerar thumbnail via expo-video:", error);
       }
-    })();
-  }, []);
+    };
+
+    if (type === "image") {
+      FastImage.preload([
+        {
+          uri: url,
+          headers: getHeadersForAuthFiles(url),
+          cache: "immutable",
+          priority: "normal",
+        },
+      ]);
+    } else if (type === "video") {
+      generateVideoThumbnail();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [type, url]);
 
   const handleDownloadFile = () => {
     setDownloadWarning(true);
@@ -87,7 +104,7 @@ const FilePreview = ({
     setDownloadWarning(false);
 
     await fileService.downloadFile(url, original_name);
-  }, [url, name]);
+  }, [url, original_name]);
 
   const renderIcon = () => {
     switch (type) {

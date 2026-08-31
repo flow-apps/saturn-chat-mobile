@@ -1,5 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Keyboard, Platform, KeyboardAvoidingView } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  Platform,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from "react-native";
 import { useAppState } from "@react-native-community/hooks";
 import { useRoute } from "@react-navigation/core";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -17,7 +22,8 @@ import FormData from "form-data";
 import crashlytics from "@react-native-firebase/crashlytics";
 import analytics from "@react-native-firebase/analytics";
 import _ from "lodash";
-import { MotiView } from "moti";
+import { MotiView, AnimatePresence } from "moti";
+import { useTheme } from "styled-components/native";
 
 import {
   GroupData,
@@ -27,7 +33,7 @@ import {
 } from "@type/interfaces";
 import { ParticipantRoles } from "@type/enums";
 import { HeaderButton } from "@components/Header/styles";
-import Alert from "@components/Alert";
+import CustomAlert from "@components/Alert";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
 import Message from "@components/Chat/Message";
@@ -50,10 +56,20 @@ import { useChatMessages } from "@hooks/useChatMessages";
 import { useChatAudio } from "@hooks/useChatAudio";
 import { ChatInput } from "@components/Chat/ChatInput";
 import { Container, MessageContainer } from "./styles";
+import { PollModal } from "@components/Chat/PollModal";
 
 const MESSAGES_LIMIT_REQUEST = 50;
 
-// Componente animado para entrada suave das mensagens
+interface AlertConfigState {
+  visible: boolean;
+  title: string;
+  content: string;
+  extraButton?: boolean;
+  extraButtonText?: string;
+  extraButtonAction?: () => void;
+  okButtonAction?: () => void;
+}
+
 const AnimatedMessage: React.FC<{
   children: React.ReactNode;
   index: number;
@@ -90,10 +106,13 @@ const Chat: React.FC = () => {
   const { user } = useAuth();
   const { userConfigs } = useRemoteConfigs();
   const { socket } = useWebsocket();
+  const { colors } = useTheme();
   const appState = useAppState();
   const { t } = useTranslate("Chat");
 
-  // Custom Hooks
+  const flashListRef = useRef<FlashList<MessageData>>(null);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
   const {
     oldMessages,
     setOldMessages,
@@ -112,10 +131,8 @@ const Chat: React.FC = () => {
     cancelRecordAudio,
   } = useChatAudio((dur, uri) => handleSendVoice(dur, uri));
 
-  // Estados locais da tela
+  const [isPollModalVisible, setIsPollModalVisible] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [largeFile, setLargeFile] = useState(false);
-  const [isSelectedFile, setIsSelectedFile] = useState(false);
   const [filesSizeUsed, setFilesSizeUsed] = useState(0);
   const [sendingFile, setSendingFile] = useState(false);
   const [sendedFileProgress, setSendedFileProgress] = useState(0);
@@ -126,9 +143,25 @@ const Chat: React.FC = () => {
     {} as ParticipantsData,
   );
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
+
+  // Controle de loading apenas para a montagem inicial da tela
   const [loading, setLoading] = useState(true);
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const prevAppState = useRef(appState);
+
+  // Ref para indicar que o carregamento inicial já foi concluído
+  const initialLoadDone = useRef(false);
+
+  const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
+    visible: false,
+    title: "",
+    content: "",
+  });
+
+  const hideAlert = useCallback(() => {
+    setAlertConfig((prev) => ({ ...prev, visible: false }));
+  }, []);
 
   const fileService = new FileService(filesSizeUsed, userConfigs.fileUpload);
   const {
@@ -161,6 +194,90 @@ const Chat: React.FC = () => {
     };
   }, []);
 
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setShowScrollToBottom(offsetY > 300);
+  };
+
+  const scrollToBottom = () => {
+    flashListRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
+  const handleCreatePoll = useCallback(
+    (pollData: {
+      question: string;
+      options: string[];
+      allows_multiple: boolean;
+    }) => {
+      if (id !== currentGroupId || !connected) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.connection", {
+            defaultValue:
+              "Não foi possível conectar à sala para criar a enquete.",
+          }),
+        });
+        return;
+      }
+
+      const localReference = uuid.v4() as string;
+
+      const optimisticPollMessage: MessageData = {
+        id: localReference,
+        localReference,
+        author: user as UserData,
+        group,
+        participant,
+        message: "",
+        sended: false,
+        created_at: new Date().toISOString(),
+        poll: {
+          id: `temp_poll_${localReference}`,
+          message_id: localReference,
+          question: pollData.question,
+          allows_multiple: pollData.allows_multiple,
+          options: pollData.options.map((optText, index) => ({
+            id: `temp_opt_${index}_${localReference}`,
+            poll_id: `temp_poll_${localReference}`,
+            option_text: optText,
+            votes_count: 0,
+            votes: [],
+            created_at: new Date().toISOString(),
+          })),
+          created_at: new Date().toISOString(),
+        } as any,
+      };
+
+      setOldMessages((old) =>
+        sortMessages(_.uniqBy([optimisticPollMessage, ...old], "id")),
+      );
+
+      socket?.emit("new_poll", {
+        group_id: id,
+        question: pollData.question,
+        options: pollData.options,
+        allows_multiple: pollData.allows_multiple,
+        reply_to_id: replyingMessage?.id,
+        localReference,
+      });
+
+      setReplyingMessage(undefined);
+    },
+    [
+      id,
+      currentGroupId,
+      connected,
+      socket,
+      replyingMessage,
+      user,
+      group,
+      participant,
+      sortMessages,
+      t,
+    ],
+  );
+
   const buildOptimisticMessage = useCallback(
     (data: Partial<MessageData> & { localReference: string }): MessageData => ({
       id: data.id || data.localReference,
@@ -180,19 +297,29 @@ const Chat: React.FC = () => {
   );
 
   const configureSocketListeners = useCallback(() => {
-    onSendedUserMessage(({ msg, localReference }) =>
-      setOldMessages(
-        (old) =>
-          arrayUtils.iterator(old, (m) =>
-            m.localReference === localReference ? { ...msg, sended: true } : m,
-          ) || old,
-      ),
-    );
+    onSendedUserMessage(({ msg, localReference }) => {
+      setOldMessages((old) =>
+        old.map((m) => {
+          if (
+            (m.localReference && m.localReference === localReference) ||
+            m.id === localReference
+          ) {
+            return {
+              ...msg,
+              sended: true,
+            };
+          }
+          return m;
+        }),
+      );
+    });
+
     onNewUserMessage((msg) => {
       if (arrayUtils.has(oldMessages, (m) => m.id === msg.id)) return;
       setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));
       handleSetReadMessage(msg.id);
     });
+
     onNewUserTyping((newUser) => {
       if (
         newUser.id !== user?.id &&
@@ -200,16 +327,25 @@ const Chat: React.FC = () => {
       )
         setTypingUsers((old) => [...old, newUser]);
     });
+
     onDeletedUserTyping((removedId) =>
       setTypingUsers(
         (old) => arrayUtils.removeOne(old, (u) => u.id === removedId) || [],
       ),
     );
+
     onDeleteUserMessage((res) => {
       if (replyingMessage?.id === res.id) setReplyingMessage(undefined);
       setOldMessages((old) => old.filter((m) => m.id !== res.id));
     });
-  }, [socket, oldMessages, typingUsers, replyingMessage, sortMessages]);
+  }, [
+    socket,
+    oldMessages,
+    typingUsers,
+    replyingMessage,
+    sortMessages,
+    onSendedUserMessage,
+  ]);
 
   const handleSendVoice = async (duration: number, uri: string) => {
     try {
@@ -263,6 +399,14 @@ const Chat: React.FC = () => {
       setReplyingMessage(undefined);
     } catch (error) {
       crashlytics().recordError(error as Error, "Send Voice Message Error");
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: t("alerts.error.voice_message", {
+          defaultValue:
+            "Não foi possível enviar a mensagem de voz. Tente novamente.",
+        }),
+      });
     }
   };
 
@@ -271,55 +415,107 @@ const Chat: React.FC = () => {
     if (!res.error && res.selectedFile) {
       if (
         arrayUtils.has(files, (f) => f.file.uri === res.selectedFile.file.uri)
-      )
-        return setIsSelectedFile(true);
+      ) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.same_file.title"),
+          content: t("alerts.same_file.content"),
+          extraButton: false,
+        });
+        return;
+      }
       if (res.usageSize) setFilesSizeUsed(res.usageSize);
       setFiles((old) => [
         { file: res.selectedFile.file, type: res.selectedFile.type },
         ...old,
       ]);
     } else if (res.errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT) {
-      setLargeFile(true);
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.file_size.title"),
+        content: t("alerts.file_size.content", {
+          amount: userConfigs.fileUpload,
+        }),
+        extraButton: true,
+        extraButtonText: t("alerts.file_size.extra_button_text"),
+        extraButtonAction: () => {
+          hideAlert();
+          analytics().logEvent("IncreaseUpload");
+          navigation.navigate("PurchasePremium");
+        },
+      });
+    } else if (res.error) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: t("alerts.error.file_selection", {
+          defaultValue: "Não foi possível selecionar o arquivo.",
+        }),
+      });
     }
   };
 
-  const fetchParticipantAndGroup = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [pRes, mRes, listRes] = await Promise.all([
-        api.get(`/group/participant/${id}`),
-        api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
-        api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
-      ]);
-      if (pRes.status === 200) {
-        setParticipant(pRes.data.participant);
-        setGroup(pRes.data.participant.group);
+  const fetchParticipantAndGroup = useCallback(
+    async (isSilent = false) => {
+      // Só ativa a tela inteira de loading na primeira execução
+      if (!isSilent && !initialLoadDone.current) {
+        setLoading(true);
       }
-      if (listRes.status === 200) setParticipants(listRes.data);
-      if (Platform.OS === "android")
-        OneSignal.Notifications.removeGroupedNotifications(id);
 
-      if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
-        setFetchedAll(true);
-      // @ts-ignore
-      setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
-      setPage(1);
-    } catch (error) {
-      crashlytics().recordError(
-        error as Error,
-        "Chat: fetchParticipantAndGroup",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [id, sortMessages]);
+      try {
+        const [pRes, mRes, listRes] = await Promise.all([
+          api.get(`/group/participant/${id}`),
+          api.get(`/messages/${id}?_page=0&_limit=${MESSAGES_LIMIT_REQUEST}`),
+          api.get(`/group/participants/list/?group_id=${id}&_limit=200`),
+        ]);
+        if (pRes.status === 200) {
+          setParticipant(pRes.data.participant);
+          setGroup(pRes.data.participant.group);
+        }
+        if (listRes.status === 200) setParticipants(listRes.data);
+        if (Platform.OS === "android")
+          OneSignal.Notifications.removeGroupedNotifications(id);
+
+        if (mRes.data.messages.length < MESSAGES_LIMIT_REQUEST)
+          setFetchedAll(true);
+        // @ts-ignore
+        setOldMessages(sortMessages(_.uniqBy(mRes.data.messages, "id")));
+        setPage(1);
+      } catch (error) {
+        crashlytics().recordError(
+          error as Error,
+          "Chat: fetchParticipantAndGroup",
+        );
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.load_chat", {
+            defaultValue: "Não foi possível carregar as informações do chat.",
+          }),
+        });
+      } finally {
+        initialLoadDone.current = true;
+        setLoading(false);
+      }
+    },
+    [id, sortMessages, t],
+  );
 
   const handleMessageSubmit = async (
     message: string,
     selectedFiles: File[],
     mentionIds: string[],
   ) => {
-    if (id !== currentGroupId || !connected) return;
+    if (id !== currentGroupId || !connected) {
+      setAlertConfig({
+        visible: true,
+        title: t("alerts.error.title", { defaultValue: "Erro" }),
+        content: t("alerts.error.connection", {
+          defaultValue: "Sem conexão com o chat no momento.",
+        }),
+      });
+      return;
+    }
     const localReference = uuid.v4() as string;
 
     const optimisticMsg = buildOptimisticMessage({
@@ -389,6 +585,13 @@ const Chat: React.FC = () => {
           new Error(error as string),
           "Send File Error",
         );
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.send_file", {
+            defaultValue: "Não foi possível enviar os arquivos anexados.",
+          }),
+        });
       } finally {
         setFiles([]);
         setSendingFile(false);
@@ -401,6 +604,7 @@ const Chat: React.FC = () => {
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<MessageData>) => (
+      // @ts-ignore
       <AnimatedMessage index={index} messageId={item.id || item.localReference}>
         <Message
           message={item}
@@ -425,7 +629,9 @@ const Chat: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    if (group?.id !== currentGroupId) fetchParticipantAndGroup();
+    if (group?.id !== currentGroupId) {
+      fetchParticipantAndGroup(false);
+    }
   }, [currentGroupId]);
 
   useEffect(() => {
@@ -439,38 +645,69 @@ const Chat: React.FC = () => {
     setCanSendMessage(pRoleIdx >= minRoleIdx);
   }, [participant, group]);
 
+  useEffect(() => {
+    const appCameToForeground =
+      prevAppState.current.match(/inactive|background/) &&
+      appState === "active";
+
+    if (appCameToForeground) {
+      // Sincroniza silenciosamente sem ativar a tela inteira de loading
+      if (group?.id === id) {
+        fetchParticipantAndGroup(true);
+      }
+
+      if (socket && !connected) {
+        handleJoinRoom(id);
+        configureSocketListeners();
+      }
+    }
+
+    prevAppState.current = appState;
+  }, [
+    appState,
+    group?.id,
+    id,
+    connected,
+    socket,
+    handleJoinRoom,
+    configureSocketListeners,
+    fetchParticipantAndGroup,
+  ]);
+
   useFocusEffect(
     useCallback(() => {
       if (appState === "active" && socket && !connected) {
         handleJoinRoom(id);
         configureSocketListeners();
       }
-    }, [connected, socket, appState]),
+    }, [
+      connected,
+      socket,
+      appState,
+      handleJoinRoom,
+      configureSocketListeners,
+      id,
+    ]),
   );
 
   if (loading) return <Loading />;
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
-      <Alert
-        title={t("alerts.file_size.title")}
-        content={t("alerts.file_size.content", {
-          amount: userConfigs.fileUpload,
-        })}
-        okButtonAction={() => setLargeFile(false)}
-        extraButtonAction={() => {
-          analytics().logEvent("IncreaseUpload");
-          navigation.navigate("PurchasePremium");
-        }}
-        extraButtonText={t("alerts.file_size.extra_button_text")}
-        extraButton
-        visible={largeFile}
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        okButtonAction={alertConfig.okButtonAction || hideAlert}
+        extraButton={alertConfig.extraButton}
+        extraButtonText={alertConfig.extraButtonText}
+        extraButtonAction={alertConfig.extraButtonAction}
       />
-      <Alert
-        title={t("alerts.same_file.title")}
-        content={t("alerts.same_file.content")}
-        okButtonAction={() => setIsSelectedFile(false)}
-        visible={isSelectedFile}
+
+      <PollModal
+        visible={isPollModalVisible}
+        onClose={() => setIsPollModalVisible(false)}
+        onSubmit={handleCreatePoll}
       />
 
       <Header
@@ -500,10 +737,11 @@ const Chat: React.FC = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? headerHeight : 0}
       >
-        <Container style={{ flex: 1 }}>
+        <Container style={{ flex: 1, position: "relative" }}>
           <Typing typingUsers={typingUsers} />
           <MessageContainer style={{ flex: 1 }}>
             <FlashList
+              ref={flashListRef}
               data={oldMessages}
               extraData={oldMessages.length}
               keyExtractor={(item) => item.id || item.localReference || ""}
@@ -517,8 +755,47 @@ const Chat: React.FC = () => {
               onEndReachedThreshold={0.5}
               showsVerticalScrollIndicator={false}
               disableHorizontalListHeightMeasurement
+              onScroll={handleScroll}
             />
           </MessageContainer>
+
+          <AnimatePresence>
+            {showScrollToBottom && (
+              <MotiView
+                from={{ opacity: 0, scale: 0.8, translateY: 10 }}
+                animate={{ opacity: 1, scale: 1, translateY: 0 }}
+                exit={{ opacity: 0, scale: 0.8, translateY: 10 }}
+                transition={{ type: "timing", duration: 200 }}
+                style={{
+                  position: "absolute",
+                  right: 16,
+                  bottom: isKeyboardVisible ? 80 : 70,
+                  zIndex: 99,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={scrollToBottom}
+                  activeOpacity={0.8}
+                  style={{
+                    backgroundColor: colors.primary || "#0084ff",
+                    width: 42,
+                    height: 42,
+                    borderRadius: 21,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    elevation: 4,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    marginBottom: 15,
+                  }}
+                >
+                  <Feather name="chevron-down" size={24} color="#FFF" />
+                </TouchableOpacity>
+              </MotiView>
+            )}
+          </AnimatePresence>
 
           <ChatInput
             groupId={id}
@@ -538,6 +815,7 @@ const Chat: React.FC = () => {
             onRemoveReplying={() => setReplyingMessage(undefined)}
             onTyping={() => handleSetTyping({ action: "ADD" })}
             onTypingTimeout={() => handleSetTyping({ action: "REMOVE" })}
+            onOpenPollModal={() => setIsPollModalVisible(true)}
             files={files}
             insetsBottom={insets.bottom}
             isKeyboardVisible={isKeyboardVisible}
