@@ -1,4 +1,7 @@
 {
     "java.configuration.updateBuildConfiguration": "disabled",
-    "java.compile.nullAnalysis.mode": "disabled"
+    "java.compile.nullAnalysis.mode": "disabled",
+    "i18n-ally.localesPaths": [
+        "src/translations/languages"
+    ]
 }
