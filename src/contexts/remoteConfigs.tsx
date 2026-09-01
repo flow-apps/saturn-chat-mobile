@@ -23,6 +23,8 @@ export interface Configs {
   premium_file_upload: string;
   default_max_participants: string;
   premium_max_participants: string;
+  default_max_call_participants: string;
+  premium_max_call_participants: string;
   default_max_groups: string;
   premium_max_groups: string;
   default_max_message_length: string;
@@ -68,6 +70,8 @@ const RemoteConfigsProvider: React.FC<{ children: React.ReactNode }> = ({
         premium_file_upload: 120,
         default_max_participants: 200,
         premium_max_participants: 1000,
+        default_max_call_participants: 6,
+        premium_max_call_participants: 12,
         default_max_message_length: 500,
         premium_max_message_length: 5000,
         ad_multiple_in_chat: 7,

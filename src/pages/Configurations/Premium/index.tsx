@@ -135,10 +135,23 @@ const Premium: React.FC = () => {
               <VantageContainer>
                 <VantageIconContainer>
                   <VantageIcon>
+                    <Feather name="phone-call" size={26} color="#39B2FF" />
+                  </VantageIcon>
+                </VantageIconContainer>
+                <VantageContent>
+                  {t("advantages.4", {
+                    default: allConfigs.default_max_call_participants,
+                    premium: allConfigs.premium_max_call_participants,
+                  })}
+                </VantageContent>
+              </VantageContainer>
+              <VantageContainer>
+                <VantageIconContainer>
+                  <VantageIcon>
                     <Feather name="star" size={28} color={colors.secondary} />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>{t("advantages.4")}</VantageContent>
+                <VantageContent>{t("advantages.5")}</VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -151,7 +164,7 @@ const Premium: React.FC = () => {
                   </VantageIcon>
                 </VantageIconContainer>
                 <VantageContent>
-                  {t("advantages.5", {
+                  {t("advantages.6", {
                     default: allConfigs.default_max_message_length,
                     premium: allConfigs.premium_max_message_length,
                   })}
@@ -167,7 +180,7 @@ const Premium: React.FC = () => {
                     />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>{t("advantages.6")}</VantageContent>
+                <VantageContent>{t("advantages.7")}</VantageContent>
               </VantageContainer>
               <VantageContainer>
                 <VantageIconContainer>
@@ -180,7 +193,7 @@ const Premium: React.FC = () => {
                     />
                   </VantageIcon>
                 </VantageIconContainer>
-                <VantageContent>{t("advantages.7")}</VantageContent>
+                <VantageContent>{t("advantages.8")}</VantageContent>
               </VantageContainer>
             </VantagesContainer>
           </VantagesWrapper>
