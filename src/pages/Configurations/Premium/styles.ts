@@ -3,14 +3,16 @@ import fonts from '@styles/fonts';
 
 import LottieView from "lottie-react-native"
 import { RectButton } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const Container = styled.ScrollView`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
 `;
 
-export const ContentWrapper = styled.View`
+export const ContentWrapper = styled(SafeAreaView)`
   padding: 0px 15px;
+  margin: 5px;
 `
 
 export const StarContainer = styled.View`
