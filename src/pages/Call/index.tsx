@@ -39,7 +39,7 @@ import {
   MiniCard,
 } from "./styles";
 
-const MAX_DISPLAY = 6;
+const MAX_DISPLAY = 12;
 
 const Call: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
