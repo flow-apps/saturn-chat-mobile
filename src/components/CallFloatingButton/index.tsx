@@ -38,13 +38,13 @@ const CallFloatingButton: React.FC = () => {
     navigate("Call", { groupId: activeCallRoomId });
   };
 
-  return currentRouteName === "Call" || !activeCallRoomId ? null : (
+  return currentRouteName !== "Call" && activeCallRoomId ? (
     <View pointerEvents="box-none" style={styles.wrapper}>
       <Pressable onPress={handlePress} style={styles.button}>
         <Text style={styles.text}>{t("floating_button")}</Text>
       </Pressable>
     </View>
-  );
+  ) : null;
 };
 
 const styles = StyleSheet.create({
