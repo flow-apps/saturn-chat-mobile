@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import InCallManager from "react-native-incall-manager";
 
@@ -210,7 +210,7 @@ const Call: React.FC = () => {
         </ControlButton>
 
         <ControlButton onPress={switchCamera} isActive={isVideoEnabled}>
-          <Feather name="refresh-ccw" size={22} color="#FFF" />
+          <MaterialCommunityIcons name="camera-switch-outline" size={22} color="#FFF" />
         </ControlButton>
 
         <EndCallButton onPress={handleEndCall}>
