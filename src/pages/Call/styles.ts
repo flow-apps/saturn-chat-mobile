@@ -73,6 +73,38 @@ export const GridContainer = styled.View`
   align-content: space-between;
 `;
 
+export const DirectCallContainer = styled.View`
+  flex: 1;
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+export const FullscreenCard = styled.TouchableOpacity`
+  flex: 1;
+  background-color: ${({ theme }) => theme.colors.shape};
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  margin: 8px;
+`;
+
+export const MiniCard = styled.TouchableOpacity`
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 120px;
+  height: 170px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: ${({ theme }) => theme.colors.shape};
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  elevation: 6;
+  shadow-color: #000;
+  shadow-offset: 0px 8px;
+  shadow-opacity: 0.35;
+  shadow-radius: 10px;
+`;
+
 export const ParticipantCard = styled.View<GridCardProps>`
   background-color: ${({ theme }) => theme.colors.shape};
   border-radius: 12px;
