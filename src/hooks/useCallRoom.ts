@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 import InCallManager from "react-native-incall-manager";
 import * as Notifications from "expo-notifications";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +14,7 @@ import { Socket } from "socket.io-client";
 
 import configs from "@config";
 import { useWebsocket } from "@contexts/websocket";
+import { navigationRef } from "@routes/rootNavigation";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -26,9 +27,11 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const useCallRoom = (roomId: string) => {
+export const useCallRoom = (
+  roomId: string | null,
+  onEnded?: () => void,
+) => {
   const { socket } = useWebsocket();
-  const navigation = useNavigation();
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<{
@@ -38,6 +41,55 @@ export const useCallRoom = (roomId: string) => {
   const peersRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
   const iceCandidatesQueue = useRef<{ [socketId: string]: any[] }>({});
   const notificationIdRef = useRef<string | null>(null);
+  const videoEnabledRef = useRef(false);
+
+  const refreshMediaTracks = async () => {
+    if (!socket || !roomId) return;
+
+    try {
+      const nextStream = await mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+
+      const audioTrack = nextStream.getAudioTracks()[0];
+      const videoTrack = nextStream.getVideoTracks()[0];
+
+      if (videoTrack) {
+        videoTrack.enabled = videoEnabledRef.current;
+      }
+
+      if (localStream) {
+        localStream.getTracks().forEach((track: any) => track.stop());
+      }
+
+      setLocalStream(nextStream);
+
+      Object.values(peersRef.current).forEach((peer) => {
+        const senders = peer.getSenders();
+        const audioSender = senders.find((s: any) => s.track?.kind === "audio");
+        const videoSender = senders.find((s: any) => s.track?.kind === "video");
+
+        if (audioTrack) {
+          if (audioSender) {
+            audioSender.replaceTrack(audioTrack);
+          } else {
+            peer.addTrack(audioTrack, nextStream);
+          }
+        }
+
+        if (videoTrack) {
+          if (videoSender) {
+            videoSender.replaceTrack(videoTrack);
+          } else {
+            peer.addTrack(videoTrack, nextStream);
+          }
+        }
+      });
+    } catch (error) {
+      console.error("[Call] Erro ao reativar mídia em segundo plano:", error);
+    }
+  };
 
   // Função centralizada para criar/reemitir a notificação fixa
   const emitCallNotification = async () => {
@@ -78,6 +130,10 @@ export const useCallRoom = (roomId: string) => {
   };
 
   useEffect(() => {
+    if (!roomId) {
+      return;
+    }
+
     let isMounted = true;
 
     const initVoice = async () => {
@@ -206,9 +262,9 @@ export const useCallRoom = (roomId: string) => {
     initVoice();
 
     // LÓGICA 1: Recria a notificação quando o usuário navega para OUTRA TELA dentro do app (Perda de foco)
-    const unsubscribeBlur = navigation.addListener("blur", () => {
-      emitCallNotification();
-    });
+    // const unsubscribeBlur = navigationRef.addListener("blur", () => {
+    //   emitCallNotification();
+    // });
 
     // LÓGICA 2: Recria a notificação caso o usuário clique nela (o Android remove notificações comuns ao clicar)
     const responseSubscription =
@@ -216,21 +272,24 @@ export const useCallRoom = (roomId: string) => {
         await emitCallNotification();
       });
 
+    const appStateSubscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        if (nextAppState === "active") {
+          if (roomId) {
+            await refreshMediaTracks();
+            socket?.emit("join_call_room", { roomId });
+          }
+        }
+      },
+    );
+
     // Cleanup acionado SOMENTE quando a chamada é totalmente encerrada (componente desmontado)
     return () => {
       isMounted = false;
-      unsubscribeBlur();
+      // unsubscribeBlur();
       responseSubscription.remove();
-
-      InCallManager.setKeepScreenOn(false);
-      InCallManager.stop();
-
-      // Desmuda e remove a notificação do Android ao desligar
-      if (notificationIdRef.current) {
-        Notifications.dismissNotificationAsync(notificationIdRef.current);
-      }
-
-      socket?.emit("leave_voice_room", { roomId });
+      appStateSubscription.remove();
 
       socket?.off("current_room_users");
       socket?.off("user_joined");
@@ -248,7 +307,37 @@ export const useCallRoom = (roomId: string) => {
       }
       setRemoteStreams({});
     };
-  }, [roomId, socket, navigation]);
+  }, [roomId, socket]);
+
+  const endCall = () => {
+    Object.values(peersRef.current).forEach((peer) => peer.close());
+    peersRef.current = {};
+    iceCandidatesQueue.current = {};
+
+    if (localStream) {
+      localStream.getTracks().forEach((track: any) => track.stop());
+    }
+
+    setRemoteStreams({});
+
+    InCallManager.setKeepScreenOn(false);
+    InCallManager.stop();
+
+    if (notificationIdRef.current) {
+      Notifications.dismissNotificationAsync(notificationIdRef.current);
+    }
+
+    socket?.emit("leave_voice_room", { roomId });
+
+    socket?.off("current_room_users");
+    socket?.off("user_joined");
+    socket?.off("receive_offer");
+    socket?.off("receive_answer");
+    socket?.off("receive_ice_candidate");
+    socket?.off("user_left");
+
+    onEnded?.();
+  };
 
   const createPeer = (
     targetSocketId: string,
@@ -309,6 +398,8 @@ export const useCallRoom = (roomId: string) => {
   };
 
   const toggleVideo = async (enableVideo: boolean) => {
+    videoEnabledRef.current = enableVideo;
+
     if (!localStream) return;
 
     let videoTrack = localStream.getVideoTracks()[0];
@@ -351,5 +442,5 @@ export const useCallRoom = (roomId: string) => {
     );
   };
 
-  return { localStream, remoteStreams, toggleAudio, toggleVideo };
+  return { localStream, remoteStreams, toggleAudio, toggleVideo, endCall };
 };

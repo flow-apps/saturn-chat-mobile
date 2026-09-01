@@ -6,6 +6,7 @@ import InCallManager from "react-native-incall-manager";
 import { useCallRoom } from "@hooks/useCallRoom";
 import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
+import { useCallStatus } from "@contexts/callStatus";
 import { RoomUser } from "@type/interfaces";
 
 import {
@@ -33,7 +34,6 @@ const MAX_DISPLAY = 6;
 
 const Call: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
-  const [isVideoOn, setIsVideoOn] = useState(false);
   const navigation = useNavigation();
 
   const { groupId } = useRoute().params as {
@@ -41,9 +41,20 @@ const Call: React.FC = () => {
   };
   const { socket } = useWebsocket();
   const { user } = useAuth();
+  const {
+    localStream,
+    remoteStreams,
+    toggleAudio,
+    toggleVideo,
+    endCall,
+    setActiveCallRoom,
+    isVideoEnabled,
+    setVideoEnabled,
+  } = useCallStatus();
 
-  const { localStream, remoteStreams, toggleAudio, toggleVideo } =
-    useCallRoom(groupId);
+  useEffect(() => {
+    setActiveCallRoom(groupId);
+  }, [groupId, setActiveCallRoom]);
 
   const [participants, setParticipants] = useState<RoomUser[]>([
     { socketId: "local", user: user! },
@@ -76,8 +87,8 @@ const Call: React.FC = () => {
   };
 
   const handleToggleVideo = async () => {
-    const nextState = !isVideoOn;
-    setIsVideoOn(nextState);
+    const nextState = !isVideoEnabled;
+    setVideoEnabled(nextState);
 
     InCallManager.start({ media: nextState ? "video" : "audio", auto: true });
     InCallManager.setForceSpeakerphoneOn(true);
@@ -93,12 +104,7 @@ const Call: React.FC = () => {
   };
 
   const handleEndCall = () => {
-    if (localStream) {
-      localStream.getTracks().forEach((track: any) => track.stop());
-    }
-
-    InCallManager.stop();
-    socket?.emit("leave_voice_room", { roomId: groupId });
+    endCall();
     navigation.goBack();
   };
 
@@ -146,7 +152,7 @@ const Call: React.FC = () => {
             .some((t: any) => t.enabled && t.readyState === "live");
 
           const shouldShowVideo = isLocal
-            ? isVideoOn && hasVideoTrack
+            ? isVideoEnabled && hasVideoTrack
             : hasVideoTrack;
 
           return (
@@ -194,9 +200,9 @@ const Call: React.FC = () => {
         <ControlButton onPress={handleToggleMute} isActive={!isMuted}>
           <Feather name={isMuted ? "mic-off" : "mic"} size={24} color="#FFF" />
         </ControlButton>
-        <ControlButton onPress={handleToggleVideo} isActive={isVideoOn}>
+        <ControlButton onPress={handleToggleVideo} isActive={isVideoEnabled}>
           <Feather
-            name={isVideoOn ? "video" : "video-off"}
+            name={isVideoEnabled ? "video" : "video-off"}
             size={24}
             color="#FFF"
           />

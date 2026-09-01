@@ -30,6 +30,8 @@ import { ChatProvider } from "@contexts/chat";
 import { HomeProvider } from "@contexts/home";
 import { PurchasesProvider } from "@contexts/purchases";
 import { PremiumProvider } from "@contexts/premium";
+import { CallStatusProvider } from "@contexts/callStatus";
+import CallFloatingButton from "@components/CallFloatingButton";
 
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
@@ -114,9 +116,12 @@ function App() {
                       <ChatProvider>
                         <AudioPlayerProvider>
                           <RemoteConfigsProvider>
-                            <HomeProvider>
-                              <Routes />
-                            </HomeProvider>
+                            <CallStatusProvider>
+                              <HomeProvider>
+                                <CallFloatingButton />
+                                <Routes />
+                              </HomeProvider>
+                            </CallStatusProvider>
                           </RemoteConfigsProvider>
                         </AudioPlayerProvider>
                       </ChatProvider>

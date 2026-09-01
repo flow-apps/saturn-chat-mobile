@@ -30,3 +30,22 @@ export function getCurrentRoute() {
 
   return navigationRef.current.getCurrentRoute()
 }
+
+export function subscribeToRouteChanges(
+  callback: (routeName?: string) => void,
+) {
+  if (!navigationRef.current) {
+    callback(undefined);
+    return () => undefined;
+  }
+
+  const emitCurrentRoute = () => {
+    callback(navigationRef.current?.getCurrentRoute()?.name);
+  };
+
+  emitCurrentRoute();
+
+  const unsubscribe = navigationRef.current.addListener("state", emitCurrentRoute);
+
+  return unsubscribe;
+}
