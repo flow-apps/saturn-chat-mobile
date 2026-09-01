@@ -46,6 +46,7 @@ const Call: React.FC = () => {
     remoteStreams,
     toggleAudio,
     toggleVideo,
+    switchCamera,
     endCall,
     setActiveCallRoom,
     isVideoEnabled,
@@ -206,6 +207,10 @@ const Call: React.FC = () => {
             size={24}
             color="#FFF"
           />
+        </ControlButton>
+
+        <ControlButton onPress={switchCamera} isActive={isVideoEnabled}>
+          <Feather name="refresh-ccw" size={22} color="#FFF" />
         </ControlButton>
 
         <EndCallButton onPress={handleEndCall}>

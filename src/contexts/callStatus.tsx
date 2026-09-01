@@ -16,6 +16,7 @@ interface ICallStatusContext {
   remoteStreams: { [socketId: string]: any };
   toggleAudio: (isMuted: boolean) => void;
   toggleVideo: (enableVideo: boolean) => Promise<void>;
+  switchCamera: () => Promise<void>;
   endCall: () => void;
   isVideoEnabled: boolean;
   setVideoEnabled: (value: boolean) => void;
@@ -29,6 +30,7 @@ const CallStatusContext = createContext<ICallStatusContext>({
   remoteStreams: {},
   toggleAudio: () => undefined,
   toggleVideo: async () => undefined,
+  switchCamera: async () => undefined,
   endCall: () => undefined,
   isVideoEnabled: false,
   setVideoEnabled: () => undefined,
@@ -73,6 +75,7 @@ export const CallStatusProvider: React.FC<{ children: React.ReactNode }> = ({
       remoteStreams: session.remoteStreams,
       toggleAudio: session.toggleAudio,
       toggleVideo: session.toggleVideo,
+      switchCamera: session.switchCamera,
       endCall: session.endCall,
       isVideoEnabled,
       setVideoEnabled,

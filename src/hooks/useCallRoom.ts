@@ -42,6 +42,7 @@ export const useCallRoom = (
   const iceCandidatesQueue = useRef<{ [socketId: string]: any[] }>({});
   const notificationIdRef = useRef<string | null>(null);
   const videoEnabledRef = useRef(false);
+  const cameraFacingRef = useRef<"user" | "environment">("user");
 
   const refreshMediaTracks = async () => {
     if (!socket || !roomId) return;
@@ -148,7 +149,9 @@ export const useCallRoom = (
       // 2. Captura do Stream Local (inicia com vídeo desabilitado)
       const stream = await mediaDevices.getUserMedia({
         audio: true,
-        video: true,
+        video: {
+          facingMode: cameraFacingRef.current,
+        },
       });
 
       stream.getVideoTracks().forEach((track: any) => {
@@ -408,7 +411,9 @@ export const useCallRoom = (
       try {
         const videoStream = await mediaDevices.getUserMedia({
           audio: false,
-          video: true,
+          video: {
+            facingMode: cameraFacingRef.current,
+          },
         });
 
         videoTrack = videoStream.getVideoTracks()[0];
@@ -437,10 +442,66 @@ export const useCallRoom = (
       videoTrack.enabled = enableVideo;
     }
 
-    setLocalStream(
-      Object.assign(new MediaStream(localStream.getTracks()), localStream),
-    );
+    setLocalStream(new MediaStream(localStream.getTracks()));
   };
 
-  return { localStream, remoteStreams, toggleAudio, toggleVideo, endCall };
+  const switchCamera = async () => {
+    const nextFacing =
+      cameraFacingRef.current === "user" ? "environment" : "user";
+    cameraFacingRef.current = nextFacing;
+
+    if (!localStream || !videoEnabledRef.current) {
+      return;
+    }
+
+    const currentVideoTrack = localStream.getVideoTracks()[0];
+
+    if (!currentVideoTrack) {
+      return;
+    }
+
+    try {
+      const nextVideoStream = await mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          facingMode: nextFacing,
+        },
+      });
+
+      const nextVideoTrack = nextVideoStream.getVideoTracks()[0];
+
+      if (!nextVideoTrack) {
+        nextVideoStream.getTracks().forEach((track: any) => track.stop());
+        return;
+      }
+
+      currentVideoTrack.stop();
+      localStream.removeTrack(currentVideoTrack);
+      localStream.addTrack(nextVideoTrack);
+
+      Object.values(peersRef.current).forEach((peer) => {
+        const senders = peer.getSenders();
+        const videoSender = senders.find((s: any) => s.track?.kind === "video");
+
+        if (videoSender) {
+          videoSender.replaceTrack(nextVideoTrack);
+        } else {
+          peer.addTrack(nextVideoTrack, localStream);
+        }
+      });
+
+      setLocalStream(new MediaStream(localStream.getTracks()));
+    } catch (error) {
+      console.error("Erro ao trocar câmera:", error);
+    }
+  };
+
+  return {
+    localStream,
+    remoteStreams,
+    toggleAudio,
+    toggleVideo,
+    switchCamera,
+    endCall,
+  };
 };
