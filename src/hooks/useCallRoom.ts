@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { AppState, Platform } from "react-native";
 import InCallManager from "react-native-incall-manager";
 import * as Notifications from "expo-notifications";
-import { useNavigation } from "@react-navigation/native";
 
 import { useTranslate } from "@hooks/useTranslate";
 import {
@@ -105,7 +104,6 @@ export const useCallRoom = (
     }
   };
 
-  // Função centralizada para criar/reemitir a notificação fixa
   const emitCallNotification = async () => {
     try {
       if (Platform.OS === "android") {
@@ -120,7 +118,6 @@ export const useCallRoom = (
         });
       }
 
-      // Cancela a versão anterior para evitar duplicadas antes de reemitir
       if (notificationIdRef.current) {
         await Notifications.dismissNotificationAsync(notificationIdRef.current);
       }
@@ -151,15 +148,12 @@ export const useCallRoom = (
     let isMounted = true;
 
     const initVoice = async () => {
-      // 1. Configuração de Hardware e Áudio
       InCallManager.start({ media: "audio", auto: false });
       InCallManager.setForceSpeakerphoneOn(true);
       InCallManager.setKeepScreenOn(true);
 
-      // Emite a notificação ao entrar
       await emitCallNotification();
 
-      // 2. Captura do Stream Local (inicia com vídeo desabilitado)
       const stream = await mediaDevices.getUserMedia({
         audio: true,
         video: getCallVideoConstraints(cameraFacingRef.current),
@@ -173,7 +167,6 @@ export const useCallRoom = (
 
       socket?.emit("join_call_room", { roomId });
 
-      // 3. Handshake WebRTC via Socket.IO
       socket?.on(
         "current_room_users",
         async (users: Array<{ socketId: string }>) => {
@@ -274,13 +267,6 @@ export const useCallRoom = (
     };
 
     initVoice();
-
-    // LÓGICA 1: Recria a notificação quando o usuário navega para OUTRA TELA dentro do app (Perda de foco)
-    // const unsubscribeBlur = navigationRef.addListener("blur", () => {
-    //   emitCallNotification();
-    // });
-
-    // LÓGICA 2: Recria a notificação caso o usuário clique nela (o Android remove notificações comuns ao clicar)
     const responseSubscription =
       Notifications.addNotificationResponseReceivedListener(async () => {
         await emitCallNotification();
@@ -298,7 +284,6 @@ export const useCallRoom = (
       },
     );
 
-    // Cleanup acionado SOMENTE quando a chamada é totalmente encerrada (componente desmontado)
     return () => {
       isMounted = false;
       // unsubscribeBlur();
