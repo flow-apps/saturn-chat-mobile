@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import InCallManager from "react-native-incall-manager";
 import { Modal, ScrollView, TouchableWithoutFeedback, View } from "react-native";
 
+import CustomAlert from "@components/Alert";
 import { useCallRoom } from "@hooks/useCallRoom";
 import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
@@ -44,6 +45,11 @@ const Call: React.FC = () => {
   const [isLocalPrimary, setIsLocalPrimary] = useState(false);
   const [isParticipantsModalVisible, setParticipantsModalVisible] = useState(false);
   const [focusedParticipant, setFocusedParticipant] = useState<RoomUser | null>(null);
+  const [callAlert, setCallAlert] = useState({
+    visible: false,
+    title: "",
+    content: "",
+  });
   const navigation = useNavigation();
 
   const { groupId } = useRoute().params as {
@@ -125,6 +131,43 @@ const Call: React.FC = () => {
     navigation.goBack();
   };
 
+  const showCallAlert = (message: string, fallbackTitle = "Não foi possível entrar na chamada") => {
+    const lowerMessage = message.toLowerCase();
+
+    let title = fallbackTitle;
+    let content = message || "Ocorreu um erro ao acessar a chamada.";
+
+    if (lowerMessage.includes("banned")) {
+      title = "Acesso bloqueado";
+      content = "Você está bloqueado neste grupo e não pode participar da chamada.";
+    } else if (lowerMessage.includes("not in this group")) {
+      title = "Grupo inválido";
+      content = "Você não pertence a este grupo ou a conversa não está mais disponível.";
+    } else if (lowerMessage.includes("direct calls can only contain")) {
+      title = "Chamada em dupla";
+      content = "Esta chamada direta só pode ter os dois participantes da conversa.";
+    } else if (lowerMessage.includes("allows up to")) {
+      title = "Limite da chamada";
+      content = message;
+    } else if (lowerMessage.includes("inactivity") || lowerMessage.includes("inactivity_timeout")) {
+      title = "Chamada encerrada";
+      content = "A chamada foi encerrada por inatividade.";
+    } else if (lowerMessage.includes("call room") || lowerMessage.includes("room closed") || lowerMessage.includes("closed")) {
+      title = "Chamada encerrada";
+      content = "Esta sala de chamada foi encerrada.";
+    } else if (lowerMessage.includes("not part of this direct call")) {
+      title = "Participação inválida";
+      content = "Você não faz parte desta chamada direta.";
+    }
+
+    setCallAlert({ visible: true, title, content });
+  };
+
+  const closeCallAlert = () => {
+    setCallAlert({ visible: false, title: "", content: "" });
+    navigation.goBack();
+  };
+
   const handleParticipantFocus = (item: RoomUser) => {
     setParticipantsModalVisible(false);
     setFocusedParticipant(item);
@@ -194,6 +237,25 @@ const Call: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleRoomError = ({ message }: { message?: string }) => {
+      if (message) {
+        showCallAlert(message);
+      }
+    };
+
+    const handleRoomClosed = ({ reason }: { reason?: string }) => {
+      if (reason === "inactivity_timeout") {
+        showCallAlert("A chamada foi encerrada por inatividade.");
+        return;
+      }
+
+      showCallAlert("A sala de chamada foi encerrada.");
+    };
+
+    socket?.on("call_error", handleRoomError);
+    socket?.on("error_join_call_room", handleRoomError);
+    socket?.on("call_room_closed", handleRoomClosed);
+
     socket?.on("current_room_users", (users: RoomUser[]) => {
       setParticipants((prev) => {
         const localUser = prev.find((u) => u.socketId === "local");
@@ -214,6 +276,9 @@ const Call: React.FC = () => {
     });
 
     return () => {
+      socket?.off("call_error", handleRoomError);
+      socket?.off("error_join_call_room", handleRoomError);
+      socket?.off("call_room_closed", handleRoomClosed);
       socket?.off("current_room_users");
       socket?.off("user_joined");
       socket?.off("user_left");
@@ -379,6 +444,15 @@ const Call: React.FC = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+      <CustomAlert
+        title={callAlert.title}
+        content={callAlert.content}
+        visible={callAlert.visible}
+        okButtonText="Entendi"
+        okButtonAction={closeCallAlert}
+        extraButton={false}
+      />
 
       <ControlsBar>
         <ControlButton onPress={handleToggleMute} isActive={!isMuted}>
