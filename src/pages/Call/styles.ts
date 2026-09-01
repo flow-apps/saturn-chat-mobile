@@ -95,9 +95,9 @@ export const MoreCard = styled.TouchableOpacity<GridCardProps>`
 `;
 
 export const Avatar = styled.View`
-  width: 72px;
-  height: 72px;
-  border-radius: 36px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
   background-color: #41414d;
   align-items: center;
   justify-content: center;
@@ -121,9 +121,9 @@ export const NameContainer = styled.View`
   bottom: 8px;
   left: 8px;
   right: 8px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #00000080;
   padding: 8px;
-  border-radius: 4px;
+  border-radius: 20px;
 `;
 
 export const Name = styled.Text`
