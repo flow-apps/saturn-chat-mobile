@@ -1,5 +1,6 @@
 import { isDevice } from "expo-device";
 import { Platform } from "react-native";
+import secrets from "@secrets";
 
 const configs = {
   PROD_API_URL: "https://saturnchat.azurewebsites.net/",
@@ -15,6 +16,11 @@ const configs = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun1.l.google.com:19302" },
+      {
+        urls: secrets.TURN.url,
+        username: secrets.TURN.username,
+        credential: secrets.TURN.password,
+      },
     ],
   },
   ADS: {
