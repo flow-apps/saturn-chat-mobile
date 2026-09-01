@@ -1,6 +1,8 @@
-import configs from "@config";
-import { useWebsocket } from "@contexts/websocket";
 import { useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
+import InCallManager from "react-native-incall-manager";
+import * as Notifications from "expo-notifications";
+import { useNavigation } from "@react-navigation/native";
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -9,9 +11,9 @@ import {
   MediaStream,
 } from "@stream-io/react-native-webrtc";
 import { Socket } from "socket.io-client";
-import InCallManager from "react-native-incall-manager";
-import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
+
+import configs from "@config";
+import { useWebsocket } from "@contexts/websocket";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -26,6 +28,7 @@ Notifications.setNotificationHandler({
 
 export const useCallRoom = (roomId: string) => {
   const { socket } = useWebsocket();
+  const navigation = useNavigation();
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<{
@@ -33,58 +36,60 @@ export const useCallRoom = (roomId: string) => {
   }>({});
 
   const peersRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
-  // Fila para guardar os candidatos ICE que chegarem antes do RemoteDescription
   const iceCandidatesQueue = useRef<{ [socketId: string]: any[] }>({});
+  const notificationIdRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    let notificationId: string | null = null;
+  // Função centralizada para criar/reemitir a notificação fixa
+  const emitCallNotification = async () => {
+    try {
+      if (Platform.OS === "android") {
+        await Notifications.requestPermissionsAsync();
 
-    // 1. Configura e exibe a notificação de Foreground Service via expo-notifications
-    const startCallNotification = async () => {
-      try {
-        if (Platform.OS === "android") {
-          await Notifications.requestPermissionsAsync();
+        await Notifications.setNotificationChannelAsync("voice_call_channel", {
+          name: "Chamadas em Andamento",
+          importance: Notifications.AndroidImportance.MAX,
+          lockscreenVisibility:
+            Notifications.AndroidNotificationVisibility.PUBLIC,
+          sound: undefined,
+        });
+      }
 
-          await Notifications.setNotificationChannelAsync(
-            "voice_call_channel",
-            {
-              name: "Chamadas em Andamento",
-              importance: Notifications.AndroidImportance.MAX,
-              lockscreenVisibility:
-                Notifications.AndroidNotificationVisibility.PUBLIC,
-              sound: undefined,
-            },
-          );
-        }
+      // Cancela a versão anterior para evitar duplicadas antes de reemitir
+      if (notificationIdRef.current) {
+        await Notifications.dismissNotificationAsync(notificationIdRef.current);
+      }
 
-        notificationId = await Notifications.scheduleNotificationAsync({
+      notificationIdRef.current = await Notifications.scheduleNotificationAsync(
+        {
           content: {
             title: "Chamada em andamento",
             body: "Toque para voltar ao Saturn Chat",
             sticky: true,
             priority: Notifications.AndroidNotificationPriority.HIGH,
             categoryIdentifier: "call",
-            data: { roomId },
+            data: { groupId: roomId },
           },
           trigger: null,
-        });
-      } catch (error) {
-        console.error("[Notifications] Erro ao iniciar notificação:", error);
-      }
-    };
+        },
+      );
+    } catch (error) {
+      console.error("[Notifications] Erro ao emitir notificação:", error);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
 
     const initVoice = async () => {
-      // 2. Configuração de Hardware e Áudio
-      InCallManager.start({ media: "audio", auto: true });
+      // 1. Configuração de Hardware e Áudio
+      InCallManager.start({ media: "audio", auto: false });
       InCallManager.setForceSpeakerphoneOn(true);
       InCallManager.setKeepScreenOn(true);
 
-      await startCallNotification();
+      // Emite a notificação ao entrar
+      await emitCallNotification();
 
-      // 3. Captura do Stream Local
-      // Começa com video: true para negociar a track no SDP inicial,
-      // mas desabilita imediatamente para o usuário entrar com a câmera desligada.
+      // 2. Captura do Stream Local (inicia com vídeo desabilitado)
       const stream = await mediaDevices.getUserMedia({
         audio: true,
         video: true,
@@ -96,12 +101,9 @@ export const useCallRoom = (roomId: string) => {
 
       if (isMounted) setLocalStream(stream);
 
-      // Entra na sala via WebSocket
       socket?.emit("join_call_room", { roomId });
 
-      // 4. Listeners do Socket.IO para a sinalização WebRTC
-
-      // Usuários que já estavam na sala quando eu entrei
+      // 3. Handshake WebRTC via Socket.IO
       socket?.on(
         "current_room_users",
         async (users: Array<{ socketId: string }>) => {
@@ -121,7 +123,6 @@ export const useCallRoom = (roomId: string) => {
         },
       );
 
-      // Novo participante entrou na sala
       socket?.on("user_joined", ({ socketId }) => {
         if (!socket) return;
         if (!peersRef.current[socketId]) {
@@ -130,11 +131,9 @@ export const useCallRoom = (roomId: string) => {
         }
       });
 
-      // Recebeu uma oferta WebRTC de outro participante
       socket?.on("receive_offer", async ({ callerSocketId, offer }) => {
         if (!socket) return;
 
-        // Se o peer ainda não existe no mapa local, cria na hora
         let peer = peersRef.current[callerSocketId];
         if (!peer) {
           peer = createPeer(callerSocketId, stream, socket);
@@ -145,7 +144,6 @@ export const useCallRoom = (roomId: string) => {
         const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
 
-        // Processa candidatos ICE pendentes que chegaram antes do SDP
         if (iceCandidatesQueue.current[callerSocketId]) {
           for (const candidate of iceCandidatesQueue.current[callerSocketId]) {
             await peer.addIceCandidate(new RTCIceCandidate(candidate));
@@ -159,7 +157,6 @@ export const useCallRoom = (roomId: string) => {
         });
       });
 
-      // Recebeu a resposta para uma oferta enviada
       socket?.on("receive_answer", async ({ responderSocketId, answer }) => {
         const peer = peersRef.current[responderSocketId];
         if (peer) {
@@ -176,7 +173,6 @@ export const useCallRoom = (roomId: string) => {
         }
       });
 
-      // Recebeu candidatos ICE
       socket?.on(
         "receive_ice_candidate",
         async ({ senderSocketId, candidate }) => {
@@ -185,7 +181,6 @@ export const useCallRoom = (roomId: string) => {
           if (peer && peer.remoteDescription) {
             await peer.addIceCandidate(new RTCIceCandidate(candidate));
           } else {
-            // Guarda na fila para processar assim que o remoteDescription for definido
             if (!iceCandidatesQueue.current[senderSocketId]) {
               iceCandidatesQueue.current[senderSocketId] = [];
             }
@@ -194,7 +189,6 @@ export const useCallRoom = (roomId: string) => {
         },
       );
 
-      // Participante saiu da chamada
       socket?.on("user_left", ({ socketId }) => {
         if (peersRef.current[socketId]) {
           peersRef.current[socketId].close();
@@ -211,22 +205,33 @@ export const useCallRoom = (roomId: string) => {
 
     initVoice();
 
-    // 5. Cleanup da chamada
+    // LÓGICA 1: Recria a notificação quando o usuário navega para OUTRA TELA dentro do app (Perda de foco)
+    const unsubscribeBlur = navigation.addListener("blur", () => {
+      emitCallNotification();
+    });
+
+    // LÓGICA 2: Recria a notificação caso o usuário clique nela (o Android remove notificações comuns ao clicar)
+    const responseSubscription =
+      Notifications.addNotificationResponseReceivedListener(async () => {
+        await emitCallNotification();
+      });
+
+    // Cleanup acionado SOMENTE quando a chamada é totalmente encerrada (componente desmontado)
     return () => {
       isMounted = false;
+      unsubscribeBlur();
+      responseSubscription.remove();
 
-      // Restaura as configurações nativas de hardware e notificações
       InCallManager.setKeepScreenOn(false);
       InCallManager.stop();
 
-      if (notificationId) {
-        Notifications.dismissNotificationAsync(notificationId);
+      // Desmuda e remove a notificação do Android ao desligar
+      if (notificationIdRef.current) {
+        Notifications.dismissNotificationAsync(notificationIdRef.current);
       }
 
-      // Informa ao servidor que o usuário saiu da sala de voz
       socket?.emit("leave_voice_room", { roomId });
 
-      // Desliga listeners do Socket.IO
       socket?.off("current_room_users");
       socket?.off("user_joined");
       socket?.off("receive_offer");
@@ -234,25 +239,27 @@ export const useCallRoom = (roomId: string) => {
       socket?.off("receive_ice_candidate");
       socket?.off("user_left");
 
-      // Fecha todas as conexões Peer
       Object.values(peersRef.current).forEach((peer) => peer.close());
       peersRef.current = {};
       iceCandidatesQueue.current = {};
 
-      // Para o stream local e reseta os remotos
       if (localStream) {
         localStream.getTracks().forEach((track: any) => track.stop());
       }
       setRemoteStreams({});
     };
-  }, [roomId, socket]);
+  }, [roomId, socket, navigation]);
 
   const createPeer = (
     targetSocketId: string,
     stream: MediaStream,
     activeSocket: Socket,
   ) => {
-    const peer = new RTCPeerConnection(configs.ICE_SERVERS_CONFIG);
+    const peerConfig = Array.isArray(configs.ICE_SERVERS_CONFIG)
+      ? { iceServers: configs.ICE_SERVERS_CONFIG }
+      : configs.ICE_SERVERS_CONFIG;
+
+    const peer = new RTCPeerConnection(peerConfig);
 
     stream.getTracks().forEach((track: any) => peer.addTrack(track, stream));
 
@@ -265,20 +272,24 @@ export const useCallRoom = (roomId: string) => {
       }
     };
 
-    peer.oniceconnectionstatechange = () => {
-      console.log(
-        `[WebRTC] ICE State (${targetSocketId}):`,
-        peer.iceConnectionState,
-      );
-    };
-
     peer.ontrack = (event: any) => {
-      console.log(
-        `[WebRTC] Track de mídia recebida de ${targetSocketId}:`,
-        event.track.kind,
-      );
       if (event.streams && event.streams[0]) {
         const remoteStream = event.streams[0];
+
+        event.track.onunmute = () => {
+          setRemoteStreams((prev) => ({
+            ...prev,
+            [targetSocketId]: remoteStream,
+          }));
+        };
+
+        event.track.onmute = () => {
+          setRemoteStreams((prev) => ({
+            ...prev,
+            [targetSocketId]: remoteStream,
+          }));
+        };
+
         setRemoteStreams((prev) => ({
           ...prev,
           [targetSocketId]: remoteStream,
@@ -332,11 +343,9 @@ export const useCallRoom = (roomId: string) => {
         return;
       }
     } else if (videoTrack) {
-      // Se a faixa já existe, apenas ativa ou desativa
       videoTrack.enabled = enableVideo;
     }
 
-    // Clona a referência para forçar o re-render no React
     setLocalStream(
       Object.assign(new MediaStream(localStream.getTracks()), localStream),
     );
