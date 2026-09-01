@@ -7,7 +7,7 @@ import {
 } from "@react-navigation/native";
 import { useAuth } from "@contexts/auth";
 import { AuthRoutes } from "@routes/auth.routes";
-import { navigationRef } from "./rootNavigation";
+import { navigate, navigationRef } from "./rootNavigation";
 import Loading from "@components/Loading";
 import config from "@config";
 import * as Linking from "expo-linking";
@@ -15,6 +15,7 @@ import * as Linking from "expo-linking";
 import analytics from "@react-native-firebase/analytics";
 import { useTheme } from "styled-components";
 import { hideAsync } from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
@@ -36,6 +37,31 @@ const Routes = () => {
   useEffect(() => {
     if (!loadingData) hideAsync();
   }, [loadingData]);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const data = response.notification.request.content.data;
+
+        if (data?.roomId) {
+          navigate("Call", { groupId: data.roomId });
+        }
+      },
+    );
+
+    const response = Notifications.getLastNotificationResponse();
+
+    if (response) {
+      const data = response.notification.request.content.data;
+      if (data?.roomId) {
+        navigate("Call", { groupId: data.roomId });
+      }
+    }
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (loadingData) {
     return <Loading />;
