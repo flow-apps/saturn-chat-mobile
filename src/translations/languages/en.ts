@@ -512,6 +512,59 @@ export const en = {
         "Your payment may have been declined or cancelled by the app store. Check and try again later.",
     },
   },
+  Call: {
+    header_title: "Group Call",
+    participants_count: "{{count}} in call",
+    participants_modal: {
+      title: "Participants",
+    },
+    view_all: "View all",
+    floating_button: "Return to call",
+    alert_ok: "Got it",
+    you: "You",
+    notification: {
+      channel_name: "Ongoing calls",
+      title: "Call in progress",
+      body: "Tap to return to Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "The call was ended due to inactivity.",
+      room_closed: "This call room has been closed.",
+    },
+    errors: {
+      default: {
+        title: "Could not join the call",
+        content: "An error occurred while accessing the call.",
+      },
+      access_blocked: {
+        title: "Access blocked",
+        content: "You are blocked in this group and cannot join the call.",
+      },
+      group_invalid: {
+        title: "Invalid group",
+        content: "You do not belong to this group or the conversation is no longer available.",
+      },
+      direct_limit: {
+        title: "Two-person call",
+        content: "This direct call can only include the two participants in the conversation.",
+      },
+      participant_limit: {
+        title: "Call limit",
+      },
+      inactivity_timeout: {
+        title: "Call ended",
+        content: "The call was closed due to inactivity.",
+      },
+      call_closed: {
+        title: "Call ended",
+        content: "This call room has been closed.",
+      },
+      direct_not_part: {
+        title: "Invalid participation",
+        content: "You are not part of this direct call.",
+      },
+    },
+  },
   Chat: {
     alerts: {
       file_size: {

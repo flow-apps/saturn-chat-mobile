@@ -516,6 +516,59 @@ export const es = {
         "Tu pago pudo haber sido rechazado o la compra cancelada por la tienda de aplicaciones. Comprueba e inténtalo de nuevo más tarde.",
     },
   },
+  Call: {
+    header_title: "Llamada en grupo",
+    participants_count: "{{count}} en la llamada",
+    participants_modal: {
+      title: "Participantes",
+    },
+    view_all: "Ver todos",
+    floating_button: "Volver a la llamada",
+    alert_ok: "Entendido",
+    you: "Tú",
+    notification: {
+      channel_name: "Llamadas en curso",
+      title: "Llamada en curso",
+      body: "Toca para volver a Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "La llamada se cerró por inactividad.",
+      room_closed: "Esta sala de llamada ha sido cerrada.",
+    },
+    errors: {
+      default: {
+        title: "No se pudo entrar a la llamada",
+        content: "Ocurrió un error al acceder a la llamada.",
+      },
+      access_blocked: {
+        title: "Acceso bloqueado",
+        content: "Estás bloqueado en este grupo y no puedes participar en la llamada.",
+      },
+      group_invalid: {
+        title: "Grupo no válido",
+        content: "No perteneces a este grupo o la conversación ya no está disponible.",
+      },
+      direct_limit: {
+        title: "Llamada en pareja",
+        content: "Esta llamada directa solo puede incluir a los dos participantes de la conversación.",
+      },
+      participant_limit: {
+        title: "Límite de la llamada",
+      },
+      inactivity_timeout: {
+        title: "Llamada finalizada",
+        content: "La llamada se cerró por inactividad.",
+      },
+      call_closed: {
+        title: "Llamada finalizada",
+        content: "Esta sala de llamada ha sido cerrada.",
+      },
+      direct_not_part: {
+        title: "Participación inválida",
+        content: "No eres parte de esta llamada directa.",
+      },
+    },
+  },
   Chat: {
     alerts: {
       file_size: {

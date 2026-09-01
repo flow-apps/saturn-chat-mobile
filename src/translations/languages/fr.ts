@@ -516,6 +516,59 @@ export const fr = {
         "Votre paiement a peut-être été refusé ou annulé par le store. Vérifiez et réessayez plus tard.",
     },
   },
+  Call: {
+    header_title: "Appel de groupe",
+    participants_count: "{{count}} dans l'appel",
+    participants_modal: {
+      title: "Participants",
+    },
+    view_all: "Voir tout",
+    floating_button: "Retourner à l'appel",
+    alert_ok: "Compris",
+    you: "Vous",
+    notification: {
+      channel_name: "Appels en cours",
+      title: "Appel en cours",
+      body: "Touchez pour revenir dans Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "L'appel a été fermé pour cause d'inactivité.",
+      room_closed: "Cette salle d'appel a été fermée.",
+    },
+    errors: {
+      default: {
+        title: "Impossible de rejoindre l'appel",
+        content: "Une erreur s'est produite lors de l'accès à l'appel.",
+      },
+      access_blocked: {
+        title: "Accès bloqué",
+        content: "Vous êtes bloqué dans ce groupe et ne pouvez pas participer à l'appel.",
+      },
+      group_invalid: {
+        title: "Groupe invalide",
+        content: "Vous n'appartenez pas à ce groupe ou la conversation n'est plus disponible.",
+      },
+      direct_limit: {
+        title: "Appel à deux",
+        content: "Cet appel direct ne peut inclure que les deux participants de la conversation.",
+      },
+      participant_limit: {
+        title: "Limite d'appel",
+      },
+      inactivity_timeout: {
+        title: "Appel terminé",
+        content: "L'appel a été fermé pour cause d'inactivité.",
+      },
+      call_closed: {
+        title: "Appel terminé",
+        content: "Cette salle d'appel a été fermée.",
+      },
+      direct_not_part: {
+        title: "Participation invalide",
+        content: "Vous ne faites pas partie de cet appel direct.",
+      },
+    },
+  },
   Chat: {
     alerts: {
       file_size: {

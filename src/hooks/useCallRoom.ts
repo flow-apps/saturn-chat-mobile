@@ -3,6 +3,8 @@ import { AppState, Platform } from "react-native";
 import InCallManager from "react-native-incall-manager";
 import * as Notifications from "expo-notifications";
 import { useNavigation } from "@react-navigation/native";
+
+import { useTranslate } from "@hooks/useTranslate";
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -32,6 +34,7 @@ export const useCallRoom = (
   onEnded?: () => void,
 ) => {
   const { socket } = useWebsocket();
+  const { t } = useTranslate("Call");
 
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<{
@@ -99,7 +102,7 @@ export const useCallRoom = (
         await Notifications.requestPermissionsAsync();
 
         await Notifications.setNotificationChannelAsync("voice_call_channel", {
-          name: "Chamadas em Andamento",
+          name: t("notification.channel_name"),
           importance: Notifications.AndroidImportance.MAX,
           lockscreenVisibility:
             Notifications.AndroidNotificationVisibility.PUBLIC,
@@ -115,8 +118,8 @@ export const useCallRoom = (
       notificationIdRef.current = await Notifications.scheduleNotificationAsync(
         {
           content: {
-            title: "Chamada em andamento",
-            body: "Toque para voltar ao Saturn Chat",
+            title: t("notification.title"),
+            body: t("notification.body"),
             sticky: true,
             priority: Notifications.AndroidNotificationPriority.HIGH,
             categoryIdentifier: "call",

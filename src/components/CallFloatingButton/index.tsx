@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useCallStatus } from "@contexts/callStatus";
+import { useTranslate } from "@hooks/useTranslate";
 import {
   getCurrentRoute,
   navigate,
@@ -10,6 +11,7 @@ import {
 
 const CallFloatingButton: React.FC = () => {
   const { activeCallRoomId } = useCallStatus();
+  const { t } = useTranslate("Call");
   const [currentRouteName, setCurrentRouteName] = useState<
     string | undefined
   >();
@@ -39,7 +41,7 @@ const CallFloatingButton: React.FC = () => {
   return currentRouteName === "Call" || !activeCallRoomId ? null : (
     <View pointerEvents="box-none" style={styles.wrapper}>
       <Pressable onPress={handlePress} style={styles.button}>
-        <Text style={styles.text}>Voltar para chamada</Text>
+        <Text style={styles.text}>{t("floating_button")}</Text>
       </Pressable>
     </View>
   );

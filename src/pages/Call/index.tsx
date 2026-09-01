@@ -8,6 +8,7 @@ import InCallManager from "react-native-incall-manager";
 import { Modal, ScrollView, TouchableWithoutFeedback, View } from "react-native";
 
 import CustomAlert from "@components/Alert";
+import { useTranslate } from "@hooks/useTranslate";
 import { useCallRoom } from "@hooks/useCallRoom";
 import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
@@ -51,6 +52,7 @@ const Call: React.FC = () => {
     content: "",
   });
   const navigation = useNavigation();
+  const { t } = useTranslate("Call");
 
   const { groupId } = useRoute().params as {
     groupId: string;
@@ -131,33 +133,33 @@ const Call: React.FC = () => {
     navigation.goBack();
   };
 
-  const showCallAlert = (message: string, fallbackTitle = "Não foi possível entrar na chamada") => {
+  const showCallAlert = (message: string, fallbackTitle = t("errors.default.title")) => {
     const lowerMessage = message.toLowerCase();
 
     let title = fallbackTitle;
-    let content = message || "Ocorreu um erro ao acessar a chamada.";
+    let content = message || t("errors.default.content");
 
     if (lowerMessage.includes("banned")) {
-      title = "Acesso bloqueado";
-      content = "Você está bloqueado neste grupo e não pode participar da chamada.";
+      title = t("errors.access_blocked.title");
+      content = t("errors.access_blocked.content");
     } else if (lowerMessage.includes("not in this group")) {
-      title = "Grupo inválido";
-      content = "Você não pertence a este grupo ou a conversa não está mais disponível.";
+      title = t("errors.group_invalid.title");
+      content = t("errors.group_invalid.content");
     } else if (lowerMessage.includes("direct calls can only contain")) {
-      title = "Chamada em dupla";
-      content = "Esta chamada direta só pode ter os dois participantes da conversa.";
+      title = t("errors.direct_limit.title");
+      content = t("errors.direct_limit.content");
     } else if (lowerMessage.includes("allows up to")) {
-      title = "Limite da chamada";
+      title = t("errors.participant_limit.title");
       content = message;
     } else if (lowerMessage.includes("inactivity") || lowerMessage.includes("inactivity_timeout")) {
-      title = "Chamada encerrada";
-      content = "A chamada foi encerrada por inatividade.";
+      title = t("errors.inactivity_timeout.title");
+      content = t("errors.inactivity_timeout.content");
     } else if (lowerMessage.includes("call room") || lowerMessage.includes("room closed") || lowerMessage.includes("closed")) {
-      title = "Chamada encerrada";
-      content = "Esta sala de chamada foi encerrada.";
+      title = t("errors.call_closed.title");
+      content = t("errors.call_closed.content");
     } else if (lowerMessage.includes("not part of this direct call")) {
-      title = "Participação inválida";
-      content = "Você não faz parte desta chamada direta.";
+      title = t("errors.direct_not_part.title");
+      content = t("errors.direct_not_part.content");
     }
 
     setCallAlert({ visible: true, title, content });
@@ -229,7 +231,7 @@ const Call: React.FC = () => {
 
         <NameContainer>
           <Name numberOfLines={1}>
-            {isLocal ? `${item.user?.name} (Você)` : item.user?.name}
+            {isLocal ? `${item.user?.name} (${t("you")})` : item.user?.name}
           </Name>
         </NameContainer>
       </View>
@@ -245,11 +247,11 @@ const Call: React.FC = () => {
 
     const handleRoomClosed = ({ reason }: { reason?: string }) => {
       if (reason === "inactivity_timeout") {
-        showCallAlert("A chamada foi encerrada por inatividade.");
+        showCallAlert(t("events.inactivity_closed"));
         return;
       }
 
-      showCallAlert("A sala de chamada foi encerrada.");
+      showCallAlert(t("events.room_closed"));
     };
 
     socket?.on("call_error", handleRoomError);
@@ -288,8 +290,10 @@ const Call: React.FC = () => {
   return (
     <Container>
       <Header>
-        <HeaderTitle>Chamada em Grupo</HeaderTitle>
-        <ParticipantCount>{totalParticipants} na chamada</ParticipantCount>
+        <HeaderTitle>{t("header_title")}</HeaderTitle>
+        <ParticipantCount>
+          {t("participants_count", { count: totalParticipants })}
+        </ParticipantCount>
       </Header>
 
       {focusedParticipant ? (
@@ -396,7 +400,7 @@ const Call: React.FC = () => {
                     borderBottomColor: "#2E2E33",
                   }}
                 >
-                  <HeaderTitle style={{ fontSize: 18 }}>Participantes</HeaderTitle>
+                  <HeaderTitle style={{ fontSize: 18 }}>{t("participants_modal.title")}</HeaderTitle>
                   <ControlButton
                     onPress={() => setParticipantsModalVisible(false)}
                     isActive
@@ -449,7 +453,7 @@ const Call: React.FC = () => {
         title={callAlert.title}
         content={callAlert.content}
         visible={callAlert.visible}
-        okButtonText="Entendi"
+        okButtonText={t("alert_ok")}
         okButtonAction={closeCallAlert}
         extraButton={false}
       />

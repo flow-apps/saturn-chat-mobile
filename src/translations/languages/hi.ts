@@ -512,6 +512,59 @@ export const hi = {
         "आपका भुगतान अस्वीकृत हो गया हो सकता है। कृपया जांचें और बाद में पुनः प्रयास करें।",
     },
   },
+  Call: {
+    header_title: "समूह कॉल",
+    participants_count: "{{count}} कॉल में",
+    participants_modal: {
+      title: "सदस्य",
+    },
+    view_all: "सभी देखें",
+    floating_button: "कॉल पर वापस जाएँ",
+    alert_ok: "समझ गया",
+    you: "आप",
+    notification: {
+      channel_name: "चल रही कॉलें",
+      title: "कॉल प्रगति पर है",
+      body: "Saturn Chat पर वापस जाने के लिए टैप करें",
+    },
+    events: {
+      inactivity_closed: "निष्क्रियता के कारण कॉल समाप्त कर दी गई।",
+      room_closed: "यह कॉल रूम बंद कर दिया गया है।",
+    },
+    errors: {
+      default: {
+        title: "कॉल में शामिल नहीं हो सके",
+        content: "कॉल तक पहुंचते समय त्रुटि हुई।",
+      },
+      access_blocked: {
+        title: "उपयोग अस्वीकृत",
+        content: "आप इस समूह में अवरुद्ध हैं और कॉल में शामिल नहीं हो सकते।",
+      },
+      group_invalid: {
+        title: "अमान्य समूह",
+        content: "आप इस समूह के सदस्य नहीं हैं या वार्तालाप उपलब्ध नहीं है।",
+      },
+      direct_limit: {
+        title: "दो लोगों की कॉल",
+        content: "यह प्रत्यक्ष कॉल केवल बातचीत के दो प्रतिभागियों को ही शामिल कर सकती है।",
+      },
+      participant_limit: {
+        title: "कॉल सीमा",
+      },
+      inactivity_timeout: {
+        title: "कॉल समाप्त",
+        content: "निष्क्रियता के कारण कॉल समाप्त कर दी गई।",
+      },
+      call_closed: {
+        title: "कॉल समाप्त",
+        content: "यह कॉल रूम बंद कर दिया गया है।",
+      },
+      direct_not_part: {
+        title: "अमान्य भागीदारी",
+        content: "आप इस प्रत्यक्ष कॉल का हिस्सा नहीं हैं।",
+      },
+    },
+  },
   Chat: {
     alerts: {
       file_size: {
