@@ -6,7 +6,7 @@ import { useTranslate } from "@hooks/useTranslate";
 import {
   getCurrentRoute,
   navigate,
-  navigationRef,
+  subscribeToRouteChanges,
 } from "@routes/rootNavigation";
 
 const CallFloatingButton: React.FC = () => {
@@ -24,10 +24,7 @@ const CallFloatingButton: React.FC = () => {
 
     refreshRoute();
 
-    const unsubscribe = navigationRef.current?.addListener(
-      "state",
-      refreshRoute,
-    );
+    const unsubscribe = subscribeToRouteChanges(refreshRoute);
 
     return () => {
       unsubscribe?.();
@@ -38,7 +35,9 @@ const CallFloatingButton: React.FC = () => {
     navigate("Call", { groupId: activeCallRoomId });
   };
 
-  return currentRouteName !== "Call" && activeCallRoomId ? (
+  const isOnCallScreen = currentRouteName === "Call";
+
+  return !isOnCallScreen && activeCallRoomId ? (
     <View pointerEvents="box-none" style={styles.wrapper}>
       <Pressable onPress={handlePress} style={styles.button}>
         <Text style={styles.text}>{t("floating_button")}</Text>
