@@ -1,5 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import InCallManager from "react-native-incall-manager";
+
+import { useCallRoom } from "@hooks/useCallRoom";
+import { useWebsocket } from "@contexts/websocket";
+import { useAuth } from "@contexts/auth";
+import { RoomUser } from "@type/interfaces";
 
 import {
   Container,
@@ -18,66 +25,111 @@ import {
   ControlsBar,
   ControlButton,
   EndCallButton,
+  StyledRTCView,
 } from "./styles";
-import { useCallRoom } from "@hooks/useCallRoom";
-import { useWebsocket } from "@contexts/websocket";
-
-interface Participant {
-  id: string;
-  name: string;
-}
-
-const PARTICIPANTS_DATA: Participant[] = [
-  { id: "1", name: "Ana Silva" },
-  { id: "2", name: "Carlos Oliveira" },
-  { id: "3", name: "Beatriz Souza" },
-  { id: "4", name: "João Pedro" },
-  { id: "5", name: "Mariana Costa" },
-  { id: "6", name: "Lucas Mendes" },
-  { id: "7", name: "Fernanda Lima" },
-  { id: "8", name: "Gabriel Santos" },
-];
 
 const MAX_DISPLAY = 6;
 
 const Call: React.FC = () => {
-  // Estados para controlar os botões
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const navigation = useNavigation();
 
-  const totalParticipants = PARTICIPANTS_DATA.length;
+  const { groupId } = useRoute().params as {
+    groupId: string;
+  };
+  const { socket } = useWebsocket();
+  const { user } = useAuth();
+
+  const { localStream, remoteStreams, toggleAudio, toggleVideo } =
+    useCallRoom(groupId);
+
+  const [participants, setParticipants] = useState<RoomUser[]>([
+    { socketId: "local", user: user! },
+  ]);
+
+  const totalParticipants = participants.length;
   const hasMore = totalParticipants > MAX_DISPLAY;
 
   const visibleParticipants = hasMore
-    ? PARTICIPANTS_DATA.slice(0, MAX_DISPLAY - 1)
-    : PARTICIPANTS_DATA.slice(0, MAX_DISPLAY);
+    ? participants.slice(0, MAX_DISPLAY - 1)
+    : participants.slice(0, MAX_DISPLAY);
 
   const remainingCount = totalParticipants - (MAX_DISPLAY - 1);
 
-  const handleOpenMoreParticipants = () => {
-    console.log("Abrir lista de participantes");
-  };
-
   const handleToggleMute = () => {
-    setIsMuted((prevState) => !prevState);
+    const nextState = !isMuted;
+    setIsMuted(nextState);
+
+    if (localStream) {
+      toggleAudio(nextState);
+    }
+
+    socket?.emit("toggle_mute_audio", {
+      roomId: groupId,
+      isMuted: nextState,
+    });
   };
 
-  const handleToggleVideo = () => {
-    setIsVideoOn((prevState) => !prevState);
-  };
+  const handleToggleVideo = async () => {
+    const nextState = !isVideoOn;
+    setIsVideoOn(nextState);
 
-  const handleToggleScreenShare = () => {
-    setIsScreenSharing((prevState) => !prevState);
+    InCallManager.start({ media: nextState ? "video" : "audio", auto: true });
+    InCallManager.setForceSpeakerphoneOn(true);
+
+    if (toggleVideo) {
+      await toggleVideo(nextState);
+    }
+
+    socket?.emit("toggle_video", {
+      roomId: groupId,
+      isVideoOn: nextState,
+    });
   };
 
   const handleEndCall = () => {
-    console.log("Encerrar chamada");
+    if (localStream) {
+      localStream.getTracks().forEach((track: any) => track.stop());
+    }
+
+    InCallManager.stop();
+    socket?.emit("leave_voice_room", { roomId: groupId });
+    navigation.goBack();
   };
 
-  const { socket } = useWebsocket();
-  const {} = useCallRoom("123");
+  useEffect(() => {
+    // 1. Recebe a lista inicial de participantes e preserva o estado local
+    socket?.on("current_room_users", (users: RoomUser[]) => {
+      setParticipants((prev) => {
+        const localUser = prev.find((u) => u.socketId === "local");
+        const newRemoteUsers = users.filter((u) => u.socketId !== socket.id);
 
+        return localUser ? [localUser, ...newRemoteUsers] : newRemoteUsers;
+      });
+    });
+
+    // 2. Quando um novo usuário entra na sala
+    socket?.on("user_joined", (newUser: RoomUser) => {
+      setParticipants((prev) => {
+        if (prev.some((u) => u.socketId === newUser.socketId)) return prev;
+        return [...prev, newUser];
+      });
+    });
+
+    // 3. Quando um usuário sai
+    socket?.on("user_left", ({ socketId }: { socketId: string }) => {
+      setParticipants((prev) => prev.filter((u) => u.socketId !== socketId));
+    });
+
+    return () => {
+      socket?.off("current_room_users");
+      socket?.off("user_joined");
+      socket?.off("user_left");
+    };
+  }, [socket, user]);
+
+  console.log(remoteStreams);
   return (
     <Container>
       <Header>
@@ -86,19 +138,45 @@ const Call: React.FC = () => {
       </Header>
 
       <GridContainer>
-        {visibleParticipants.map((item) => (
-          <ParticipantCard key={item.id}>
-            <Avatar>
-              <AvatarText>{item.name.charAt(0).toUpperCase()}</AvatarText>
-            </Avatar>
-            <NameContainer>
-              <Name numberOfLines={1}>{item.name}</Name>
-            </NameContainer>
-          </ParticipantCard>
-        ))}
+        {visibleParticipants.map((item) => {
+          const isLocal = item.socketId === "local";
+          const stream = isLocal ? localStream : remoteStreams?.[item.socketId];
+
+          // No caso remoto, basta verificar se o stream remoto existe
+          const shouldShowVideo = isLocal
+            ? isVideoOn &&
+              localStream?.getVideoTracks().some((t: any) => t.enabled)
+            : !!stream && stream.getVideoTracks().length > 0;
+
+          return (
+            <ParticipantCard key={item.socketId}>
+              {shouldShowVideo && stream ? (
+                <StyledRTCView
+                  streamURL={stream.toURL()}
+                  objectFit="cover"
+                  mirror={isLocal}
+                />
+              ) : (
+                <Avatar>
+                  <AvatarText>
+                    {item.user?.name
+                      ? item.user.name.charAt(0).toUpperCase()
+                      : "U"}
+                  </AvatarText>
+                </Avatar>
+              )}
+
+              <NameContainer>
+                <Name numberOfLines={1}>
+                  {isLocal ? `${item.user?.name} (Você)` : item.user?.name}
+                </Name>
+              </NameContainer>
+            </ParticipantCard>
+          );
+        })}
 
         {hasMore && (
-          <MoreCard onPress={handleOpenMoreParticipants} activeOpacity={0.7}>
+          <MoreCard onPress={() => {}} activeOpacity={0.7}>
             <MoreText>+{remainingCount}</MoreText>
             <MoreSubtext>Ver todos</MoreSubtext>
           </MoreCard>
@@ -106,12 +184,9 @@ const Call: React.FC = () => {
       </GridContainer>
 
       <ControlsBar>
-        {/* Controle Mute */}
         <ControlButton onPress={handleToggleMute} isActive={isMuted}>
           <Feather name={isMuted ? "mic-off" : "mic"} size={24} color="#FFF" />
         </ControlButton>
-
-        {/* Controle Vídeo */}
         <ControlButton onPress={handleToggleVideo} isActive={isVideoOn}>
           <Feather
             name={isVideoOn ? "video" : "video-off"}
@@ -120,15 +195,6 @@ const Call: React.FC = () => {
           />
         </ControlButton>
 
-        {/* Controle Compartilhar Tela */}
-        <ControlButton
-          onPress={handleToggleScreenShare}
-          isActive={isScreenSharing}
-        >
-          <Feather name="tv" size={24} color="#FFF" />
-        </ControlButton>
-
-        {/* Desligar Chamada */}
         <EndCallButton onPress={handleEndCall}>
           <Feather name="phone-off" size={24} color="#FFF" />
         </EndCallButton>

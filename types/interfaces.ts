@@ -1,5 +1,6 @@
 import { ParticipantData } from "@pages/Home";
 import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums";
+import { Socket } from "socket.io-client";
 
 export interface UserData {
   id: string;
@@ -159,4 +160,14 @@ export interface ISetting {
   setting_value: string;
   typeof_value: string;
   input_type: string;
+}
+
+export interface CallProps {
+  roomId: string;
+  onLeaveCall?: () => void;
+}
+
+export interface RoomUser {
+  socketId: string;
+  user: UserData;
 }

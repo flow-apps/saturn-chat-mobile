@@ -1,3 +1,4 @@
+import { RTCView } from "@stream-io/react-native-webrtc";
 import fonts from "@styles/fonts";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -18,7 +19,7 @@ export const Header = styled.View`
 `;
 
 export const HeaderTitle = styled.Text`
-  color: #ffffff;
+  color: ${({ theme }) => theme.colors.black};
   font-size: 18px;
   font-family: ${fonts["text-bold"]};
 `;
@@ -112,7 +113,7 @@ export const ControlsBar = styled.View`
   justify-content: space-evenly;
   align-items: center;
   padding: 20px 0;
-  background-color: #202024;
+  background-color: ${({ theme }) => theme.colors.shape};
 `;
 
 export const ControlButton = styled.TouchableOpacity<ControlButtonProps>`
@@ -132,4 +133,14 @@ export const EndCallButton = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.red};
   align-items: center;
   justify-content: center;
+`;
+
+export const StyledRTCView = styled(RTCView)`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 `;

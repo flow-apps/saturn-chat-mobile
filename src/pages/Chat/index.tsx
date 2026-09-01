@@ -720,7 +720,7 @@ const Chat: React.FC = () => {
       >
         {group.type === "GROUP" && (
           <HeaderButton
-            onPress={() => navigation.navigate("Call", { id })}
+            onPress={() => navigation.navigate("Call", { groupId: id })}
           >
             <Feather name="phone" size={22} color="#fff" />
           </HeaderButton>
