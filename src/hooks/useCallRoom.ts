@@ -16,7 +16,6 @@ import { Socket } from "socket.io-client";
 
 import configs from "@config";
 import { useWebsocket } from "@contexts/websocket";
-import { navigationRef } from "@routes/rootNavigation";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,6 +26,17 @@ Notifications.setNotificationHandler({
     shouldShowList: false,
     priority: Notifications.AndroidNotificationPriority.MAX,
   }),
+});
+
+const CALL_VIDEO_CONSTRAINTS = {
+  width: { ideal: 1280 },
+  height: { ideal: 720 },
+  frameRate: { ideal: 24 },
+};
+
+const getCallVideoConstraints = (facingMode: "user" | "environment") => ({
+  facingMode,
+  ...CALL_VIDEO_CONSTRAINTS,
 });
 
 export const useCallRoom = (
@@ -53,7 +63,7 @@ export const useCallRoom = (
     try {
       const nextStream = await mediaDevices.getUserMedia({
         audio: true,
-        video: true,
+        video: getCallVideoConstraints(cameraFacingRef.current),
       });
 
       const audioTrack = nextStream.getAudioTracks()[0];
@@ -152,9 +162,7 @@ export const useCallRoom = (
       // 2. Captura do Stream Local (inicia com vídeo desabilitado)
       const stream = await mediaDevices.getUserMedia({
         audio: true,
-        video: {
-          facingMode: cameraFacingRef.current,
-        },
+        video: getCallVideoConstraints(cameraFacingRef.current),
       });
 
       stream.getVideoTracks().forEach((track: any) => {
@@ -414,9 +422,7 @@ export const useCallRoom = (
       try {
         const videoStream = await mediaDevices.getUserMedia({
           audio: false,
-          video: {
-            facingMode: cameraFacingRef.current,
-          },
+          video: getCallVideoConstraints(cameraFacingRef.current),
         });
 
         videoTrack = videoStream.getVideoTracks()[0];
@@ -466,9 +472,7 @@ export const useCallRoom = (
     try {
       const nextVideoStream = await mediaDevices.getUserMedia({
         audio: false,
-        video: {
-          facingMode: nextFacing,
-        },
+        video: getCallVideoConstraints(nextFacing),
       });
 
       const nextVideoTrack = nextVideoStream.getVideoTracks()[0];
