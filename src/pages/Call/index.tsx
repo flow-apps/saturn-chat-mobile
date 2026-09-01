@@ -16,6 +16,7 @@ import {
   GridContainer,
   ParticipantCard,
   Avatar,
+  AvatarImage, // Importado
   AvatarText,
   NameContainer,
   Name,
@@ -32,7 +33,7 @@ const MAX_DISPLAY = 6;
 
 const Call: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
-  const [isVideoOn, setIsVideoOn] = useState(true);
+  const [isVideoOn, setIsVideoOn] = useState(false);
   const navigation = useNavigation();
 
   const { groupId } = useRoute().params as {
@@ -56,6 +57,9 @@ const Call: React.FC = () => {
     : participants.slice(0, MAX_DISPLAY);
 
   const remainingCount = totalParticipants - (MAX_DISPLAY - 1);
+  const displayedCardsCount = hasMore
+    ? visibleParticipants.length + 1
+    : visibleParticipants.length;
 
   const handleToggleMute = () => {
     const nextState = !isMuted;
@@ -99,17 +103,14 @@ const Call: React.FC = () => {
   };
 
   useEffect(() => {
-    // 1. Recebe a lista inicial de participantes e preserva o estado local
     socket?.on("current_room_users", (users: RoomUser[]) => {
       setParticipants((prev) => {
         const localUser = prev.find((u) => u.socketId === "local");
         const newRemoteUsers = users.filter((u) => u.socketId !== socket.id);
-
         return localUser ? [localUser, ...newRemoteUsers] : newRemoteUsers;
       });
     });
 
-    // 2. Quando um novo usuário entra na sala
     socket?.on("user_joined", (newUser: RoomUser) => {
       setParticipants((prev) => {
         if (prev.some((u) => u.socketId === newUser.socketId)) return prev;
@@ -117,7 +118,6 @@ const Call: React.FC = () => {
       });
     });
 
-    // 3. Quando um usuário sai
     socket?.on("user_left", ({ socketId }: { socketId: string }) => {
       setParticipants((prev) => prev.filter((u) => u.socketId !== socketId));
     });
@@ -129,7 +129,6 @@ const Call: React.FC = () => {
     };
   }, [socket, user]);
 
-  console.log(remoteStreams);
   return (
     <Container>
       <Header>
@@ -142,14 +141,19 @@ const Call: React.FC = () => {
           const isLocal = item.socketId === "local";
           const stream = isLocal ? localStream : remoteStreams?.[item.socketId];
 
-          // No caso remoto, basta verificar se o stream remoto existe
+          const hasVideoTrack = stream
+            ?.getVideoTracks()
+            .some((t: any) => t.enabled && t.readyState === "live");
+
           const shouldShowVideo = isLocal
-            ? isVideoOn &&
-              localStream?.getVideoTracks().some((t: any) => t.enabled)
-            : !!stream && stream.getVideoTracks().length > 0;
+            ? isVideoOn && hasVideoTrack
+            : hasVideoTrack;
 
           return (
-            <ParticipantCard key={item.socketId}>
+            <ParticipantCard
+              key={item.socketId}
+              totalItems={displayedCardsCount}
+            >
               {shouldShowVideo && stream ? (
                 <StyledRTCView
                   streamURL={stream.toURL()}
@@ -158,11 +162,10 @@ const Call: React.FC = () => {
                 />
               ) : (
                 <Avatar>
-                  <AvatarText>
-                    {item.user?.name
-                      ? item.user.name.charAt(0).toUpperCase()
-                      : "U"}
-                  </AvatarText>
+                  <AvatarImage
+                    uri={item.user.avatar ? item.user?.avatar.url : undefined}
+                    placeholder={require("@assets/avatar-placeholder.jpg")}
+                  />
                 </Avatar>
               )}
 
@@ -176,7 +179,11 @@ const Call: React.FC = () => {
         })}
 
         {hasMore && (
-          <MoreCard onPress={() => {}} activeOpacity={0.7}>
+          <MoreCard
+            totalItems={displayedCardsCount}
+            onPress={() => {}}
+            activeOpacity={0.7}
+          >
             <MoreText>+{remainingCount}</MoreText>
             <MoreSubtext>Ver todos</MoreSubtext>
           </MoreCard>
@@ -184,7 +191,7 @@ const Call: React.FC = () => {
       </GridContainer>
 
       <ControlsBar>
-        <ControlButton onPress={handleToggleMute} isActive={isMuted}>
+        <ControlButton onPress={handleToggleMute} isActive={!isMuted}>
           <Feather name={isMuted ? "mic-off" : "mic"} size={24} color="#FFF" />
         </ControlButton>
         <ControlButton onPress={handleToggleVideo} isActive={isVideoOn}>

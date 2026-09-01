@@ -34,21 +34,18 @@ export const useCallRoom = (roomId: string) => {
     let isMounted = true;
 
     const initVoice = async () => {
-      // 1. Inicia áudio e viva-voz no hardware nativo
-      InCallManager.start({ media: "video" });
+      InCallManager.start({ media: "audio" });
       InCallManager.setForceSpeakerphoneOn(true);
 
-      // 2. Captura stream local
       const stream = await mediaDevices.getUserMedia({
         audio: true,
-        video: true,
+        video: false,
       });
 
       if (isMounted) setLocalStream(stream);
 
       socket?.emit("join_call_room", { roomId });
 
-      // O usuário que entrou recebe os usuários que já estavam na sala
       socket?.on(
         "current_room_users",
         async (users: Array<{ socketId: string }>) => {
@@ -68,7 +65,6 @@ export const useCallRoom = (roomId: string) => {
         },
       );
 
-      // Novo participante entrou
       socket?.on("user_joined", ({ socketId }) => {
         if (!socket) return;
         if (!peersRef.current[socketId]) {
@@ -114,7 +110,9 @@ export const useCallRoom = (roomId: string) => {
 
           // Processa candidatos ICE pendentes na fila
           if (iceCandidatesQueue.current[responderSocketId]) {
-            for (const candidate of iceCandidatesQueue.current[responderSocketId]) {
+            for (const candidate of iceCandidatesQueue.current[
+              responderSocketId
+            ]) {
               await peer.addIceCandidate(new RTCIceCandidate(candidate));
             }
             delete iceCandidatesQueue.current[responderSocketId];
@@ -202,7 +200,10 @@ export const useCallRoom = (roomId: string) => {
     };
 
     peer.ontrack = (event: any) => {
-      console.log(`[WebRTC] Track de mídia recebida de ${targetSocketId}:`, event.track.kind);
+      console.log(
+        `[WebRTC] Track de mídia recebida de ${targetSocketId}:`,
+        event.track.kind,
+      );
       if (event.streams && event.streams[0]) {
         const remoteStream = event.streams[0];
         setRemoteStreams((prev) => ({
@@ -226,9 +227,46 @@ export const useCallRoom = (roomId: string) => {
   const toggleVideo = async (enableVideo: boolean) => {
     if (!localStream) return;
 
-    localStream.getVideoTracks().forEach((track: any) => {
-      track.enabled = enableVideo;
-    });
+    let videoTrack = localStream.getVideoTracks()[0];
+
+    if (enableVideo && !videoTrack) {
+      try {
+        const videoStream = await mediaDevices.getUserMedia({
+          audio: false,
+          video: true,
+        });
+
+        videoTrack = videoStream.getVideoTracks()[0];
+
+        if (videoTrack) {
+          localStream.addTrack(videoTrack);
+
+          Object.values(peersRef.current).forEach((peer) => {
+            const senders = peer.getSenders();
+            const videoSender = senders.find(
+              (s: any) => s.track?.kind === "video",
+            );
+
+            if (videoSender) {
+              videoSender.replaceTrack(videoTrack);
+            } else {
+              peer.addTrack(videoTrack, localStream);
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao capturar câmera:", error);
+        return;
+      }
+    } else if (videoTrack) {
+      // Se a faixa já existe, apenas ativa ou desativa
+      videoTrack.enabled = enableVideo;
+    }
+
+    // Clona a referência para forçar o re-render no React
+    setLocalStream(
+      Object.assign(new MediaStream(localStream.getTracks()), localStream),
+    );
   };
 
   return { localStream, remoteStreams, toggleAudio, toggleVideo };

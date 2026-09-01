@@ -1,11 +1,44 @@
+import CachedImage from "@components/CachedImage";
 import { RTCView } from "@stream-io/react-native-webrtc";
 import fonts from "@styles/fonts";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { css } from "styled-components/native";
 
 interface ControlButtonProps {
   isActive?: boolean;
 }
+
+interface GridCardProps {
+  totalItems: number;
+}
+
+const getCardDimensions = (totalItems: number) => {
+  switch (totalItems) {
+    case 1:
+      return css`
+        width: 100%;
+        height: 100%;
+      `;
+    case 2:
+      return css`
+        width: 100%;
+        height: 48.5%;
+      `;
+    case 3:
+    case 4:
+      return css`
+        width: 48.5%;
+        height: 48.5%;
+      `;
+    case 5:
+    case 6:
+    default:
+      return css`
+        width: 48.5%;
+        height: 31.5%;
+      `;
+  }
+};
 
 export const Container = styled(SafeAreaView)`
   flex: 1;
@@ -37,28 +70,44 @@ export const GridContainer = styled.View`
   flex-wrap: wrap;
   padding: 8px;
   justify-content: space-between;
-  align-content: center;
+  align-content: space-between;
 `;
 
-export const ParticipantCard = styled.View`
-  width: 48%;
-  height: 31%;
+export const ParticipantCard = styled.View<GridCardProps>`
   background-color: ${({ theme }) => theme.colors.shape};
   border-radius: 12px;
-  margin-bottom: 4%;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+
+  ${({ totalItems }) => getCardDimensions(totalItems)}
+`;
+
+export const MoreCard = styled.TouchableOpacity<GridCardProps>`
+  background-color: #29292e;
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #8d8d99;
+
+  ${({ totalItems }) => getCardDimensions(totalItems)}
 `;
 
 export const Avatar = styled.View`
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
   background-color: #41414d;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+`;
+
+export const AvatarImage = styled(CachedImage)`
+  width: 100%;
+  height: 100%;
+  border-radius: 36px;
 `;
 
 export const AvatarText = styled.Text`
@@ -73,26 +122,15 @@ export const NameContainer = styled.View`
   left: 8px;
   right: 8px;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 4px 8px;
+  padding: 8px;
   border-radius: 4px;
 `;
 
 export const Name = styled.Text`
   color: #ffffff;
-  font-size: 12px;
+  font-size: 16px;
   text-align: center;
   font-family: ${fonts["text"]};
-`;
-
-export const MoreCard = styled.TouchableOpacity`
-  width: 48%;
-  height: 31%;
-  background-color: #29292e;
-  border-radius: 12px;
-  margin-bottom: 4%;
-  align-items: center;
-  justify-content: center;
-  border: 1px dashed #8d8d99;
 `;
 
 export const MoreText = styled.Text`
@@ -121,7 +159,7 @@ export const ControlButton = styled.TouchableOpacity<ControlButtonProps>`
   height: 50px;
   border-radius: 25px;
   background-color: ${({ isActive, theme }) =>
-    isActive ? theme.colors.primary : theme.colors.light_gray};
+    isActive ? theme.colors.primary : theme.colors.dark_gray};
   align-items: center;
   justify-content: center;
 `;
