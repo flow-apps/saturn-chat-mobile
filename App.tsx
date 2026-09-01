@@ -86,6 +86,12 @@ function App() {
     }
   }, [isUpdateAvailable]);
 
+  useEffect(() => {
+    if (fontLoaded && !isUpdating) {
+      hideAsync();
+    }
+  }, [fontLoaded, isUpdating]);
+
   if (!fontLoaded || isUpdating) {
     return (
       <View style={styles.splashContainer}>
