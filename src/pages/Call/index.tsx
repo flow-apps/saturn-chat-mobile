@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  Feather,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import InCallManager from "react-native-incall-manager";
-import { Modal, ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Modal,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 import CustomAlert from "@components/Alert";
 import { useTranslate } from "@hooks/useTranslate";
-import { useCallRoom } from "@hooks/useCallRoom";
 import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
 import { useCallStatus } from "@contexts/callStatus";
@@ -24,7 +25,6 @@ import {
   ParticipantCard,
   Avatar,
   AvatarImage,
-  AvatarText,
   NameContainer,
   Name,
   MoreCard,
@@ -44,8 +44,11 @@ const MAX_DISPLAY = 12;
 const Call: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isLocalPrimary, setIsLocalPrimary] = useState(false);
-  const [isParticipantsModalVisible, setParticipantsModalVisible] = useState(false);
-  const [focusedParticipant, setFocusedParticipant] = useState<RoomUser | null>(null);
+  const [isParticipantsModalVisible, setParticipantsModalVisible] =
+    useState(false);
+  const [focusedParticipant, setFocusedParticipant] = useState<RoomUser | null>(
+    null,
+  );
   const [callAlert, setCallAlert] = useState({
     visible: false,
     title: "",
@@ -80,11 +83,20 @@ const Call: React.FC = () => {
   ]);
 
   const totalParticipants = participants.length;
-  const localParticipant = participants.find((item) => item.socketId === "local");
-  const remoteParticipant = participants.find((item) => item.socketId !== "local");
-  const isDirectCall = totalParticipants === 2 && !!localParticipant && !!remoteParticipant;
-  const primaryParticipant = isLocalPrimary ? localParticipant : remoteParticipant;
-  const secondaryParticipant = isLocalPrimary ? remoteParticipant : localParticipant;
+  const localParticipant = participants.find(
+    (item) => item.socketId === "local",
+  );
+  const remoteParticipant = participants.find(
+    (item) => item.socketId !== "local",
+  );
+  const isDirectCall =
+    totalParticipants === 2 && !!localParticipant && !!remoteParticipant;
+  const primaryParticipant = isLocalPrimary
+    ? localParticipant
+    : remoteParticipant;
+  const secondaryParticipant = isLocalPrimary
+    ? remoteParticipant
+    : localParticipant;
 
   const hasMore = totalParticipants > MAX_DISPLAY;
 
@@ -133,7 +145,10 @@ const Call: React.FC = () => {
     navigation.goBack();
   };
 
-  const showCallAlert = (message: string, fallbackTitle = t("errors.default.title")) => {
+  const showCallAlert = (
+    message: string,
+    fallbackTitle = t("errors.default.title"),
+  ) => {
     const lowerMessage = message.toLowerCase();
 
     let title = fallbackTitle;
@@ -151,10 +166,17 @@ const Call: React.FC = () => {
     } else if (lowerMessage.includes("allows up to")) {
       title = t("errors.participant_limit.title");
       content = message;
-    } else if (lowerMessage.includes("inactivity") || lowerMessage.includes("inactivity_timeout")) {
+    } else if (
+      lowerMessage.includes("inactivity") ||
+      lowerMessage.includes("inactivity_timeout")
+    ) {
       title = t("errors.inactivity_timeout.title");
       content = t("errors.inactivity_timeout.content");
-    } else if (lowerMessage.includes("call room") || lowerMessage.includes("room closed") || lowerMessage.includes("closed")) {
+    } else if (
+      lowerMessage.includes("call room") ||
+      lowerMessage.includes("room closed") ||
+      lowerMessage.includes("closed")
+    ) {
       title = t("errors.call_closed.title");
       content = t("errors.call_closed.content");
     } else if (lowerMessage.includes("not part of this direct call")) {
@@ -369,7 +391,9 @@ const Call: React.FC = () => {
         animationType="fade"
         onRequestClose={() => setParticipantsModalVisible(false)}
       >
-        <TouchableWithoutFeedback onPress={() => setParticipantsModalVisible(false)}>
+        <TouchableWithoutFeedback
+          onPress={() => setParticipantsModalVisible(false)}
+        >
           <View
             style={{
               flex: 1,
@@ -400,7 +424,9 @@ const Call: React.FC = () => {
                     borderBottomColor: "#2E2E33",
                   }}
                 >
-                  <HeaderTitle style={{ fontSize: 18 }}>{t("participants_modal.title")}</HeaderTitle>
+                  <HeaderTitle style={{ fontSize: 18 }}>
+                    {t("participants_modal.title")}
+                  </HeaderTitle>
                   <ControlButton
                     onPress={() => setParticipantsModalVisible(false)}
                     isActive
@@ -471,7 +497,11 @@ const Call: React.FC = () => {
         </ControlButton>
 
         <ControlButton onPress={switchCamera} isActive={isVideoEnabled}>
-          <MaterialCommunityIcons name="camera-switch-outline" size={22} color="#FFF" />
+          <MaterialCommunityIcons
+            name="camera-switch-outline"
+            size={22}
+            color="#FFF"
+          />
         </ControlButton>
 
         <EndCallButton onPress={handleEndCall}>

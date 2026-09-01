@@ -3,18 +3,12 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useCallStatus } from "@contexts/callStatus";
 import { useTranslate } from "@hooks/useTranslate";
-import {
-  getCurrentRoute,
-  navigate,
-  subscribeToRouteChanges,
-} from "@routes/rootNavigation";
+import { getCurrentRoute, navigate, navigationRef } from "@routes/rootNavigation";
 
 const CallFloatingButton: React.FC = () => {
   const { activeCallRoomId } = useCallStatus();
   const { t } = useTranslate("Call");
-  const [currentRouteName, setCurrentRouteName] = useState<
-    string | undefined
-  >();
+  const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
   useEffect(() => {
     const refreshRoute = () => {
@@ -24,7 +18,7 @@ const CallFloatingButton: React.FC = () => {
 
     refreshRoute();
 
-    const unsubscribe = subscribeToRouteChanges(refreshRoute);
+    const unsubscribe = navigationRef.current?.addListener("state", refreshRoute);
 
     return () => {
       unsubscribe?.();
@@ -32,6 +26,7 @@ const CallFloatingButton: React.FC = () => {
   }, []);
 
   const handlePress = () => {
+    if (!activeCallRoomId) return;
     navigate("Call", { groupId: activeCallRoomId });
   };
 

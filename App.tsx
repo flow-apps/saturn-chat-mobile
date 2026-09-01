@@ -124,7 +124,6 @@ function App() {
                           <RemoteConfigsProvider>
                             <CallStatusProvider>
                               <HomeProvider>
-                                <CallFloatingButton />
                                 <Routes />
                               </HomeProvider>
                             </CallStatusProvider>

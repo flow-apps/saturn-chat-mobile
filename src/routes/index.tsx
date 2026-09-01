@@ -15,6 +15,7 @@ import * as Linking from "expo-linking";
 import analytics from "@react-native-firebase/analytics";
 import { useTheme } from "styled-components";
 import * as Notifications from "expo-notifications";
+import CallFloatingButton from "@components/CallFloatingButton";
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
@@ -94,6 +95,7 @@ const Routes = () => {
       }}
       ref={navigationRef}
     >
+      {!loadingData && <CallFloatingButton />}
       {signed ? <AppRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );
