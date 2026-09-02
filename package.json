@@ -6,16 +6,11 @@
     "start": "expo start --dev-client",
     "android": "expo run:android --variant betaDebug",
     "ios": "expo run:ios",
-    "web": "expo start --web",
-    "bundle-visualizer": "react-native-bundle-visualizer --platform android --only-mapped --expo true --reset-cache",
-    "build:apk": "cd android && ./gradlew assembleRelease",
-    "build:aab": "cd android && ./gradlew bundleRelease",
+    "bundle-visualizer": "react-native-bundle-visualizer --expo true --platform android --dev false --entry-file index.js --bundle-output ./android-bundle.js --sourcemap-output ./android-bundle.map",
     "build:clean": "cd android && ./gradlew clean",
     "build:stop": "cd android && ./gradlew --stop",
     "build:beta": "cd android && ./gradlew bundleBetaRelease",
-    "build:prod": "cd android && ./gradlew bundleProductionRelease",
-    "open-emulator:pixel5": "emulator -avd Pixel_5_API_34",
-    "open-emulator:pixel4": "emulator -avd Pixel_4_API_30"
+    "build:prod": "cd android && ./gradlew bundleProductionRelease"
   },
   "dependencies": {
     "@config-plugins/react-native-webrtc": "^15.0.2",

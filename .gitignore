@@ -41,3 +41,5 @@ yarn-error.*
 *.tsbuildinfo
 
 *.bak
+*-bundle.js*
+*.map

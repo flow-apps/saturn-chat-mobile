@@ -172,8 +172,9 @@ export const useCallRoom = (
         async (users: Array<{ socketId: string }>) => {
           if (!socket) return;
           for (const targetUser of users) {
-            const peer = createPeer(targetUser.socketId, stream, socket);
-            peersRef.current[targetUser.socketId] = peer;
+            const peer = ensurePeer(targetUser.socketId, stream, socket);
+
+            if (peer.signalingState !== "stable") continue;
 
             const offer = await peer.createOffer({});
             await peer.setLocalDescription(offer);
@@ -188,19 +189,16 @@ export const useCallRoom = (
 
       socket?.on("user_joined", ({ socketId }) => {
         if (!socket) return;
-        if (!peersRef.current[socketId]) {
-          const peer = createPeer(socketId, stream, socket);
-          peersRef.current[socketId] = peer;
-        }
+        ensurePeer(socketId, stream, socket);
       });
 
       socket?.on("receive_offer", async ({ callerSocketId, offer }) => {
         if (!socket) return;
 
-        let peer = peersRef.current[callerSocketId];
-        if (!peer) {
-          peer = createPeer(callerSocketId, stream, socket);
-          peersRef.current[callerSocketId] = peer;
+        const peer = ensurePeer(callerSocketId, stream, socket);
+
+        if (peer.remoteDescription && peer.remoteDescription.type === "offer") {
+          return;
         }
 
         await peer.setRemoteDescription(new RTCSessionDescription(offer));
@@ -343,11 +341,17 @@ export const useCallRoom = (
     stream: MediaStream,
     activeSocket: Socket,
   ) => {
+    const existingPeer = peersRef.current[targetSocketId];
+    if (existingPeer) {
+      return existingPeer;
+    }
+
     const peerConfig = Array.isArray(configs.ICE_SERVERS_CONFIG)
       ? { iceServers: configs.ICE_SERVERS_CONFIG }
       : configs.ICE_SERVERS_CONFIG;
 
     const peer = new RTCPeerConnection(peerConfig);
+    peersRef.current[targetSocketId] = peer;
 
     stream.getTracks().forEach((track: any) => peer.addTrack(track, stream));
 
@@ -387,6 +391,12 @@ export const useCallRoom = (
 
     return peer;
   };
+
+  const ensurePeer = (
+    targetSocketId: string,
+    stream: MediaStream,
+    activeSocket: Socket,
+  ) => createPeer(targetSocketId, stream, activeSocket);
 
   const toggleAudio = (isMuted: boolean) => {
     if (localStream) {
