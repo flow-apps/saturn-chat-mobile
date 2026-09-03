@@ -3,9 +3,7 @@
     "name": "Saturn Chat",
     "slug": "SaturnChat",
     "version": "0.2.0",
-    "platforms": [
-      "android"
-    ],
+    "platforms": ["android"],
     "scheme": "saturnchat",
     "android": {
       "package": "com.flowapps.saturnchat",
@@ -36,7 +34,16 @@
       "expo-splash-screen",
       "expo-status-bar",
       "expo-local-authentication",
-      "@config-plugins/react-native-webrtc"
+      "@config-plugins/react-native-webrtc",
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/notification-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "calls",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ]
     ]
   },
   "react-native-google-mobile-ads": {
