@@ -656,6 +656,10 @@ export const en = {
     header_group_title: "Group options",
     header_chat_title: "Chat options",
     alerts: {
+      error: {
+        title: "Error",
+        content: "Could not load the group settings.",
+      },
       delete_group: {
         title: "⚠ Caution, this is dangerous!",
         content:

@@ -20,6 +20,7 @@ import Alert from "@components/Alert";
 import {
   rolesForDeleteGroup,
   rolesForEditGroup,
+  rolesForEditConfigs,
   rolesForInvite,
 } from "@utils/authorizedRoles";
 
@@ -48,6 +49,12 @@ const uniqueSettings = (settings?: ISetting[]) =>
 const isSettingEnabled = (setting?: ISetting) =>
   String(setting?.setting_value) === "true";
 
+interface AlertConfigState {
+  visible: boolean;
+  title: string;
+  content: string;
+}
+
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
   const [participant, setParticipant] = useState<ParticipantsData>(
@@ -63,6 +70,11 @@ const GroupConfig: React.FC = () => {
     useState(false);
   const [showGroupSettings, setShowGroupSettings] = useState(false);
   const [canManageAntiPrint, setCanManageAntiPrint] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
+    visible: false,
+    title: "",
+    content: "",
+  });
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -74,64 +86,78 @@ const GroupConfig: React.FC = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const groupRes = await api.get(`/group/${id}`);
-      const participantRes = await api.get(`/group/participant/${id}`);
+      try {
+        const groupRes = await api.get(`/group/${id}`);
+        const participantRes = await api.get(`/group/participant/${id}`);
 
-      if (groupRes.status === 200) {
-        setGroup(groupRes.data);
-        setGroupSettings(uniqueSettings(groupRes.data.group_settings));
-      }
+        if (groupRes.status === 200) {
+          setGroup(groupRes.data);
+        }
 
-      if (participantRes.status === 200) {
-        setParticipant(participantRes.data.participant);
-        setParticipantSettings(
-          uniqueSettings(
-            participantRes.data.participant.participant_settings,
-          ),
+        if (participantRes.status === 200) {
+          setParticipant(participantRes.data.participant);
+          setParticipantSettings(
+            uniqueSettings(
+              participantRes.data.participant.participant_settings,
+            ),
+          );
+
+          if (groupRes.data.type === "DIRECT") {
+            const participantSettingsRes = await api.get(
+              `/group/participant/settings/${participantRes.data.participant.id}`,
+            );
+            if (participantSettingsRes.status === 200) {
+              setParticipantSettings(
+                uniqueSettings(
+                  participantSettingsRes.data.settings || participantSettingsRes.data,
+                ),
+              );
+            }
+          }
+        }
+
+        const canAccessGroupSettings = rolesForEditConfigs.includes(
+          participantRes.data.participant.role,
         );
 
-        if (groupRes.data.type === "DIRECT") {
-          const participantSettingsRes = await api.get(
-            `/group/participant/settings/${participantRes.data.participant.id}`,
-          );
-          if (participantSettingsRes.status === 200) {
-            setParticipantSettings(
-              uniqueSettings(
-                participantSettingsRes.data.settings || participantSettingsRes.data,
-              ),
+        if (
+          groupRes.status === 200 &&
+          groupRes.data.type === "GROUP" &&
+          canAccessGroupSettings
+        ) {
+          const groupSettingsRes = await api.get(`/group/settings/${id}`);
+          if (groupSettingsRes.status === 200) {
+            setGroupSettings(
+              uniqueSettings(groupSettingsRes.data.settings || groupSettingsRes.data),
             );
           }
         }
+      } catch (error: any) {
+        console.error("Erro ao carregar as configurações do grupo:", error);
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content:
+            error?.response?.data?.message ||
+            t("alerts.error.content", {
+              defaultValue: "Não foi possível carregar as configurações do grupo.",
+            }),
+        });
+      } finally {
+        setLoading(false);
       }
-
-      if (groupRes.status === 200 && groupRes.data.type === "GROUP") {
-        const groupSettingsRes = await api.get(`/group/settings/${id}`);
-        if (groupSettingsRes.status === 200) {
-          setGroupSettings(
-            uniqueSettings(groupSettingsRes.data.settings || groupSettingsRes.data),
-          );
-        }
-      }
-      setLoading(false);
     })();
-  }, []);
+  }, [id, t]);
 
   useEffect(() => {
     if (!participant) return;
-    const authorizedRoles = [
-      ParticipantRoles.ADMIN,
-      ParticipantRoles.MANAGER,
-      ParticipantRoles.MODERATOR,
-      ParticipantRoles.OWNER,
-    ];
     const antiPrintRoles = [
       ParticipantRoles.ADMIN,
       ParticipantRoles.MANAGER,
-      ParticipantRoles.MODERATOR,
       ParticipantRoles.OWNER,
     ];
 
-    setShowGroupSettings(authorizedRoles.includes(participant.role));
+    setShowGroupSettings(rolesForEditConfigs.includes(participant.role));
     setCanManageAntiPrint(antiPrintRoles.includes(participant.role));
   }, [participant]);
 
@@ -200,7 +226,10 @@ const GroupConfig: React.FC = () => {
 
     setLoading(true);
 
-    if (hasUpdateGroupSettings) {
+    if (
+      hasUpdateGroupSettings &&
+      rolesForEditConfigs.includes(participant.role)
+    ) {
       await api
         .patch(`/group/settings/${id}`, { settings: groupSettings })
         .then((res) => {
@@ -252,6 +281,15 @@ const GroupConfig: React.FC = () => {
 
   return (
     <>
+      <Alert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        content={alertConfig.content}
+        extraButton={false}
+        okButtonAction={() =>
+          setAlertConfig((previous) => ({ ...previous, visible: false }))
+        }
+      />
       <Header
         title={
           group.type === "GROUP"

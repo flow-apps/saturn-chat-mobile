@@ -657,6 +657,10 @@ export const de = {
     header_group_title: "Gruppenoptionen",
     header_chat_title: "Chat-Optionen",
     alerts: {
+      error: {
+        title: "Fehler",
+        content: "Die Gruppeneinstellungen konnten nicht geladen werden.",
+      },
       delete_group: {
         title: "⚠ Achtung, das ist gefährlich!",
         content:

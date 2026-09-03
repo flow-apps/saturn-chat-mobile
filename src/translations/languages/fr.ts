@@ -660,6 +660,10 @@ export const fr = {
     header_group_title: "Options du groupe",
     header_chat_title: "Options du tchat",
     alerts: {
+      error: {
+        title: "Erreur",
+        content: "Impossible de charger les paramètres du groupe.",
+      },
       delete_group: {
         title: "⚠ Attention, c'est dangereux !",
         content:

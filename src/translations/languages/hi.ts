@@ -656,6 +656,10 @@ export const hi = {
     header_group_title: "समूह विकल्प",
     header_chat_title: "चैट विकल्प",
     alerts: {
+      error: {
+        title: "त्रुटि",
+        content: "समूह सेटिंग लोड नहीं की जा सकीं।",
+      },
       delete_group: {
         title: "⚠ ध्यान दें, यह खतरनाक है!",
         content:
