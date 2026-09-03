@@ -850,6 +850,7 @@ export const pt = {
     joined: "Participando",
     participants_one: "Participante",
     participants_other: "Participantes",
+    category: "Categoria",
     tags: "Tags do grupo",
     desc: "Descrição",
     no_desc: "Este grupo não possui uma descrição.",

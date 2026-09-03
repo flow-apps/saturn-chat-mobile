@@ -854,6 +854,7 @@ export const es = {
     joined: "Unido",
     participants_one: "Participante",
     participants_other: "Participantes",
+    category: "Categoría",
     tags: "Etiquetas del grupo",
     desc: "Descripción",
     no_desc: "Este grupo no tiene una descripción.",

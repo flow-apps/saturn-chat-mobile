@@ -42,7 +42,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 import { useAuth } from "@contexts/auth";
 import { HeaderButton } from "@components/Header/styles";
-import { ReportToType } from "@type/enums";
+import { GroupCategory, ReportToType } from "@type/enums";
 
 const GroupInfos: React.FC = () => {
   const [group, setGroup] = useState<GroupData>();
@@ -51,6 +51,7 @@ const GroupInfos: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const { t } = useTranslate("GroupInfos");
+  const { t: categoryT } = useTranslate("NewGroup");
   const { id } = useRoute().params as { id: string };
   const { user } = useAuth();
 
@@ -168,6 +169,22 @@ const GroupInfos: React.FC = () => {
                   </ParticipantsTitle>
                 </ParticipantsContainer>
               </ParticipantsInfosContainer>
+
+              <GroupTagsContainer>
+                <GroupTagsTitle>
+                  <Feather name="grid" size={20} /> {t("category")}
+                </GroupTagsTitle>
+                <GroupTagContainer>
+                  <GroupTagText>
+                    {categoryT(`categories.${group.category}`, {
+                      defaultValue: (group.category || GroupCategory.OTHER).replace(
+                        /_/g,
+                        " ",
+                      ),
+                    })}
+                  </GroupTagText>
+                </GroupTagContainer>
+              </GroupTagsContainer>
 
               <GroupTagsContainer>
                 <GroupTagsTitle>

@@ -1,5 +1,10 @@
 import { ParticipantData } from "@pages/Home";
-import { FriendsStates, ParticipantRoles, ParticipantStates } from "./enums";
+import {
+  FriendsStates,
+  GroupCategory,
+  ParticipantRoles,
+  ParticipantStates,
+} from "./enums";
 import { Socket } from "socket.io-client";
 
 export interface UserData {
@@ -37,6 +42,7 @@ export interface GroupData {
   description: string;
   privacy: "PUBLIC" | "PRIVATE";
   type: "GROUP" | "DIRECT";
+  category: GroupCategory;
   tags: string[];
   group_avatar: {
     name: string;

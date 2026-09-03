@@ -849,6 +849,7 @@ export const de = {
     joined: "Mitglied",
     participants_one: "Teilnehmer",
     participants_other: "Teilnehmer",
+    category: "Kategorie",
     tags: "Gruppen-Tags",
     desc: "Beschreibung",
     no_desc: "Diese Gruppe hat keine Beschreibung.",

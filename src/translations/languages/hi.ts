@@ -850,6 +850,7 @@ export const hi = {
     joined: "शामिल हैं",
     participants_one: "सदस्य",
     participants_other: "सदस्य",
+    category: "श्रेणी",
     tags: "समूह टैग",
     desc: "विवरण",
     no_desc: "इस समूह का कोई विवरण नहीं है।",
