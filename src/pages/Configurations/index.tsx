@@ -36,13 +36,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 
 const API_PREFERENCE_KEY = "@SaturnChat:useDevApi"; // Same key as in api.ts
 const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
-const BIOMETRICS_INTERVALS = [
-  { label: "Sempre que abrir", minutes: 0 },
-  { label: "A cada 5 minutos", minutes: 5 },
-  { label: "A cada 15 minutos", minutes: 15 },
-  { label: "A cada 30 minutos", minutes: 30 },
-  { label: "A cada 1 hora", minutes: 60 },
-];
+const BIOMETRICS_INTERVALS = [0, 5, 15, 30, 60];
 
 const Settings: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
@@ -156,10 +150,9 @@ const Settings: React.FC = () => {
     setIntervalAlertVisible(true);
   };
 
-  const selectedBiometricsInterval =
-    BIOMETRICS_INTERVALS.find(
-      ({ minutes }) => minutes === biometricsInterval,
-    )?.label || "Sempre que abrir";
+  const selectedBiometricsInterval = BIOMETRICS_INTERVALS.find(
+    (minutes) => minutes === biometricsInterval,
+  );
 
   return (
     <>
@@ -176,19 +169,19 @@ const Settings: React.FC = () => {
         />
         <Alert
           visible={localAuthAlertVisible}
-          title="Autenticação local indisponível"
-          content="Cadastre uma biometria ou senha no dispositivo para ativar esta opção."
+          title={t("account.security.unavailable_title")}
+          content={t("account.security.unavailable_content")}
           extraButton={false}
           okButtonText="OK"
           okButtonAction={() => setLocalAuthAlertVisible(false)}
         />
         <Alert
           visible={intervalAlertVisible}
-          title="Solicitar autenticação"
-          content="Escolha quando o bloqueio deverá ser solicitado."
+          title={t("account.security.interval_title")}
+          content={t("account.security.interval_content")}
           extraButton={false}
-          options={BIOMETRICS_INTERVALS.map(({ label, minutes }) => ({
-            text: label,
+          options={BIOMETRICS_INTERVALS.map((minutes) => ({
+            text: t(`account.security.intervals.${minutes}`),
             action: () => {
               setBiometricsInterval(minutes);
               setIntervalAlertVisible(false);
@@ -257,8 +250,8 @@ const Settings: React.FC = () => {
               </ConfigContainer>
               <ConfigContainer>
                 <ConfigTitle>
-                  <MaterialCommunityIcons name="fingerprint" size={16} /> Exigir
-                  senha ao abrir app
+                  <MaterialCommunityIcons name="fingerprint" size={16} />{" "}
+                  {t("account.security.require_on_open")}
                 </ConfigTitle>
                 <Switcher
                   currentValue={useBiometrics}
@@ -269,9 +262,13 @@ const Settings: React.FC = () => {
                 <ConfigContainer onPress={handleSelectBiometricsInterval}>
                   <ConfigTitle>
                     <MaterialCommunityIcons name="timer-outline" size={16} />{" "}
-                    Solicitar autenticação
+                    {t("account.security.interval")}
                   </ConfigTitle>
-                  <CurrentValueText>{selectedBiometricsInterval}</CurrentValueText>
+                  <CurrentValueText>
+                    {t(
+                      `account.security.intervals.${selectedBiometricsInterval || 0}`,
+                    )}
+                  </CurrentValueText>
                 </ConfigContainer>
               )}
             </ConfigsContainer>

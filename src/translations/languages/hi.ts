@@ -324,6 +324,27 @@ export const hi = {
     account: {
       title: "खाता और गोपनीयता",
       edit_password: "पासवर्ड बदलें",
+      security: {
+        require_on_open: "ऐप खोलते समय पासवर्ड मांगें",
+        interval: "प्रमाणीकरण मांगें",
+        interval_title: "प्रमाणीकरण मांगें",
+        interval_content: "चुनें कि लॉक कब मांगा जाना चाहिए।",
+        unavailable_title: "स्थानीय प्रमाणीकरण उपलब्ध नहीं है",
+        unavailable_content:
+          "इस विकल्प को सक्षम करने के लिए डिवाइस पर बायोमेट्रिक या पासवर्ड पंजीकृत करें।",
+        unlock_prompt: "Saturn Chat अनलॉक करें",
+        unlock_message: "Saturn Chat खोलने के लिए प्रमाणीकरण करें",
+        authenticating: "प्रमाणीकरण की प्रतीक्षा है",
+        unlock_button: "अनलॉक करें",
+        cancel: "रद्द करें",
+        intervals: {
+          0: "हर बार खोलने पर",
+          5: "हर 5 मिनट में",
+          15: "हर 15 मिनट में",
+          30: "हर 30 मिनट में",
+          60: "हर घंटे",
+        },
+      },
     },
     about: {
       developer_options: "डेवलपर विकल्प",

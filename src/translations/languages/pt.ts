@@ -324,6 +324,27 @@ export const pt = {
     account: {
       title: "Conta e privacidade",
       edit_password: "Alterar senha",
+      security: {
+        require_on_open: "Exigir senha ao abrir o app",
+        interval: "Solicitar autenticação",
+        interval_title: "Solicitar autenticação",
+        interval_content: "Escolha quando o bloqueio deverá ser solicitado.",
+        unavailable_title: "Autenticação local indisponível",
+        unavailable_content:
+          "Cadastre uma biometria ou senha no dispositivo para ativar esta opção.",
+        unlock_prompt: "Desbloqueie o Saturn Chat",
+        unlock_message: "Autentique-se para abrir o Saturn Chat",
+        authenticating: "Aguardando autenticação",
+        unlock_button: "Desbloquear",
+        cancel: "Cancelar",
+        intervals: {
+          0: "Sempre que abrir",
+          5: "A cada 5 minutos",
+          15: "A cada 15 minutos",
+          30: "A cada 30 minutos",
+          60: "A cada 1 hora",
+        },
+      },
     },
     about: {
       developer_options: "Opções de Desenvolvedor",

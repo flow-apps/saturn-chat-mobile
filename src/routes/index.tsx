@@ -21,6 +21,7 @@ import { useTheme } from "styled-components";
 import * as Notifications from "expo-notifications";
 import CallFloatingButton from "@components/CallFloatingButton";
 import Button from "@components/Button";
+import { useTranslate } from "@hooks/useTranslate";
 
 const BIOMETRICS_KEY = "@SaturnChat:biometrics";
 const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
@@ -32,6 +33,7 @@ const Routes = () => {
   const { signed, loadingData } = useAuth();
   const { activeCallRoomId } = useCallStatus();
   const { title, colors } = useTheme();
+  const { t } = useTranslate("Settings");
   const [biometricsEnabled, setBiometricsEnabled] = useState(false);
   const [biometricsPreferenceLoaded, setBiometricsPreferenceLoaded] =
     useState(false);
@@ -83,8 +85,8 @@ const Routes = () => {
 
     try {
       const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Desbloqueie o Saturn Chat",
-        cancelLabel: "Cancelar",
+        promptMessage: t("account.security.unlock_prompt"),
+        cancelLabel: t("account.security.cancel"),
       });
       if (result.success) {
         await AsyncStorage.setItem(
@@ -97,7 +99,7 @@ const Routes = () => {
       authenticatingRef.current = false;
       setIsAuthenticating(false);
     }
-  }, [activeCallRoomId, signed]);
+  }, [activeCallRoomId, signed, t]);
 
   useEffect(() => {
     if (!loadingData) {
@@ -183,11 +185,14 @@ const Routes = () => {
           }}
         >
           {isAuthenticating
-            ? "Aguardando autenticação"
-            : "Autentique-se para abrir o Saturn Chat"}
+            ? t("account.security.authenticating")
+            : t("account.security.unlock_message")}
         </Text>
         {!isAuthenticating && (
-          <Button title="Desbloquear" onPress={authenticate} />
+          <Button
+            title={t("account.security.unlock_button")}
+            onPress={authenticate}
+          />
         )}
       </View>
     );

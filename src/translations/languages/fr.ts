@@ -328,6 +328,27 @@ export const fr = {
     account: {
       title: "Compte et confidentialité",
       edit_password: "Changer de mot de passe",
+      security: {
+        require_on_open: "Exiger un mot de passe à l'ouverture de l'application",
+        interval: "Demander l'authentification",
+        interval_title: "Demander l'authentification",
+        interval_content: "Choisissez quand le verrouillage doit être demandé.",
+        unavailable_title: "Authentification locale indisponible",
+        unavailable_content:
+          "Enregistrez une biométrie ou un mot de passe de l'appareil pour activer cette option.",
+        unlock_prompt: "Déverrouillez Saturn Chat",
+        unlock_message: "Authentifiez-vous pour ouvrir Saturn Chat",
+        authenticating: "Authentification en attente",
+        unlock_button: "Déverrouiller",
+        cancel: "Annuler",
+        intervals: {
+          0: "À chaque ouverture",
+          5: "Toutes les 5 minutes",
+          15: "Toutes les 15 minutes",
+          30: "Toutes les 30 minutes",
+          60: "Toutes les heures",
+        },
+      },
     },
     about: {
       developer_options: "Options pour développeurs",
