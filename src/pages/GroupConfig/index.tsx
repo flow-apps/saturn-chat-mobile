@@ -58,7 +58,6 @@ const GroupConfig: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
   const [showExitGroupAlert, setShowExitGroup] = useState(false);
-  const [showAntiPrintAlert, setShowAntiPrintAlert] = useState(false);
   const [hasUpdateGroupSettings, setHasUpdateGroupSettings] = useState(false);
   const [hasUpdateParticipantSettings, setHasUpdateParticipantSettings] =
     useState(false);
@@ -277,12 +276,6 @@ const GroupConfig: React.FC = () => {
         okButtonAction={exitGroup}
         cancelButtonAction={() => setShowExitGroup(false)}
       />
-      <Alert
-        visible={showAntiPrintAlert}
-        title={settingsT("account.security.screenshot_blocked_title")}
-        content={settingsT("account.security.screenshot_blocked_content")}
-        okButtonAction={() => setShowAntiPrintAlert(false)}
-      />
       <Container>
         <OptionsContainer>
           {group.type === "GROUP" && (
@@ -413,7 +406,6 @@ const GroupConfig: React.FC = () => {
                       )}
                       onChangeValue={(value) => {
                         updateGroupSetting("anti_print", value);
-                        if (value) setShowAntiPrintAlert(true);
                       }}
                     />
                   </OptionActionContainer>
@@ -424,7 +416,12 @@ const GroupConfig: React.FC = () => {
         </OptionsContainer>
         <OptionsContainer>
           <SectionTitle>{t("options.participant.title")}</SectionTitle>
-          {participantSettings?.map((setting) => (
+          {participantSettings
+            ?.filter(
+              (setting) =>
+                group.type === "DIRECT" || setting.setting_name !== "anti_print",
+            )
+            .map((setting) => (
             <OptionContainer
               style={{
                 flexDirection: ["select", "participant_role"].includes(
@@ -446,12 +443,6 @@ const GroupConfig: React.FC = () => {
                     currentValue={isSettingEnabled(setting)}
                     onChangeValue={(value) => {
                       updateParticipantSetting(setting.setting_name, value);
-                      if (
-                        setting.setting_name === "anti_print" &&
-                        value
-                      ) {
-                        setShowAntiPrintAlert(true);
-                      }
                     }}
                   />
                 </OptionActionContainer>
