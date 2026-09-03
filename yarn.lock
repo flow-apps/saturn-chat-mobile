@@ -3945,6 +3945,13 @@ expo-linking@~57.0.7:
     expo-constants "~57.0.13"
     invariant "^2.2.4"
 
+expo-local-authentication@~57.0.2:
+  version "57.0.2"
+  resolved "https://registry.yarnpkg.com/expo-local-authentication/-/expo-local-authentication-57.0.2.tgz#31e24db97002d49a27a972c08cb3d088779f6740"
+  integrity sha512-8K4zcrQ5wZkRS1rwEWY8qHbeGVMNh35e9D1VTVKlMHz1O47itW+pW6iBVuqwGFLozN4fRBeEDQH8hu9Gt58YuQ==
+  dependencies:
+    invariant "^2.2.4"
+
 expo-localization@~57.0.1:
   version "57.0.1"
   resolved "https://registry.yarnpkg.com/expo-localization/-/expo-localization-57.0.1.tgz#62d7a99f5d548bcf01bfd36d2411b47f38db9c48"
@@ -3982,6 +3989,11 @@ expo-modules-jsi@~57.0.5:
   version "57.0.5"
   resolved "https://registry.yarnpkg.com/expo-modules-jsi/-/expo-modules-jsi-57.0.5.tgz#cd7fd231ba23e31c673d27ca959372d02559ef33"
   integrity sha512-NQF7MUF0j3rQHV8KJqETYA1SrJr3USvQ/AWEhODo+unMRFBDP9BKpn8+aNGGmx6fa2XLnqC2qulVw4DT6Gp13Q==
+
+expo-screen-capture@~57.0.2:
+  version "57.0.2"
+  resolved "https://registry.yarnpkg.com/expo-screen-capture/-/expo-screen-capture-57.0.2.tgz#9e04ae86b54eec6c5bb4395c04353bcd0dcc1998"
+  integrity sha512-Ww8LFdSXuW7YeHc6/DwZd5tOEUqHAsOy4hLrfBxu99pbv+14sD9Lh0ueZeutg4QVktI+u2XJqFjMqyJ0b/5yxA==
 
 expo-server@^57.0.3:
   version "57.0.3"
