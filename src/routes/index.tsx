@@ -1,4 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as LocalAuthentication from "expo-local-authentication";
 import AppRoutes from "@routes/app.routes";
 import {
   LinkingOptions,
@@ -6,6 +9,7 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { useAuth } from "@contexts/auth";
+import { useCallStatus } from "@contexts/callStatus";
 import { AuthRoutes } from "@routes/auth.routes";
 import { navigate, navigationRef } from "./rootNavigation";
 import Loading from "@components/Loading";
@@ -16,10 +20,102 @@ import analytics from "@react-native-firebase/analytics";
 import { useTheme } from "styled-components";
 import * as Notifications from "expo-notifications";
 import CallFloatingButton from "@components/CallFloatingButton";
+import Button from "@components/Button";
+
+const BIOMETRICS_KEY = "@SaturnChat:biometrics";
+const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
+const BIOMETRICS_LAST_AUTHENTICATED_KEY =
+  "@SaturnChat:biometricsLastAuthenticated";
+const BACKGROUND_LOCK_COOLDOWN_MS = 60 * 1000;
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
+  const { activeCallRoomId } = useCallStatus();
   const { title, colors } = useTheme();
+  const [biometricsEnabled, setBiometricsEnabled] = useState(false);
+  const [biometricsPreferenceLoaded, setBiometricsPreferenceLoaded] =
+    useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const authenticatingRef = useRef(false);
+  const backgroundEnteredAtRef = useRef<number | null>(null);
+
+  const authenticate = useCallback(async () => {
+    if (authenticatingRef.current) {
+      return;
+    }
+
+    if (activeCallRoomId) {
+      setIsUnlocked(true);
+      return;
+    }
+
+    const backgroundEnteredAt = backgroundEnteredAtRef.current;
+    backgroundEnteredAtRef.current = null;
+    const returnedBeforeCooldown =
+      backgroundEnteredAt !== null &&
+      Date.now() - backgroundEnteredAt < BACKGROUND_LOCK_COOLDOWN_MS;
+
+    const [storedPreference, storedInterval, storedLastAuthenticated] =
+      await AsyncStorage.multiGet([
+        BIOMETRICS_KEY,
+        BIOMETRICS_INTERVAL_KEY,
+        BIOMETRICS_LAST_AUTHENTICATED_KEY,
+      ]).then((entries) => entries.map(([, value]) => value));
+    const enabled = storedPreference === "true";
+    const intervalMinutes = Number(storedInterval || 0);
+    const lastAuthenticated = Number(storedLastAuthenticated || 0);
+    const intervalExpired =
+      intervalMinutes === 0 ||
+      !lastAuthenticated ||
+      Date.now() - lastAuthenticated >= intervalMinutes * 60 * 1000;
+    setBiometricsEnabled(enabled);
+    setBiometricsPreferenceLoaded(true);
+
+    if (!signed || !enabled || !intervalExpired || returnedBeforeCooldown) {
+      setIsUnlocked(true);
+      return;
+    }
+
+    authenticatingRef.current = true;
+    setIsAuthenticating(true);
+    setIsUnlocked(false);
+
+    try {
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Desbloqueie o Saturn Chat",
+        cancelLabel: "Cancelar",
+      });
+      if (result.success) {
+        await AsyncStorage.setItem(
+          BIOMETRICS_LAST_AUTHENTICATED_KEY,
+          String(Date.now()),
+        );
+      }
+      setIsUnlocked(result.success);
+    } finally {
+      authenticatingRef.current = false;
+      setIsAuthenticating(false);
+    }
+  }, [activeCallRoomId, signed]);
+
+  useEffect(() => {
+    if (!loadingData) {
+      authenticate();
+    }
+  }, [authenticate, loadingData]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") {
+        authenticate();
+      } else if (!activeCallRoomId) {
+        backgroundEnteredAtRef.current = Date.now();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [activeCallRoomId, authenticate]);
 
   const linking: LinkingOptions<{}> = {
     prefixes: [config.WEBSITE_URL, "saturnchat://", Linking.createURL("/")],
@@ -61,6 +157,40 @@ const Routes = () => {
 
   if (loadingData) {
     return <Loading />;
+  }
+
+  if (
+    signed &&
+    !activeCallRoomId &&
+    (!biometricsPreferenceLoaded || (biometricsEnabled && !isUnlocked))
+  ) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+          backgroundColor: colors.background,
+        }}
+      >
+        <Text
+          style={{
+            marginBottom: 24,
+            color: colors.white,
+            fontSize: 20,
+            textAlign: "center",
+          }}
+        >
+          {isAuthenticating
+            ? "Aguardando autenticação"
+            : "Autentique-se para abrir o Saturn Chat"}
+        </Text>
+        {!isAuthenticating && (
+          <Button title="Desbloquear" onPress={authenticate} />
+        )}
+      </View>
+    );
   }
 
   return (

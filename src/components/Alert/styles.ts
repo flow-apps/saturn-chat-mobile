@@ -66,3 +66,15 @@ export const AlertExtraButton = styled(AlertOkButton)`
 export const AlertExtraButtonText = styled(AlertOkButtonText)`
   color: ${(props) => props.theme.colors.secondary};
 `;
+
+export const AlertOptionsContainer = styled.View`
+  margin-top: 20px;
+`;
+
+export const AlertOptionButton = styled.TouchableOpacity`
+  padding: 8px 0;
+`;
+
+export const AlertOptionButtonText = styled(AlertOkButtonText)`
+  margin-left: 0;
+`;

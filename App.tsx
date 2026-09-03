@@ -46,6 +46,7 @@ import {
   Poppins_300Light_Italic,
 } from "@expo-google-fonts/poppins";
 import { registerGlobals } from "@stream-io/react-native-webrtc";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 preventAutoHideAsync();
 
@@ -110,7 +111,7 @@ function App() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeControllerProvider>
         <FirebaseProvider>
           <AuthProvider>
@@ -138,7 +139,7 @@ function App() {
           </AuthProvider>
         </FirebaseProvider>
       </ThemeControllerProvider>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 

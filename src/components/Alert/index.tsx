@@ -13,11 +13,15 @@ import {
   AlertCancelButtonText,
   AlertExtraButton,
   AlertExtraButtonText,
+  AlertOptionsContainer,
+  AlertOptionButton,
+  AlertOptionButtonText,
 } from "./styles";
 import { TouchableWithoutFeedback } from "react-native";
 import { useTranslate } from "@hooks/useTranslate";
 
 interface AlertProps {
+  options?: { text: string; action: () => any }[];
   title: string;
   content: string;
   okButtonText?: string;
@@ -31,6 +35,7 @@ interface AlertProps {
 }
 
 const Alert = ({
+  options,
   title,
   content,
   okButtonText,
@@ -79,31 +84,41 @@ const Alert = ({
           <AlertModal>
             <AlertTitle>{title}</AlertTitle>
             <AlertContent>{content}</AlertContent>
-            <AlertButtonsContainer>
-              <AlertOkButton onPress={handleOkButton}>
-                <AlertOkButtonText>
-                  {okButtonText ? okButtonText : "OK"}
-                </AlertOkButtonText>
-              </AlertOkButton>
-              {cancelButtonAction ? (
-                <AlertCancelButton onPress={handleCancelButton}>
-                  <AlertCancelButtonText>
-                    {cancelButtonText ? cancelButtonText : t("cancel")}
-                  </AlertCancelButtonText>
-                </AlertCancelButton>
-              ) : (
-                <></>
-              )}
-              {
-                extraButton ? (
+            {options?.length ? (
+              <AlertOptionsContainer>
+                {options.map(({ text, action }) => (
+                  <AlertOptionButton key={text} onPress={action}>
+                    <AlertOptionButtonText>{text}</AlertOptionButtonText>
+                  </AlertOptionButton>
+                ))}
+              </AlertOptionsContainer>
+            ) : (
+              <AlertButtonsContainer>
+                <AlertOkButton onPress={handleOkButton}>
+                  <AlertOkButtonText>
+                    {okButtonText ? okButtonText : "OK"}
+                  </AlertOkButtonText>
+                </AlertOkButton>
+                {cancelButtonAction ? (
+                  <AlertCancelButton onPress={handleCancelButton}>
+                    <AlertCancelButtonText>
+                      {cancelButtonText ? cancelButtonText : t("cancel")}
+                    </AlertCancelButtonText>
+                  </AlertCancelButton>
+                ) : (
+                  <></>
+                )}
+                {extraButton ? (
                   <AlertExtraButton onPress={handleExtraButton}>
-                    <AlertExtraButtonText>{extraButtonText}</AlertExtraButtonText>
+                    <AlertExtraButtonText>
+                      {extraButtonText}
+                    </AlertExtraButtonText>
                   </AlertExtraButton>
                 ) : (
                   <></>
-                )
-              }
-            </AlertButtonsContainer>
+                )}
+              </AlertButtonsContainer>
+            )}
           </AlertModal>
         </AlertContainer>
       </TouchableWithoutFeedback>
