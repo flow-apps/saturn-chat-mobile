@@ -158,6 +158,7 @@ export interface ISetting {
   id: string;
   setting_name: string;
   setting_value: string;
+  effective_setting_value?: string;
   typeof_value: string;
   input_type: string;
 }

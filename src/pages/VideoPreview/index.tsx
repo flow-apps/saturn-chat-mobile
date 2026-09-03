@@ -29,6 +29,12 @@ import { useNavigation } from "@react-navigation/native";
 import { FileService } from "@services/file";
 import { DateUtils } from "@utils/date";
 import { useAuth } from "@contexts/auth";
+import Alert from "@components/Alert";
+import {
+  isScreenshotBlocked,
+  useScreenshotProtection,
+} from "@hooks/useScreenshotProtection";
+import { useTranslate } from "@hooks/useTranslate";
 
 const { convertToMillis } = new DateUtils();
 const TIME_FOR_HIDE_CONTROLS = convertToMillis(3, "SECONDS");
@@ -49,10 +55,20 @@ const VideoPreview: React.FC = () => {
     original_name: string;
     url: string;
     poster: string;
+    antiPrint?: boolean;
+    conversationType?: "GROUP" | "DIRECT";
   };
 
   const { getHeadersForAuthFiles } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslate("Settings");
+  const screenshotBlocked = isScreenshotBlocked({
+    antiPrint: routeParams.antiPrint === true,
+    conversationType: routeParams.conversationType || "DIRECT",
+    settingsLoading: false,
+  });
+  const { screenshotAlertVisible, dismissScreenshotAlert } =
+    useScreenshotProtection(screenshotBlocked, false, `video-${routeParams.url}`);
 
   const videoHeaders = useMemo(
     () => getHeadersForAuthFiles(routeParams.url),
@@ -121,6 +137,12 @@ const VideoPreview: React.FC = () => {
 
   return (
     <>
+      <Alert
+        visible={screenshotAlertVisible}
+        title={t("account.security.screenshot_blocked_title")}
+        content={t("account.security.screenshot_blocked_content")}
+        okButtonAction={dismissScreenshotAlert}
+      />
       <Container>
         <AnimatePresence>
           {!hiddenControls && (

@@ -10,6 +10,12 @@ import { HeaderButton } from "@components/Header/styles";
 import { useCallback } from "react";
 import { FileService } from "@services/file";
 import { useAuth } from "@contexts/auth";
+import Alert from "@components/Alert";
+import {
+  isScreenshotBlocked,
+  useScreenshotProtection,
+} from "@hooks/useScreenshotProtection";
+import { useTranslate } from "@hooks/useTranslate";
 
 interface ImageDimensions {
   width: number;
@@ -21,11 +27,21 @@ const ImagePreview = () => {
 
   const route = useRoute();
   const { getHeadersForAuthFiles } = useAuth();
-  const { name, original_name, url } = route.params as {
+  const { t } = useTranslate("Settings");
+  const { name, original_name, url, antiPrint, conversationType } = route.params as {
     name: string;
     original_name: string;
     url: string;
+    antiPrint?: boolean;
+    conversationType?: "GROUP" | "DIRECT";
   };
+  const screenshotBlocked = isScreenshotBlocked({
+    antiPrint: antiPrint === true,
+    conversationType: conversationType || "DIRECT",
+    settingsLoading: false,
+  });
+  const { screenshotAlertVisible, dismissScreenshotAlert } =
+    useScreenshotProtection(screenshotBlocked, false, `image-${url}`);
 
   const [dimensions, setDimensions] = useState<ImageDimensions>();
   const imageHeaders = useMemo(
@@ -60,6 +76,12 @@ const ImagePreview = () => {
 
   return (
     <>
+      <Alert
+        visible={screenshotAlertVisible}
+        title={t("account.security.screenshot_blocked_title")}
+        content={t("account.security.screenshot_blocked_content")}
+        okButtonAction={dismissScreenshotAlert}
+      />
       <Header bgColor="#111" title={original_name}>
         <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />

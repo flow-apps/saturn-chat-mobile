@@ -40,9 +40,16 @@ import { useTranslate } from "@hooks/useTranslate";
 interface LinkPreviewProps {
   link: LinkData;
   openLink: (link: string) => void;
+  antiPrint: boolean;
+  conversationType: "GROUP" | "DIRECT";
 }
 
-const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
+const LinkPreview: React.FC<LinkPreviewProps> = ({
+  link,
+  openLink,
+  antiPrint,
+  conversationType,
+}) => {
   const ytIFrameRef = useRef<IYouTubeIFrameRef>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [displayTitle, setDisplayTitle] = useState(link.title || link.link);
@@ -73,8 +80,13 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ link, openLink }) => {
       return ytIFrameRef.current.openYouTubeIFrameModal();
     }
 
-    navigation.navigate("ImagePreview", { name: link.link, url: link.image });
-  }, [isYoutubeLink, link.image, link.link, navigation]);
+    navigation.navigate("ImagePreview", {
+      name: link.link,
+      url: link.image,
+      antiPrint,
+      conversationType,
+    });
+  }, [antiPrint, conversationType, isYoutubeLink, link.image, link.link, navigation]);
 
   useEffect(() => {
     const fetchYouTubeData = async () => {

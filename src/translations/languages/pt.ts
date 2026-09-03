@@ -326,6 +326,7 @@ export const pt = {
       edit_password: "Alterar senha",
       security: {
         require_on_open: "Exigir senha ao abrir o app",
+        anti_print: "Bloquear capturas de tela",
         interval: "Solicitar autenticação",
         interval_title: "Solicitar autenticação",
         interval_content: "Escolha quando o bloqueio deverá ser solicitado.",
@@ -337,6 +338,8 @@ export const pt = {
         authenticating: "Aguardando autenticação",
         unlock_button: "Desbloquear",
         cancel: "Cancelar",
+        screenshot_blocked_title: "Captura de tela bloqueada",
+        screenshot_blocked_content: "Esta conversa não permite capturas de tela.",
         intervals: {
           0: "Sempre que abrir",
           5: "A cada 5 minutos",
@@ -656,6 +659,7 @@ export const pt = {
       },
       participant: {
         send_notifications: "Receber notificações de novas mensagens",
+        anti_print: "Bloquear capturas de tela",
         title: "Configurações do participante",
       },
       danger_zone: {

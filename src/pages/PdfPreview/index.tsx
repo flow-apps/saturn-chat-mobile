@@ -9,17 +9,33 @@ import { HeaderButton } from "@components/Header/styles";
 import Feather from "@expo/vector-icons/Feather";
 import { FileService } from "@services/file";
 import { useAuth } from "@contexts/auth";
+import Alert from "@components/Alert";
+import {
+  isScreenshotBlocked,
+  useScreenshotProtection,
+} from "@hooks/useScreenshotProtection";
+import { useTranslate } from "@hooks/useTranslate";
 
 const PdfPreview = () => {
   const linkUtils = new LinkUtils();
   const fileService = new FileService();
   const route = useRoute();
   const { getHeadersForAuthFiles } = useAuth();
-  const { name, original_name, url } = route.params as {
+  const { t } = useTranslate("Settings");
+  const { name, original_name, url, antiPrint, conversationType } = route.params as {
     name: string;
     original_name: string;
     url: string;
+    antiPrint?: boolean;
+    conversationType?: "GROUP" | "DIRECT";
   };
+  const screenshotBlocked = isScreenshotBlocked({
+    antiPrint: antiPrint === true,
+    conversationType: conversationType || "DIRECT",
+    settingsLoading: false,
+  });
+  const { screenshotAlertVisible, dismissScreenshotAlert } =
+    useScreenshotProtection(screenshotBlocked, false, `pdf-${url}`);
 
   const pdfHeaders = useMemo(
     () => getHeadersForAuthFiles(url),
@@ -36,6 +52,12 @@ const PdfPreview = () => {
 
   return (
     <>
+      <Alert
+        visible={screenshotAlertVisible}
+        title={t("account.security.screenshot_blocked_title")}
+        content={t("account.security.screenshot_blocked_content")}
+        okButtonAction={dismissScreenshotAlert}
+      />
       <Header title={original_name}>
         <HeaderButton onPress={downloadFile}>
           <Feather name="download" size={25} color="#fff" />

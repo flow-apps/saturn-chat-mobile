@@ -329,6 +329,7 @@ export const es = {
       edit_password: "Cambiar contraseña",
       security: {
         require_on_open: "Solicitar contraseña al abrir la aplicación",
+        anti_print: "Bloquear capturas de pantalla",
         interval: "Solicitar autenticación",
         interval_title: "Solicitar autenticación",
         interval_content: "Elige cuándo se debe solicitar el bloqueo.",
@@ -340,6 +341,8 @@ export const es = {
         authenticating: "Esperando autenticación",
         unlock_button: "Desbloquear",
         cancel: "Cancelar",
+        screenshot_blocked_title: "Captura de pantalla bloqueada",
+        screenshot_blocked_content: "Esta conversación no permite capturas de pantalla.",
         intervals: {
           0: "Cada vez que se abra",
           5: "Cada 5 minutos",
@@ -685,6 +688,7 @@ export const es = {
   },
   Participant: {
     title: "Opciones del participante",
+        anti_print: "Bloquear capturas de pantalla",
     view_profile: "Ver perfil",
     change_role: "Cambiar rol",
     kick: "Expulsar",

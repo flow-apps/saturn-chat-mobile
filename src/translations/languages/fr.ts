@@ -330,6 +330,7 @@ export const fr = {
       edit_password: "Changer de mot de passe",
       security: {
         require_on_open: "Exiger un mot de passe à l'ouverture de l'application",
+        anti_print: "Bloquer les captures d'écran",
         interval: "Demander l'authentification",
         interval_title: "Demander l'authentification",
         interval_content: "Choisissez quand le verrouillage doit être demandé.",
@@ -341,6 +342,8 @@ export const fr = {
         authenticating: "Authentification en attente",
         unlock_button: "Déverrouiller",
         cancel: "Annuler",
+        screenshot_blocked_title: "Capture d'écran bloquée",
+        screenshot_blocked_content: "Cette conversation n'autorise pas les captures d'écran.",
         intervals: {
           0: "À chaque ouverture",
           5: "Toutes les 5 minutes",
@@ -660,6 +663,7 @@ export const fr = {
       },
       participant: {
         send_notifications: "Recevoir les notifications de nouveaux messages",
+        anti_print: "Bloquer les captures d'écran",
         title: "Paramètres du participant",
       },
       danger_zone: {

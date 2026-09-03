@@ -48,7 +48,10 @@ import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
 import { useTranslate } from "@hooks/useTranslate";
 import { ArrayUtils } from "@utils/array";
-import { getSettingValue } from "@utils/settings";
+import {
+  getEffectiveSettingValue,
+  getSettingValue,
+} from "@utils/settings";
 import { OneSignal } from "@configs/notifications";
 
 import { File, ordernedRolesArray } from "./types";
@@ -57,6 +60,10 @@ import { useChatAudio } from "@hooks/useChatAudio";
 import { ChatInput } from "@components/Chat/ChatInput";
 import { Container, MessageContainer } from "./styles";
 import { PollModal } from "@components/Chat/PollModal";
+import {
+  isScreenshotBlocked,
+  useScreenshotProtection,
+} from "@hooks/useScreenshotProtection";
 
 const MESSAGES_LIMIT_REQUEST = 50;
 
@@ -109,6 +116,7 @@ const Chat: React.FC = () => {
   const { colors } = useTheme();
   const appState = useAppState();
   const { t } = useTranslate("Chat");
+  const { t: settingsT } = useTranslate("Settings");
 
   const flashListRef = useRef<FlashList<MessageData>>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
@@ -159,6 +167,25 @@ const Chat: React.FC = () => {
     content: "",
   });
 
+  const antiPrintSetting =
+    group.type === "DIRECT"
+      ? getEffectiveSettingValue(
+          participant.participant_settings,
+          "anti_print",
+        )
+      : getSettingValue(group.group_settings, "anti_print");
+  const screenshotBlocked = isScreenshotBlocked({
+    antiPrint: antiPrintSetting === true || antiPrintSetting === "true",
+    conversationType: group.type,
+    settingsLoading: loading || !group.id || !participant.id,
+  });
+  const { screenshotAlertVisible, dismissScreenshotAlert } =
+    useScreenshotProtection(
+      screenshotBlocked,
+      loading || !group.id || !participant.id,
+      `chat-${id}`,
+    );
+
   const hideAlert = useCallback(() => {
     setAlertConfig((prev) => ({ ...prev, visible: false }));
   }, []);
@@ -178,6 +205,17 @@ const Chat: React.FC = () => {
     connected,
     currentGroupId,
   } = useChat();
+  const oldMessagesRef = useRef(oldMessages);
+  const typingUsersRef = useRef(typingUsers);
+  const replyingMessageRef = useRef(replyingMessage);
+  const userRef = useRef(user);
+  const handleSetReadMessageRef = useRef(handleSetReadMessage);
+
+  oldMessagesRef.current = oldMessages;
+  typingUsersRef.current = typingUsers;
+  replyingMessageRef.current = replyingMessage;
+  userRef.current = user;
+  handleSetReadMessageRef.current = handleSetReadMessage;
 
   useEffect(() => {
     const showSub = Keyboard.addListener(
@@ -315,15 +353,16 @@ const Chat: React.FC = () => {
     });
 
     onNewUserMessage((msg) => {
-      if (arrayUtils.has(oldMessages, (m) => m.id === msg.id)) return;
+      if (arrayUtils.has(oldMessagesRef.current, (m) => m.id === msg.id))
+        return;
       setOldMessages((old) => sortMessages(_.uniqBy([msg, ...old], "id")));
-      handleSetReadMessage(msg.id);
+      handleSetReadMessageRef.current(msg.id);
     });
 
     onNewUserTyping((newUser) => {
       if (
-        newUser.id !== user?.id &&
-        !arrayUtils.has(typingUsers, (u) => u.id === newUser.id)
+        newUser.id !== userRef.current?.id &&
+        !arrayUtils.has(typingUsersRef.current, (u) => u.id === newUser.id)
       )
         setTypingUsers((old) => [...old, newUser]);
     });
@@ -335,16 +374,17 @@ const Chat: React.FC = () => {
     );
 
     onDeleteUserMessage((res) => {
-      if (replyingMessage?.id === res.id) setReplyingMessage(undefined);
+      if (replyingMessageRef.current?.id === res.id)
+        setReplyingMessage(undefined);
       setOldMessages((old) => old.filter((m) => m.id !== res.id));
     });
   }, [
-    socket,
-    oldMessages,
-    typingUsers,
-    replyingMessage,
     sortMessages,
     onSendedUserMessage,
+    onNewUserMessage,
+    onNewUserTyping,
+    onDeletedUserTyping,
+    onDeleteUserMessage,
   ]);
 
   const handleSendVoice = async (duration: number, uri: string) => {
@@ -457,7 +497,6 @@ const Chat: React.FC = () => {
 
   const fetchParticipantAndGroup = useCallback(
     async (isSilent = false) => {
-      // Só ativa a tela inteira de loading na primeira execução
       if (!isSilent && !initialLoadDone.current) {
         setLoading(true);
       }
@@ -471,6 +510,7 @@ const Chat: React.FC = () => {
         if (pRes.status === 200) {
           setParticipant(pRes.data.participant);
           setGroup(pRes.data.participant.group);
+          console.log(group);
         }
         if (listRes.status === 200) setParticipants(listRes.data);
         if (Platform.OS === "android")
@@ -614,6 +654,7 @@ const Chat: React.FC = () => {
           group={group}
           disableReply={!canSendMessage}
           participants={participants}
+          antiPrint={screenshotBlocked}
         />
       </AnimatedMessage>
     ),
@@ -676,6 +717,10 @@ const Chat: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
+      if (initialLoadDone.current) {
+        fetchParticipantAndGroup(true);
+      }
+
       if (appState === "active" && socket && !connected) {
         handleJoinRoom(id);
         configureSocketListeners();
@@ -687,6 +732,7 @@ const Chat: React.FC = () => {
       handleJoinRoom,
       configureSocketListeners,
       id,
+      fetchParticipantAndGroup,
     ]),
   );
 
@@ -702,6 +748,12 @@ const Chat: React.FC = () => {
         extraButton={alertConfig.extraButton}
         extraButtonText={alertConfig.extraButtonText}
         extraButtonAction={alertConfig.extraButtonAction}
+      />
+      <CustomAlert
+        visible={screenshotAlertVisible}
+        title={settingsT("account.security.screenshot_blocked_title")}
+        content={settingsT("account.security.screenshot_blocked_content")}
+        okButtonAction={dismissScreenshotAlert}
       />
 
       <PollModal

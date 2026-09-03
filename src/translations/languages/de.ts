@@ -328,6 +328,7 @@ export const de = {
       edit_password: "Passwort ändern",
       security: {
         require_on_open: "Passwort beim Öffnen der App verlangen",
+        anti_print: "Screenshots blockieren",
         interval: "Authentifizierung anfordern",
         interval_title: "Authentifizierung anfordern",
         interval_content: "Wählen Sie, wann die Sperre angefordert werden soll.",
@@ -339,6 +340,8 @@ export const de = {
         authenticating: "Auf Authentifizierung warten",
         unlock_button: "Entsperren",
         cancel: "Abbrechen",
+        screenshot_blocked_title: "Screenshot blockiert",
+        screenshot_blocked_content: "Diese Unterhaltung erlaubt keine Screenshots.",
         intervals: {
           0: "Bei jedem Öffnen",
           5: "Alle 5 Minuten",
@@ -656,6 +659,7 @@ export const de = {
       },
       participant: {
         send_notifications: "Benachrichtigungen für neue Nachrichten erhalten",
+        anti_print: "Screenshots blockieren",
         title: "Teilnehmereinstellungen",
       },
       danger_zone: {

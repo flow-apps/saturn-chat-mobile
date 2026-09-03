@@ -35,6 +35,18 @@ import InputNumber from "@components/InputNumber";
 import RNPickerSelect from "react-native-picker-select";
 import SimpleToast from "react-native-simple-toast";
 import _ from "lodash";
+import { getSettingValue } from "@utils/settings";
+
+const uniqueSettings = (settings?: ISetting[]) =>
+  settings?.filter(
+    (setting, index, allSettings) =>
+      allSettings.findIndex(
+        (item) => item.setting_name === setting.setting_name,
+      ) === index,
+  );
+
+const isSettingEnabled = (setting?: ISetting) =>
+  String(setting?.setting_value) === "true";
 
 const GroupConfig: React.FC = () => {
   const [group, setGroup] = useState<GroupData>({} as GroupData);
@@ -46,16 +58,19 @@ const GroupConfig: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteGroupAlert, setShowDeleteGroupAlert] = useState(false);
   const [showExitGroupAlert, setShowExitGroup] = useState(false);
+  const [showAntiPrintAlert, setShowAntiPrintAlert] = useState(false);
   const [hasUpdateGroupSettings, setHasUpdateGroupSettings] = useState(false);
   const [hasUpdateParticipantSettings, setHasUpdateParticipantSettings] =
     useState(false);
   const [showGroupSettings, setShowGroupSettings] = useState(false);
+  const [canManageAntiPrint, setCanManageAntiPrint] = useState(false);
 
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { colors, title } = useTheme();
   const { id } = route.params as { id: string };
   const { t } = useTranslate("GroupConfig");
+  const { t: settingsT } = useTranslate("Settings");
 
   useEffect(() => {
     (async () => {
@@ -65,14 +80,38 @@ const GroupConfig: React.FC = () => {
 
       if (groupRes.status === 200) {
         setGroup(groupRes.data);
-        setGroupSettings(groupRes.data.group_settings);
+        setGroupSettings(uniqueSettings(groupRes.data.group_settings));
       }
 
       if (participantRes.status === 200) {
         setParticipant(participantRes.data.participant);
         setParticipantSettings(
-          participantRes.data.participant.participant_settings,
+          uniqueSettings(
+            participantRes.data.participant.participant_settings,
+          ),
         );
+
+        if (groupRes.data.type === "DIRECT") {
+          const participantSettingsRes = await api.get(
+            `/group/participant/settings/${participantRes.data.participant.id}`,
+          );
+          if (participantSettingsRes.status === 200) {
+            setParticipantSettings(
+              uniqueSettings(
+                participantSettingsRes.data.settings || participantSettingsRes.data,
+              ),
+            );
+          }
+        }
+      }
+
+      if (groupRes.status === 200 && groupRes.data.type === "GROUP") {
+        const groupSettingsRes = await api.get(`/group/settings/${id}`);
+        if (groupSettingsRes.status === 200) {
+          setGroupSettings(
+            uniqueSettings(groupSettingsRes.data.settings || groupSettingsRes.data),
+          );
+        }
       }
       setLoading(false);
     })();
@@ -83,10 +122,18 @@ const GroupConfig: React.FC = () => {
     const authorizedRoles = [
       ParticipantRoles.ADMIN,
       ParticipantRoles.MANAGER,
+      ParticipantRoles.MODERATOR,
+      ParticipantRoles.OWNER,
+    ];
+    const antiPrintRoles = [
+      ParticipantRoles.ADMIN,
+      ParticipantRoles.MANAGER,
+      ParticipantRoles.MODERATOR,
       ParticipantRoles.OWNER,
     ];
 
     setShowGroupSettings(authorizedRoles.includes(participant.role));
+    setCanManageAntiPrint(antiPrintRoles.includes(participant.role));
   }, [participant]);
 
   const handleGoGroupInfos = () => {
@@ -124,13 +171,11 @@ const GroupConfig: React.FC = () => {
   };
 
   const updateGroupSetting = (settingName: string, newValue: any) => {
-    const updatedSettings = groupSettings?.map((setting) => {
-      if (setting.setting_name === settingName) {
-        setting.setting_value = String(newValue);
-      }
-
-      return setting;
-    });
+    const updatedSettings = (groupSettings || []).map((setting) =>
+      setting.setting_name === settingName
+        ? { ...setting, setting_value: String(newValue) }
+        : setting,
+    );
 
     if (!hasUpdateGroupSettings) {
       setHasUpdateGroupSettings(true);
@@ -140,17 +185,13 @@ const GroupConfig: React.FC = () => {
   };
 
   const updateParticipantSetting = (settingName: string, newValue: any) => {
-    const updatedSettings = participantSettings?.map((setting) => {
-      if (setting.setting_name === settingName) {
-        setting.setting_value = String(newValue);
-      }
+    const updatedSettings = (participantSettings || []).map((setting) =>
+      setting.setting_name === settingName
+        ? { ...setting, setting_value: String(newValue) }
+        : setting,
+    );
 
-      return setting;
-    });
-
-    if (!hasUpdateGroupSettings) {
-      setHasUpdateParticipantSettings(true);
-    }
+    setHasUpdateParticipantSettings(true);
 
     setParticipantSettings(updatedSettings);
   };
@@ -165,7 +206,7 @@ const GroupConfig: React.FC = () => {
         .patch(`/group/settings/${id}`, { settings: groupSettings })
         .then((res) => {
           if (res.status === 200) {
-            setGroupSettings(res.data);
+            setGroupSettings(uniqueSettings(res.data));
             setHasUpdateGroupSettings(false);
 
             SimpleToast.show(t("toasts.submit_success"), SimpleToast.SHORT);
@@ -179,13 +220,20 @@ const GroupConfig: React.FC = () => {
     }
 
     if (hasUpdateParticipantSettings) {
+      const personalSettings = (participantSettings || []).map(
+        ({ setting_name, setting_value }) => ({
+          setting_name,
+          setting_value: String(setting_value),
+        }),
+      );
+
       await api
         .patch(`/group/participant/settings/${participant.id}`, {
-          settings: participantSettings,
+          settings: personalSettings,
         })
         .then((res) => {
           if (res.status === 200) {
-            setParticipantSettings(res.data);
+            setParticipantSettings(uniqueSettings(res.data));
             setHasUpdateParticipantSettings(false);
 
             SimpleToast.show(t("toasts.submit_success"), SimpleToast.SHORT);
@@ -229,6 +277,12 @@ const GroupConfig: React.FC = () => {
         okButtonAction={exitGroup}
         cancelButtonAction={() => setShowExitGroup(false)}
       />
+      <Alert
+        visible={showAntiPrintAlert}
+        title={settingsT("account.security.screenshot_blocked_title")}
+        content={settingsT("account.security.screenshot_blocked_content")}
+        okButtonAction={() => setShowAntiPrintAlert(false)}
+      />
       <Container>
         <OptionsContainer>
           {group.type === "GROUP" && (
@@ -267,7 +321,9 @@ const GroupConfig: React.FC = () => {
                 </OptionText>
               </OptionContainer>
               {showGroupSettings &&
-                groupSettings?.map((setting) => (
+                groupSettings
+                  ?.filter((setting) => setting.setting_name !== "anti_print")
+                  .map((setting) => (
                   <OptionContainer
                     style={{
                       flexDirection: ["select", "participant_role"].includes(
@@ -341,7 +397,28 @@ const GroupConfig: React.FC = () => {
                       <InputNumber currentValue={0} onChangeValue={() => {}} />
                     )}
                   </OptionContainer>
-                ))}
+                  ))}
+              {canManageAntiPrint && (
+                <OptionContainer disabled>
+                  <OptionText>
+                    <Feather name="shield" size={20} />{" "}
+                    {settingsT("account.security.anti_print")}
+                  </OptionText>
+                  <OptionActionContainer>
+                    <Switcher
+                      currentValue={isSettingEnabled(
+                        groupSettings?.find(
+                          (setting) => setting.setting_name === "anti_print",
+                        ),
+                      )}
+                      onChangeValue={(value) => {
+                        updateGroupSetting("anti_print", value);
+                        if (value) setShowAntiPrintAlert(true);
+                      }}
+                    />
+                  </OptionActionContainer>
+                </OptionContainer>
+              )}
             </>
           )}
         </OptionsContainer>
@@ -366,10 +443,16 @@ const GroupConfig: React.FC = () => {
               {setting.input_type === "switch" && (
                 <OptionActionContainer>
                   <Switcher
-                    currentValue={setting.setting_value === "true"}
-                    onChangeValue={(value) =>
-                      updateParticipantSetting(setting.setting_name, value)
-                    }
+                    currentValue={isSettingEnabled(setting)}
+                    onChangeValue={(value) => {
+                      updateParticipantSetting(setting.setting_name, value);
+                      if (
+                        setting.setting_name === "anti_print" &&
+                        value
+                      ) {
+                        setShowAntiPrintAlert(true);
+                      }
+                    }}
                   />
                 </OptionActionContainer>
               )}

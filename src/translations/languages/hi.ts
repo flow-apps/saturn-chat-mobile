@@ -326,6 +326,7 @@ export const hi = {
       edit_password: "पासवर्ड बदलें",
       security: {
         require_on_open: "ऐप खोलते समय पासवर्ड मांगें",
+        anti_print: "स्क्रीनशॉट ब्लॉक करें",
         interval: "प्रमाणीकरण मांगें",
         interval_title: "प्रमाणीकरण मांगें",
         interval_content: "चुनें कि लॉक कब मांगा जाना चाहिए।",
@@ -337,6 +338,8 @@ export const hi = {
         authenticating: "प्रमाणीकरण की प्रतीक्षा है",
         unlock_button: "अनलॉक करें",
         cancel: "रद्द करें",
+        screenshot_blocked_title: "स्क्रीनशॉट अवरुद्ध",
+        screenshot_blocked_content: "यह बातचीत स्क्रीनशॉट की अनुमति नहीं देती है।",
         intervals: {
           0: "हर बार खोलने पर",
           5: "हर 5 मिनट में",
@@ -681,6 +684,7 @@ export const hi = {
   },
   Participant: {
     title: "सदस्य विकल्प",
+        anti_print: "स्क्रीनशॉट ब्लॉक करें",
     view_profile: "प्रोफ़ाइल देखें",
     change_role: "पद बदलें",
     kick: "समूह से निकालें (Kick)",

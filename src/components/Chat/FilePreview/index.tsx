@@ -35,6 +35,8 @@ interface IFilePreviewProps {
   size: number;
   type: string;
   deleted: boolean;
+  antiPrint: boolean;
+  conversationType: "GROUP" | "DIRECT";
 }
 
 const FilePreview = ({
@@ -44,6 +46,8 @@ const FilePreview = ({
   url,
   type,
   deleted,
+  antiPrint,
+  conversationType,
 }: IFilePreviewProps) => {
   const [downloadWarning, setDownloadWarning] = useState(false);
   const [videoThumb, setVideoThumb] = useState<string>();
@@ -179,6 +183,8 @@ const FilePreview = ({
       name,
       original_name,
       url,
+      antiPrint,
+      conversationType,
     });
   };
 
@@ -188,6 +194,8 @@ const FilePreview = ({
       original_name,
       url,
       poster: videoThumb,
+      antiPrint,
+      conversationType,
     });
   };
 
@@ -196,6 +204,8 @@ const FilePreview = ({
       name,
       original_name,
       url,
+      antiPrint,
+      conversationType,
     });
   };
 

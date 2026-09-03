@@ -327,6 +327,7 @@ export const en = {
       edit_password: "Change password",
       security: {
         require_on_open: "Require password when opening the app",
+        anti_print: "Block screenshots",
         interval: "Request authentication",
         interval_title: "Request authentication",
         interval_content: "Choose when the lock should be requested.",
@@ -338,6 +339,8 @@ export const en = {
         authenticating: "Waiting for authentication",
         unlock_button: "Unlock",
         cancel: "Cancel",
+        screenshot_blocked_title: "Screenshot blocked",
+        screenshot_blocked_content: "This conversation does not allow screenshots.",
         intervals: {
           0: "Every time it opens",
           5: "Every 5 minutes",
@@ -655,6 +658,7 @@ export const en = {
       },
       participant: {
         send_notifications: "Receive notifications for new messages",
+        anti_print: "Block screenshots",
         title: "Participant settings",
       },
       danger_zone: {

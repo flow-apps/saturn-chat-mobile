@@ -10,10 +10,23 @@ export const getSettingValue = (settings: ISetting[], name: string) => {
   return converterStringWithType(setting.setting_value, setting.typeof_value);
 };
 
+export const getEffectiveSettingValue = (settings: ISetting[], name: string) => {
+  if (!settings?.length) return undefined;
+
+  const setting = settings.find((item) => item.setting_name === name);
+
+  if (!setting) return undefined;
+
+  return converterStringWithType(
+    setting.effective_setting_value,
+    setting.typeof_value,
+  );
+};
+
 export const converterStringWithType = (value: any, type: string): any => {
   switch (type) {
     case "boolean":
-      return value === "true";
+      return value === true || value === "true";
 
     case "number":
       return Number(value);

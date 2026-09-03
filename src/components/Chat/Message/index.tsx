@@ -65,6 +65,7 @@ interface MessageProps {
   group: GroupData;
   disableReply: boolean;
   participants: ParticipantsData[];
+  antiPrint: boolean;
 }
 
 interface InvitesData {
@@ -117,6 +118,7 @@ const Message = ({
   group,
   disableReply,
   participants,
+  antiPrint,
 }: MessageProps) => {
   const [showLinkAlert, setShowLinkAlert] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -532,6 +534,9 @@ const Message = ({
                   url={file.url}
                   size={file.size}
                   type={file.type}
+                  deleted={false}
+                  antiPrint={antiPrint}
+                  conversationType={group.type}
                 />
               ))}
           </MessageContentContainer>
@@ -556,6 +561,8 @@ const Message = ({
                   key={link.id || index}
                   link={link}
                   openLink={alertLink}
+                  antiPrint={antiPrint}
+                  conversationType={group.type}
                 />
               );
             })}
