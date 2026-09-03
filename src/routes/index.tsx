@@ -162,10 +162,15 @@ const Routes = () => {
     return <Loading />;
   }
 
+  if (signed && !activeCallRoomId && !biometricsPreferenceLoaded) {
+    return <Loading />;
+  }
+
   if (
     signed &&
     !activeCallRoomId &&
-    (!biometricsPreferenceLoaded || (biometricsEnabled && !isUnlocked))
+    biometricsEnabled &&
+    !isUnlocked
   ) {
     return (
       <View
