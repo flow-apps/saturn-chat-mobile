@@ -22,6 +22,7 @@ import * as Notifications from "expo-notifications";
 import CallFloatingButton from "@components/CallFloatingButton";
 import Button from "@components/Button";
 import { useTranslate } from "@hooks/useTranslate";
+import fonts from "@styles/fonts";
 
 const BIOMETRICS_KEY = "@SaturnChat:biometrics";
 const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
@@ -179,9 +180,10 @@ const Routes = () => {
         <Text
           style={{
             marginBottom: 24,
-            color: colors.white,
+            color: colors.black,
             fontSize: 20,
             textAlign: "center",
+            fontFamily: fonts.text,
           }}
         >
           {isAuthenticating
