@@ -54,6 +54,10 @@ export const FieldContainer = styled.View`
   margin-bottom: 15px;
 `;
 
+export const CategoryContainer = styled.View`
+  margin-bottom: 15px;
+`;
+
 export const SwitcherContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;

@@ -10,6 +10,8 @@ import FormData from "form-data";
 import SimpleToast from "react-native-simple-toast";
 import api from "@services/api";
 import Feather from "@expo/vector-icons/Feather";
+import RNPickerSelect from "react-native-picker-select";
+import { useTheme } from "styled-components";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { GroupData } from "@type/interfaces";
 import {
@@ -23,9 +25,12 @@ import {
   SwitcherContainer,
   SwitcherText,
   TextArea,
+  CategoryContainer,
 } from "./styles";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
+import { GroupCategory } from "@type/enums";
+import { Label } from "@components/Input/styles";
 
 interface AlertConfigState {
   visible: boolean;
@@ -43,6 +48,9 @@ const EditGroup: React.FC = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
+  const [groupCategory, setGroupCategory] = useState<GroupCategory>(
+    GroupCategory.OTHER,
+  );
   const [isPublicGroup, setIsPublicGroup] = useState<boolean>(false);
   const [newAvatar, setNewAvatar] = useState<string | undefined>();
   const [isSendable, setIsSendable] = useState(false);
@@ -61,6 +69,8 @@ const EditGroup: React.FC = () => {
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { t } = useTranslate("EditGroup");
+  const { t: categoryT } = useTranslate("NewGroup");
+  const { colors } = useTheme();
 
   const { id } = route.params as any;
 
@@ -78,6 +88,7 @@ const EditGroup: React.FC = () => {
         description,
         privacy: isPublicGroup ? "PUBLIC" : "PRIVATE",
         tags,
+        category: groupCategory,
       });
 
       SimpleToast.show(t("toasts.success"), SimpleToast.SHORT);
@@ -192,6 +203,7 @@ const EditGroup: React.FC = () => {
           setName(response.data.name);
           setDescription(response.data.description);
           setTags(response.data.tags.join(", "));
+          setGroupCategory(response.data.category || GroupCategory.OTHER);
           handleIsPublic(response.data.privacy === "PUBLIC");
         }
       } catch (error: any) {
@@ -263,6 +275,45 @@ const EditGroup: React.FC = () => {
               onChange={handleCheckFields}
             />
           </FieldContainer>
+          <CategoryContainer>
+            <Label>{categoryT("form.labels.category.label")}</Label>
+            <RNPickerSelect
+              onValueChange={(value) => setGroupCategory(value)}
+              value={groupCategory}
+              style={{
+                inputAndroid: {
+                  color: colors.light_heading,
+                  backgroundColor: colors.shape,
+                  paddingHorizontal: 12,
+                },
+                inputIOS: {
+                  color: colors.light_heading,
+                  backgroundColor: colors.shape,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
+                },
+              }}
+              dropdownItemStyle={{ backgroundColor: colors.background }}
+              activeItemStyle={{ backgroundColor: colors.shape }}
+              items={Object.values(GroupCategory)
+                .sort((firstCategory, secondCategory) =>
+                  categoryT(`categories.${firstCategory}`, {
+                    defaultValue: firstCategory.replace(/_/g, " "),
+                  }).localeCompare(
+                    categoryT(`categories.${secondCategory}`, {
+                      defaultValue: secondCategory.replace(/_/g, " "),
+                    }),
+                  ),
+                )
+                .map((category) => ({
+                  label: categoryT(`categories.${category}`, {
+                    defaultValue: category.replace(/_/g, " "),
+                  }),
+                  value: category,
+                  color: colors.light_heading,
+                }))}
+            />
+          </CategoryContainer>
           <FieldContainer>
             <SwitcherContainer>
               <SwitcherText>

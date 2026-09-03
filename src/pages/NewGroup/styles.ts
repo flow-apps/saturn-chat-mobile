@@ -65,6 +65,10 @@ export const TextArea = styled(Input)`
   margin-bottom: 20px;
 `;
 
+export const CategoryContainer = styled.View`
+  margin-bottom: 20px;
+`;
+
 export const SwitcherContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;

@@ -21,6 +21,7 @@ import {
   FormInput,
   SwitcherContainer,
   SwitcherText,
+  CategoryContainer,
   ButtonWrapper,
   TextArea,
   AdWrapper,
@@ -34,6 +35,7 @@ import {
 } from "./styles";
 import Feather from "@expo/vector-icons/Feather";
 import { useTheme } from "styled-components";
+import RNPickerSelect from "react-native-picker-select";
 import Button from "@components/Button";
 import CustomAlert from "@components/Alert";
 import * as ImagePicker from "expo-image-picker";
@@ -49,6 +51,8 @@ import { UserData } from "@type/interfaces";
 import { useRemoteConfigs } from "@contexts/remoteConfigs";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
+import { GroupCategory } from "@type/enums";
+import { Label } from "@components/Input/styles";
 
 interface AlertConfigState {
   visible: boolean;
@@ -68,6 +72,9 @@ const NewGroup: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string>("");
+  const [groupCategory, setGroupCategory] = useState<GroupCategory>(
+    GroupCategory.OTHER,
+  );
   const [isPublicGroup, setIsPublicGroup] = useState(true);
   const [user, setUser] = useState<UserData>({} as UserData);
 
@@ -147,6 +154,7 @@ const NewGroup: React.FC = () => {
     }
     data.append("privacy", isPublicGroup ? "PUBLIC" : "PRIVATE");
     data.append("tags", tags);
+    data.append("category", groupCategory);
 
     setCreating(true);
     const trace = await perf()?.startTrace("create_group");
@@ -364,6 +372,63 @@ const NewGroup: React.FC = () => {
                   value={tags}
                   onChangeText={setTags}
                 />
+                <CategoryContainer>
+                  <Label>
+                    {t("form.labels.category.label", {
+                      defaultValue: "Group category",
+                    })}
+                  </Label>
+                  <RNPickerSelect
+                    onValueChange={(value) => setGroupCategory(value)}
+                    value={groupCategory}
+                    placeholder={{
+                      label: t("form.labels.category.placeholder", {
+                        defaultValue: "Select a category",
+                      }),
+                      value: null,
+                      color: colors.light_heading,
+                    }}
+                    style={{
+                      inputAndroid: {
+                        color: colors.light_heading,
+                        backgroundColor: colors.shape,
+                        paddingHorizontal: 12,
+                      },
+                      inputIOS: {
+                        color: colors.light_heading,
+                        backgroundColor: colors.shape,
+                        paddingHorizontal: 12,
+                        paddingVertical: 12,
+                      },
+                      placeholder: {
+                        color: colors.light_heading,
+                      },
+                    }}
+                    dropdownItemStyle={{
+                      backgroundColor: colors.background,
+                    }}
+                    activeItemStyle={{
+                      backgroundColor: colors.shape,
+                    }}
+                    items={Object.values(GroupCategory)
+                      .sort((firstCategory, secondCategory) =>
+                        t(`categories.${firstCategory}`, {
+                          defaultValue: firstCategory.replace(/_/g, " "),
+                        }).localeCompare(
+                          t(`categories.${secondCategory}`, {
+                            defaultValue: secondCategory.replace(/_/g, " "),
+                          }),
+                        ),
+                      )
+                      .map((category) => ({
+                        label: t(`categories.${category}`, {
+                          defaultValue: category.replace(/_/g, " "),
+                        }),
+                        value: category,
+                        color: colors.light_heading,
+                      }))}
+                  />
+                </CategoryContainer>
                 <SwitcherContainer>
                   <SwitcherText>
                     <Feather
