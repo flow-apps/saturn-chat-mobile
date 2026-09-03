@@ -458,10 +458,11 @@ export const es = {
       1: "Aumenta en {{multiple}}x el espacio para enviar archivos: de {{default}} MB a un increíble {{premium}} MB.",
       2: "Aumenta el límite de grupos que puedes crear: de {{default}} a {{premium}} grupos.",
       3: "Aumenta el número máximo de participantes en tus grupos: de {{default}} a {{premium}} participantes.",
-      4: "¡Obtén una insignia exclusiva junto a tu nombre para lucirte!",
-      5: "¿Te gusta enviar textos largos? ¡Aumenta el límite de caracteres de tus mensajes de {{default}} a {{premium}} caracteres!",
-      6: "Apoya el desarrollo de la aplicación y ayúdanos a traer novedades más rápido ❤",
-      7: "Exporta los mensajes de tus grupos en formato CSV.",
+      4: "Aumenta el número de personas permitidas en una llamada: de {{default}} a {{premium}} participantes.",
+      5: "¡Obtén una insignia exclusiva junto a tu nombre para lucirte!",
+      6: "¿Te gusta enviar textos largos? ¡Aumenta el límite de caracteres de tus mensajes de {{default}} a {{premium}} caracteres!",
+      7: "Apoya el desarrollo de la aplicación y ayúdanos a traer novedades más rápido ❤",
+      8: "Exporta los mensajes de tus grupos en formato CSV.",
     },
   },
   ManagePremium: {
@@ -514,6 +515,59 @@ export const es = {
         "¡Ahora puedes disfrutar de todos los beneficios del plan Star! Ten en cuenta que puede tardar unos minutos en desbloquearse por completo.",
       error_subtitle:
         "Tu pago pudo haber sido rechazado o la compra cancelada por la tienda de aplicaciones. Comprueba e inténtalo de nuevo más tarde.",
+    },
+  },
+  Call: {
+    header_title: "Llamada en grupo",
+    participants_count: "{{count}} en la llamada",
+    participants_modal: {
+      title: "Participantes",
+    },
+    view_all: "Ver todos",
+    floating_button: "Volver a la llamada",
+    alert_ok: "Entendido",
+    you: "Tú",
+    notification: {
+      channel_name: "Llamadas en curso",
+      title: "Llamada en curso",
+      body: "Toca para volver a Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "La llamada se cerró por inactividad.",
+      room_closed: "Esta sala de llamada ha sido cerrada.",
+    },
+    errors: {
+      default: {
+        title: "No se pudo entrar a la llamada",
+        content: "Ocurrió un error al acceder a la llamada.",
+      },
+      access_blocked: {
+        title: "Acceso bloqueado",
+        content: "Estás bloqueado en este grupo y no puedes participar en la llamada.",
+      },
+      group_invalid: {
+        title: "Grupo no válido",
+        content: "No perteneces a este grupo o la conversación ya no está disponible.",
+      },
+      direct_limit: {
+        title: "Llamada en pareja",
+        content: "Esta llamada directa solo puede incluir a los dos participantes de la conversación.",
+      },
+      participant_limit: {
+        title: "Límite de la llamada",
+      },
+      inactivity_timeout: {
+        title: "Llamada finalizada",
+        content: "La llamada se cerró por inactividad.",
+      },
+      call_closed: {
+        title: "Llamada finalizada",
+        content: "Esta sala de llamada ha sido cerrada.",
+      },
+      direct_not_part: {
+        title: "Participación inválida",
+        content: "No eres parte de esta llamada directa.",
+      },
     },
   },
   Chat: {

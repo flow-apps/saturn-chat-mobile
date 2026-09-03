@@ -13,7 +13,7 @@ interface NotificationDataType {
 const configureNotificationsHandlers = async (signed: boolean) => {
   OneSignal.Notifications.addEventListener(
     "click",
-    async ({ notification }) => {
+    async ({ notification }: any) => {
       if (signed && notification) {
         const { openLink } = new LinkUtils();
         const data = notification.additionalData as NotificationDataType;
@@ -22,6 +22,14 @@ const configureNotificationsHandlers = async (signed: boolean) => {
           if (data.open_url_on_click) {
             await openLink(data.open_url_on_click);
           }
+
+          if (data.type === NotificationsTypes.CALL_STARTED) {
+            if (data.roomId) {
+              navigate("Call", { groupId: data.roomId });
+            }
+            return;
+          }
+
           if (data.type === NotificationsTypes.CHAT_MESSAGE) {
             const isDM = data.group_type === "DIRECT";
             const name = data.friend_name;
@@ -43,7 +51,7 @@ const configureNotificationsHandlers = async (signed: boolean) => {
           }
         }
       }
-    }
+    },
   );
 };
 

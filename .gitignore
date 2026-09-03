@@ -42,3 +42,6 @@ yarn-error.*
 
 *.map
 *-bundle.*
+*.bak
+*-bundle.js*
+*.map

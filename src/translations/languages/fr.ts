@@ -458,10 +458,11 @@ export const fr = {
       1: "Augmentez par {{multiple}}x l'espace d'envoi de fichiers : de {{default}} Mo à un incroyable {{premium}} Mo.",
       2: "Augmentez la limite de groupes créables : de {{default}} à {{premium}} groupes.",
       3: "Augmentez le nombre de participants dans vos groupes : de {{default}} à {{premium}} participants.",
-      4: "Obtenez un badge exclusif à côté de votre nom !",
-      5: "Vous aimez envoyer de longs textes ? Augmentez la limite de vos messages de {{default}} à un merveilleux {{premium}} caractères !",
-      6: "Soutenez le développement de l'application et aidez-nous à apporter des nouveautés plus rapidement ❤",
-      7: "Exportez les messages de vos groupes au format CSV.",
+      4: "Augmentez le nombre de personnes autorisées dans un appel : de {{default}} à {{premium}} participants.",
+      5: "Obtenez un badge exclusif à côté de votre nom !",
+      6: "Vous aimez envoyer de longs textes ? Augmentez la limite de vos messages de {{default}} à un merveilleux {{premium}} caractères !",
+      7: "Soutenez le développement de l'application et aidez-nous à apporter des nouveautés plus rapidement ❤",
+      8: "Exportez les messages de vos groupes au format CSV.",
     },
   },
   ManagePremium: {
@@ -514,6 +515,59 @@ export const fr = {
         "Vous pouvez maintenant profiter de tous les avantages du forfait Star ! Veuillez noter que le déverrouillage complet peut prendre quelques minutes.",
       error_subtitle:
         "Votre paiement a peut-être été refusé ou annulé par le store. Vérifiez et réessayez plus tard.",
+    },
+  },
+  Call: {
+    header_title: "Appel de groupe",
+    participants_count: "{{count}} dans l'appel",
+    participants_modal: {
+      title: "Participants",
+    },
+    view_all: "Voir tout",
+    floating_button: "Retourner à l'appel",
+    alert_ok: "Compris",
+    you: "Vous",
+    notification: {
+      channel_name: "Appels en cours",
+      title: "Appel en cours",
+      body: "Touchez pour revenir dans Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "L'appel a été fermé pour cause d'inactivité.",
+      room_closed: "Cette salle d'appel a été fermée.",
+    },
+    errors: {
+      default: {
+        title: "Impossible de rejoindre l'appel",
+        content: "Une erreur s'est produite lors de l'accès à l'appel.",
+      },
+      access_blocked: {
+        title: "Accès bloqué",
+        content: "Vous êtes bloqué dans ce groupe et ne pouvez pas participer à l'appel.",
+      },
+      group_invalid: {
+        title: "Groupe invalide",
+        content: "Vous n'appartenez pas à ce groupe ou la conversation n'est plus disponible.",
+      },
+      direct_limit: {
+        title: "Appel à deux",
+        content: "Cet appel direct ne peut inclure que les deux participants de la conversation.",
+      },
+      participant_limit: {
+        title: "Limite d'appel",
+      },
+      inactivity_timeout: {
+        title: "Appel terminé",
+        content: "L'appel a été fermé pour cause d'inactivité.",
+      },
+      call_closed: {
+        title: "Appel terminé",
+        content: "Cette salle d'appel a été fermée.",
+      },
+      direct_not_part: {
+        title: "Participation invalide",
+        content: "Vous ne faites pas partie de cet appel direct.",
+      },
     },
   },
   Chat: {

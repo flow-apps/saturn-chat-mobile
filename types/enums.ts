@@ -20,7 +20,8 @@ export enum FriendsStates {
 }
 
 export enum NotificationsTypes {
-  CHAT_MESSAGE = "CHAT_MESSAGE"
+  CHAT_MESSAGE = "CHAT_MESSAGE",
+  CALL_STARTED = "CALL_STARTED",
 }
 
 export enum PaymentState {

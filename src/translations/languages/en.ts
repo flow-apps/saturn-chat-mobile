@@ -454,10 +454,11 @@ export const en = {
       1: "Increase file upload storage by {{multiple}}x: from {{default}} MB to an incredible {{premium}} MB.",
       2: "Increase the limit of groups you can create: from {{default}} to {{premium}} groups.",
       3: "Increase the participant limit for your groups: from {{default}} to {{premium}} participants.",
-      4: "Get an exclusive badge next to your name to show off!",
-      5: "Love sending long texts? Increase your message character limit from {{default}} to a wonderful {{premium}} characters!",
-      6: "Support the development of the app and help us bring updates faster ❤",
-      7: "Export your group chat messages in CSV format.",
+      4: "Increase the number of people allowed in a call: from {{default}} to {{premium}} participants.",
+      5: "Get an exclusive badge next to your name to show off!",
+      6: "Love sending long texts? Increase your message character limit from {{default}} to a wonderful {{premium}} characters!",
+      7: "Support the development of the app and help us bring updates faster ❤",
+      8: "Export your group chat messages in CSV format.",
     },
   },
   ManagePremium: {
@@ -510,6 +511,59 @@ export const en = {
         "You can now enjoy all the benefits available in the Star plan! Note that it may take a few minutes for all benefits to be fully unlocked.",
       error_subtitle:
         "Your payment may have been declined or cancelled by the app store. Check and try again later.",
+    },
+  },
+  Call: {
+    header_title: "Group Call",
+    participants_count: "{{count}} in call",
+    participants_modal: {
+      title: "Participants",
+    },
+    view_all: "View all",
+    floating_button: "Return to call",
+    alert_ok: "Got it",
+    you: "You",
+    notification: {
+      channel_name: "Ongoing calls",
+      title: "Call in progress",
+      body: "Tap to return to Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "The call was ended due to inactivity.",
+      room_closed: "This call room has been closed.",
+    },
+    errors: {
+      default: {
+        title: "Could not join the call",
+        content: "An error occurred while accessing the call.",
+      },
+      access_blocked: {
+        title: "Access blocked",
+        content: "You are blocked in this group and cannot join the call.",
+      },
+      group_invalid: {
+        title: "Invalid group",
+        content: "You do not belong to this group or the conversation is no longer available.",
+      },
+      direct_limit: {
+        title: "Two-person call",
+        content: "This direct call can only include the two participants in the conversation.",
+      },
+      participant_limit: {
+        title: "Call limit",
+      },
+      inactivity_timeout: {
+        title: "Call ended",
+        content: "The call was closed due to inactivity.",
+      },
+      call_closed: {
+        title: "Call ended",
+        content: "This call room has been closed.",
+      },
+      direct_not_part: {
+        title: "Invalid participation",
+        content: "You are not part of this direct call.",
+      },
     },
   },
   Chat: {

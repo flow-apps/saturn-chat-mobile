@@ -454,10 +454,11 @@ export const pt = {
       1: "Aumente em {{multiple}}x o espaço para envio de arquivos: de {{default}} MB para incríveis {{premium}} MB.",
       2: "Aumente a quantidade de grupos que você pode criar: de {{default}} para {{premium}} grupos.",
       3: "Aumente a quantidade de participantes que você pode ter em seus grupos: de {{default}} para {{premium}} participantes.",
-      4: "Ganhe um selo exclusivo ao lado do seu nome para ostentar!",
-      5: "Gosta de mandar textões? Aumente o limite das suas mensagens de {{default}} para maravilhosos {{premium}} caracteres!",
-      6: "Apoie o desenvolvimento do aplicativo e nos ajude a trazer novidades mais rápido ❤",
-      7: "Exporte as mensagens dos seus grupos em formato CSV.",
+      4: "Aumente o limite de pessoas por chamada: de {{default}} para {{premium}} participantes.",
+      5: "Ganhe um selo exclusivo ao lado do seu nome para ostentar!",
+      6: "Gosta de mandar textões? Aumente o limite das suas mensagens de {{default}} para maravilhosos {{premium}} caracteres!",
+      7: "Apoie o desenvolvimento do aplicativo e nos ajude a trazer novidades mais rápido ❤",
+      8: "Exporte as mensagens dos seus grupos em formato CSV.",
     },
   },
   ManagePremium: {
@@ -510,6 +511,59 @@ export const pt = {
         "Você agora pode usufruir de vários benefícios disponíveis no plano Star! Mas atenção, pode demorar alguns minutos até que todos os benefícios sejam totalmente liberados, então não se preocupe.",
       error_subtitle:
         "Seu pagamento pode ter sido negado ou sua compra cancelada pela loja de aplicativos. Verifique e tente novamente mais tarde",
+    },
+  },
+  Call: {
+    header_title: "Chamada em Grupo",
+    participants_count: "{{count}} na chamada",
+    participants_modal: {
+      title: "Participantes",
+    },
+    view_all: "Ver todos",
+    floating_button: "Voltar para chamada",
+    alert_ok: "Entendi",
+    you: "Você",
+    notification: {
+      channel_name: "Chamadas em andamento",
+      title: "Chamada em andamento",
+      body: "Toque para voltar ao Saturn Chat",
+    },
+    events: {
+      inactivity_closed: "A chamada foi encerrada por inatividade.",
+      room_closed: "A sala de chamada foi encerrada.",
+    },
+    errors: {
+      default: {
+        title: "Não foi possível entrar na chamada",
+        content: "Ocorreu um erro ao acessar a chamada.",
+      },
+      access_blocked: {
+        title: "Acesso bloqueado",
+        content: "Você está bloqueado neste grupo e não pode participar da chamada.",
+      },
+      group_invalid: {
+        title: "Grupo inválido",
+        content: "Você não pertence a este grupo ou a conversa não está mais disponível.",
+      },
+      direct_limit: {
+        title: "Chamada em dupla",
+        content: "Esta chamada direta só pode ter os dois participantes da conversa.",
+      },
+      participant_limit: {
+        title: "Limite da chamada",
+      },
+      inactivity_timeout: {
+        title: "Chamada encerrada",
+        content: "A chamada foi encerrada por inatividade.",
+      },
+      call_closed: {
+        title: "Chamada encerrada",
+        content: "A sala de chamada foi encerrada.",
+      },
+      direct_not_part: {
+        title: "Participação inválida",
+        content: "Você não faz parte desta chamada direta.",
+      },
     },
   },
   Chat: {

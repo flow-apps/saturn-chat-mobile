@@ -7,14 +7,15 @@ import {
 } from "@react-navigation/native";
 import { useAuth } from "@contexts/auth";
 import { AuthRoutes } from "@routes/auth.routes";
-import { navigationRef } from "./rootNavigation";
+import { navigate, navigationRef } from "./rootNavigation";
 import Loading from "@components/Loading";
 import config from "@config";
 import * as Linking from "expo-linking";
 
 import analytics from "@react-native-firebase/analytics";
 import { useTheme } from "styled-components";
-import { hideAsync } from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
+import CallFloatingButton from "@components/CallFloatingButton";
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
@@ -34,8 +35,29 @@ const Routes = () => {
   const routeNameRef = useRef<string | undefined>("");
 
   useEffect(() => {
-    if (!loadingData) hideAsync();
-  }, [loadingData]);
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const data = response.notification.request.content.data;
+
+        if (data?.roomId) {
+          navigate("Call", { groupId: data.roomId });
+        }
+      },
+    );
+
+    const response = Notifications.getLastNotificationResponse();
+
+    if (response) {
+      const data = response.notification.request.content.data;
+      if (data?.roomId) {
+        navigate("Call", { groupId: data.roomId });
+      }
+    }
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   if (loadingData) {
     return <Loading />;
@@ -73,6 +95,7 @@ const Routes = () => {
       }}
       ref={navigationRef}
     >
+      {!loadingData && <CallFloatingButton />}
       {signed ? <AppRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );

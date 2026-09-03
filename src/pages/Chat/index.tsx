@@ -718,6 +718,11 @@ const Chat: React.FC = () => {
             : () => navigation.navigate("UserProfile", { id: friendId })
         }
       >
+        <HeaderButton
+          onPress={() => navigation.navigate("Call", { groupId: id })}
+        >
+          <Feather name="phone" size={22} color="#fff" />
+        </HeaderButton>
         {group.type === "GROUP" && (
           <HeaderButton
             onPress={() => navigation.navigate("Participants", { id })}

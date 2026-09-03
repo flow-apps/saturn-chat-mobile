@@ -28,5 +28,37 @@ export function getCurrentRoute() {
   if (!navigationRef.current)
     return;
 
-  return navigationRef.current.getCurrentRoute()
+  const route = navigationRef.current.getCurrentRoute();
+
+  if (!route?.state) {
+    return route;
+  }
+
+  let currentRoute: any = route;
+
+  while (currentRoute?.state && currentRoute.state.routes?.length) {
+    const index = currentRoute.state.index ?? 0;
+    currentRoute = currentRoute.state.routes[index];
+  }
+
+  return currentRoute;
+}
+
+export function subscribeToRouteChanges(
+  callback: (routeName?: string) => void,
+) {
+  if (!navigationRef.current) {
+    callback(undefined);
+    return () => undefined;
+  }
+
+  const emitCurrentRoute = () => {
+    callback(navigationRef.current?.getCurrentRoute()?.name);
+  };
+
+  emitCurrentRoute();
+
+  const unsubscribe = navigationRef.current.addListener("state", emitCurrentRoute);
+
+  return unsubscribe;
 }

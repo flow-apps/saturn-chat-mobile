@@ -30,6 +30,8 @@ import { ChatProvider } from "@contexts/chat";
 import { HomeProvider } from "@contexts/home";
 import { PurchasesProvider } from "@contexts/purchases";
 import { PremiumProvider } from "@contexts/premium";
+import { CallStatusProvider } from "@contexts/callStatus";
+import CallFloatingButton from "@components/CallFloatingButton";
 
 import { Roboto_500Medium, Roboto_900Black } from "@expo-google-fonts/roboto";
 import { FiraCode_500Medium } from "@expo-google-fonts/fira-code";
@@ -43,11 +45,13 @@ import {
   Poppins_600SemiBold,
   Poppins_300Light_Italic,
 } from "@expo-google-fonts/poppins";
+import { registerGlobals } from "@stream-io/react-native-webrtc";
 
 preventAutoHideAsync();
 
 OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.Error);
 OneSignal.initialize(secrets.OneSignalAppID);
+registerGlobals();
 
 function App() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -82,6 +86,12 @@ function App() {
     }
   }, [isUpdateAvailable]);
 
+  useEffect(() => {
+    if (fontLoaded && !isUpdating) {
+      hideAsync();
+    }
+  }, [fontLoaded, isUpdating]);
+
   if (!fontLoaded || isUpdating) {
     return (
       <View style={styles.splashContainer}>
@@ -112,9 +122,11 @@ function App() {
                       <ChatProvider>
                         <AudioPlayerProvider>
                           <RemoteConfigsProvider>
-                            <HomeProvider>
-                              <Routes />
-                            </HomeProvider>
+                            <CallStatusProvider>
+                              <HomeProvider>
+                                <Routes />
+                              </HomeProvider>
+                            </CallStatusProvider>
                           </RemoteConfigsProvider>
                         </AudioPlayerProvider>
                       </ChatProvider>

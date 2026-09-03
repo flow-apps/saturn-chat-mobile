@@ -455,10 +455,11 @@ export const de = {
       1: "Erhöhe den Speicher für Datei-Uploads um das {{multiple}}-fache: von {{default}} MB auf unglaubliche {{premium}} MB.",
       2: "Erhöhe das Gruppenlimit: von {{default}} auf {{premium}} Gruppen.",
       3: "Erhöhe die maximale Teilnehmerzahl deiner Gruppen: von {{default}} auf {{premium}} Teilnehmer.",
-      4: "Erhalte ein exklusives Abzeichen neben deinem Namen!",
-      5: "Längere Nachrichten schreiben? Erhöhe das Zeichenlimit von {{default}} auf {{premium}} Zeichen!",
-      6: "Unterstütze die Entwicklung der App und erhalte Updates schneller ❤",
-      7: "Exportiere deine Gruppen-Nachrichten im CSV-Format.",
+      4: "Erhöhe die Anzahl der Personen pro Anruf: von {{default}} auf {{premium}} Teilnehmer.",
+      5: "Erhalte ein exklusives Abzeichen neben deinem Namen!",
+      6: "Längere Nachrichten schreiben? Erhöhe das Zeichenlimit von {{default}} auf {{premium}} Zeichen!",
+      7: "Unterstütze die Entwicklung der App und erhalte Updates schneller ❤",
+      8: "Exportiere deine Gruppen-Nachrichten im CSV-Format.",
     },
   },
   ManagePremium: {
@@ -511,6 +512,59 @@ export const de = {
         "Du kannst nun alle Vorteile des Star-Plans nutzen! Es kann einige Minuten dauern, bis alles freigeschaltet ist.",
       error_subtitle:
         "Deine Zahlung wurde möglicherweise abgelehnt oder storniert. Versuche es später erneut.",
+    },
+  },
+  Call: {
+    header_title: "Gruppenanruf",
+    participants_count: "{{count}} im Anruf",
+    participants_modal: {
+      title: "Teilnehmer",
+    },
+    view_all: "Alle anzeigen",
+    floating_button: "Zurück zum Anruf",
+    alert_ok: "Verstanden",
+    you: "Du",
+    notification: {
+      channel_name: "Laufende Anrufe",
+      title: "Anruf läuft",
+      body: "Tippe, um zu Saturn Chat zurückzukehren",
+    },
+    events: {
+      inactivity_closed: "Der Anruf wurde wegen Inaktivität beendet.",
+      room_closed: "Dieser Anrufraum wurde geschlossen.",
+    },
+    errors: {
+      default: {
+        title: "Anruf konnte nicht betreten werden",
+        content: "Beim Zugriff auf den Anruf ist ein Fehler aufgetreten.",
+      },
+      access_blocked: {
+        title: "Zugriff blockiert",
+        content: "Du bist in dieser Gruppe gesperrt und kannst nicht am Anruf teilnehmen.",
+      },
+      group_invalid: {
+        title: "Ungültige Gruppe",
+        content: "Du gehörst nicht zu dieser Gruppe oder das Gespräch ist nicht mehr verfügbar.",
+      },
+      direct_limit: {
+        title: "Zwei-Personen-Anruf",
+        content: "Dieser Direktanruf darf nur die beiden Teilnehmer der Unterhaltung enthalten.",
+      },
+      participant_limit: {
+        title: "Anruflimit",
+      },
+      inactivity_timeout: {
+        title: "Anruf beendet",
+        content: "Der Anruf wurde wegen Inaktivität beendet.",
+      },
+      call_closed: {
+        title: "Anruf beendet",
+        content: "Dieser Anrufraum wurde geschlossen.",
+      },
+      direct_not_part: {
+        title: "Ungültige Teilnahme",
+        content: "Du bist nicht Teil dieses Direktanrufs.",
+      },
     },
   },
   Chat: {
