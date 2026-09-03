@@ -53,8 +53,23 @@ export const useCallRoom = (
   const peersRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
   const iceCandidatesQueue = useRef<{ [socketId: string]: any[] }>({});
   const notificationIdRef = useRef<string | null>(null);
+  const joinedRoomRef = useRef<{ roomId: string; socket: Socket } | null>(null);
   const videoEnabledRef = useRef(false);
   const cameraFacingRef = useRef<"user" | "environment">("user");
+
+  const joinCallRoom = () => {
+    if (
+      !socket ||
+      !roomId ||
+      (joinedRoomRef.current?.roomId === roomId &&
+        joinedRoomRef.current.socket === socket)
+    ) {
+      return;
+    }
+
+    joinedRoomRef.current = { roomId, socket };
+    socket.emit("join_call_room", { roomId });
+  };
 
   const refreshMediaTracks = async () => {
     if (!socket || !roomId) return;
@@ -165,7 +180,7 @@ export const useCallRoom = (
 
       if (isMounted) setLocalStream(stream);
 
-      socket?.emit("join_call_room", { roomId });
+      joinCallRoom();
 
       socket?.on(
         "current_room_users",
@@ -265,10 +280,6 @@ export const useCallRoom = (
     };
 
     initVoice();
-    const responseSubscription =
-      Notifications.addNotificationResponseReceivedListener(async () => {
-        await emitCallNotification();
-      });
 
     const appStateSubscription = AppState.addEventListener(
       "change",
@@ -276,7 +287,7 @@ export const useCallRoom = (
         if (nextAppState === "active") {
           if (roomId) {
             await refreshMediaTracks();
-            socket?.emit("join_call_room", { roomId });
+            joinCallRoom();
           }
         }
       },
@@ -284,8 +295,7 @@ export const useCallRoom = (
 
     return () => {
       isMounted = false;
-      // unsubscribeBlur();
-      responseSubscription.remove();
+      joinedRoomRef.current = null;
       appStateSubscription.remove();
 
       socket?.off("current_room_users");

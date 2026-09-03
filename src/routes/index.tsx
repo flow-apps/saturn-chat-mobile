@@ -134,13 +134,16 @@ const Routes = () => {
   const routeNameRef = useRef<string | undefined>("");
 
   useEffect(() => {
+    const openCallFromNotification = (data: Record<string, unknown>) => {
+      if (data?.roomId && data.roomId !== activeCallRoomId) {
+        navigate("Call", { groupId: data.roomId as string });
+      }
+    };
+
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         const data = response.notification.request.content.data;
-
-        if (data?.roomId) {
-          navigate("Call", { groupId: data.roomId });
-        }
+        openCallFromNotification(data);
       },
     );
 
@@ -148,15 +151,13 @@ const Routes = () => {
 
     if (response) {
       const data = response.notification.request.content.data;
-      if (data?.roomId) {
-        navigate("Call", { groupId: data.roomId });
-      }
+      openCallFromNotification(data);
     }
 
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [activeCallRoomId]);
 
   if (loadingData) {
     return <Loading />;
