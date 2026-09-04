@@ -19,7 +19,7 @@ interface ICallStatusContext {
   switchCamera: () => Promise<void>;
   endCall: () => void;
   isVideoEnabled: boolean;
-  setVideoEnabled: (value: boolean) => void;
+  setVideoEnabled: (value: boolean) => Promise<void>;
 }
 
 const CallStatusContext = createContext<ICallStatusContext>({
@@ -33,7 +33,7 @@ const CallStatusContext = createContext<ICallStatusContext>({
   switchCamera: async () => undefined,
   endCall: () => undefined,
   isVideoEnabled: false,
-  setVideoEnabled: () => undefined,
+  setVideoEnabled: async () => undefined,
 });
 
 export const CallStatusProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -59,11 +59,9 @@ export const CallStatusProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsVideoEnabled(false);
   }, [session]);
 
-  const setVideoEnabled = useCallback((value: boolean) => {
+  const setVideoEnabled = useCallback(async (value: boolean) => {
+    await session.toggleVideo(value);
     setIsVideoEnabled(value);
-    if (session.toggleVideo) {
-      session.toggleVideo(value);
-    }
   }, [session]);
 
   const value = useMemo(

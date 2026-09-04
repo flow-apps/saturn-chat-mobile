@@ -171,11 +171,7 @@ export const useCallRoom = (
 
       const stream = await mediaDevices.getUserMedia({
         audio: true,
-        video: getCallVideoConstraints(cameraFacingRef.current),
-      });
-
-      stream.getVideoTracks().forEach((track: any) => {
-        track.enabled = false;
+        video: false,
       });
 
       if (isMounted) setLocalStream(stream);
@@ -325,6 +321,10 @@ export const useCallRoom = (
       localStream.getTracks().forEach((track: any) => track.stop());
     }
 
+    setLocalStream(null);
+    videoEnabledRef.current = false;
+    joinedRoomRef.current = null;
+
     setRemoteStreams({});
 
     InCallManager.setKeepScreenOn(false);
@@ -423,17 +423,23 @@ export const useCallRoom = (
 
     let videoTrack = localStream.getVideoTracks()[0];
 
-    if (enableVideo && !videoTrack) {
+    if (enableVideo) {
       try {
         const videoStream = await mediaDevices.getUserMedia({
           audio: false,
           video: getCallVideoConstraints(cameraFacingRef.current),
         });
 
-        videoTrack = videoStream.getVideoTracks()[0];
+        const nextVideoTrack = videoStream.getVideoTracks()[0];
 
-        if (videoTrack) {
-          localStream.addTrack(videoTrack);
+        if (nextVideoTrack) {
+          if (videoTrack) {
+            videoTrack.stop();
+            localStream.removeTrack(videoTrack);
+          }
+
+          videoTrack = nextVideoTrack;
+          localStream.addTrack(nextVideoTrack);
 
           Object.values(peersRef.current).forEach((peer) => {
             const senders = peer.getSenders();
@@ -442,9 +448,9 @@ export const useCallRoom = (
             );
 
             if (videoSender) {
-              videoSender.replaceTrack(videoTrack);
+              videoSender.replaceTrack(nextVideoTrack);
             } else {
-              peer.addTrack(videoTrack, localStream);
+              peer.addTrack(nextVideoTrack, localStream);
             }
           });
         }
@@ -453,7 +459,8 @@ export const useCallRoom = (
         return;
       }
     } else if (videoTrack) {
-      videoTrack.enabled = enableVideo;
+      videoTrack.stop();
+      localStream.removeTrack(videoTrack);
     }
 
     setLocalStream(new MediaStream(localStream.getTracks()));

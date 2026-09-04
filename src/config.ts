@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import secrets from "@secrets";
 
 const configs = {
-  PROD_API_URL: "https://saturnchat.azurewebsites.net/",
+  PROD_API_URL: isDevice ? "http://192.168.1.201:3000" : "http://10.0.2.2:3000",
   DEV_API_URL: isDevice ? "http://192.168.1.201:3000" : "http://10.0.2.2:3000",
   STORAGE_URL: "https://saturnchatstorage.blob.core.windows.net/",
   SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.com.br"],
@@ -16,11 +16,11 @@ const configs = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun1.l.google.com:19302" },
-      // {
-      //   urls: secrets.TURN.url,
-      //   username: secrets.TURN.username,
-      //   credential: secrets.TURN.password,
-      // },
+      {
+        urls: secrets.TURN.url,
+        username: secrets.TURN.username,
+        credential: secrets.TURN.password,
+      },
     ],
   },
   ADS: {

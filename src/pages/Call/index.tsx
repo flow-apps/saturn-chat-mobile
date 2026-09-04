@@ -66,7 +66,6 @@ const Call: React.FC = () => {
     localStream,
     remoteStreams,
     toggleAudio,
-    toggleVideo,
     switchCamera,
     endCall,
     setActiveCallRoom,
@@ -125,14 +124,11 @@ const Call: React.FC = () => {
 
   const handleToggleVideo = async () => {
     const nextState = !isVideoEnabled;
-    setVideoEnabled(nextState);
+
+    await setVideoEnabled(nextState);
 
     InCallManager.start({ media: nextState ? "video" : "audio", auto: true });
     InCallManager.setForceSpeakerphoneOn(true);
-
-    if (toggleVideo) {
-      await toggleVideo(nextState);
-    }
 
     socket?.emit("toggle_video", {
       roomId: groupId,
