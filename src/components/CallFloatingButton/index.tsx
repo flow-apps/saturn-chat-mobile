@@ -3,12 +3,19 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useCallStatus } from "@contexts/callStatus";
 import { useTranslate } from "@hooks/useTranslate";
-import { getCurrentRoute, navigate, navigationRef } from "@routes/rootNavigation";
+import {
+  getCurrentRoute,
+  navigate,
+  navigationRef,
+} from "@routes/rootNavigation";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CallFloatingButton: React.FC = () => {
   const { activeCallRoomId } = useCallStatus();
   const { t } = useTranslate("Call");
-  const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
+  const [currentRouteName, setCurrentRouteName] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     const refreshRoute = () => {
@@ -18,7 +25,10 @@ const CallFloatingButton: React.FC = () => {
 
     refreshRoute();
 
-    const unsubscribe = navigationRef.current?.addListener("state", refreshRoute);
+    const unsubscribe = navigationRef.current?.addListener(
+      "state",
+      refreshRoute,
+    );
 
     return () => {
       unsubscribe?.();
@@ -33,11 +43,11 @@ const CallFloatingButton: React.FC = () => {
   const isOnCallScreen = currentRouteName === "Call";
 
   return !isOnCallScreen && activeCallRoomId ? (
-    <View pointerEvents="box-none" style={styles.wrapper}>
-      <Pressable onPress={handlePress} style={styles.button}>
+    <Pressable onPress={handlePress} style={styles.button}>
+      <SafeAreaView pointerEvents="box-none" style={styles.wrapper}>
         <Text style={styles.text}>{t("floating_button")}</Text>
-      </Pressable>
-    </View>
+      </SafeAreaView>
+    </Pressable>
   ) : null;
 };
 

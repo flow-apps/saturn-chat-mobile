@@ -2,11 +2,16 @@ import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import styled from "styled-components/native";
 import fonts from "@styles/fonts";
 
-export const Container = styled.View<{ bgColor?: string }>`
+export const Container = styled.View<{
+  bgColor?: string;
+  $useSafeArea?: boolean;
+}>`
   width: 100%;
   padding: 0 15px;
-  height: ${getStatusBarHeight(true) + 60}px;
-  padding-top: ${getStatusBarHeight()}px;
+  height: ${(props) =>
+    props.$useSafeArea ? getStatusBarHeight(true) + 60 : 60}px;
+  padding-top: ${(props) =>
+    props.$useSafeArea ? getStatusBarHeight() : 0}px;
   background: ${(props) => props.bgColor || props.theme.colors.primary};
 `;
 
