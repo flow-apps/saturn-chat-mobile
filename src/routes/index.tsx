@@ -28,7 +28,6 @@ const BIOMETRICS_KEY = "@SaturnChat:biometrics";
 const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
 const BIOMETRICS_LAST_AUTHENTICATED_KEY =
   "@SaturnChat:biometricsLastAuthenticated";
-const BACKGROUND_LOCK_COOLDOWN_MS = 60 * 1000;
 
 const Routes = () => {
   const { signed, loadingData } = useAuth();
@@ -41,7 +40,6 @@ const Routes = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const authenticatingRef = useRef(false);
-  const backgroundEnteredAtRef = useRef<number | null>(null);
 
   const authenticate = useCallback(async () => {
     if (authenticatingRef.current) {
@@ -52,12 +50,6 @@ const Routes = () => {
       setIsUnlocked(true);
       return;
     }
-
-    const backgroundEnteredAt = backgroundEnteredAtRef.current;
-    backgroundEnteredAtRef.current = null;
-    const returnedBeforeCooldown =
-      backgroundEnteredAt !== null &&
-      Date.now() - backgroundEnteredAt < BACKGROUND_LOCK_COOLDOWN_MS;
 
     const [storedPreference, storedInterval, storedLastAuthenticated] =
       await AsyncStorage.multiGet([
@@ -75,7 +67,7 @@ const Routes = () => {
     setBiometricsEnabled(enabled);
     setBiometricsPreferenceLoaded(true);
 
-    if (!signed || !enabled || !intervalExpired || returnedBeforeCooldown) {
+    if (!signed || !enabled || !intervalExpired) {
       setIsUnlocked(true);
       return;
     }
@@ -112,8 +104,6 @@ const Routes = () => {
     const subscription = AppState.addEventListener("change", (nextState) => {
       if (nextState === "active") {
         authenticate();
-      } else if (!activeCallRoomId) {
-        backgroundEnteredAtRef.current = Date.now();
       }
     });
 

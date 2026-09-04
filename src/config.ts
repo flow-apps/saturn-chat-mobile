@@ -16,11 +16,11 @@ const configs = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun1.l.google.com:19302" },
-      {
-        urls: secrets.TURN.url,
-        username: secrets.TURN.username,
-        credential: secrets.TURN.password,
-      },
+      // {
+      //   urls: secrets.TURN.url,
+      //   username: secrets.TURN.username,
+      //   credential: secrets.TURN.password,
+      // },
     ],
   },
   ADS: {
