@@ -230,9 +230,9 @@ const Chat: React.FC = () => {
     setShowScrollToBottom(offsetY > 300);
   };
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     flashListRef.current?.scrollToOffset({ offset: 0, animated: true });
-  };
+  }, []);
 
   const handleCreatePoll = useCallback(
     (pollData: {
@@ -284,6 +284,8 @@ const Chat: React.FC = () => {
         sortMessages(_.uniqBy([optimisticPollMessage, ...old], "id")),
       );
 
+      setTimeout(() => scrollToBottom(), 50);
+
       socket?.emit("new_poll", {
         group_id: id,
         question: pollData.question,
@@ -305,6 +307,7 @@ const Chat: React.FC = () => {
       group,
       participant,
       sortMessages,
+      scrollToBottom,
       t,
     ],
   );
@@ -405,6 +408,9 @@ const Chat: React.FC = () => {
       setOldMessages((old) =>
         sortMessages(_.uniqBy([optimisticAudio, ...old], "id")),
       );
+
+      setTimeout(() => scrollToBottom(), 50);
+
       const res = await api.post(
         `/messages/SendAttachment/${id}?type=voice_message`,
         audioData,
@@ -570,6 +576,9 @@ const Chat: React.FC = () => {
     setOldMessages((old) =>
       sortMessages(_.uniqBy([optimisticMsg, ...old], "id")),
     );
+
+    // Garante a rolagem automática para o final do chat ao enviar a mensagem
+    setTimeout(() => scrollToBottom(), 50);
 
     if (selectedFiles.length === 0) {
       handleSendMessage({
