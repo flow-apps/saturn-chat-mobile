@@ -66,15 +66,16 @@ const FilePreview = ({
     const generateVideoThumbnail = async () => {
       try {
         const player = createVideoPlayer({
-          uri: url,
+          uri: `${url}&type=.mp4`,
           headers: getHeadersForAuthFiles(url),
         });
         
-        const thumbnails = await player.generateThumbnailsAsync([1]);
+        const thumbnails = await player.generateThumbnailsAsync([5]);
         console.log(thumbnails);
         
 
         if (isMounted && thumbnails && thumbnails.length > 0) {
+          
           setVideoThumb(thumbnails[0].uri);
         }
       } catch (error) {
