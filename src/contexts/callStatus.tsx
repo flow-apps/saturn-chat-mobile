@@ -7,6 +7,7 @@ import React, {
 } from "react";
 
 import { useCallRoom } from "@hooks/useCallRoom";
+import { RoomUser } from "@type/interfaces";
 
 interface ICallStatusContext {
   activeCallRoomId: string | null;
@@ -14,6 +15,9 @@ interface ICallStatusContext {
   clearActiveCallRoom: () => void;
   localStream: any;
   remoteStreams: { [socketId: string]: any };
+  participants: RoomUser[];
+  remoteVideoEnabled: { [socketId: string]: boolean };
+  remoteAudioMuted: { [socketId: string]: boolean };
   toggleAudio: (isMuted: boolean) => void;
   toggleVideo: (enableVideo: boolean) => Promise<void>;
   switchCamera: () => Promise<void>;
@@ -28,6 +32,9 @@ const CallStatusContext = createContext<ICallStatusContext>({
   clearActiveCallRoom: () => undefined,
   localStream: null,
   remoteStreams: {},
+  participants: [],
+  remoteVideoEnabled: {},
+  remoteAudioMuted: {},
   toggleAudio: () => undefined,
   toggleVideo: async () => undefined,
   switchCamera: async () => undefined,
@@ -71,6 +78,9 @@ export const CallStatusProvider: React.FC<{ children: React.ReactNode }> = ({
       clearActiveCallRoom,
       localStream: session.localStream,
       remoteStreams: session.remoteStreams,
+      participants: session.participants,
+      remoteVideoEnabled: session.remoteVideoEnabled,
+      remoteAudioMuted: session.remoteAudioMuted,
       toggleAudio: session.toggleAudio,
       toggleVideo: session.toggleVideo,
       switchCamera: session.switchCamera,
@@ -78,7 +88,14 @@ export const CallStatusProvider: React.FC<{ children: React.ReactNode }> = ({
       isVideoEnabled,
       setVideoEnabled,
     }),
-    [activeCallRoomId, clearActiveCallRoom, isVideoEnabled, session, setActiveCallRoom, setVideoEnabled],
+    [
+      activeCallRoomId,
+      clearActiveCallRoom,
+      isVideoEnabled,
+      session,
+      setActiveCallRoom,
+      setVideoEnabled,
+    ],
   );
 
   return (

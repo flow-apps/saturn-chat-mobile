@@ -71,8 +71,7 @@ const Login: React.FC = () => {
           {loginError && internalError.has && (
             <ErrorContainer>
               <ErrorText>
-                {t("internal_error")}{" "}
-                {internalError.reason}
+                {t("internal_error")} {internalError.reason}
               </ErrorText>
             </ErrorContainer>
           )}
@@ -102,6 +101,7 @@ const Login: React.FC = () => {
                   passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
                   autoCapitalize="none"
                   secureTextEntry
+                  caretHidden={false}
                 />
                 <ForgotPassword onPress={handleForgotPassword}>
                   <ForgotPasswordText>

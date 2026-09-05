@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import secrets from "@secrets";
 
 const configs = {
-  PROD_API_URL: isDevice ? "http://192.168.1.201:3000" : "http://10.0.2.2:3000",
+  PROD_API_URL: "https://saturnchat.azurewebsites.net/",
   DEV_API_URL: isDevice ? "http://192.168.1.201:3000" : "http://10.0.2.2:3000",
   STORAGE_URL: "https://saturnchatstorage.blob.core.windows.net/",
   SATURN_CHAT_DOMAINS: ["saturn-chat.vercel.app", "saturnchat.com.br"],

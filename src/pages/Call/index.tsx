@@ -65,6 +65,9 @@ const Call: React.FC = () => {
   const {
     localStream,
     remoteStreams,
+    participants: roomParticipants,
+    remoteVideoEnabled,
+    remoteAudioMuted,
     toggleAudio,
     switchCamera,
     endCall,
@@ -77,9 +80,12 @@ const Call: React.FC = () => {
     setActiveCallRoom(groupId);
   }, [groupId, setActiveCallRoom]);
 
-  const [participants, setParticipants] = useState<RoomUser[]>([
-    { socketId: "local", user: user! },
-  ]);
+  const participants =
+    roomParticipants && roomParticipants.length > 0
+      ? roomParticipants
+      : user
+      ? [{ socketId: "local", user }]
+      : [];
 
   const totalParticipants = participants.length;
   const localParticipant = participants.find(
@@ -111,29 +117,14 @@ const Call: React.FC = () => {
   const handleToggleMute = () => {
     const nextState = !isMuted;
     setIsMuted(nextState);
-
-    if (localStream) {
-      toggleAudio(nextState);
-    }
-
-    socket?.emit("toggle_mute_audio", {
-      roomId: groupId,
-      isMuted: nextState,
-    });
+    toggleAudio(nextState);
   };
 
   const handleToggleVideo = async () => {
     const nextState = !isVideoEnabled;
-
     await setVideoEnabled(nextState);
-
     InCallManager.start({ media: nextState ? "video" : "audio", auto: true });
     InCallManager.setForceSpeakerphoneOn(true);
-
-    socket?.emit("toggle_video", {
-      roomId: groupId,
-      isVideoOn: nextState,
-    });
   };
 
   const handleEndCall = () => {
@@ -201,14 +192,19 @@ const Call: React.FC = () => {
   const renderParticipantContent = (item: RoomUser) => {
     const isLocal = item.socketId === "local";
     const stream = isLocal ? localStream : remoteStreams?.[item.socketId];
+    const isRemoteVideoOn = remoteVideoEnabled?.[item.socketId] ?? false;
+    const isRemoteMuted = remoteAudioMuted?.[item.socketId] ?? false;
 
     const hasVideoTrack = stream
       ?.getVideoTracks()
-      .some((t: any) => t.enabled && t.readyState === "live");
+      .some((t: any) => t.readyState === "live");
 
     const shouldShowVideo = isLocal
       ? isVideoEnabled && hasVideoTrack
-      : hasVideoTrack;
+      : isRemoteVideoOn && hasVideoTrack;
+
+    const avatarUrl = item.user?.avatar?.url;
+    const displayName = item.user?.name || t("participant");
 
     return (
       <View
@@ -240,16 +236,32 @@ const Call: React.FC = () => {
           >
             <Avatar>
               <AvatarImage
-                uri={item.user.avatar ? item.user?.avatar.url : undefined}
+                uri={avatarUrl}
                 placeholder={require("@assets/avatar-placeholder.jpg")}
               />
             </Avatar>
           </View>
         )}
 
+        {isRemoteMuted && !isLocal && (
+          <View
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              borderRadius: 12,
+              padding: 6,
+              zIndex: 5,
+            }}
+          >
+            <Feather name="mic-off" size={14} color="#E83F5B" />
+          </View>
+        )}
+
         <NameContainer>
           <Name numberOfLines={1}>
-            {isLocal ? `${item.user?.name} (${t("you")})` : item.user?.name}
+            {isLocal ? `${displayName} (${t("you")})` : displayName}
           </Name>
         </NameContainer>
       </View>
@@ -276,34 +288,12 @@ const Call: React.FC = () => {
     socket?.on("error_join_call_room", handleRoomError);
     socket?.on("call_room_closed", handleRoomClosed);
 
-    socket?.on("current_room_users", (users: RoomUser[]) => {
-      setParticipants((prev) => {
-        const localUser = prev.find((u) => u.socketId === "local");
-        const newRemoteUsers = users.filter((u) => u.socketId !== socket.id);
-        return localUser ? [localUser, ...newRemoteUsers] : newRemoteUsers;
-      });
-    });
-
-    socket?.on("user_joined", (newUser: RoomUser) => {
-      setParticipants((prev) => {
-        if (prev.some((u) => u.socketId === newUser.socketId)) return prev;
-        return [...prev, newUser];
-      });
-    });
-
-    socket?.on("user_left", ({ socketId }: { socketId: string }) => {
-      setParticipants((prev) => prev.filter((u) => u.socketId !== socketId));
-    });
-
     return () => {
       socket?.off("call_error", handleRoomError);
       socket?.off("error_join_call_room", handleRoomError);
       socket?.off("call_room_closed", handleRoomClosed);
-      socket?.off("current_room_users");
-      socket?.off("user_joined");
-      socket?.off("user_left");
     };
-  }, [socket, user]);
+  }, [socket]);
 
   return (
     <Container>
