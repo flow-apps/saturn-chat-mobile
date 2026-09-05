@@ -53,6 +53,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 import { GroupCategory } from "@type/enums";
 import { Label } from "@components/Input/styles";
+import { biometricsControl } from "@services/biometricsControl";
 
 interface AlertConfigState {
   visible: boolean;
@@ -228,6 +229,7 @@ const NewGroup: React.FC = () => {
     }
 
     try {
+      biometricsControl.setIgnoreBiometrics(true);
       const photo = await ImagePicker.launchImageLibraryAsync({
         aspect: [600, 600],
         allowsEditing: true,
@@ -247,6 +249,8 @@ const NewGroup: React.FC = () => {
         title: t("alerts.error.title", { defaultValue: "Erro" }),
         content: "Não foi possível carregar a imagem selecionada.",
       });
+    } finally {
+      biometricsControl.setIgnoreBiometrics(false);
     }
   };
 

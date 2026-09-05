@@ -29,6 +29,7 @@ import { BannerAdSize } from "react-native-google-mobile-ads";
 import { nicknameValidation } from "@utils/regex";
 import _ from "lodash";
 import { FieldError, SearchText } from "@pages/Auth/Register/styles";
+import { biometricsControl } from "@services/biometricsControl";
 
 interface AlertConfigState {
   visible: boolean;
@@ -186,6 +187,7 @@ const EditProfile: React.FC = () => {
       }
     }
 
+    biometricsControl.setIgnoreBiometrics(true);
     const photo = await ImagePicker.launchImageLibraryAsync({
       aspect: [600, 600],
       allowsEditing: true,
@@ -230,6 +232,8 @@ const EditProfile: React.FC = () => {
           });
         });
     }
+
+    biometricsControl.setIgnoreBiometrics(false);
   };
 
   const renderAvatar = () => {

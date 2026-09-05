@@ -31,6 +31,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslate } from "@hooks/useTranslate";
 import { GroupCategory } from "@type/enums";
 import { Label } from "@components/Input/styles";
+import { biometricsControl } from "@services/biometricsControl";
 
 interface AlertConfigState {
   visible: boolean;
@@ -123,6 +124,7 @@ const EditGroup: React.FC = () => {
       }
     }
 
+    biometricsControl.setIgnoreBiometrics(true);
     const photo = await ImagePicker.launchImageLibraryAsync({
       aspect: [600, 600],
       allowsEditing: true,
@@ -165,6 +167,8 @@ const EditGroup: React.FC = () => {
         });
       }
     }
+
+    biometricsControl.setIgnoreBiometrics(false);
   };
 
   const renderAvatar = () => {

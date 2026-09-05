@@ -50,6 +50,7 @@ import { useTranslate } from "@hooks/useTranslate";
 import { ArrayUtils } from "@utils/array";
 import { getEffectiveSettingValue, getSettingValue } from "@utils/settings";
 import { OneSignal } from "@configs/notifications";
+import { biometricsControl } from "@services/biometricsControl";
 
 import { File, ordernedRolesArray } from "./types";
 import { useChatMessages } from "@hooks/useChatMessages";
@@ -443,47 +444,56 @@ const Chat: React.FC = () => {
   };
 
   const handleFileSelector = async () => {
-    const res = await fileService.get();
-    if (!res.error && res.selectedFile) {
-      if (
-        arrayUtils.has(files, (f) => f.file.uri === res.selectedFile.file.uri)
-      ) {
+    try {
+      biometricsControl.setIgnoreBiometrics(true);
+
+      const res = await fileService.get();
+
+      if (!res.error && res.selectedFile) {
+        if (
+          arrayUtils.has(files, (f) => f.file.uri === res.selectedFile.file.uri)
+        ) {
+          setAlertConfig({
+            visible: true,
+            title: t("alerts.same_file.title"),
+            content: t("alerts.same_file.content"),
+            extraButton: false,
+          });
+          return;
+        }
+        if (res.usageSize) setFilesSizeUsed(res.usageSize);
+        setFiles((old) => [
+          { file: res.selectedFile.file, type: res.selectedFile.type },
+          ...old,
+        ]);
+      } else if (res.errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT) {
         setAlertConfig({
           visible: true,
-          title: t("alerts.same_file.title"),
-          content: t("alerts.same_file.content"),
-          extraButton: false,
+          title: t("alerts.file_size.title"),
+          content: t("alerts.file_size.content", {
+            amount: userConfigs.fileUpload,
+          }),
+          extraButton: true,
+          extraButtonText: t("alerts.file_size.extra_button_text"),
+          extraButtonAction: () => {
+            hideAlert();
+            analytics().logEvent("IncreaseUpload");
+            navigation.navigate("PurchasePremium");
+          },
         });
-        return;
+      } else if (res.error) {
+        setAlertConfig({
+          visible: true,
+          title: t("alerts.error.title", { defaultValue: "Erro" }),
+          content: t("alerts.error.file_selection", {
+            defaultValue: "Não foi possível selecionar o arquivo.",
+          }),
+        });
       }
-      if (res.usageSize) setFilesSizeUsed(res.usageSize);
-      setFiles((old) => [
-        { file: res.selectedFile.file, type: res.selectedFile.type },
-        ...old,
-      ]);
-    } else if (res.errorType === FileServiceErrors.FILE_SIZE_REACHED_LIMIT) {
-      setAlertConfig({
-        visible: true,
-        title: t("alerts.file_size.title"),
-        content: t("alerts.file_size.content", {
-          amount: userConfigs.fileUpload,
-        }),
-        extraButton: true,
-        extraButtonText: t("alerts.file_size.extra_button_text"),
-        extraButtonAction: () => {
-          hideAlert();
-          analytics().logEvent("IncreaseUpload");
-          navigation.navigate("PurchasePremium");
-        },
-      });
-    } else if (res.error) {
-      setAlertConfig({
-        visible: true,
-        title: t("alerts.error.title", { defaultValue: "Erro" }),
-        content: t("alerts.error.file_selection", {
-          defaultValue: "Não foi possível selecionar o arquivo.",
-        }),
-      });
+    } finally {
+      setTimeout(() => {
+        biometricsControl.setIgnoreBiometrics(false);
+      }, 1000);
     }
   };
 
@@ -502,7 +512,6 @@ const Chat: React.FC = () => {
         if (pRes.status === 200) {
           setParticipant(pRes.data.participant);
           setGroup(pRes.data.participant.group);
-          console.log(group);
         }
         if (listRes.status === 200) setParticipants(listRes.data);
         if (Platform.OS === "android")
@@ -677,7 +686,6 @@ const Chat: React.FC = () => {
       appState === "active";
 
     if (appCameToForeground) {
-      // Sincroniza silenciosamente sem ativar a tela inteira de loading
       if (group?.id === id) {
         fetchParticipantAndGroup(true);
       }

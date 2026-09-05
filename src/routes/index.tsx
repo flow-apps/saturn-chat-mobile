@@ -23,6 +23,7 @@ import CallFloatingButton from "@components/CallFloatingButton";
 import Button from "@components/Button";
 import { useTranslate } from "@hooks/useTranslate";
 import fonts from "@styles/fonts";
+import { biometricsControl } from "@services/biometricsControl";
 
 const BIOMETRICS_KEY = "@SaturnChat:biometrics";
 const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
@@ -43,6 +44,12 @@ const Routes = () => {
 
   const authenticate = useCallback(async () => {
     if (authenticatingRef.current) {
+      return;
+    }
+
+    if (biometricsControl.getShouldIgnore()) {
+      biometricsControl.setIgnoreBiometrics(false);
+      setIsUnlocked(true);
       return;
     }
 
@@ -124,7 +131,7 @@ const Routes = () => {
   const routeNameRef = useRef<string | undefined>("");
 
   useEffect(() => {
-    const openCallFromNotification = (data: Record<string, unknown>) => {
+    const openCallFromNotification = (data: any) => {
       const targetRoomId = (data?.groupId || data?.roomId) as
         | string
         | undefined;
