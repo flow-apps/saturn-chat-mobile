@@ -125,8 +125,12 @@ const Routes = () => {
 
   useEffect(() => {
     const openCallFromNotification = (data: Record<string, unknown>) => {
-      if (data?.roomId && data.roomId !== activeCallRoomId) {
-        navigate("Call", { groupId: data.roomId as string });
+      const targetRoomId = (data?.groupId || data?.roomId) as
+        | string
+        | undefined;
+
+      if (targetRoomId && targetRoomId !== activeCallRoomId) {
+        navigate("Call", { groupId: targetRoomId });
       }
     };
 
@@ -157,12 +161,7 @@ const Routes = () => {
     return <Loading />;
   }
 
-  if (
-    signed &&
-    !activeCallRoomId &&
-    biometricsEnabled &&
-    !isUnlocked
-  ) {
+  if (signed && !activeCallRoomId && biometricsEnabled && !isUnlocked) {
     return (
       <View
         style={{

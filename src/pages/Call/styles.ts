@@ -99,10 +99,7 @@ export const MiniCard = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.shape};
   border: 2px solid rgba(255, 255, 255, 0.2);
   elevation: 6;
-  shadow-color: #000;
-  shadow-offset: 0px 8px;
-  shadow-opacity: 0.35;
-  shadow-radius: 10px;
+  z-index: 10;
 `;
 
 export const ParticipantCard = styled.View<GridCardProps>`

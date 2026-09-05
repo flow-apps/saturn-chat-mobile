@@ -84,8 +84,8 @@ const Call: React.FC = () => {
     roomParticipants && roomParticipants.length > 0
       ? roomParticipants
       : user
-      ? [{ socketId: "local", user }]
-      : [];
+        ? [{ socketId: "local", user }]
+        : [];
 
   const totalParticipants = participants.length;
   const localParticipant = participants.find(
@@ -188,20 +188,26 @@ const Call: React.FC = () => {
     setFocusedParticipant(null);
     setParticipantsModalVisible(true);
   };
-
-  const renderParticipantContent = (item: RoomUser) => {
+  const renderParticipantContent = (item: RoomUser, isOverlay = false) => {
     const isLocal = item.socketId === "local";
     const stream = isLocal ? localStream : remoteStreams?.[item.socketId];
     const isRemoteVideoOn = remoteVideoEnabled?.[item.socketId] ?? false;
-    const isRemoteMuted = remoteAudioMuted?.[item.socketId] ?? false;
 
-    const hasVideoTrack = stream
-      ?.getVideoTracks()
-      .some((t: any) => t.readyState === "live");
+    const videoTrack = stream?.getVideoTracks()?.[0];
 
-    const shouldShowVideo = isLocal
-      ? isVideoEnabled && hasVideoTrack
-      : isRemoteVideoOn && hasVideoTrack;
+    const isLocalVideoOn =
+      isLocal &&
+      videoTrack &&
+      videoTrack.enabled &&
+      videoTrack.readyState === "live";
+
+    const isRemoteVideoValid =
+      !isLocal &&
+      isRemoteVideoOn &&
+      videoTrack &&
+      videoTrack.readyState === "live";
+
+    const shouldShowVideo = isLocal ? isLocalVideoOn : isRemoteVideoValid;
 
     const avatarUrl = item.user?.avatar?.url;
     const displayName = item.user?.name || t("participant");
@@ -222,6 +228,9 @@ const Call: React.FC = () => {
             streamURL={stream.toURL()}
             objectFit="cover"
             mirror={isLocal}
+            /* --- ADICIONE ESTAS DUAS PROPS --- */
+            zOrder={isOverlay ? 1 : 0}
+            hasVideoPassThrough={isOverlay}
             style={{ width: "100%", height: "100%" }}
           />
         ) : (
@@ -243,7 +252,7 @@ const Call: React.FC = () => {
           </View>
         )}
 
-        {isRemoteMuted && !isLocal && (
+        {remoteAudioMuted && !isLocal && (
           <View
             style={{
               position: "absolute",
@@ -267,7 +276,6 @@ const Call: React.FC = () => {
       </View>
     );
   };
-
   useEffect(() => {
     const handleRoomError = ({ message }: { message?: string }) => {
       if (message) {
@@ -306,45 +314,33 @@ const Call: React.FC = () => {
 
       {focusedParticipant ? (
         <DirectCallContainer>
-          <View
-            style={{
-              position: "absolute",
-              top: 16,
-              right: 16,
-              zIndex: 10,
-            }}
-          >
-            <ControlButton
-              onPress={closeFocusedParticipant}
-              isActive
-              style={{ width: 42, height: 42, borderRadius: 21 }}
-            >
-              <Feather name="x" size={20} color="#FFF" />
-            </ControlButton>
-          </View>
-
+          {/* Tela Cheia (Fundo) -> zOrder = 0 */}
           <FullscreenCard activeOpacity={1}>
-            {renderParticipantContent(focusedParticipant)}
+            {renderParticipantContent(focusedParticipant, false)}
           </FullscreenCard>
 
+          {/* Mini Card (Sobreposto) -> zOrder = 1 */}
           <MiniCard
             activeOpacity={0.9}
             onPress={() => setIsLocalPrimary((prev) => !prev)}
           >
-            {renderParticipantContent(localParticipant ?? participants[0])}
+            {renderParticipantContent(
+              localParticipant ?? participants[0],
+              true,
+            )}
           </MiniCard>
         </DirectCallContainer>
       ) : isDirectCall && primaryParticipant && secondaryParticipant ? (
         <DirectCallContainer>
           <FullscreenCard activeOpacity={1}>
-            {renderParticipantContent(primaryParticipant)}
+            {renderParticipantContent(primaryParticipant, false)}
           </FullscreenCard>
 
           <MiniCard
             activeOpacity={0.9}
             onPress={() => setIsLocalPrimary((prev) => !prev)}
           >
-            {renderParticipantContent(secondaryParticipant)}
+            {renderParticipantContent(secondaryParticipant, true)}
           </MiniCard>
         </DirectCallContainer>
       ) : (
@@ -354,20 +350,9 @@ const Call: React.FC = () => {
               key={item.socketId}
               totalItems={displayedCardsCount}
             >
-              {renderParticipantContent(item)}
+              {renderParticipantContent(item, false)}
             </ParticipantCard>
           ))}
-
-          {hasMore && (
-            <MoreCard
-              totalItems={displayedCardsCount}
-              onPress={() => setParticipantsModalVisible(true)}
-              activeOpacity={0.7}
-            >
-              <MoreText>+{remainingCount}</MoreText>
-              <MoreSubtext>Ver todos</MoreSubtext>
-            </MoreCard>
-          )}
         </GridContainer>
       )}
 

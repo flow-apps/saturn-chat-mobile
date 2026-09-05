@@ -40,10 +40,7 @@ const getCallVideoConstraints = (facingMode: "user" | "environment") => ({
   ...CALL_VIDEO_CONSTRAINTS,
 });
 
-export const useCallRoom = (
-  roomId: string | null,
-  onEnded?: () => void,
-) => {
+export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
   const { socket } = useWebsocket();
   const { user } = useAuth();
   const { t } = useTranslate("Call");
@@ -172,6 +169,22 @@ export const useCallRoom = (
   };
 
   useEffect(() => {
+    if (!socket) return;
+
+    const handleConnect = () => {
+      if (roomId) {
+        joinedRoomRef.current = null;
+        joinCallRoom();
+      }
+    };
+
+    socket.on("connect", handleConnect);
+    return () => {
+      socket.off("connect", handleConnect);
+    };
+  }, [socket, roomId]);
+
+  useEffect(() => {
     if (!roomId) {
       setParticipants([]);
       return;
@@ -192,10 +205,13 @@ export const useCallRoom = (
 
       const stream = await mediaDevices.getUserMedia({
         audio: true,
-        video: videoEnabledRef.current
-          ? getCallVideoConstraints(cameraFacingRef.current)
-          : false,
+        video: getCallVideoConstraints(cameraFacingRef.current),
       });
+
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = videoEnabledRef.current;
+      }
 
       streamRef.current = stream;
       if (isMounted) setLocalStream(stream);
@@ -208,7 +224,8 @@ export const useCallRoom = (
             prev.find((u) => u.socketId === "local") ||
             (user ? { socketId: "local", user } : null);
           const remoteUsers = users.filter(
-            (u) => u.socketId !== socket.id && (!user || u.user?.id !== user.id),
+            (u) =>
+              u.socketId !== socket.id && (!user || u.user?.id !== user.id),
           );
           return localUser ? [localUser, ...remoteUsers] : remoteUsers;
         });
@@ -290,11 +307,16 @@ export const useCallRoom = (
           await peer.setLocalDescription(answer);
 
           if (iceCandidatesQueue.current[callerSocketId]) {
-            for (const candidate of iceCandidatesQueue.current[callerSocketId]) {
+            for (const candidate of iceCandidatesQueue.current[
+              callerSocketId
+            ]) {
               try {
                 await peer.addIceCandidate(new RTCIceCandidate(candidate));
               } catch (e) {
-                console.warn("[Call] Erro ao adicionar ICE candidate da fila:", e);
+                console.warn(
+                  "[Call] Erro ao adicionar ICE candidate da fila:",
+                  e,
+                );
               }
             }
             delete iceCandidatesQueue.current[callerSocketId];
@@ -327,11 +349,16 @@ export const useCallRoom = (
           await peer.setRemoteDescription(new RTCSessionDescription(answer));
 
           if (iceCandidatesQueue.current[responderSocketId]) {
-            for (const candidate of iceCandidatesQueue.current[responderSocketId]) {
+            for (const candidate of iceCandidatesQueue.current[
+              responderSocketId
+            ]) {
               try {
                 await peer.addIceCandidate(new RTCIceCandidate(candidate));
               } catch (e) {
-                console.warn("[Call] Erro ao adicionar ICE candidate após resposta:", e);
+                console.warn(
+                  "[Call] Erro ao adicionar ICE candidate após resposta:",
+                  e,
+                );
               }
             }
             delete iceCandidatesQueue.current[responderSocketId];
@@ -635,68 +662,40 @@ export const useCallRoom = (
 
     let videoTrack = activeStream.getVideoTracks()[0];
 
-    if (enableVideo) {
+    if (!videoTrack && enableVideo) {
       try {
         const videoStream = await mediaDevices.getUserMedia({
           audio: false,
           video: getCallVideoConstraints(cameraFacingRef.current),
         });
-
-        const nextVideoTrack = videoStream.getVideoTracks()[0];
-
-        if (nextVideoTrack) {
-          if (videoTrack) {
-            videoTrack.stop();
-            activeStream.removeTrack(videoTrack);
-          }
-
-          videoTrack = nextVideoTrack;
-          activeStream.addTrack(nextVideoTrack);
-
-          await Promise.all(
-            Object.entries(peersRef.current).map(async ([targetSocketId, peer]) => {
-              const senders = peer.getSenders();
-              const videoSender = senders.find(
-                (s: any) => s.track?.kind === "video",
-              );
-
-              if (videoSender) {
-                videoSender.replaceTrack(nextVideoTrack);
-              } else {
-                peer.addTrack(nextVideoTrack, activeStream);
-              }
-
-              await renegotiatePeer(targetSocketId, peer);
-            }),
-          );
+        const newVideoTrack = videoStream.getVideoTracks()[0];
+        if (newVideoTrack) {
+          activeStream.addTrack(newVideoTrack);
+          videoTrack = newVideoTrack;
         }
       } catch (error) {
-        console.error("Erro ao capturar câmera:", error);
+        console.error("[Call] Erro ao obter câmera:", error);
         return;
       }
-    } else if (videoTrack) {
-      videoTrack.stop();
-      activeStream.removeTrack(videoTrack);
-
-      await Promise.all(
-        Object.entries(peersRef.current).map(async ([targetSocketId, peer]) => {
-          const senders = peer.getSenders();
-          const videoSender = senders.find(
-            (s: any) => s.track?.kind === "video",
-          );
-
-          if (videoSender) {
-            videoSender.replaceTrack(null);
-          }
-
-          await renegotiatePeer(targetSocketId, peer);
-        }),
-      );
     }
 
-    const updatedStream = new MediaStream(activeStream.getTracks());
-    streamRef.current = updatedStream;
-    setLocalStream(updatedStream);
+    if (videoTrack) {
+      videoTrack.enabled = enableVideo;
+
+      Object.values(peersRef.current).forEach((peer) => {
+        const senders = peer.getSenders();
+        const videoSender = senders.find((s: any) => s.track?.kind === "video");
+
+        if (videoSender) {
+          videoSender.replaceTrack(videoTrack);
+        } else if (enableVideo) {
+          peer.addTrack(videoTrack, activeStream);
+        }
+      });
+    }
+
+    streamRef.current = activeStream;
+    setLocalStream(activeStream);
 
     socket?.emit("toggle_video", {
       roomId,
