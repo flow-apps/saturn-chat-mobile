@@ -467,10 +467,12 @@ const Message = ({
       <ReanimatedSwipeable
         ref={swipeableRef}
         friction={2}
-        leftThreshold={80}
-        rightThreshold={80}
+        leftThreshold={40}
+        rightThreshold={40}
         overshootLeft={false}
         overshootRight={false}
+        dragOffsetFromLeftEdge={25}
+        dragOffsetFromRightEdge={25}
         renderLeftActions={!isRight ? renderReplyIcon : undefined}
         renderRightActions={isRight ? renderReplyIcon : undefined}
         onSwipeableWillOpen={triggerReply}
