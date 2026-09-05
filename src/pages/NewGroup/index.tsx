@@ -137,6 +137,17 @@ const NewGroup: React.FC = () => {
     navigator.navigate("PurchasePremium");
   };
 
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setTags("");
+    setGroupPhoto(undefined);
+    setGroupPhotoPreview("");
+    setGroupCategory(GroupCategory.OTHER);
+    setIsPublicGroup(true);
+    setIsSendable(false);
+  };
+
   const handleCreateGroup = async () => {
     const data = new FormData();
 
@@ -172,6 +183,7 @@ const NewGroup: React.FC = () => {
         await analytics().logEvent("created_group", {
           group_id: response.data.id,
         });
+        resetForm();
         navigator.navigate("GroupsChat");
       }
     } catch (error: any) {
@@ -189,7 +201,8 @@ const NewGroup: React.FC = () => {
   };
 
   const handleCheckFields = (textName: string) => {
-    if (verifyBetweenValues(textName.length, 0, 100)) return setIsSendable(true);
+    if (verifyBetweenValues(textName.length, 0, 100))
+      return setIsSendable(true);
     setIsSendable(false);
   };
 
@@ -256,11 +269,7 @@ const NewGroup: React.FC = () => {
 
         <ReachedLimitContainer>
           <AnimationContainer>
-            <Animation
-              source={require("@assets/crying.json")}
-              autoPlay
-              loop
-            />
+            <Animation source={require("@assets/crying.json")} autoPlay loop />
           </AnimationContainer>
           <ReachedLimitTitle>
             {t("limit.title", { count: userConfigs.amountGroups })}
@@ -325,11 +334,7 @@ const NewGroup: React.FC = () => {
                 {groupPhotoPreview ? (
                   <GroupPhoto source={{ uri: groupPhotoPreview }} />
                 ) : (
-                  <Feather
-                    name="camera"
-                    size={55}
-                    color={colors.secondary}
-                  />
+                  <Feather name="camera" size={55} color={colors.secondary} />
                 )}
               </SelectGroupPhoto>
               <SelectGroupPhotoTitle>

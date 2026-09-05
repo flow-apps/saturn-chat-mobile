@@ -41,6 +41,7 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
   const { t } = useTranslate("Components.Ads");
 
   const [isAdLoaded, setIsAdLoaded] = useState(false);
+  const [disabled, setDisabled] = useState(__DEV__);
 
   const handleGoPremium = async () => {
     navigation.navigate("PurchasePremium");
@@ -58,7 +59,7 @@ const Banner = ({ rotate, size = BannerAdSize.BANNER }: BannerProps) => {
     setIsAdLoaded(false);
   };
 
-  if (isPremium) return null;
+  if (isPremium || disabled) return null;
 
   return (
     <AnimatePresence>
