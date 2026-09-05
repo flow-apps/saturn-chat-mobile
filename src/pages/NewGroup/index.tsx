@@ -382,7 +382,7 @@ const NewGroup: React.FC = () => {
                   onChangeText={setTags}
                 />
                 <CategoryContainer>
-                  <Label>
+                  <Label style={{ marginBottom: 10 }}>
                     {t("form.labels.category.label", {
                       defaultValue: "Group category",
                     })}

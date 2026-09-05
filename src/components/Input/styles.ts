@@ -29,6 +29,7 @@ export const Label = styled.Text`
   color: ${(props) => props.theme.colors.light_heading};
   font-size: 18px;
   font-family: ${fonts.heading};
+  margin-bottom: 5px;
 `;
 
 export const ShowPasswordContainer = styled.TouchableOpacity`
