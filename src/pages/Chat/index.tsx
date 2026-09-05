@@ -55,6 +55,7 @@ import { biometricsControl } from "@services/biometricsControl";
 import { File, ordernedRolesArray } from "./types";
 import { useChatMessages } from "@hooks/useChatMessages";
 import { useChatAudio } from "@hooks/useChatAudio";
+import { usePersistedState } from "@hooks/usePersistedState";
 import { ChatInput } from "@components/Chat/ChatInput";
 import { Container, MessageContainer } from "./styles";
 import { PollModal } from "@components/Chat/PollModal";
@@ -118,6 +119,10 @@ const Chat: React.FC = () => {
 
   const flashListRef = useRef<FlashList<MessageData>>(null);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
+  // Sistema de rascunho persistido por grupo/chat
+  const [draftMessage, setDraftMessage, isDraftFetched] =
+    usePersistedState<string>(`@saturnchat:draft:${id}`, "");
 
   const {
     oldMessages,
@@ -558,6 +563,9 @@ const Chat: React.FC = () => {
     }
     const localReference = uuid.v4() as string;
 
+    // Limpa o rascunho persistido
+    setDraftMessage("");
+
     const optimisticMsg = buildOptimisticMessage({
       localReference,
       message,
@@ -577,7 +585,6 @@ const Chat: React.FC = () => {
       sortMessages(_.uniqBy([optimisticMsg, ...old], "id")),
     );
 
-    // Garante a rolagem automática para o final do chat ao enviar a mensagem
     setTimeout(() => scrollToBottom(), 50);
 
     if (selectedFiles.length === 0) {
@@ -661,7 +668,14 @@ const Chat: React.FC = () => {
         />
       </AnimatedMessage>
     ),
-    [oldMessages, participant, group, canSendMessage, participants],
+    [
+      oldMessages,
+      participant,
+      group,
+      canSendMessage,
+      participants,
+      screenshotBlocked,
+    ],
   );
 
   useEffect(() => {
@@ -878,6 +892,8 @@ const Chat: React.FC = () => {
             files={files}
             insetsBottom={insets.bottom}
             isKeyboardVisible={isKeyboardVisible}
+            initialValue={isDraftFetched ? draftMessage : ""}
+            onChangeText={setDraftMessage}
           />
         </Container>
       </KeyboardAvoidingView>

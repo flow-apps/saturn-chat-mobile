@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Keyboard,
   Modal,
@@ -64,6 +64,8 @@ interface ChatInputProps {
   files: File[];
   insetsBottom: number;
   isKeyboardVisible: boolean;
+  initialValue?: string;
+  onChangeText?: (text: string) => void;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -87,6 +89,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   files,
   insetsBottom,
   isKeyboardVisible,
+  initialValue = "",
+  onChangeText,
 }) => {
   const { colors } = useTheme();
   const messageInputRef = useRef<{
@@ -104,6 +108,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [mentionPosition, setMentionPosition] = useState({ start: 0, end: 0 });
   const [isActionsModalVisible, setIsActionsModalVisible] = useState(false);
   const { t } = useTranslate("Chat");
+
+  // Sincroniza o rascunho inicial vindo do hook persistido
+  useEffect(() => {
+    if (initialValue !== undefined && messageInputRef.current) {
+      messageInputRef.current.setNativeProps({ text: initialValue });
+      messageInputRef.current.value = initialValue;
+      setIsTypingMessage(initialValue.length > 0);
+    }
+  }, [initialValue]);
 
   const handleSetText = (text: string) => {
     if (text.length >= maxMessageLength) {
@@ -129,6 +142,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
     setMentions((prev) => prev.filter((m) => text.includes(`@${m.nickname}`)));
     if (messageInputRef.current) messageInputRef.current.value = text;
+    
+    if (onChangeText) {
+      onChangeText(text);
+    }
     onTyping();
   };
 
@@ -144,6 +161,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     setMentions((prev) => [...prev, selectedUser]);
     setIsMentioning(false);
     setIsTypingMessage(true);
+    
+    if (onChangeText) {
+      onChangeText(newText);
+    }
     onTyping();
     messageInputRef.current?.focus();
   };
@@ -158,6 +179,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
 
     setIsTypingMessage(false);
+    
+    if (onChangeText) {
+      onChangeText("");
+    }
+
     onSendMessage(
       text,
       files,

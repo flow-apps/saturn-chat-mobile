@@ -84,7 +84,7 @@ export interface MessageData {
   links?: LinkData[];
   created_at: string;
   author: UserData;
-  author_id: string;
+  author_id?: string;
   participant: ParticipantData;
   group: GroupData;
   reply_to?: MessageData;
@@ -135,7 +135,7 @@ export interface FileData {
 }
 
 export interface IFileItem {
-  id: string;
+  id?: string;
   name: string;
   original_name: string;
   url?: string;
