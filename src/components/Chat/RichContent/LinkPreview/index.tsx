@@ -77,7 +77,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
 
   const handlePreview = useCallback(() => {
     if (isYoutubeLink) {
-      return ytIFrameRef.current.openYouTubeIFrameModal();
+      return ytIFrameRef.current?.openYouTubeIFrameModal();
     }
 
     navigation.navigate("ImagePreview", {
@@ -86,7 +86,14 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
       antiPrint,
       conversationType,
     });
-  }, [antiPrint, conversationType, isYoutubeLink, link.image, link.link, navigation]);
+  }, [
+    antiPrint,
+    conversationType,
+    isYoutubeLink,
+    link.image,
+    link.link,
+    navigation,
+  ]);
 
   useEffect(() => {
     const fetchYouTubeData = async () => {

@@ -30,7 +30,8 @@ import { useAuth } from "@contexts/auth";
 interface IFilePreviewProps {
   name: string;
   original_name: string;
-  url: string;
+  url?: string;
+  uri?: string;
   size: number;
   type: string;
   deleted: boolean;
@@ -65,7 +66,7 @@ const FilePreview = ({
   }, [url]);
 
   const fileHeaders = useMemo(
-    () => getHeadersForAuthFiles(url),
+    () => getHeadersForAuthFiles(url!),
     [getHeadersForAuthFiles, url],
   );
 
@@ -89,7 +90,9 @@ const FilePreview = ({
               const thumbUri =
                 typeof firstThumb === "string"
                   ? firstThumb
-                  : (firstThumb as any).uri || (firstThumb as any).image?.uri || (firstThumb as any).image;
+                  : (firstThumb as any).uri ||
+                    (firstThumb as any).image?.uri ||
+                    (firstThumb as any).image;
 
               if (thumbUri) {
                 setVideoThumb(thumbUri);
@@ -152,7 +155,7 @@ const FilePreview = ({
   const downloadFile = useCallback(async () => {
     setDownloadWarning(false);
 
-    await fileService.downloadFile(url, original_name);
+    await fileService.downloadFile(url!, original_name);
   }, [url, original_name]);
 
   const renderIcon = () => {
@@ -280,7 +283,7 @@ const FilePreview = ({
           <FileOpenAction>{renderPreview()}</FileOpenAction>
         </FileContainer>
       </Container>
-      {type === "audio" && <AudioPreview audio={{ name, url }} />}
+      {type === "audio" && <AudioPreview audio={{ name, url: String(url) }} />}
     </>
   );
 };

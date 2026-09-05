@@ -84,11 +84,12 @@ export interface MessageData {
   links?: LinkData[];
   created_at: string;
   author: UserData;
+  author_id: string;
   participant: ParticipantData;
   group: GroupData;
   reply_to?: MessageData;
   voice_message?: AudioData;
-  files?: FileData[] | File[];
+  files?: IFileItem[];
   sended?: boolean;
   mentions?: string[];
   poll?: PollData;
@@ -133,6 +134,18 @@ export interface FileData {
   type: "unknown" | string;
 }
 
+export interface IFileItem {
+  id: string;
+  name: string;
+  original_name: string;
+  url?: string;
+  uri?: string; // Para arquivos do Expo Picker/Camera
+  size: number;
+  type: string;
+  mimeType: string;
+  deleted: boolean;
+}
+
 export interface InviteData {
   id: string;
   friend_id?: string;
@@ -152,6 +165,7 @@ export interface InviteData {
 }
 
 export interface LinkData {
+  id?: string;
   link: string;
   siteName: string;
   title: string;
