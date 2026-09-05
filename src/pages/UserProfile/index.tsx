@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import AdBanner from "@components/Ads/Banner";
 import Group from "@components/Group";
 import Feather from "@expo/vector-icons/Feather";
@@ -14,7 +14,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { FriendData, UserData } from "@type/interfaces";
+import { FriendData, GroupData, UserData } from "@type/interfaces";
 import { FriendsStates, ParticipantStates, ReportToType } from "@type/enums";
 import { View } from "react-native";
 import {
@@ -46,12 +46,15 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { HeaderButton } from "@components/Header/styles";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
+import { ParticipantData } from "@pages/Home";
 
 const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [friendsState, setFriendsState] = useState<FriendsStates>();
   const [userInfos, setUserInfos] = useState<UserData>({} as UserData);
   const [friendInfos, setFriendInfos] = useState<FriendData>();
+  const [participatingGroups, setParticipatingGroups] =
+    useState<ParticipantData[]>();
 
   const { colors } = useTheme();
   const { user } = useAuth();
@@ -81,6 +84,18 @@ const UserProfile: React.FC = () => {
       })();
     }, []),
   );
+
+  useEffect(() => {
+    if (!userInfos || !userInfos?.participating?.length) {
+      setParticipatingGroups([]);
+    }
+
+    const filteredGroups = userInfos.participating?.filter(
+      (p) =>
+        p.group.privacy !== "PRIVATE" && p.state === ParticipantStates.JOINED,
+    );
+    setParticipatingGroups(filteredGroups);
+  }, [userInfos]);
 
   const openFriendsManager = () => {
     navigation.navigate("FriendsManager");
@@ -217,30 +232,24 @@ const UserProfile: React.FC = () => {
             )}
             <AddFriendContainer>{renderFriendButton()}</AddFriendContainer>
           </BasicInfosContainer>
-          {userInfos?.participating!.length > 0 && (
+          {!!participatingGroups?.length && (
             <GroupsContainer>
               <GroupsTitle>
                 <Feather name="users" size={25} color={colors.light_heading} />{" "}
                 {t("participating")}
               </GroupsTitle>
               <Groups>
-                {userInfos?.participating?.map((participant, index) => {
+                {participatingGroups.map((participant, index) => {
                   const avatar = participant.group.group_avatar;
                   return (
-                    participant.group.privacy !== "PRIVATE" &&
-                    participant.state === ParticipantStates.JOINED && (
-                      <View key={index * 1.5}>
-                        {!!index && index % 5 === 0 && <AdBanner />}
-                        <Group
-                          key={participant.id}
-                          name={participant.group.name}
-                          image={avatar ? avatar?.url : ""}
-                          onPress={() =>
-                            handleGoGroupInfos(participant.group.id)
-                          }
-                        />
-                      </View>
-                    )
+                    <View key={index * 1.5}>
+                      <Group
+                        key={participant.id}
+                        name={participant.group.name}
+                        image={avatar ? avatar?.url : ""}
+                        onPress={() => handleGoGroupInfos(participant.group.id)}
+                      />
+                    </View>
                   );
                 })}
               </Groups>
