@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, Text } from "react-native";
 import {
   ConfigContainer,
   ConfigsContainer,
@@ -13,7 +14,6 @@ import Header from "@components/Header";
 import { useAuth } from "@contexts/auth";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Switcher from "@components/Switcher";
 import { useThemeController } from "@contexts/theme";
 import Button from "@components/Button";
@@ -29,12 +29,14 @@ import { useNotifications } from "@contexts/notifications";
 import { LinkUtils } from "@utils/link";
 import { useTranslate } from "@hooks/useTranslate";
 import { usePremium } from "@contexts/premium";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-import { setApiBaseURL } from "@services/api"; // Import the function to set API base URL
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setApiBaseURL } from "@services/api";
 import { usePersistedState } from "@hooks/usePersistedState";
 import * as LocalAuthentication from "expo-local-authentication";
+import Constants from "expo-constants";
+import * as Application from "expo-application";
 
-const API_PREFERENCE_KEY = "@SaturnChat:useDevApi"; // Same key as in api.ts
+const API_PREFERENCE_KEY = "@SaturnChat:useDevApi";
 const BIOMETRICS_INTERVAL_KEY = "@SaturnChat:biometricsInterval";
 const BIOMETRICS_INTERVALS = [0, 5, 15, 30, 60];
 
@@ -42,13 +44,15 @@ const Settings: React.FC = () => {
   const [confirmSignOut, setConfirmSignOut] = useState(false);
   const [localAuthAlertVisible, setLocalAuthAlertVisible] = useState(false);
   const [intervalAlertVisible, setIntervalAlertVisible] = useState(false);
-  const [useDevApi, setUseDevApi] = useState(false); // Estado para o switch da API de desenvolvimento
+  const [useDevApi, setUseDevApi] = useState(false);
   const [useBiometrics, setUseBiometrics] = usePersistedState<boolean>(
     "@SaturnChat:biometrics",
     false,
   );
-  const [biometricsInterval, setBiometricsInterval] =
-    usePersistedState<number>(BIOMETRICS_INTERVAL_KEY, 0);
+  const [biometricsInterval, setBiometricsInterval] = usePersistedState<number>(
+    BIOMETRICS_INTERVAL_KEY,
+    0,
+  );
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { signOut } = useAuth();
@@ -67,7 +71,15 @@ const Settings: React.FC = () => {
     return false;
   }, [isPremium]);
 
-  // Load the persisted state for useDevApi on component mount
+  // Informações de versão de app, build nativa e perfil EAS
+  const appVersion =
+    Application.nativeApplicationVersion ||
+    Constants.expoConfig?.version ||
+    "1.0.0";
+  const nativeBuildVersion = Application.nativeBuildVersion;
+  const buildProfile = Constants.expoConfig?.extra?.eas?.buildProfile;
+  const isBeta = buildProfile === "preview" || __DEV__;
+
   useEffect(() => {
     const loadApiPreference = async () => {
       try {
@@ -81,6 +93,7 @@ const Settings: React.FC = () => {
     };
     loadApiPreference();
   }, []);
+
   const handleSignOut = useCallback(() => {
     setConfirmSignOut(true);
   }, []);
@@ -119,7 +132,7 @@ const Settings: React.FC = () => {
 
   const handleToggleDevApi = async (value: boolean) => {
     setUseDevApi(value);
-    await setApiBaseURL(value); // Update the API base URL
+    await setApiBaseURL(value);
   };
 
   const handleSetBiometrics = async (value: boolean) => {
@@ -296,7 +309,7 @@ const Settings: React.FC = () => {
             </ConfigsContainer>
           </SectionContainer>
 
-          {__DEV__ && ( // Renderiza esta seção apenas em ambiente de desenvolvimento
+          {__DEV__ && (
             <SectionContainer>
               <SectionTitle>{t("about.developer_options")}</SectionTitle>
               <ConfigsContainer>
@@ -318,6 +331,22 @@ const Settings: React.FC = () => {
             bgColor={colors.red}
             onPress={handleSignOut}
           />
+
+          <View
+            style={{ marginTop: 24, marginBottom: 16, alignItems: "center" }}
+          >
+            <Text
+              style={{
+                fontSize: 10,
+                color: colors.dark_heading || "#888",
+                textAlign: "center",
+              }}
+            >
+              Saturn Chat v{appVersion}
+              {nativeBuildVersion ? ` (${nativeBuildVersion})` : ""}
+              {isBeta ? "\n (Beta)" : ""}
+            </Text>
+          </View>
         </SectionsContainer>
       </Container>
     </>
