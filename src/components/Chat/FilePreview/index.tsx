@@ -126,17 +126,7 @@ const FilePreview = ({
       }
     };
 
-    // Prefetch de imagens com prioridade máxima (Alta performance na lista do chat)
-    if (type === "image") {
-      FastImage.preload([
-        {
-          uri: url,
-          headers: fileHeaders,
-          cache: "immutable",
-          priority: FastImage.priority.high,
-        },
-      ]);
-    } else if (type === "video") {
+    if (type === "video") {
       generateVideoThumbnail();
     }
 
