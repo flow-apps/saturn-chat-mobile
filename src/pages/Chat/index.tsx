@@ -4,6 +4,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { useAppState } from "@react-native-community/hooks";
 import { useRoute } from "@react-navigation/core";
@@ -818,8 +819,8 @@ const Chat: React.FC = () => {
               data={oldMessages}
               extraData={oldMessages.length}
               keyExtractor={(item) => item.id || item.localReference || ""}
-              drawDistance={MESSAGES_LIMIT_REQUEST * 160}
-              estimatedItemSize={200}
+              drawDistance={Dimensions.get("screen").height * 2}
+              estimatedItemSize={250}
               renderItem={renderItem}
               ListFooterComponent={() =>
                 fetching && !fetchedAll ? <LoadingIndicator /> : null

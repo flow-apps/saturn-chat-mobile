@@ -1,5 +1,5 @@
-import React, { useMemo, useCallback, memo } from "react";
-import { Text } from "react-native";
+import React, { useMemo, useCallback, memo, useState } from "react";
+import { Text, TouchableOpacity } from "react-native";
 import Markdown, {
   MarkdownIt,
   RenderRules,
@@ -26,6 +26,13 @@ interface MessageMarkProps {
   participants: ParticipantsData[];
 }
 
+const MAX_MESSAGE_LENGTH = 200;
+
+const markdownItInstance = MarkdownIt({
+  linkify: true,
+  typographer: true,
+}).disable(["image", "heading", "table", "list", "blockquote", "hr"]);
+
 const MessageMark = ({
   user,
   message,
@@ -34,13 +41,15 @@ const MessageMark = ({
 }: MessageMarkProps) => {
   const { t } = useTranslate("Components.Chat.LinkPreview");
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const markdownRules = MarkdownIt({
-    linkify: true,
-    typographer: true,
-  })
-    .disable(["image", "heading", "table", "list", "blockquote", "hr"])
-    .use(require("markdown-it-linkscheme"));
+  const rawText = message.message || "";
+  const isLongMessage = rawText.length > MAX_MESSAGE_LENGTH;
+
+  const displayedText = useMemo(() => {
+    if (!isLongMessage || isExpanded) return rawText;
+    return `${rawText.substring(0, MAX_MESSAGE_LENGTH)}... `;
+  }, [rawText, isLongMessage, isExpanded]);
 
   const copyLink = useCallback(async (url: string) => {
     await Clipboard.setStringAsync(url);
@@ -83,35 +92,39 @@ const MessageMark = ({
         );
       },
       text: (node) => {
-        const words = node.content.split(/(\s+)/);
+        const content = node.content;
+        const mentionRegex = /(@\w+)/g;
+
+        if (!mentionRegex.test(content)) {
+          return node.content;
+        }
+
+        const parts = content.split(mentionRegex);
         return (
           <Text key={node.key}>
-            {words.map((word, index) => {
-              if (word.startsWith("@")) {
-                const nickname = word.substring(1);
-                if (!participants)
-                  return;
-                
-                const participant = participants.find(
-                  (p) => p.user.nickname === nickname
+            {parts.map((part, index) => {
+              if (part.startsWith("@")) {
+                const nickname = part.substring(1);
+                const participant = participants?.find(
+                  (p) => p.user?.nickname === nickname,
                 );
 
                 if (participant) {
                   return (
                     <MessageLink
-                      key={index}
+                      key={`mention-${index}`}
                       onPress={() =>
                         navigation.navigate("UserProfile", {
                           id: participant.user.id,
                         })
                       }
                     >
-                      {word}
+                      {part}
                     </MessageLink>
                   );
                 }
               }
-              return <Text key={index}>{word}</Text>;
+              return <Text key={`text-${index}`}>{part}</Text>;
             })}
           </Text>
         );
@@ -119,16 +132,38 @@ const MessageMark = ({
     };
 
     return rules;
-  }, [message, user, participants]);
+  }, [message, user, participants, navigation, onPressLink, copyLink]);
 
   return (
-    // @ts-ignore
-    <Markdown markdownit={markdownRules} rules={renderRules} mergeStyle>
-      {message.message}
-    </Markdown>
+    <>
+      {/* @ts-ignore */}
+      <Markdown markdownit={markdownItInstance} rules={renderRules} mergeStyle>
+        {displayedText}
+      </Markdown>
+
+      {isLongMessage && (
+        <TouchableOpacity
+          onPress={() => setIsExpanded(!isExpanded)}
+          style={{ marginTop: 4, alignSelf: "flex-start" }}
+        >
+          <Text
+            style={{
+              color: user.id === message.author.id ? "#E0F2FE" : "#0284C7",
+              fontWeight: "600",
+              fontSize: 13,
+            }}
+          >
+            {isExpanded ? "Ler menos" : "Ler mais"}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </>
   );
 };
 
 export default memo(MessageMark, (prev, next) => {
-  return prev.message.id === next.message.id;
+  return (
+    prev.message.id === next.message.id &&
+    prev.message.message === next.message.message
+  );
 });
