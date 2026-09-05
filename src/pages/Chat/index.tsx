@@ -48,10 +48,7 @@ import { useWebsocket } from "@contexts/websocket";
 import { useChat } from "@contexts/chat";
 import { useTranslate } from "@hooks/useTranslate";
 import { ArrayUtils } from "@utils/array";
-import {
-  getEffectiveSettingValue,
-  getSettingValue,
-} from "@utils/settings";
+import { getEffectiveSettingValue, getSettingValue } from "@utils/settings";
 import { OneSignal } from "@configs/notifications";
 
 import { File, ordernedRolesArray } from "./types";
@@ -152,13 +149,11 @@ const Chat: React.FC = () => {
   );
   const [participants, setParticipants] = useState<ParticipantsData[]>([]);
 
-  // Controle de loading apenas para a montagem inicial da tela
   const [loading, setLoading] = useState(true);
   const [canSendMessage, setCanSendMessage] = useState(true);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const prevAppState = useRef(appState);
 
-  // Ref para indicar que o carregamento inicial já foi concluído
   const initialLoadDone = useRef(false);
 
   const [alertConfig, setAlertConfig] = useState<AlertConfigState>({
@@ -169,10 +164,7 @@ const Chat: React.FC = () => {
 
   const antiPrintSetting =
     group.type === "DIRECT"
-      ? getEffectiveSettingValue(
-          participant.participant_settings,
-          "anti_print",
-        )
+      ? getEffectiveSettingValue(participant.participant_settings, "anti_print")
       : getSettingValue(group.group_settings, "anti_print");
   const screenshotBlocked = isScreenshotBlocked({
     antiPrint: antiPrintSetting === true || antiPrintSetting === "true",
@@ -526,13 +518,6 @@ const Chat: React.FC = () => {
           error as Error,
           "Chat: fetchParticipantAndGroup",
         );
-        setAlertConfig({
-          visible: true,
-          title: t("alerts.error.title", { defaultValue: "Erro" }),
-          content: t("alerts.error.load_chat", {
-            defaultValue: "Não foi possível carregar as informações do chat.",
-          }),
-        });
       } finally {
         initialLoadDone.current = true;
         setLoading(false);
