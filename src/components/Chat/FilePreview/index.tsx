@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -60,26 +59,46 @@ const FilePreview = ({
   const { t } = useTranslate("Components.Chat.FilePreview");
   const { getHeadersForAuthFiles } = useAuth();
 
+  const formattedVideoUrl = useMemo(() => {
+    if (!url) return "";
+    return url.includes("?") ? `${url}&ext=.mp4` : `${url}?ext=.mp4`;
+  }, [url]);
+
   useEffect(() => {
     let isMounted = true;
+    let statusSubscription: { remove: () => void } | null = null;
 
     const generateVideoThumbnail = async () => {
       try {
         const player = createVideoPlayer({
-          uri: `${url}&type=.mp4`,
+          uri: formattedVideoUrl,
           headers: getHeadersForAuthFiles(url),
         });
-        
-        const thumbnails = await player.generateThumbnailsAsync([5]);
-        console.log(thumbnails);
-        
 
-        if (isMounted && thumbnails && thumbnails.length > 0) {
-          
-          setVideoThumb(thumbnails[0].uri);
+        const captureThumbnail = async () => {
+          try {
+            const thumbnails = await player.generateThumbnailsAsync([1]);
+
+            if (isMounted && thumbnails && thumbnails.length > 0) {
+              // @ts-ignore
+              setVideoThumb(thumbnails[0].uri);
+            }
+          } catch (err) {
+            console.warn("Erro ao extrair thumbnail do player:", err);
+          }
+        };
+
+        statusSubscription = player.addListener("statusChange", (event) => {
+          if (event.status === "readyToPlay") {
+            captureThumbnail();
+          }
+        });
+
+        if (player.status === "readyToPlay") {
+          captureThumbnail();
         }
       } catch (error) {
-        console.warn("Erro ao gerar thumbnail via expo-video:", error);
+        console.warn("Erro ao inicializar o player para thumbnail:", error);
       }
     };
 
@@ -98,8 +117,11 @@ const FilePreview = ({
 
     return () => {
       isMounted = false;
+      if (statusSubscription) {
+        statusSubscription.remove();
+      }
     };
-  }, [type, url]);
+  }, [type, url, formattedVideoUrl]);
 
   const handleDownloadFile = () => {
     setDownloadWarning(true);
@@ -154,7 +176,12 @@ const FilePreview = ({
             <Feather name="play-circle" size={25} color={"#fff"} />
           </FileIconActionWrapper>
           <FileImagePreview
-            source={{ uri: videoThumb, cache: "immutable", priority: "high" }}
+            source={{
+              uri: videoThumb || url,
+              headers: getHeadersForAuthFiles(url),
+              cache: "immutable",
+              priority: "high",
+            }}
           />
         </FileButton>
       );
