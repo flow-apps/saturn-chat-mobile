@@ -2,7 +2,7 @@
   "expo": {
     "name": "Saturn Chat",
     "slug": "SaturnChat",
-    "version": "0.2.0",
+    "version": "0.2.3",
     "platforms": ["android"],
     "scheme": "saturnchat",
     "android": {
