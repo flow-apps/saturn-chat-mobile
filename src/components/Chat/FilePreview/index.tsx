@@ -64,6 +64,11 @@ const FilePreview = ({
     return url.includes("?") ? `${url}&ext=.mp4` : `${url}?ext=.mp4`;
   }, [url]);
 
+  const fileHeaders = useMemo(
+    () => getHeadersForAuthFiles(url),
+    [getHeadersForAuthFiles, url],
+  );
+
   useEffect(() => {
     let isMounted = true;
     let statusSubscription: { remove: () => void } | null = null;
@@ -72,7 +77,7 @@ const FilePreview = ({
       try {
         const player = createVideoPlayer({
           uri: formattedVideoUrl,
-          headers: getHeadersForAuthFiles(url),
+          headers: fileHeaders,
         });
 
         const captureThumbnail = async () => {
@@ -80,8 +85,24 @@ const FilePreview = ({
             const thumbnails = await player.generateThumbnailsAsync([1]);
 
             if (isMounted && thumbnails && thumbnails.length > 0) {
-              // @ts-ignore
-              setVideoThumb(thumbnails[0].uri);
+              const firstThumb = thumbnails[0];
+              const thumbUri =
+                typeof firstThumb === "string"
+                  ? firstThumb
+                  : (firstThumb as any).uri || (firstThumb as any).image?.uri || (firstThumb as any).image;
+
+              if (thumbUri) {
+                setVideoThumb(thumbUri);
+
+                // Prefetch da thumbnail do vídeo gerada no cache
+                FastImage.preload([
+                  {
+                    uri: thumbUri,
+                    cache: "immutable",
+                    priority: FastImage.priority.high,
+                  },
+                ]);
+              }
             }
           } catch (err) {
             console.warn("Erro ao extrair thumbnail do player:", err);
@@ -102,13 +123,14 @@ const FilePreview = ({
       }
     };
 
+    // Prefetch de imagens com prioridade máxima (Alta performance na lista do chat)
     if (type === "image") {
       FastImage.preload([
         {
           uri: url,
-          headers: getHeadersForAuthFiles(url),
+          headers: fileHeaders,
           cache: "immutable",
-          priority: "normal",
+          priority: FastImage.priority.high,
         },
       ]);
     } else if (type === "video") {
@@ -121,7 +143,7 @@ const FilePreview = ({
         statusSubscription.remove();
       }
     };
-  }, [type, url, formattedVideoUrl]);
+  }, [type, url, formattedVideoUrl, fileHeaders]);
 
   const handleDownloadFile = () => {
     setDownloadWarning(true);
@@ -162,9 +184,9 @@ const FilePreview = ({
           <FileImagePreview
             source={{
               uri: url,
-              headers: getHeadersForAuthFiles(url),
-              cache: "immutable",
-              priority: "high",
+              headers: fileHeaders,
+              cache: FastImage.cacheControl.immutable,
+              priority: FastImage.priority.high,
             }}
           />
         </FileButton>
@@ -178,9 +200,9 @@ const FilePreview = ({
           <FileImagePreview
             source={{
               uri: videoThumb || url,
-              headers: getHeadersForAuthFiles(url),
-              cache: "immutable",
-              priority: "high",
+              headers: fileHeaders,
+              cache: FastImage.cacheControl.immutable,
+              priority: FastImage.priority.high,
             }}
           />
         </FileButton>

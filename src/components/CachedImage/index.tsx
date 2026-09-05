@@ -4,6 +4,7 @@ import { Image, Cache } from "./styles";
 import { ImageProps, ImageSourcePropType, StyleProp } from "react-native";
 import { SvgCssUri } from "react-native-svg/src/css";
 import { useAuth } from "@contexts/auth";
+import FastImage from "react-native-fast-image";
 
 interface CachedImageProps {
   uri: string | null | undefined;
@@ -34,8 +35,7 @@ const CachedImage: React.FC<CachedImageProps> = ({
     );
   }
 
-  const placeholderImage =
-    placeholder || require("@assets/placeholder.jpg");
+  const placeholderImage = placeholder || require("@assets/placeholder.jpg");
 
   if (hasError || !uri) {
     return (
@@ -47,9 +47,9 @@ const CachedImage: React.FC<CachedImageProps> = ({
     <Cache
       source={{
         uri,
-        cache: "immutable",
         headers: getHeadersForAuthFiles(uri),
-        priority: "high",
+        priority: FastImage.priority.high,
+        cache: FastImage.cacheControl.immutable,
       }}
       style={[{ width, height }, style]}
       fallback

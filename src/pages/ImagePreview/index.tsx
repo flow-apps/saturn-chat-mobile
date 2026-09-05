@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import ReactNative, { Dimensions, StatusBar } from "react-native";
 import Header from "@components/Header";
 import Loading from "@components/Loading";
@@ -7,10 +7,10 @@ import Feather from "@expo/vector-icons/Feather";
 import { Container, ImageContainer, Image } from "./styles";
 import { useRoute } from "@react-navigation/native";
 import { HeaderButton } from "@components/Header/styles";
-import { useCallback } from "react";
 import { FileService } from "@services/file";
 import { useAuth } from "@contexts/auth";
 import Alert from "@components/Alert";
+import FastImage from "react-native-fast-image";
 import {
   isScreenshotBlocked,
   useScreenshotProtection,
@@ -28,49 +28,76 @@ const ImagePreview = () => {
   const route = useRoute();
   const { getHeadersForAuthFiles } = useAuth();
   const { t } = useTranslate("Settings");
-  const { name, original_name, url, antiPrint, conversationType } = route.params as {
-    name: string;
-    original_name: string;
-    url: string;
-    antiPrint?: boolean;
-    conversationType?: "GROUP" | "DIRECT";
-  };
+  const { name, original_name, url, antiPrint, conversationType } =
+    route.params as {
+      name: string;
+      original_name: string;
+      url: string;
+      antiPrint?: boolean;
+      conversationType?: "GROUP" | "DIRECT";
+    };
+
   const screenshotBlocked = isScreenshotBlocked({
     antiPrint: antiPrint === true,
     conversationType: conversationType || "DIRECT",
     settingsLoading: false,
   });
+
   const { screenshotAlertVisible, dismissScreenshotAlert } =
     useScreenshotProtection(screenshotBlocked, false, `image-${url}`);
 
   const [dimensions, setDimensions] = useState<ImageDimensions>();
+
   const imageHeaders = useMemo(
     () => getHeadersForAuthFiles(url),
-    [getHeadersForAuthFiles],
+    [getHeadersForAuthFiles, url],
   );
 
   useEffect(() => {
+    let isMounted = true;
+
     if (url) {
+      // 1. Reforça o prefetch caso o usuário acesse a tela diretamente via deep link/push
+      FastImage.preload([
+        {
+          uri: url,
+          headers: imageHeaders,
+          cache: "immutable",
+          priority: FastImage.priority.high,
+        },
+      ]);
+
+      // 2. Obtém dimensões da imagem
       ReactNative.Image.getSizeWithHeaders(
         url,
         // @ts-ignore
         imageHeaders,
         (width, height) => {
+          if (!isMounted) return;
           const screenWidth = Dimensions.get("window").width;
           const scaleFactor = width / screenWidth;
           const imageHeight = height / scaleFactor;
           setDimensions({ width: screenWidth, height: imageHeight });
         },
         (error) => {
-          console.log(error);
+          console.warn("Erro ao obter tamanho da imagem:", error);
+          // Fallback para exibir a imagem mesmo se getSize falhar
+          if (isMounted) {
+            const screenWidth = Dimensions.get("window").width;
+            setDimensions({ width: screenWidth, height: screenWidth });
+          }
         },
       );
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [url, imageHeaders]);
 
   const downloadFile = useCallback(async () => {
     await fileService.downloadFile(url, original_name, imageHeaders);
-  }, [original_name, url]);
+  }, [fileService, original_name, url, imageHeaders]);
 
   if (!dimensions) return <Loading />;
 
@@ -103,11 +130,10 @@ const ImagePreview = () => {
           >
             <Image
               uri={url}
-              width={dimensions.width}
-              height={dimensions.height}
-              // @ts-ignore
-              headers={imageHeaders}
-              resizeMode="contain"
+              style={{
+                width: dimensions.width,
+                height: dimensions.height,
+              }}
             />
           </ImageZoom>
         </ImageContainer>
