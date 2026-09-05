@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, Text, View } from "react-native";
+import { AppState, Text, View, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as LocalAuthentication from "expo-local-authentication";
 import AppRoutes from "@routes/app.routes";
@@ -161,75 +161,83 @@ const Routes = () => {
     return <Loading />;
   }
 
-  if (signed && !activeCallRoomId && biometricsEnabled && !isUnlocked) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 24,
-          backgroundColor: colors.background,
-        }}
-      >
-        <Text
-          style={{
-            marginBottom: 24,
-            color: colors.black,
-            fontSize: 20,
-            textAlign: "center",
-            fontFamily: fonts.text,
-          }}
-        >
-          {isAuthenticating
-            ? t("account.security.authenticating")
-            : t("account.security.unlock_message")}
-        </Text>
-        {!isAuthenticating && (
-          <Button
-            title={t("account.security.unlock_button")}
-            onPress={authenticate}
-          />
-        )}
-      </View>
-    );
-  }
+  const showLockOverlay =
+    signed && !activeCallRoomId && biometricsEnabled && !isUnlocked;
 
   return (
-    <NavigationContainer
-      linking={linking}
-      fallback={<Loading />}
-      theme={
-        title === "dark"
-          ? {
-              ...DarkTheme,
-              colors: { ...DarkTheme.colors, background: colors.background },
-            }
-          : undefined
-      }
-      onReady={() => {
-        if (navigationRef.current) {
-          routeNameRef.current = navigationRef.current.getCurrentRoute()?.name;
+    <View style={{ flex: 1 }}>
+      <NavigationContainer
+        linking={linking}
+        fallback={<Loading />}
+        theme={
+          title === "dark"
+            ? {
+                ...DarkTheme,
+                colors: { ...DarkTheme.colors, background: colors.background },
+              }
+            : undefined
         }
-      }}
-      onStateChange={async () => {
-        if (!navigationRef.current) {
-          return;
-        }
-        const previousRouteName = routeNameRef.current;
-        const currentRouteName = navigationRef.current.getCurrentRoute()?.name;
+        onReady={() => {
+          if (navigationRef.current) {
+            routeNameRef.current =
+              navigationRef.current.getCurrentRoute()?.name;
+          }
+        }}
+        onStateChange={async () => {
+          if (!navigationRef.current) {
+            return;
+          }
+          const previousRouteName = routeNameRef.current;
+          const currentRouteName =
+            navigationRef.current.getCurrentRoute()?.name;
 
-        if (previousRouteName !== currentRouteName) {
-          await analytics().logEvent("screen_view", { currentRouteName });
-        }
+          if (previousRouteName !== currentRouteName) {
+            await analytics().logEvent("screen_view", { currentRouteName });
+          }
 
-        routeNameRef.current = currentRouteName;
-      }}
-      ref={navigationRef}
-    >
-      {!loadingData && <CallFloatingButton />}
-      {signed ? <AppRoutes /> : <AuthRoutes />}
-    </NavigationContainer>
+          routeNameRef.current = currentRouteName;
+        }}
+        ref={navigationRef}
+      >
+        {!loadingData && <CallFloatingButton />}
+        {signed ? <AppRoutes /> : <AuthRoutes />}
+      </NavigationContainer>
+
+      {showLockOverlay && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 24,
+              backgroundColor: colors.background,
+              zIndex: 999,
+            },
+          ]}
+        >
+          <Text
+            style={{
+              marginBottom: 24,
+              color: colors.black,
+              fontSize: 20,
+              textAlign: "center",
+              fontFamily: fonts.text,
+            }}
+          >
+            {isAuthenticating
+              ? t("account.security.authenticating")
+              : t("account.security.unlock_message")}
+          </Text>
+          {!isAuthenticating && (
+            <Button
+              title={t("account.security.unlock_button")}
+              onPress={authenticate}
+            />
+          )}
+        </View>
+      )}
+    </View>
   );
 };
 
