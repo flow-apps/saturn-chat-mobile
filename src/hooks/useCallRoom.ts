@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, Alert } from "react-native";
 import InCallManager from "react-native-incall-manager";
 import * as Notifications from "expo-notifications";
 
@@ -31,6 +31,8 @@ const getCallVideoConstraints = (facingMode: "user" | "environment") => ({
   ...CALL_VIDEO_CONSTRAINTS,
 });
 
+let activeCallRoomId: string | null = null;
+
 export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
   const { socket } = useWebsocket();
   const { user } = useAuth();
@@ -60,6 +62,7 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
     if (
       !socket ||
       !roomId ||
+      (activeCallRoomId && activeCallRoomId !== roomId) ||
       (joinedRoomRef.current?.roomId === roomId &&
         joinedRoomRef.current.socket === socket)
     ) {
@@ -163,7 +166,7 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
     if (!socket) return;
 
     const handleConnect = () => {
-      if (roomId) {
+      if (roomId && (!activeCallRoomId || activeCallRoomId === roomId)) {
         joinedRoomRef.current = null;
         joinCallRoom();
       }
@@ -180,6 +183,37 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
       setParticipants([]);
       return;
     }
+
+    // Trava de chamada em andamento em outra sala
+    if (activeCallRoomId && activeCallRoomId !== roomId) {
+      console.warn(
+        `[Call] Bloqueado: Já existe chamada ativa na sala ${activeCallRoomId}`,
+      );
+
+      // Usar setTimeout impede que o encerramento imediato da tela destrua a janela de Alert
+      setTimeout(() => {
+        Alert.alert(
+          t("already_in_call_title", "Chamada em andamento"),
+          t(
+            "already_in_call_message",
+            "Você já está em uma chamada. Encerre a chamada atual antes de entrar em outra.",
+          ),
+          [
+            {
+              text: t("ok", "OK"),
+              onPress: () => {
+                onEnded?.();
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      }, 150);
+
+      return;
+    }
+
+    activeCallRoomId = roomId;
 
     let isMounted = true;
 
@@ -439,7 +473,7 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
       "change",
       async (nextAppState) => {
         if (nextAppState === "active") {
-          if (roomId) {
+          if (roomId && activeCallRoomId === roomId) {
             await refreshMediaTracks();
             joinCallRoom();
           }
@@ -451,6 +485,10 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
       isMounted = false;
       joinedRoomRef.current = null;
       appStateSubscription.remove();
+
+      if (activeCallRoomId === roomId) {
+        activeCallRoomId = null;
+      }
 
       socket?.off("current_room_users");
       socket?.off("user_joined");
@@ -538,6 +576,10 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
     }
     if (localStream) {
       localStream.getTracks().forEach((track: any) => track.stop());
+    }
+
+    if (activeCallRoomId === roomId) {
+      activeCallRoomId = null;
     }
 
     setLocalStream(null);
@@ -769,5 +811,6 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
     toggleVideo,
     switchCamera,
     endCall,
+    activeCallRoomId,
   };
 };

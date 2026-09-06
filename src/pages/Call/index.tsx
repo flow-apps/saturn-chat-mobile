@@ -74,9 +74,20 @@ const Call: React.FC = () => {
     setActiveCallRoom,
     isVideoEnabled,
     setVideoEnabled,
+    activeCallRoomId,
   } = useCallStatus();
 
   useEffect(() => {
+    if (activeCallRoomId && activeCallRoomId !== groupId) {
+      showCallAlert(
+        t(
+          "already_in_call_message",
+          "Você já está em uma chamada em andamento.",
+        ),
+      );
+      return;
+    }
+
     setActiveCallRoom(groupId);
   }, [groupId, setActiveCallRoom]);
 
@@ -141,7 +152,16 @@ const Call: React.FC = () => {
     let title = fallbackTitle;
     let content = message || t("errors.default.content");
 
-    if (lowerMessage.includes("banned")) {
+    if (
+      lowerMessage.includes("already_in_call") ||
+      lowerMessage.includes("já está em uma chamada")
+    ) {
+      title = t("already_in_call_title", "Chamada em andamento");
+      content = t(
+        "already_in_call_message",
+        "Você já está em uma chamada ativada. Encerre a chamada atual para iniciar outra.",
+      );
+    } else if (lowerMessage.includes("banned")) {
       title = t("errors.access_blocked.title");
       content = t("errors.access_blocked.content");
     } else if (lowerMessage.includes("not in this group")) {
@@ -276,6 +296,7 @@ const Call: React.FC = () => {
       </View>
     );
   };
+
   useEffect(() => {
     const handleRoomError = ({ message }: { message?: string }) => {
       if (message) {
@@ -284,6 +305,10 @@ const Call: React.FC = () => {
     };
 
     const handleRoomClosed = ({ reason }: { reason?: string }) => {
+      if (reason === "last_user_left" || reason === "call_room_closed") {
+        return;
+      }
+
       if (reason === "inactivity_timeout") {
         showCallAlert(t("events.inactivity_closed"));
         return;
