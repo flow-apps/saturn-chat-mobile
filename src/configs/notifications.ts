@@ -2,6 +2,7 @@ import { OneSignal } from "react-native-onesignal";
 import { NotificationsTypes } from "@type/enums";
 import { getCurrentRoute, navigate, setParams } from "../routes/rootNavigation";
 import { LinkUtils } from "@utils/link";
+import * as Notifications from "expo-notifications";
 
 interface NotificationDataType {
   type: string;
@@ -11,6 +12,36 @@ interface NotificationDataType {
 }
 
 const configureNotificationsHandlers = async (signed: boolean) => {
+  Notifications.setNotificationHandler({
+    handleNotification: async (
+      notification,
+    ): Promise<Notifications.NotificationBehavior> => {
+      const { title, body, data } = notification.request.content;
+
+      const isOneSignalPush =
+        data?.custom || data?.onesignalData || data?.additionalData;
+
+      if (isOneSignalPush) {
+        return {
+          shouldShowAlert: false,
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+          shouldShowBanner: false,
+          shouldShowList: false,
+        };
+      }
+
+      return {
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
+        priority: Notifications.AndroidNotificationPriority.MAX,
+      };
+    },
+  });
+
   OneSignal.Notifications.addEventListener(
     "click",
     async ({ notification }: any) => {

@@ -18,17 +18,6 @@ import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
 import { RoomUser } from "@type/interfaces";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: false,
-    shouldShowList: false,
-    priority: Notifications.AndroidNotificationPriority.MAX,
-  }),
-});
-
 const CALL_VIDEO_CONSTRAINTS = {
   width: { ideal: 640 },
   height: { ideal: 480 },
