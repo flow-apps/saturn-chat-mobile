@@ -18,6 +18,7 @@ import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
 import { RoomUser } from "@type/interfaces";
 import { callSounds } from "@utils/callSounds";
+import { AudioModule } from "expo-audio";
 
 const CALL_VIDEO_CONSTRAINTS = {
   width: { ideal: 640 },
@@ -187,6 +188,10 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
     }
 
     const initVoice = async () => {
+      await AudioModule.setAudioModeAsync({
+        playsInSilentMode: true,
+        interruptionMode: "mixWithOthers",
+      });
       InCallManager.start({ media: "audio", auto: false });
       InCallManager.setForceSpeakerphoneOn(true);
       InCallManager.setKeepScreenOn(true);
