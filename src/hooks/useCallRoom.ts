@@ -17,6 +17,7 @@ import configs from "@config";
 import { useWebsocket } from "@contexts/websocket";
 import { useAuth } from "@contexts/auth";
 import { RoomUser } from "@type/interfaces";
+import { callSounds } from "@utils/callSounds";
 
 const CALL_VIDEO_CONSTRAINTS = {
   width: { ideal: 640 },
@@ -249,6 +250,8 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
         if (newUser.socketId === socket.id) return;
         if (user?.id && newUser.user?.id === user.id) return;
 
+        callSounds.playJoin();
+
         setParticipants((prev) => {
           if (prev.some((u) => u.socketId === newUser.socketId)) return prev;
           return [...prev, newUser];
@@ -381,6 +384,8 @@ export const useCallRoom = (roomId: string | null, onEnded?: () => void) => {
       };
 
       const handleUserLeft = ({ socketId }: { socketId: string }) => {
+        callSounds.playLeave();
+
         cleanupPeerConnection(socketId);
         setParticipants((prev) => prev.filter((u) => u.socketId !== socketId));
       };
