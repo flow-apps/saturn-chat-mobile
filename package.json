@@ -40,7 +40,7 @@
     "@react-navigation/native": "^7.1.16",
     "@react-navigation/stack": "^7.4.4",
     "@shopify/flash-list": "1.8.3",
-    "axios": "^1.11.0",
+    "axios": "^1.20.0",
     "expo": "~57.0.16",
     "expo-audio": "~57.0.4",
     "expo-clipboard": "~57.0.1",
